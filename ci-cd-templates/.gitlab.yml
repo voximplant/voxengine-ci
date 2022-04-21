@@ -1,0 +1,7 @@
+.voxengine-ci:
+  image: node:16
+  variables:
+    VOX_CI_CREDENTIALS: 'vox_ci_credentials.json'
+  before_script:
+    - npm ci
+    - echo "$VOX_CI_CREDENTIALS_CONTENT" > $VOX_CI_CREDENTIALS

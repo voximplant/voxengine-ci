@@ -1,0 +1,40 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": ["node_modules/**", "__tests__/**"],
+  "dictionaries": ["en_US", "typescript", "node", "bash"],
+  "words": [
+    "ve",
+    "ci",
+    "vox",
+    "saas",
+    "pstn",
+    "iarna",
+    "npmrc",
+    "doesnt",
+    "voxfiles",
+    "dirents",
+    "nsladkii",
+    "prebuild",
+    "callerid",
+    "cloudable",
+    "voximplant",
+    "voxengine",
+    "postbuild",
+    "untracked",
+    "apiclient",
+    "commitlint",
+    "opensource",
+    "transpiled",
+    "postpublish",
+    "voxengineci",
+    "open-source",
+    "voxengine-ci",
+    "voxengine_ci",
+    "nikolasmelui",
+    "persistentable"
+  ],
+  "flagWords": [
+    "hte"
+  ]
+}

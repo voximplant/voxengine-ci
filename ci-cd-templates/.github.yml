@@ -1,0 +1,23 @@
+name: voxengine-ci
+
+on: [push]
+
+jobs:
+  your-job:
+    runs-on: ununtu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          check-latest: true
+      - name: Install voxengine-ci
+        run: npm ci
+      - name: Prepare credentials
+        run: echo "${{ secrets.VOX_CI_CREDENTIALS_CONTENT }}" > ${{ env.VOX_CI_CREDENTIALS }}
+        env:
+          VOX_CI_CREDENTIALS: 'vox_ci_credentials.json'
+      - name: Run voxengine-ci scripts
+        run: |
+          npx voxengine-ci upload --application-name your_applicatoin_name

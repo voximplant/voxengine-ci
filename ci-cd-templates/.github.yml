@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   your-job:
-    runs-on: ununtu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -15,7 +15,7 @@ jobs:
       - name: Install voxengine-ci
         run: npm ci
       - name: Prepare credentials
-        run: echo "${{ secrets.VOX_CI_CREDENTIALS_CONTENT }}" > ${{ env.VOX_CI_CREDENTIALS }}
+        run: echo "${{ secrets.VOX_CI_CREDENTIALS_CONTENT }}" | base64 --decode > ${{ env.VOX_CI_CREDENTIALS }}
         env:
           VOX_CI_CREDENTIALS: 'vox_ci_credentials.json'
       - name: Run voxengine-ci scripts

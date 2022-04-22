@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "MIT",
   "keywords": [
@@ -35,7 +35,7 @@
     "test": "mocha --timeout 15000 -r ts-node/register __tests__/**/*.spec.ts",
     "test:unit": "mocha --timeout 15000 -r ts-node/register __tests__/unit/**/*.spec.ts",
     "test:integration": "mocha --timeout 15000 -r ts-node/register __tests__/integration/**/*.spec.ts",
-    "spellcheck": "cspell \"{lib,bin,docs,tools}/**/*\"",
+    "spellcheck": "cspell \"{lib,bin,docs,tools}/**\" && cspell README.md",
     "prepare": "husky install"
   },
   "engines": {

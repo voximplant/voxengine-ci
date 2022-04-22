@@ -25,10 +25,10 @@ Create a `.env` file in the root directory of your project and add environment-s
   VOX_CI_ROOT_PATH=/path/to/the/voxengine_ci_source_files_directory
 ```
 
-- VOX_CI_CREDENTIALS - path to your `json` credentials file (`vox_ci_credentials.json` by default)
+- VOX_CI_CREDENTIALS - path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
 - VOX_CI_ROOT_PATH - path to the directory where the `vox` files will be located (`voxfiles` by default)
 
-Creating a .env file is not necessary if you move the file with credentials to your project folder and it has a default name – `vox_ci_credentials.json`. 
+Creating a .env file is not necessary if you move the file with credentials to your project folder, and it has a default name – `vox_ci_credentials.json`. 
 The folder with the files created after initialization will be placed in your project folder as well and will be named `voxfiles` unless you decide to create a .env variable and specify something different there.
 
 ---
@@ -77,6 +77,7 @@ When an application is uploaded to the platform, you can add/modify rules (confi
 ```shell
   npx voxengine-ci upload --application-name your-application-name --rule-name your-rule-name
 ```
+
 It works either when you upload a new rule or when you modify an existing one.
 
 If you modify an existing application or existing rule, you can specify `--application-id` and `--rule-id` instead of `-application-name` and `--rule-name`:
@@ -105,13 +106,13 @@ You can modify these old apps, scenarios, and rules only from the platform witho
   npx voxengine-ci init --force
 ```
 
-### Build application scenarios (by specifying _application-name_) for ALL application rules without uploading to the platfrom
+### Build application scenarios (by specifying _application-name_) for ALL application rules without uploading to the platform
 
 ```shell
   npx voxengine-ci upload --application-name your_application_name --dry-run
 ```
 
-### Build application scenarios (by specifying _rule-name_) for a specified application rule without uploading to the platfrom
+### Build application scenarios (by specifying _rule-name_) for a specified application rule without uploading to the platform
 
 ```shell
   npx voxengine-ci upload --application-name your_application_name --rule-name your_rule_name --dry-run
@@ -157,13 +158,13 @@ Include a template in your CI/CD job:
 
 ```yml
   include:
-  - remote: 'https://github.com/voximplant/voxengine-ci/ci-cd-templates/.gitlab.yml'
+    - remote: 'https://raw.githubusercontent.com/voximplant/voxengine-ci/main/ci-cd-templates/.gitlab.yml'
 ```
 
 Define env variables:
 
-- `VOX_CI_CREDENTIALS` – path to your `json` credentials file (`vox_ci_credentials.json` by default)
-- `VOX_CI_CREDENTIALS_CONTENT` – `vox_ci_credentials.json` file contents in the `json` format
+- `VOX_CI_CREDENTIALS` – path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
+- `VOX_CI_CREDENTIALS_CONTENT` – `vox_ci_credentials.json` file contents in the `JSON` format
 
 Use the `extends` keyword to reuse the `.voxengine-ci` configuration sections from the template:
 
@@ -194,19 +195,21 @@ your-job:
   tags:
     - docker
   script:
-    - npx voxengine-ci upload --applicaiton-id 123456
+    - npx voxengine-ci upload --application-id 123456
     - npx voxengine-ci upload --application-name my_first_application
     - npx voxengine-ci upload --application-name my_first_application --rule-name my_second_rule --dry-run
 ```
 
 ### GitHub
 
-Copy the `https://github.com/voximplant/voxengine-ci/ci-cd-templates/.github.yml` YAML file contents to your repository at `.github/workflows/any_file_name.yml`.
+Copy the `https://github.com/voximplant/voxengine-ci/blob/main/ci-cd-templates/.github.yml` YAML file contents to your repository at `.github/workflows/any_file_name.yml`.
 
-Define the GitHub Actions secrets in the `settings/secrets/actions` section of your GitHub project:
+Define the _GitHub Actions secrets_ in the `settings/secrets/actions` section of your GitHub project:
 
-- `VOX_CI_CREDENTIALS` – path to your `json` credentials file (`vox_ci_credentials.json` by default)
-- `VOX_CI_CREDENTIALS_CONTENT` - `vox_ci_credentials.json` file contents in the `json` format
+- `VOX_CI_CREDENTIALS` – path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
+- `VOX_CI_CREDENTIALS_CONTENT` - `vox_ci_credentials.json` file contents in the `base64` format
+
+> **NOTE:** since GitHub has restrictions on passing _Actions secrets_ in the `JSON` format, you need to __base64-encode__ the value before assigning it to the `VOX_CI_CREDENTIALS_CONTENT` variable
 
 You can customize your script using the following example:
 
@@ -217,8 +220,8 @@ on: workflow_dispatch
 
 jobs:
   your-job:
-    runs-on: ununtu-latest
-    needs: [build]
+    runs-on: ubuntu-latest
+    needs: [ build ]
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -229,13 +232,13 @@ jobs:
       - name: Install voxengine-ci
         run: npm ci
       - name: Prepare credentials
-        run: echo "${{ env.VOX_CI_CREDENTIALS_CONTENT }}" > ${{ env.$VOX_CI_CREDENTIALS }}
+        run: echo "${{ env.VOX_CI_CREDENTIALS_CONTENT }}" | base64 --decode > ${{ env.VOX_CI_CREDENTIALS }}
         env:
           VOX_CI_CREDENTIALS: ${{ secrets.SECRET_FILE_PATH }}
           VOX_CI_CREDENTIALS_CONTENT: ${{ secrets.SECRET_FILE_CONTENT }}
       - name: Run voxengine-ci scripts
         run: |
-          npx voxengine-ci upload --applicaiton-id 123456
+          npx voxengine-ci upload --application-id 123456
           npx voxengine-ci upload --application-name my_first_application
           npx voxengine-ci upload --application-name my_first_application --rule-name my_second_rule --dry-run
 ```

@@ -209,7 +209,7 @@ Define the _GitHub Actions secrets_ in the `settings/secrets/actions` section of
 - `VOX_CI_CREDENTIALS` – path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
 - `VOX_CI_CREDENTIALS_CONTENT` - `vox_ci_credentials.json` file contents in the `base64` format
 
-> **NOTE:** since GitHub has restrictions on passing _Actions secrets_ in the `JSON` format, you need to __base64-encode__ the value before assigning it to the `VOX_CI_CREDENTIALS_CONTENT` variable
+> __NOTE:__ since GitHub has restrictions on passing _Actions secrets_ in the `JSON` format, you need to __base64-encode__ the value before assigning it to the `VOX_CI_CREDENTIALS_CONTENT` variable
 
 You can customize your script using the following example:
 
@@ -242,6 +242,70 @@ jobs:
           npx voxengine-ci upload --application-name my_first_application
           npx voxengine-ci upload --application-name my_first_application --rule-name my_second_rule --dry-run
 ```
+
+### Jenkins
+
+First, install all necessary plugins:
+
+- NodeJS plugin. After the plugin has been installed, click __Add NodeJS__ in the __NodeJS installations__ section (in Global Tool Configuration) and specify a name (e.g. "nodejsinstallation" - this name will be used in the __Build environment__ section).
+
+- Git plugin
+
+- Credentials Binding plugin
+
+- Pipeline plugin (for using Jenkinsfile)
+
+#### Creating a job using the "Freestyle project" Item
+
+Create a new Item and select __Freestyle project__.
+
+In __Source code management__, choose the __Git__ option and specify the repository URL and credentials. If there are no SSH credentials in Jenkins yet, generate them and add a private key of the __SSH Username with private key__ type (choose the __Enter directly__ option in the __Private key__ section), and add a public key in your git account (__SSH keys__ section).
+
+In __Build environment__, choose the __Use secret text(s) or file(s)__ option, specify the "VOX_CI_CREDENTIALS" name for the corresponding variable and add the "vox_ci_credentials.json" file of the __Secret file__ type with credentials of your vox account.
+
+Check __Provide Node & npm bin/ folder to PATH__ in the __Build environment__ section and specify the name of the NodeJS installation ("nodejsinstallation" in our example).
+
+In the __Build__ section, select __Execute shell__ in the __Build step__ dropdown list and add the following script:
+
+```shell
+npm ci
+npx voxengine-ci upload --application-name my-application
+```
+
+The job is ready to run.
+
+#### Using Jenkinsfile
+
+In your project repository, add Jenkinsfile:
+
+```shell
+pipeline {
+    agent any
+    tools {nodejs "nodejsinstallation"} // name of your NodeJS installation
+    stages {
+        stage('Before-publish') {
+            steps {
+                sh "npm ci"
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh "npx voxengine-ci upload --application-name test" // your voxengine-ci script
+            }
+        }
+    }
+}
+```
+
+Create the __Pipeline__ Item.
+
+Select __Pipeline script from SCM__ in the __Pipeline__ section.
+
+Select __Git__ from the __SCM__ dropdown list, set your repository URL using SSH, and choose credentials. If you do not have credentials yet, click __Add__ and select the __SSH Username with private key__ type. Then add a private key (in the __Private key__ section, choose __Enter directly__) and a public key in your git account (__SSH keys__).
+
+Specify __Jenkinsfile__ in __Script Path__.
+
+Pipeline is ready!
 
 ## Instruments
 

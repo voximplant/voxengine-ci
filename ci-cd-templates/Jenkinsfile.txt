@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    tools {nodejs "nodejs"}
+    stages {
+        stage('Before-publish') {
+            steps {
+                sh "npm ci"
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh "npx voxengine-ci upload --application-name test"
+            }
+        }
+    }
+}

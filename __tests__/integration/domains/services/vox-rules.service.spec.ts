@@ -27,7 +27,7 @@ describe('init -- force', () => {
   });
 });
 
-describe('npx voxengine-ci upload --application-name test\nupload NEW app "test" with rule "first-rule", scenario "first-test-scenario"', async () => {
+describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test" with rule "first-rule", scenario "first-test-scenario"', async () => {
   let client: VoximplantApiClient;
   let applicationId: number;
   before(async () => {
@@ -276,7 +276,7 @@ describe('throw error if app or rule does not exist', async () => {
    * BY APPLICATION
    */
 
-  it('wrong id: npx voxengine-ci upload --application-id 11 --dry-run', async () => {
+  it('wrong id: yarn voxengine-ci upload --application-id 11 --dry-run', async () => {
     const f = () => {
       return application.applicationBuild({
         applicationName: undefined,
@@ -288,7 +288,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('wrong name: npx voxengine-ci upload --application-name dd --dry-run', async () => {
+  it('wrong name: yarn voxengine-ci upload --application-name dd --dry-run', async () => {
     const f = () => {
       return application.applicationBuild({
         applicationName: 'dd',
@@ -298,7 +298,7 @@ describe('throw error if app or rule does not exist', async () => {
     await expect(f()).to.be.ok;
   });
 
-  it('wrong id: npx voxengine-ci upload --application-name test --application-id 11 --dry-run', async () => {
+  it('wrong id: yarn voxengine-ci upload --application-name test --application-id 11 --dry-run', async () => {
     const f = () => {
       return application.applicationBuild({
         applicationName: 'test',
@@ -308,7 +308,7 @@ describe('throw error if app or rule does not exist', async () => {
     await expect(f()).to.be.ok;
   });
 
-  it('wrong name: npx voxengine-ci upload --application-name ww --application-id applicationId --dry-run', async () => {
+  it('wrong name: yarn voxengine-ci upload --application-name ww --application-id applicationId --dry-run', async () => {
     const f = () => {
       return application.applicationBuild({
         applicationName: 'ww',
@@ -318,7 +318,7 @@ describe('throw error if app or rule does not exist', async () => {
     await expect(f()).to.be.ok;
   });
 
-  it('npx voxengine-ci upload --application-id 11', async () => {
+  it('yarn voxengine-ci upload --application-id 11', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
         applicationName: undefined,
@@ -331,7 +331,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('npx voxengine-ci upload --application-name ss', async () => {
+  it('yarn voxengine-ci upload --application-name ss', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
         applicationName: 'ss',
@@ -344,7 +344,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('npx voxengine-ci upload --application-name test --application-id 11', async () => {
+  it('yarn voxengine-ci upload --application-name test --application-id 11', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
         applicationName: 'test',
@@ -357,7 +357,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('wrong name: npx voxengine-ci upload --application-name ww --application-id applicationId', async () => {
+  it('wrong name: yarn voxengine-ci upload --application-name ww --application-id applicationId', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
         applicationName: 'ww',
@@ -372,7 +372,7 @@ describe('throw error if app or rule does not exist', async () => {
    * BY RULE
    */
 
-  it('npm run voxengine-ci:dev upload -- --application-name test --rule-id 11 --dry-run', async () => {
+  it('yarn voxengine-ci:dev upload -- --application-name test --rule-id 11 --dry-run', async () => {
     const f = () => {
       return application.applicationByRuleBuild({
         applicationName: 'test',
@@ -386,7 +386,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('npm run voxengine-ci:dev upload -- --application-name dd --rule-id firstTestRuleId --dry-run', async () => {
+  it('yarnvoxengine-ci:dev upload -- --application-name dd --rule-id firstTestRuleId --dry-run', async () => {
     const f = () => {
       return application.applicationByRuleBuild({
         applicationName: 'dd',
@@ -400,7 +400,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('npm run voxengine-ci:dev upload -- --application-name test --rule-id 11', async () => {
+  it('yarn voxengine-ci:dev upload -- --application-name test --rule-id 11', async () => {
     const f = () => {
       return application.applicationByRuleBuildAndUpload({
         applicationName: 'test',
@@ -415,7 +415,7 @@ describe('throw error if app or rule does not exist', async () => {
     );
   });
 
-  it('npm run voxengine-ci:dev upload -- --application-name dd --rule-id firstTestRuleId', async () => {
+  it('yarn voxengine-ci:dev upload -- --application-name dd --rule-id firstTestRuleId', async () => {
     const f = () => {
       return application.applicationByRuleBuildAndUpload({
         applicationName: 'dd',

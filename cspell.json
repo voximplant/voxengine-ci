@@ -11,6 +11,7 @@
     "pstn",
     "iarna",
     "npmrc",
+    "yarnrc",
     "doesnt",
     "voxfiles",
     "dirents",
@@ -32,7 +33,9 @@
     "voxengine-ci",
     "voxengine_ci",
     "nikolasmelui",
-    "persistentable"
+    "persistentable",
+    "nodejsinstallation",
+    "Jenkinsfile"
   ],
   "flagWords": [
     "hte"

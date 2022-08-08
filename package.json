@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "MIT",
   "keywords": [
@@ -16,22 +16,19 @@
   ],
   "scripts": {
     "cleanup": "node tools/cleanup.js",
-    "prebuild": "npm run cleanup",
-    "build": "tsc",
+    "build": "node tools/cleanup.js && tsc",
     "start": "node bin/voxengine-ci.js",
-    "start:dev": "npm run cleanup && ts-node voxengine-ci.ts",
+    "start:dev": "node tools/cleanup.js && ts-node bin/voxengine-ci.ts",
     "voxengine-ci": "node bin/voxengine-ci.js",
-    "voxengine-ci:dev": "npm run cleanup && ts-node bin/voxengine-ci.ts",
+    "voxengine-ci:dev": "node tools/cleanup.js && ts-node bin/voxengine-ci.ts",
     "init": "node bin/voxengine-ci.js init",
-    "init:dev": "npm run cleanup && ts-node bin/voxengine-ci.ts init",
+    "init:dev": "node tools/cleanup.js && ts-node bin/voxengine-ci.ts init",
     "upload": "node bin/voxengine-ci.js upload",
-    "upload:dev": "npm run clenaup && ts-node bin/voxengine-ci.ts upload",
+    "upload:dev": "node tools/cleanup.js && ts-node bin/voxengine-ci.ts upload",
     "lint": "eslint {lib,bin} --ext .ts --cache",
     "lint:fix": "eslint {lib,bin} --ext .ts --cache --fix",
     "semantic-release": "semantic-release",
     "commitlint": "commitlint",
-    "prepublishOnly": "npm run build",
-    "postpublish": "npm run cleanup",
     "test": "mocha --timeout 15000 -r ts-node/register __tests__/**/*.spec.ts",
     "test:unit": "mocha --timeout 15000 -r ts-node/register __tests__/unit/**/*.spec.ts",
     "test:integration": "mocha --timeout 15000 -r ts-node/register __tests__/integration/**/*.spec.ts",
@@ -39,15 +36,16 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">= 14.0.0",
-    "npm": ">= 6.14.4"
+    "node": ">= 14.0.0"
   },
   "dependencies": {
     "@iarna/toml": "2.2.5",
-    "@voximplant/apiclient-nodejs": "^2.0.5",
+    "@types/sinon": "9.0.10",
+    "@voximplant/apiclient-nodejs": "2.0.5",
     "chalk": "4.1.2",
     "commander": "9.0.0",
     "dotenv": "10.0.0",
+    "sinon": "11.1.1",
     "typescript": "4.3.5",
     "yaml": "1.10.2"
   },
@@ -58,9 +56,10 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/gitlab": "7.0.4",
     "@types/chai": "4.3.0",
-    "@types/chai-as-promised": "^7.1.5",
+    "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "9.1.0",
     "@types/node": "16.11.0",
+    "@types/rewire": "2.5.28",
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",
     "chai": "4.3.6",
@@ -75,10 +74,10 @@
     "mocha": "9.2.1",
     "prettier": "2.3.2",
     "prettier-eslint": "8.2.2",
+    "rewire": "5.0.0",
     "semantic-release": "18.0.0",
     "ts-node": "10.2.0"
   },
-  "eslint.packageManager": "npm",
   "publishConfig": {
     "access": "public"
   },
@@ -89,7 +88,6 @@
     "lib/**/*.d.ts",
     "typings/**/*.d.ts"
   ],
-  "bin": {
-    "voxengine-ci": "bin/voxengine-ci.js"
-  }
+  "bin": "bin/voxengine-ci.js",
+  "packageManager": "yarn@3.2.0"
 }

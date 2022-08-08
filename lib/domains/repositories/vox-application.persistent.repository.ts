@@ -31,7 +31,7 @@ export class VoxApplicationPersistentRepository extends AbstractPersistentReposi
       );
     } catch (error) {
       console.error(
-        this.lmg.generate('ERR__INIT_FAILED', this.constructor.name),
+        this.lmg.generate('ERR__CREATE_FAILED', this.constructor.name),
       );
       console.error(error);
     }

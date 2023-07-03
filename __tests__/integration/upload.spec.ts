@@ -5,9 +5,10 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { mkdir, rmdir } from 'fs/promises';
 import { expect } from 'chai';
 import { createHash } from 'crypto';
+
 const path = require('path');
 
-describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test" with rule "first-rule", scenarios "second-test-scenario", "first-test-scenario"', async () => {
+describe('yarn voxengine-ci upload --application-name voxengine-ci \n upload NEW app "voxengine-ci" with rule "voxengine-ci", scenarios "second-voxengine-ci-scenario", "first-voxengine-ci-scenario"', async () => {
   let client: VoximplantApiClient;
   let applicationId: number;
   before(async () => {
@@ -22,16 +23,17 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     await application.projectCleanup();
     await application.projectInit();
     const appConfigDirPath = path.resolve(
-      'voxfiles/applications/test.nikit.voximplant.com',
+      'voxfiles/applications/voxengine-ci.voxengine.voximplant.com',
     );
     if (!existsSync(appConfigDirPath)) await mkdir(appConfigDirPath);
-    const appConfig = '{"applicationName":"test.nikit.voximplant.com"}';
+    const appConfig =
+      '{"applicationName":"voxengine-ci.voxengine.voximplant.com"}';
     writeFileSync(
       path.join(appConfigDirPath, 'application.config.json'),
       appConfig,
     );
     const rulesConfig =
-      '[{"ruleName":"first-rule","scenarios":["second-test-scenario","first-test-scenario"],"rulePattern":"RULE_ONE_.*"}]';
+      '[{"ruleName":"first-voxengine-ci-rule","scenarios":["second-voxengine-ci-scenario","first-voxengine-ci-scenario"],"rulePattern":"RULE_ONE_.*"}]';
     writeFileSync(
       path.join(appConfigDirPath, 'rules.config.json'),
       rulesConfig,
@@ -41,15 +43,21 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     const firstTestScenario = 'const first = 1;';
     const secondTestScenario = 'const second = 2;';
     writeFileSync(
-      path.join(scenariosSrcPath, 'first-test-scenario.voxengine.js'),
+      path.join(
+        scenariosSrcPath,
+        'first-voxengine-ci-scenario.voxengine.js',
+      ),
       firstTestScenario,
     );
     writeFileSync(
-      path.join(scenariosSrcPath, 'second-test-scenario.voxengine.js'),
+      path.join(
+        scenariosSrcPath,
+        'second-voxengine-ci-scenario.voxengine.js',
+      ),
       secondTestScenario,
     );
     await application.applicationBuildAndUpload({
-      applicationName: 'test',
+      applicationName: 'voxengine-ci',
       applicationId: undefined,
       isForce: false,
     });
@@ -58,28 +66,28 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
   after(async () => {
     await client.Applications.delApplication({
       applicationId,
-      applicationName: 'test',
+      applicationName: 'voxengine-ci',
     });
     const firstTestScenarioId = (
       await client.Scenarios.getScenarios({
-        scenarioName: 'first-test-scenario',
+        scenarioName: 'first-voxengine-ci-scenario',
       })
     ).result[0]?.scenarioId;
     await client.Scenarios.delScenario({
       scenarioId: firstTestScenarioId,
-      scenarioName: 'first-test-scenario',
+      scenarioName: 'first-voxengine-ci-scenario',
     });
     const secondTestScenarioId = (
       await client.Scenarios.getScenarios({
-        scenarioName: 'second-test-scenario',
+        scenarioName: 'second-voxengine-ci-scenario',
       })
     ).result[0]?.scenarioId;
     await client.Scenarios.delScenario({
       scenarioId: secondTestScenarioId,
-      scenarioName: 'second-test-scenario',
+      scenarioName: 'second-voxengine-ci-scenario',
     });
     const pathToAppMetadataFile = path.resolve(
-      'voxfiles/.voxengine-ci/applications/test.nikit.voximplant.com',
+      'voxfiles/.voxengine-ci/applications/voxengine-ci.voxengine.voximplant.com',
     );
     rmSync(
       path.join(pathToAppMetadataFile, 'application.metadata.config.json'),
@@ -90,7 +98,7 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
 
   it('should create application metadata file', async () => {
     const pathToAppMetadataDir = path.resolve(
-      'voxfiles/.voxengine-ci/applications/test.nikit.voximplant.com',
+      'voxfiles/.voxengine-ci/applications/voxengine-ci.voxengine.voximplant.com',
     );
     const file = readFileSync(
       path.join(pathToAppMetadataDir, 'application.metadata.config.json'),
@@ -98,10 +106,12 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     );
 
     applicationId = (
-      await client.Applications.getApplications({ applicationName: 'test' })
+      await client.Applications.getApplications({
+        applicationName: 'voxengine-ci',
+      })
     ).result[0].applicationId;
     expect(file).to.equal(
-      `{"applicationId":${applicationId},"applicationName":"test.nikit.voximplant.com"}`,
+      `{"applicationId":${applicationId},"applicationName":"voxengine-ci.voxengine.voximplant.com"}`,
     );
   });
 
@@ -112,14 +122,14 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     const file = readFileSync(
       path.join(
         pathToAppMetadataFile,
-        'first-test-scenario.metadata.config.json',
+        'first-voxengine-ci-scenario.metadata.config.json',
       ),
       'utf-8',
     );
 
     const scenarioId = (
       await client.Scenarios.getScenarios({
-        scenarioName: 'first-test-scenario',
+        scenarioName: 'first-voxengine-ci-scenario',
       })
     ).result[0].scenarioId;
     const scenarioScript = (
@@ -130,13 +140,13 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     ).result[0].scenarioScript;
     const hash = createHash('sha256').update(scenarioScript).digest('hex');
     expect(file).to.equal(
-      `{"scenarioId":${scenarioId},"scenarioName":"first-test-scenario","hash":"${hash}"}`,
+      `{"scenarioId":${scenarioId},"scenarioName":"first-voxengine-ci-scenario","hash":"${hash}"}`,
     );
   });
 
   it('should create rules metadata file', async () => {
     const pathToAppMetadataDir = path.resolve(
-      'voxfiles/.voxengine-ci/applications/test.nikit.voximplant.com',
+      'voxfiles/.voxengine-ci/applications/voxengine-ci.voxengine.voximplant.com',
     );
     const file = readFileSync(
       path.join(pathToAppMetadataDir, 'rules.metadata.config.json'),
@@ -145,14 +155,14 @@ describe('yarn voxengine-ci upload --application-name test\nupload NEW app "test
     const { ruleId, scenarios } = (
       await client.Rules.getRules({
         applicationId,
-        applicationName: 'test',
-        ruleName: 'first-rule',
+        applicationName: 'voxengine-ci',
+        ruleName: 'first-voxengine-ci-rule',
         withScenarios: true,
       })
     ).result[0];
     expect(file).to.equal(
       // @ts-expect-error: Nodejs mapper error (snake_case to camelCase)
-      `[{"ruleName":"first-rule","ruleId":${ruleId},"scenarios":[{"scenarioName":"second-test-scenario","scenarioId":${scenarios[0].scenario_id}},{"scenarioName":"first-test-scenario","scenarioId":${scenarios[1].scenario_id}}],"rulePattern":"RULE_ONE_.*"}]`,
+      `[{"ruleName":"first-voxengine-ci-rule","ruleId":${ruleId},"scenarios":[{"scenarioName":"second-voxengine-ci-scenario","scenarioId":${scenarios[0].scenario_id}},{"scenarioName":"first-voxengine-ci-scenario","scenarioId":${scenarios[1].scenario_id}}],"rulePattern":"RULE_ONE_.*"}]`,
     );
   });
 });

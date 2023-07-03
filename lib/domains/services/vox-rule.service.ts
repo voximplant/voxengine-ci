@@ -124,11 +124,13 @@ export class VoxRuleService {
     voxRulesList: VoxRulesList,
   ): Promise<void> => {
     if (!rulesFromPlatform.length) return;
-    const voxRuleListWithId = voxRulesList.map((rule) =>
-      rulesFromPlatform.find(
-        (platformRule) => platformRule.ruleName === rule.ruleName,
-      ),
-    );
+    const voxRuleListWithId = voxRulesList
+      .map((rule) =>
+        rulesFromPlatform.find(
+          (platformRule) => platformRule.ruleName === rule.ruleName,
+        ),
+      )
+      .filter((rule) => rule);
     const newRulesIdOrder = voxRuleListWithId.map(({ ruleId }) => ruleId);
     const existingRulesOrder = rulesFromPlatform.map(({ ruleId }) => ruleId);
     if (newRulesIdOrder.toString() !== existingRulesOrder.toString()) {

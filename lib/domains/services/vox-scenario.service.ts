@@ -195,9 +195,11 @@ export class VoxScenarioService {
     scenarioNames: string[],
   ): Promise<ScenarioInfo[]> => {
     const allScenarios = await this.platformRepository.downloadScenarios();
-    const scenarios = scenarioNames.map((scenarioName) =>
-      allScenarios.find((scenario) => scenario.scenarioName === scenarioName),
-    );
+    const scenarios = scenarioNames
+      .map((scenarioName) =>
+        allScenarios.find((scenario) => scenario.scenarioName === scenarioName),
+      )
+      .filter((scenario) => scenario);
     return scenarios;
   };
 

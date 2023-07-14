@@ -5147,6 +5147,16 @@ declare enum CallEvents {
    * @typedef _VideoTrackCreatedEvent
    */
   VideoTrackCreated = 'Call.Video.TrackCreated',
+  /**
+   * Triggers after the first audio packet is received.
+   * @typedef _FirstAudioPacketReceived
+   */
+  FirstAudioPacketReceived = 'Call.FirstAudioPacketReceived',
+  /**
+   * Triggers after the first video packet is received.
+   * @typedef _FirstVideoPacketReceived
+   */
+  FirstVideoPacketReceived = 'Call.FirstVideoPacketReceived',
 }
 
 /**
@@ -5182,6 +5192,8 @@ declare interface _CallEvents {
   [CallEvents.TransferComplete]: _TransferCompleteEvent;
   [CallEvents.TransferFailed]: _TransferFailedEvent;
   [CallEvents.VideoTrackCreated]: _VideoTrackCreatedEvent;
+  [CallEvents.FirstAudioPacketReceived]: _FirstAudioPacketReceived;
+  [CallEvents.FirstVideoPacketReceived]: _FirstVideoPacketReceived;
 }
 
 /**
@@ -5489,7 +5501,7 @@ declare interface _ToneReceivedEvent extends _CallEvent {
  */
 declare interface _TransferCompleteEvent extends _CallHeaderEvent {
   /**
-   * The transfer roles. Optional. 
+   * The transfer roles. Optional.
    */
   role?: 'transferor' | 'target' | 'transferee';
 }
@@ -5512,6 +5524,16 @@ declare interface _TransferFailedEvent extends _TransferCompleteEvent {
  * @private
  */
 declare interface _VideoTrackCreatedEvent extends _CallRecordEvent {}
+
+/**
+ * @private
+ */
+declare interface _FirstAudioPacketReceived extends _CallEvent {}
+
+/**
+ * @private
+ */
+declare interface _FirstVideoPacketReceived extends _CallEvent {}
 
 declare class Call {
   /**

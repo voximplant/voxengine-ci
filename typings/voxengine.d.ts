@@ -7940,6 +7940,16 @@ declare enum SmartQueueEvents {
    */
   OperatorReached = 'SmartQueue.OperatorReached',
   /**
+   * The task has been enqueued successfully.
+   * @typedef _SmartQueueEnqueueSuccessEvent
+   */
+  EnqueueSuccess = 'SmartQueue.EnqueueSuccess',
+  /**
+   * SmartQueue starts the task distribution.
+   * @typedef _SmartQueueTaskDistributedEvent
+   */
+  TaskDistributed = 'SmartQueue.DistributeTask',
+  /**
    * The client disconnected.
    * @typedef _SmartQueueClientDisconnectedEvent
    */
@@ -7968,6 +7978,14 @@ declare interface _SmartQueueEvents {
    * An agent connected to the task.
    */
   [SmartQueueEvents.OperatorReached]: _SmartQueueOperatorReachedEvent;
+  /**
+   * The task has been enqueued successfully.
+   */
+  [SmartQueueEvents.EnqueueSuccess]: _SmartQueueEnqueueSuccessEvent;
+  /**
+   * SmartQueue starts task distribution.
+   */
+  [SmartQueueEvents.TaskDistributed]: _SmartQueueTaskDistributedEvent;
   /**
    * The task has ended because the client disconnected.
    */
@@ -8022,6 +8040,25 @@ declare interface _SmartQueueOperatorReachedEvent extends _SmartQueueEvent {
    * The agent's Call object
    */
   agentCall: Call;
+}
+
+/**
+ * @private
+ */
+declare interface _SmartQueueEnqueueSuccessEvent extends _SmartQueueEvent {}
+
+/**
+ * @private
+ */
+declare interface _SmartQueueTaskDistributedEvent extends _SmartQueueEvent {
+  /**
+   * The ID of the task's responsible agent
+   */
+  operatorId: number;
+  /**
+   * The name of the task's responsible agent
+   */
+  operatorName: string;
 }
 
 /**
@@ -14132,6 +14169,18 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
+   * VoxEngine.callPSTN parameters
+   */
+  interface CallPSTNParameters {
+    /**
+     * Answering machine or voicemail detector.
+     */
+    amd?: AMD.AnsweringMachineDetector;
+  }
+}
+
+declare namespace VoxEngine {
+  /**
    * Starts an outbound call to the specified phone number. Calls that are more expensive than 20 cents per minute and calls to Africa are blocked by default for security reasons.
    * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param number phone number to start a call to in the international format (E.164)
@@ -14139,8 +14188,13 @@ declare namespace VoxEngine {
    * * A real phone number that is [rented](https://manage.voximplant.com/numbers/my_numbers) from Voximplant. **IMPORTANT**: test numbers cannot be used.
    * * Any phone number that is [verified](https://manage.voximplant.com/settings/caller_ids) via an automated call from Voximplant and confirmation code.
    * * A phone number from an inbound call to the rented number. It can be retrieved as [Caller ID](/docs/references/voxengine/call#callerid).
+   * @param parameters Object with callPSTN parameters.
    */
-  function callPSTN(number: string, callerid: string): Call;
+  function callPSTN(
+    number: string,
+    callerid: string,
+    parameters?: VoxEngine.CallPSTNParameters
+  ): Call;
 }
 
 declare namespace VoxEngine {
@@ -14213,6 +14267,10 @@ declare namespace VoxEngine {
      * Identifier of Voximplant SIP registration that is used for outbound call.
      */
     regId: number;
+    /**
+     * Answering machine or voicemail detector.
+     */
+    amd?: AMD.AnsweringMachineDetector;
   }
 }
 
@@ -14220,10 +14278,10 @@ declare namespace VoxEngine {
   /**
    * Starts an outbound call to the external SIP system or to another user of the same application. Supported codecs are: [G.722](https://www.itu.int/rec/T-REC-G.722), [G.711 (u-law and a-law)](https://www.itu.int/rec/T-REC-G.711), [Opus](http://opus-codec.org/), [ILBC](https://webrtc.org/license/ilbc-freeware/), [H.264](https://www.itu.int/rec/T-REC-H.264), [VP8](https://tools.ietf.org/html/rfc6386). The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param to SIP URI to make a call to. Example of an external call: **sip:alice@example.org**. Examples with TLS usage: **sips:alice@example.org:5061** ; **alice@example.org:5061;transport=tls**. The format for calls to another user of the same Voximplant application: user-of-the-application@application.account.voximplant.com
-   * @param options Object with callSIP parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively.
+   * @param parameters Object with callSIP parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively.
    * @param scheme Internal information about codecs from the AppEvents.CallAlerting event.
    */
-  function callSIP(to: string, options: CallSIPParameters): Call;
+  function callSIP(to: string, parameters: VoxEngine.CallSIPParameters): Call;
 }
 
 declare namespace VoxEngine {
@@ -14255,21 +14313,21 @@ declare namespace VoxEngine {
    * Start an outbound call to the specified Voximplant user in peer-to-peer mode.
    * The JavaScript scenario with this method and the destination user should be both within the same Voximplant application.
    * Audio playback and recording does not work. P2P mode is available only for calls between SDKs.
-   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. IMPORTANT: calling this method makes impossible to use the non-P2P mode for a new call and specified inboundCall.
+   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. **IMPORTANT**: calling this method makes impossible to use the non-P2P mode for a new call and specified inboundCall.
    * So the following methods cannot be used: [Call.say], [Call.sendDigits], [Call.sendMediaTo], [Call.stopMediaTo].
    * @param incomingCall Inbound call that needs to be forwarded
    * @param username Name of the Voximplant user to call
-   * @param options Object with callUserDirect parameters ("callerid", "displayName", "analyticsLabel" and "extraHeaders")
+   * @param parameters Object with callUserDirect parameters ("callerid", "displayName", "analyticsLabel" and "extraHeaders")
    */
   function callUserDirect(
     incomingCall: Call,
     username: string,
-    options: CallUserDirectParameters
+    parameters: VoxEngine.CallUserDirectParameters
   ): Call;
 }
 
 declare namespace VoxEngine {
-  interface CallUserRequest extends CallParameters {
+  interface CallUserParameters extends CallParameters {
     /**
      * Name of the Voximplant user to call
      */
@@ -14294,6 +14352,10 @@ declare namespace VoxEngine {
      * Sends custom tags along with the push notification of an inbound call.
      */
     analyticsLabel?: string;
+    /**
+     * Answering machine or voicemail detector.
+     */
+    amd?: AMD.AnsweringMachineDetector;
   }
 }
 
@@ -14301,9 +14363,9 @@ declare namespace VoxEngine {
   /**
    * Starts an outbound call to the specified Voximplant user. The JavaScript scenario that uses this method and user being called should be both associated with the same Voximplant application.
    * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
-   * @param request
+   * @param parameters Object with callUser parameters.
    */
-  function callUser(request: CallUserRequest): Call;
+  function callUser(parameters: VoxEngine.CallUserParameters): Call;
 }
 
 declare namespace VoxEngine {

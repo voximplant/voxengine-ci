@@ -1,11 +1,13 @@
 
 /**
+ * [ACDRequest] parameters. Can be passed as arguments to the [VoxEngine.enqueueACDRequest] method.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.ACD);
  * ```
  */
-declare interface ACDEnqueueParams {
+declare interface ACDEnqueueParameters {
   /**
    * Priority (1-100, 1 is the highest priority).
    * If two or more objects have the same priorities, they are handled according to the order of HTTP requests from JS scenario to the ACD queue.
@@ -36,17 +38,17 @@ declare interface ACDEnqueueParams {
  */
 declare enum ACDEvents {
   /**
-   * Triggers when an agent is reached.
+   * Triggered when an agent is reached.
    * @typedef _ACDReachedEvent
    */
   OperatorReached = 'ACD.OperatorReached',
   /**
-   * Triggers when an ACD makes a call to a user via the [callUser] method.
+   * Triggered when an ACD makes a call to a user via the [callUser] method.
    * @typedef _ACDCallAttempt
    */
   OperatorCallAttempt = 'ACD.OperatorCallAttempt',
   /**
-   * Triggers when an ACD request tries to reach an agent, but the agent declines the call. IMPORTANT NOTE: This is just a notification, the request processing does not stop. The ACD request automatically redirects to the next free agent.
+   * Triggered when an ACD request tries to reach an agent, but the agent declines the call. IMPORTANT NOTE: This is just a notification, the request processing does not stop. The ACD request automatically redirects to the next free agent.
    * @typedef _ACDFailedEvent
    */
   OperatorFailed = 'ACD.OperatorFailed',
@@ -61,7 +63,7 @@ declare enum ACDEvents {
    */
   Waiting = 'ACD.Waiting',
   /**
-   * Triggers when an [ACDRequest] is put to the queue.
+   * Triggered when an [ACDRequest] is put to the queue.
    * @typedef _ACDQueuedEvent
    */
   Queued = 'ACD.Queued',
@@ -71,7 +73,7 @@ declare enum ACDEvents {
    */
   Offline = 'ACD.Offline',
   /**
-   * Triggers when we have one more request to put in the queue but the maximum number of requests (max_queue_size) is already reached. In this case, the new request is not queued. The max_queue_size and max_waiting_time default values are “unlimited”, you can change these values for every new or existing queue in the [control panel](https://manage.voximplant.com/applications).
+   * Triggered when we have one more request to put in the queue but the maximum number of requests (max_queue_size) is already reached. In this case, the new request is not queued. The max_queue_size and max_waiting_time default values are “unlimited”, you can change these values for every new or existing queue in the [control panel](https://manage.voximplant.com/applications).
    * @typedef _ACDQueueFullEvent
    */
   QueueFull = 'ACD.QueueFull',
@@ -177,7 +179,7 @@ declare interface _ACDQueueFullEvent extends _ACDBaseEvent {}
 
 /**
  * Represents request that is put to the ACD queue.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.ACD);
@@ -222,6 +224,7 @@ declare class ACDRequest {
 
 /**
  * The AI module provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in a more productive way.
+ * <br>
  * Add the following line to your scenario code to use the module:
  * ```
  * require(Modules.AI);
@@ -232,18 +235,20 @@ declare namespace AI {}
 declare namespace AI {
   /**
    * Creates and returns a new Dialogflow instance which provides resources for exchanging data with the Dialogflow API, handling events etc.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.AI);
    * ```
-   * @param params
+   * @param parameters
    */
-  function createDialogflow(params: DialogflowSettings): DialogflowInstance;
+  function createDialogflow(parameters: DialogflowSettings): DialogflowInstance;
 }
 
 declare namespace AI {
   /**
    * Represents the parameters of the voicemail recognition session.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -265,6 +270,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Start a voicemail recognition session. You can check how many times voicemail was detected in the call history.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.AI);
@@ -282,6 +288,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Dialogflow events allow matching intents by event name instead of the natural language input.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -305,7 +312,8 @@ declare namespace AI {
 
 declare namespace AI {
   /**
-   * This class represents the Dialogflow instance.
+   * Represents the Dialogflow instance.
+   * <br>
    * Add the following line to your scenario code to use the class:
    * ```
    * require(Modules.AI);
@@ -314,9 +322,9 @@ declare namespace AI {
   class DialogflowInstance {
     /**
      * @param id
-     * @param params
+     * @param parameters
      */
-    constructor(id: string, params: any);
+    constructor(id: string, parameters: any);
 
     /**
      * Set parameters for the intents.
@@ -356,7 +364,7 @@ declare namespace AI {
     /**
      * Start sending voice from a Dialogflow participant to the media unit specified in targetCall.
      */
-    public sendMediaTo(targetMediaUnit: VoxMediaUnit, optional?: SendMediaOptions): void;
+    public sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
     /**
      * Stop sending voice from a Dialogflow participant to the media unit specified in targetCall.​
@@ -388,6 +396,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Instructs the speech synthesizer on how to generate the output audio content.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -406,6 +415,7 @@ declare namespace AI {
    * Represents the Dialogflow query input. It can contain either:
    * 1. A conversational query in the form of text
    * 2. An event that specifies which intent to trigger
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -426,6 +436,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Represents the parameters of the conversational query. All the parameters are optional.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -462,6 +473,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Represents Dialogflow intent response.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -490,6 +502,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Represents the result of an intent response.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -543,6 +556,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Settings for setting up a new Dialogflow instance
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -604,34 +618,10 @@ declare namespace AI {
   }
 }
 
-/**
- * Add the following line to your scenario code to use the enum:
- * ```
- * require(Modules.AI);
- * ```
- */
-declare enum DialogflowSsmlVoiceGender {
-  /**
-   * An unspecified gender, which means that the customer does not care which gender the selected voice has.
-   */
-  UNSPECIFIED = 'SSML_VOICE_GENDER_UNSPECIFIED',
-  /**
-   * A male voice.
-   */
-  MALE = 'SSML_VOICE_GENDER_MALE',
-  /**
-   * A female voice.
-   */
-  FEMALE = 'SSML_VOICE_GENDER_FEMALE',
-  /**
-   * A gender-neutral voice.
-   */
-  NEUTRAL = 'SSML_VOICE_GENDER_NEUTRAL',
-}
-
 declare namespace AI {
   /**
    * Contains a speech recognition result, corresponding to a portion of the audio that is currently being processed; or an indication that this is the end of the single requested utterance.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -660,6 +650,7 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Configuration of how speech should be synthesized.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -685,13 +676,14 @@ declare namespace AI {
     /**
      * Optional. The desired voice of the synthesized audio.
      */
-    voice?: DialogflowVoiceSelectionParams;
+    voice?: DialogflowVoiceSelectionParameters;
   }
 }
 
 declare namespace AI {
   /**
    * Represents the natural language text to be processed.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
@@ -712,12 +704,13 @@ declare namespace AI {
 declare namespace AI {
   /**
    * Description of which voice to use for speech synthesis.
+   * <br>
    * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
    * ```
    */
-  interface DialogflowVoiceSelectionParams {
+  interface DialogflowVoiceSelectionParameters {
     /**
      * Optional. The name of the voice. If not set, the service chooses a voice based on the other parameters such as language_code and gender.
      */
@@ -739,53 +732,53 @@ declare namespace AI {
    */
   enum Events {
     /**
-     * Triggers when a Dialogflow instance returns a query result.
+     * Triggered when a Dialogflow instance returns a query result.
      * @typedef _DialogflowQueryResultEvent
      */
     DialogflowQueryResult = 'AI.Events.DialogflowQueryResult',
     /**
-     * Triggers when a Dialogflow instance returns a recognition result.
+     * Triggered when a Dialogflow instance returns a recognition result.
      * @typedef _DialogflowRecognitionResultEvent
      */
     DialogflowRecognitionResult = 'AI.Events.DialogflowRecognitionResult',
     /**
-     * Triggers when a Dialogflow instance returns an intent response.
+     * Triggered when a Dialogflow instance returns an intent response.
      * @typedef _DialogflowResponseEvent
      */
     DialogflowResponse = 'AI.Events.DialogflowResponse',
     /**
-     * Triggers when a Dialogflow instance causes error.
+     * Triggered when a Dialogflow instance causes error.
      * @typedef _DialogflowErrorEvent
      */
     DialogflowError = 'AI.Events.DialogflowError',
     /**
-     * Triggers when a Dialogflow instance is stopped.
+     * Triggered when a Dialogflow instance is stopped.
      * @typedef _DialogflowStoppedEvent
      */
     DialogflowStopped = 'AI.Events.DialogflowStopped',
     /**
-     * Triggers when a playback of a single phrase is finished successfully or in case of playback error.
+     * Triggered when a playback of a single phrase is finished successfully or in case of playback error.
      * @typedef _DialogflowPlaybackFinishedEvent
      */
     DialogflowPlaybackFinished = 'AI.Events.DialogflowPlaybackFinished',
     /**
-     * Triggers when a playback of a single phrase is started.
+     * Triggered when a playback of a single phrase is started.
      * @typedef _DialogflowPlaybackStartedEvent
      */
     DialogflowPlaybackStarted = 'AI.Events.DialogflowPlaybackStarted',
     /**
-     * Triggers when 'DialogflowInstance.addMarker' is reached.
+     * Triggered when 'DialogflowInstance.addMarker' is reached.
      * @typedef _DialogflowPlaybackMarkerReachedEvent
      */
     DialogflowPlaybackMarkerReached = 'AI.Events.DialogflowPlaybackMarkerReached',
     /**
-     * Triggers when an answering machine or voicemail is detected.
+     * Triggered when an answering machine or voicemail is detected.
      * @typedef _VoicemailDetectedEvent
      * @deprecated Use [AMD] module instead
      */
     VoicemailDetected = 'AI.Events.VoicemailDetected',
     /**
-     * Triggers when an answering machine or voicemail is not detected.
+     * Triggered when an answering machine or voicemail is not detected.
      * @typedef _VoicemailNotDetectedEvent
      * @deprecated Use [AMD] module instead
      */
@@ -931,18 +924,19 @@ declare namespace AMD {
      */
     model: AMD.Model;
     /**
-     * The [Call] instance to detect the voicemail
-     */
-    call: Call;
-    /**
-     * Optional. Detection timeout (on call connected only) in milliseconds. The default value is 6500. Must not be less than 0 or greater than 10000.
+     * Detection timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Connected] event. The default value is 6500. Must not be less than 0 or greater than 20000
      */
     timeout?: number;
+    /**
+     * Detection threshold in the range 0.0 - 1.0
+     */
+    thresholds?: AMD.Thresholds;
   }
 }
 
 /**
  * The AI module provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
+ * <br>
  * Add the following line to your scenario code to use the ref folder:
  * ```
  * require(Modules.AI);
@@ -990,7 +984,7 @@ declare namespace AMD {
   /**
    * Creates answering machine or voicemail detector.
    */
-  function create(params: AMD.AMDParameters): AMD.AnsweringMachineDetector;
+  function create(parameters: AMD.AMDParameters): AMD.AnsweringMachineDetector;
 }
 
 declare namespace AMD {
@@ -1003,12 +997,12 @@ declare namespace AMD {
    */
   enum Events {
     /**
-     * Triggers when answering machine or voicemail detection is complete.
+     * Triggered when answering machine or voicemail detection is complete.
      * @typedef AMD._DetectionCompleteEvent
      */
     DetectionComplete = 'AMD.Events.DetectionComplete',
     /**
-     * Triggers when answering machine detector throw an error.
+     * Triggered when answering machine detector throw an error.
      * @typedef AMD._DetectionErrorEvent
      */
     DetectionError = 'AMD.Events.DetectionError',
@@ -1031,9 +1025,17 @@ declare namespace AMD {
      */
     call: Call;
     /**
+     * The id of the Call.
+     */
+    callId: string;
+    /**
      * Answering machine result class, such as human, voicemail, timeout or call termination.
      */
     resultClass: AMD.ResultClass;
+    /**
+     * Answering machine result subtype, such as MIMIC or NONE.
+     */
+    resultSubtype?: AMD.ResultSubtype;
     /**
      * Recognition confidence. Values range from 0 (completely uncertain) to 100 (completely certain). The value is not guaranteed to be accurate, consider it while handling the event.
      */
@@ -1045,7 +1047,11 @@ declare namespace AMD {
    */
   interface _DetectionErrorEvent {
     /**
-     * Error message
+     * The id of the Call.
+     */
+    callId?: string;
+    /**
+     * Error message.
      */
     message: string;
   }
@@ -1056,11 +1062,34 @@ declare namespace AMD {
    * Answering machine or voicemail detector model.
    */
   enum Model {
+    /**
+     * Brazil
+     */
     BR = 'br',
-    COLOMBIA = 'colombia',
+    /**
+     * Colombia
+     */
+    CO = 'colombia',
+    /**
+     * Kazakhstan
+     */
     KZ = 'kz',
+    /**
+     * Mexico
+     */
     MX = 'mx',
+    /**
+     * Russia
+     */
     RU = 'ru',
+    /**
+     * Philippines
+     */
+    PH = 'ph',
+    /**
+     * Peru
+     */
+    PE = 'pe',
   }
 }
 
@@ -1076,17 +1105,38 @@ declare namespace AMD {
   }
 }
 
+declare namespace AMD {
+  /**
+   * Answering machine result subtype, such as mimic or none.
+   */
+  enum ResultSubtype {
+    MIMIC = 'MIMIC',
+    NONE = 'NONE',
+  }
+}
+
+declare namespace AMD {
+  /**
+   * Detection threshold in the range 0.0 - 1.0
+   */
+  interface Thresholds {
+    human?: number;
+    voicemail?: number;
+    mimic?: number;
+  }
+}
+
 /**
  * @event
  */
 declare enum AppEvents {
   /**
-   * Triggers when an inbound call arrives.
+   * Triggered when an incoming call arrives.
    * @typedef _CallAlertingEvent
    */
   CallAlerting = 'Application.CallAlerting',
   /**
-   * Triggers when a session is about to terminate. Triggers in two cases:<br>
+   * Triggered when a session is about to terminate. Triggers in two cases:<br>
    * 1) when there are no calls and/or ACD requests in a call session. See the [session limits](/docs/guides/voxengine/limits) for details;<br>
    * 2) when the [VoxEngine.terminate](/docs/references/voxengine/voxengine/terminate) method is called. Timers and any other external resources are not available after this event is triggered,
    * but you can perform one HTTP request inside the event handler (e.g. to notify an external system about the fact that the session is finished).
@@ -1095,21 +1145,21 @@ declare enum AppEvents {
    */
   Terminating = 'Application.Terminating',
   /**
-   * Triggers when a session is terminated and after the [AppEvents.Terminating] event is triggered.
+   * Triggered when a session is terminated and after the [AppEvents.Terminating] event is triggered.
    * The time between these events depends on handler for [AppEvents.Terminating] event.
    * Use the event just for debugging, only the [Logger.write] method could be used in a handler.
    * @typedef _TerminatedEvent
    */
   Terminated = 'Application.Terminated',
   /**
-   * The very first event is triggered due to inbound call or HTTP request to Voximplant cloud over the internet.
+   * The very first event is triggered due to incoming call or HTTP request to Voximplant cloud over the internet.
    * Triggers only once in a session, so if you execute the same HTTP request again it creates the new, separate session.
    * Note that usage of the event in your JS scenario is optional.
    * @typedef _StartedEvent
    */
   Started = 'Application.Started',
   /**
-   * Triggers when the managing HTTP request is received by the session.
+   * Triggered when the managing HTTP request is received by the session.
    * If you [start a call session with HTTP request](/docs/references/httpapi/managing_scenarios#startscenarios), you get an answer: an object with media\_session\_access\_url property.
    * The property's value is the managing URL for the specified session, so it can be used in managing HTTP request that triggers [AppEvents.HttpRequest] event.
    * @typedef _HttpRequestEvent
@@ -1117,13 +1167,13 @@ declare enum AppEvents {
   HttpRequest = 'Application.HttpRequest',
 
   /**
-   * Triggers when there is a new connection to a WebSocket.
+   * Triggered when there is a new connection to a WebSocket.
    * @typedef _NewWebSocketEvent
    */
   WebSocket = 'AppEvents.NewWebSocketConnection',
 
   /**
-   * Triggers when a WebSocket fails. It can happen when the number of inbound WebSocket connections exceeds the number of calls in one session + 3.
+   * Triggered when a WebSocket fails. It can happen when the number of incoming WebSocket connections exceeds the number of calls in one session + 3.
    * @typedef _NewWebSocketFailedEvent
    */
   NewWebSocketFailed = 'Application.OnNewWebSocketFailed',
@@ -1231,7 +1281,7 @@ declare interface _TerminatingEvent {}
  */
 declare interface _CallAlertingEvent {
   /**
-   * Inbound call that triggered the event
+   * incoming call that triggered the event
    */
   call: Call;
   /**
@@ -1251,7 +1301,7 @@ declare interface _CallAlertingEvent {
    */
   toURI: string;
   /**
-   * Source CallerID with domain or SIP URI for inbound SIP call
+   * Source CallerID with domain or SIP URI for incoming SIP call
    */
   fromURI: string;
   /**
@@ -1274,7 +1324,7 @@ declare interface _CallAlertingEvent {
 
 /**
  * Represents an application storage object to manipulate key-value pairs.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.ApplicationStorage);
@@ -1289,7 +1339,7 @@ declare class ApplicationStorage {
 
   /**
    * Creates a key-value pair. If an already existing **key** is passed, the method updates its **value**.
-   *
+   * <br>
    * The keys should be unique within a Voximplant application.
    * @param key Key to create/update, up to 200 characters. A key can contain a namespace that is written before a colon, for example, test:1234. Thus, namespace "test" can be used as a **pattern** in the [keys](/docs/references/voxengine/applicationstorage#keys) method to find the keys with the same namespace. If no namespace is set, the key itself is considered as namespace
    * @param value Value for the specified key, up to 2000 characters
@@ -1311,7 +1361,8 @@ declare class ApplicationStorage {
 }
 
 /**
- * List of available dictionaries for ASR
+ * List of available dictionaries for ASR.
+ * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.ASR);
@@ -1403,26 +1454,26 @@ declare enum ASREvents {
   ASRError = 'ASR.Error',
   /**
    * Triggers after ASR instance is created
-   * @typedef _ASREvent
+   * @typedef _ASRStartedEvent
    */
   Started = 'ASR.Started',
   /**
    * Triggers after ASR detected voice input and started collecting audio data for ASR
-   * @typedef _ASREvent
+   * @typedef _ASRCaptureStartedEvent
    */
   CaptureStarted = 'ASR.CaptureStarted',
   /**
    * Triggers after ASR captured audio data, before recognition process
-   * @typedef _ASREvent
+   * @typedef _ASRSpeechCapturedEvent
    */
   SpeechCaptured = 'ASR.SpeechCaptured',
   /**
-   * Triggers when recognition result received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.
+   * Triggered when recognition result received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.
    * @typedef _ASRResultEvent
    */
   Result = 'ASR.Result',
   /**
-   * Triggers when interim recognition result received from ASR. Note that event could be triggered only if the [ASRParameters.interimResults] option is set to **true**.
+   * Triggered when interim recognition result received from ASR. Note that event could be triggered only if the [ASRParameters.interimResults] option is set to **true**.
    * @typedef _ASRInterimResultEvent
    */
   InterimResult = 'ASR.InterimResult',
@@ -1459,6 +1510,16 @@ declare interface _ASREvent {
 /**
  * @private
  */
+declare interface _ASRErrorEvent extends _ASREvent {
+  /**
+   * Error message
+   */
+  error: string;
+}
+
+/**
+ * @private
+ */
 declare interface _ASRStartedEvent extends _ASREvent {}
 
 /**
@@ -1470,30 +1531,6 @@ declare interface _ASRCaptureStartedEvent extends _ASREvent {}
  * @private
  */
 declare interface _ASRSpeechCapturedEvent extends _ASREvent {}
-
-/**
- * @private
- */
-declare interface _ASRStoppedEvent extends _ASREvent {
-  /**
-   * Record cost (in the account's currency: USD, EUR or RUB)
-   */
-  cost: string;
-  /**
-   * Record duration (sec)
-   */
-  duration: number;
-}
-
-/**
- * @private
- */
-declare interface _ASRInterimResultEvent extends _ASREvent {
-  /**
-   * Recognition result
-   */
-  text: string;
-}
 
 /**
  * @private
@@ -1524,618 +1561,633 @@ declare interface _ASRResultEvent extends _ASREvent {
 /**
  * @private
  */
-declare interface _ASRErrorEvent extends _ASREvent {
+declare interface _ASRInterimResultEvent extends _ASREvent {
   /**
-   * Error message
+   * Recognition result
    */
-  error: string;
+  text: string;
+}
+
+/**
+ * @private
+ */
+declare interface _ASRStoppedEvent extends _ASREvent {
+  /**
+   * Record cost (in the account's currency: USD, EUR or RUB)
+   */
+  cost: string;
+  /**
+   * Record duration (sec)
+   */
+  duration: number;
 }
 
 /**
  * List of available languages for ASR.
- *
+ * <br>
  * Note that the Tinkoff VoiceKit and Yandex Speechkit supports only 'ASRLanguage.RUSSIAN_RU' language.
+ * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.ASR);
  * ```
- * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+ * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
  */
 declare enum ASRLanguage {
   /**
    * English (United States)
    * @const
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_US = 'en-US',
   /**
    * English (Canada)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_CA = 'en-CA',
   /**
    * English (United Kingdom)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_UK = 'en-GB',
   /**
    * English (Australia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_AU = 'en-AU',
   /**
    * Spanish (Spain)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_ES = 'es-ES',
   /**
    * Spanish (Mexico)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_MX = 'es-MX',
   /**
    * Italian (Italy)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ITALIAN_IT = 'it-IT',
   /**
    * French (France)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   FRENCH_FR = 'fr-FR',
   /**
    * French (Canada)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   FRENCH_CA = 'fr-CA',
   /**
    * Polish (Poland)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   POLISH_PL = 'pl-PL',
   /**
    * Portuguese (Portugal)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   PORTUGUES_PT = 'pt-PT',
   /**
    * Catalan (Catalan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CATALAN_ES = 'ca-ES',
   /**
    * Chinese (Taiwan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CHINESE_TW = 'cmn-Hant-TW',
   /**
    * Danish (Denmark)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   DANISH_DK = 'da-DK',
   /**
    * German (Germany)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   GERMAN_DE = 'de-DE',
   /**
    * Finnish (Finland)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   FINNISH_FI = 'fi-FI',
   /**
    * Japanese (Japan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   JAPANESE_JP = 'ja-JP',
   /**
    * Korean (Korea)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   KOREAN_KR = 'ko-KR',
   /**
    * Dutch (Netherlands)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   DUTCH_NL = 'nl-NL',
   /**
    * Norwegian (Norway)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   NORWEGIAN_NO = 'nb-NO',
   /**
    * Portuguese (Brazil)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   PORTUGUESE_BR = 'pt-BR',
   /**
    * Russian (Russia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   RUSSIAN_RU = 'ru-RU',
   /**
    * Swedish (Sweden)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SWEDISH_SE = 'sv-SE',
   /**
    * Chinese (People's Republic of China)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CHINESE_CN = 'cmn-Hans-CN',
   /**
    * Chinese (Hong Kong S.A.R.)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CHINESE_HK = 'cmn-Hans-HK',
   /**
    * Afrikaans (South Africa)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   AFRIKAANS_ZA = 'af-ZA',
   /**
    * Indonesian (Indonesia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   INDONESIAN_ID = 'id-ID',
   /**
    * Malay (Malaysia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   MALAYSIA_MY = 'ms-MY',
   /**
    * Czech (Czech Republic)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CZECH_CZ = 'cs-CZ',
   /**
    * English (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_IN = 'en-IN',
   /**
    * English (Ireland)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_IE = 'en-IE',
   /**
    * English (New Zealand)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_NZ = 'en-NZ',
   /**
    * English (Philippines)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_PH = 'en-PH',
   /**
    * English (South Africa)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_ZA = 'en-ZA',
   /**
    * Spanish (Argentina)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_AR = 'es-AR',
   /**
    * Spanish (Bolivia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_BO = 'es-BO',
   /**
    * Spanish (Chile)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_CL = 'es-CL',
   /**
    * Spanish (Colombia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_CO = 'es-CO',
   /**
    * Spanish (Costa Rica)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_CR = 'es-CR',
   /**
    * Spanish (Ecuador)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_EC = 'es-EC',
   /**
    * Spanish (El Salvador)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_SV = 'es-SV',
   /**
    * Spanish (United States)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_US = 'es-US',
   /**
    * Spanish (Guatemala)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_GT = 'es-GT',
   /**
    * Spanish (Honduras)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_HN = 'es-HN',
   /**
    * Spanish (Nicaragua)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_NI = 'es-NI',
   /**
    * Spanish (Panama)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_PA = 'es-PA',
   /**
    * Spanish (Paraguay)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_PY = 'es-PY',
   /**
    * Spanish (Peru)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_PE = 'es-PE',
   /**
    * Spanish (Puerto Rico)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_PR = 'es-PR',
   /**
    * Spanish (Republican Dominican)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_DO = 'es-DO',
   /**
    * Spanish (Uruguay)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_UY = 'es-UY',
   /**
    * Spanish (Venezuela)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SPANISH_VE = 'es-VE',
   /**
    * Basque (Spain)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   BASQUE_ES = 'eu-ES',
   /**
    * Filipino (Philippines)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   FILIPINO_PH = 'fil-PH',
   /**
    * Galician (Spain)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   GALICIAN_ES = 'gl-ES',
   /**
    * Croatian (Croatia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CROATIAN_HR = 'hr-HR',
   /**
    * Zulu (South Africa)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ZULU_ZA = 'zu-ZA',
   /**
    * Icelandic (Iceland)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ICELANDIC_IS = 'is-IS',
   /**
    * Lithuanian (Lithuania)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   LITHUANIAN_LT = 'lt-LT',
   /**
    * Hungarian (Hungary)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   HUNGARIAN_HU = 'hu-HU',
   /**
    * Romanian (Romania)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ROMANIAN_RO = 'ro-RO',
   /**
    * Slovak (Slovakia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SLOVAK_SK = 'sk-SK',
   /**
    * Slovenian (Slovenia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SLOVENIAN_SL = 'sl-SI',
   /**
    * Vietnamese (Viet Nam)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   VIETNAMESE_VN = 'vi-VN',
   /**
    * Turkish (Turkiye)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TURKISH_TR = 'tr-TR',
   /**
    * Greek (Greece)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   GREEK_GR = 'el-GR',
   /**
    * Bulgarian (Bulgaria)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   BULGARIAN_BG = 'bg-BG',
   /**
    * Serbian
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SERBIAN_RS = 'sr-RS',
   /**
    * Ukrainian (Ukraine)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   UKRAINIAN_UA = 'uk-UA',
   /**
    * Hebrew (Israel)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   HEBREW_IL = 'he-IL',
   /**
    * Arabic (Israel)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_IL = 'ar-IL',
   /**
    * Arabic (Jordan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_JO = 'ar-JO',
   /**
    * Arabic (U.A.E.)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_AE = 'ar-AE',
   /**
    * Arabic (Bahrain)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_BH = 'ar-BH',
   /**
    * Arabic (Algeria)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_DZ = 'ar-DZ',
   /**
    * Arabic (Saudi Arabia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_SA = 'ar-SA',
   /**
    * Arabic (Iraq)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_IQ = 'ar-IQ',
   /**
    * Arabic (Kuwait)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_KW = 'ar-KW',
   /**
    * Arabic (Morocco)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_MA = 'ar-MA',
   /**
    * Arabic (Tunisia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_TN = 'ar-TN',
   /**
    * Arabic (Oman)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_OM = 'ar-OM',
   /**
    * Arabic (Palestinian)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_PS = 'ar-PS',
   /**
    * Arabic (Qatar)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_QA = 'ar-QA',
   /**
    * Arabic (Lebanon)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_LB = 'ar-LB',
   /**
    * Arabic (Egypt)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARABIC_EG = 'ar-EG',
   /**
    * Farsi (Iran)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   FARSI_IR = 'fa-IR',
   /**
    * Hindi (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   HINDI_IN = 'hi-IN',
   /**
    * Thai (Thailand)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   THAI_TH = 'th-TH',
   /**
    * Cantonese, Traditional script, Hong Kong SAR
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   CANTONESE_HK = 'yue-Hant-HK',
   /**
    * Amharic (Ethiopia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   AMHARIC_ET = 'am-ET',
   /**
    * Armenian (Armenia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ARMENIAN_AM = 'hy-AM',
   /**
    * Azerbaijani (Azerbaijan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   AZERBAIJANI_AZ = 'az-AZ',
   /**
    * Bengali (Bangladesh)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   BENGALI_BD = 'bn-BD',
   /**
    * Bengali (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   BENGALI_IN = 'bn-IN',
   /**
    * English (Ghana)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_GH = 'en-GH',
   /**
    * English (Kenya)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_KE = 'en-KE',
   /**
    * English (Nigeria)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_NG = 'en-NG',
   /**
    * English (Tanzania)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   ENGLISH_TZ = 'en-TZ',
   /**
    * Georgian (Georgia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   GEORGIAN_GE = 'ka-GE',
   /**
    * Gujarati (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   GUJARATI_IN = 'gu-IN',
   /**
    * Javanese (Indonesia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   JAVANESE_ID = 'jv-ID',
   /**
    * Kannada (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   KANNADA_IN = 'kn-IN',
   /**
    * Khmer (Cambodia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   KHMER_KH = 'km-KH',
   /**
    * Lao (Laos)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   LAO_LA = 'lo-LA',
   /**
    * Latvian (Latvia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   LATVIAN_LV = 'lv-LV',
   /**
    * Malayalam (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   MALAYALAM_IN = 'ml-IN',
   /**
    * Marathi (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   MARATHI_IN = 'mr-IN',
   /**
    * Nepali (Nepal)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   NEPALI_NP = 'ne-NP',
   /**
    * Sinhala (Srilanka)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SINHALA_LK = 'si-LK',
   /**
    * Sundanese (Indonesia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SUNDANESE_ID = 'su-ID',
   /**
    * Swahili (Tanzania)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SWAHILI_TZ = 'sw-TZ',
   /**
    * Swahili (Kenya)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   SWAHILI_KE = 'sw-KE',
   /**
    * Tamil (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TAMIL_IN = 'ta-IN',
   /**
    * Tamil (Singapore)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TAMIL_SG = 'ta-SG',
   /**
    * Tamil (Sri Lanka)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TAMIL_LK = 'ta-LK',
   /**
    * Tamil (Malaysia)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TAMIL_MY = 'ta-MY',
   /**
    * Telugu (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   TELUGU_IN = 'te-IN',
   /**
    * Urdu (Pakistan)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   URDU_PK = 'ur-PK',
   /**
    * Urdu (India)
-   * @warning Use [ASRLanguage] for [VoxEngine.RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
+   * @warning Use [ASRLanguage] for [RecorderParameters] 'language' parameter. For [ASRParameters] 'profile' parameter use [ASRProfileList] instead.
    */
   URDU_IN = 'ur-IN',
 }
@@ -2143,6 +2195,7 @@ declare enum ASRLanguage {
 declare module ASRModelList {
   /**
    * List of Amazon Polly models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2159,6 +2212,7 @@ declare module ASRModelList {
 
 /**
  * List of available ASR models.
+ * <br>
  * Add the following line to your scenario code to use the ref folder:
  * ```
  * require(Modules.ASR);
@@ -2170,6 +2224,7 @@ declare module ASRModelList {}
 declare module ASRModelList {
   /**
    * List of Deepgram models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2241,6 +2296,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of Google Speech-to-Text models. The **enhanced** models cost more than the standard rate.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2300,6 +2356,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of Microsoft Speech-to-text models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2317,6 +2374,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of SaluteSpeech models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2349,6 +2407,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of Tinkoff VoiceKit models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2366,6 +2425,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of Yandex SpeechKit models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2394,21 +2454,21 @@ declare module ASRModelList {
     generalrc,
     /**
      * Cardinal numbers and delimiters (comma, period).
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
     numbers,
     /**
      * Month names, cardinal and ordinal numbers.
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
     dates,
     /**
      * People's first and last names, as well as requests to put someone on the phone.
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
@@ -2419,6 +2479,7 @@ declare module ASRModelList {
 declare module ASRModelList {
   /**
    * List of YandexV3 SpeechKit models.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2447,21 +2508,21 @@ declare module ASRModelList {
     generalrc,
     /**
      * Cardinal numbers and delimiters (comma, period).
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
     numbers,
     /**
      * Month names, cardinal and ordinal numbers.
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
     dates,
     /**
      * People's first and last names, as well as requests to put someone on the phone.
-     *
+     * <br>
      * Supported by [ASRProfileList.Yandex.ru_RU] only.
      * @const
      */
@@ -2471,8 +2532,9 @@ declare module ASRModelList {
 
 /**
  * List of available models for ASR.
- *
+ * <br>
  * Note that Tinkoff VoiceKit supports only 'PHONE_CALL' model.
+ * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.ASR);
@@ -2510,7 +2572,8 @@ declare enum ASRModel {
 }
 
 /**
- * ASR parameters.
+ * [ASR] parameters. Can be passed as arguments to the [VoxEngine.createASR] method.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.ASR);
@@ -2532,6 +2595,22 @@ declare interface ASRParameters {
     | ASRProfileList.Tinkoff
     | ASRProfileList.Yandex
     | ASRProfileList.YandexV3;
+
+  /**
+   * Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  model?:
+    | ASRModelList.Amazon
+    | ASRModelList.Deepgram
+    | ASRModelList.Google
+    | ASRModelList.Microsoft
+    | ASRModelList.SaluteSpeech
+    | ASRModelList.Tinkoff
+    | ASRModelList.Yandex
+    | ASRModelList.YandexV3;
 
   /**
    * Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
@@ -2566,22 +2645,6 @@ declare interface ASRParameters {
   phraseHints?: string[];
 
   /**
-   * Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
-   */
-  model?:
-    | ASRModelList.Amazon
-    | ASRModelList.Deepgram
-    | ASRModelList.Google
-    | ASRModelList.Microsoft
-    | ASRModelList.SaluteSpeech
-    | ASRModelList.Tinkoff
-    | ASRModelList.Yandex
-    | ASRModelList.YandexV3;
-
-  /**
    * Whether to enable profanity filter. The default value is **false**.
    * <br>
    * If set to **true**, the server attempts to filter out profanities, replacing all but the initial character in each filtered word with asterisks, e.g. "f***". If set to **false** or omitted, profanities are not filtered out.
@@ -2598,7 +2661,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  beta: boolean;
+  beta?: boolean;
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2611,7 +2674,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  enableSeparateRecognitionPerChannel: boolean;
+  enableSeparateRecognitionPerChannel?: boolean;
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2624,7 +2687,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  alternativeLanguageCodes: string[];
+  alternativeLanguageCodes?: string[];
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2637,7 +2700,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  enableWordTimeOffsets: boolean;
+  enableWordTimeOffsets?: boolean;
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2650,7 +2713,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  enableWordConfidence: boolean;
+  enableWordConfidence?: boolean;
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2662,7 +2725,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  enableAutomaticPunctuation: boolean;
+  enableAutomaticPunctuation?: boolean;
 
   /**
    * v1p1beta1 Speech API feature.
@@ -2677,7 +2740,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  diarizationConfig: {
+  diarizationConfig?: {
     /**
      * If set to **true**, enables speaker detection for each recognized word in the top alternative of the recognition result.
      */
@@ -2697,7 +2760,7 @@ declare interface ASRParameters {
    * *Available for providers: Google.*
    * @beta
    */
-  metadata: {
+  metadata?: {
     /**
      * The audio type that most closely describes the audio being recognized. Possible values are: **MICROPHONE_DISTANCE_UNSPECIFIED**, **NEARFIELD**, **MIDFIELD**, **FARFIELD**.
      */
@@ -2717,17 +2780,18 @@ declare interface ASRParameters {
   };
 
   /**
-   * Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="https://voximplant.com/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
+   * Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
    * <br>
    * <br>
    * *Available for providers: Deepgram, Google, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
    */
-  request: Object;
+  request?: Object;
 }
 
 declare module ASRProfileList {
   /**
    * List of Amazon Polly profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2764,6 +2828,7 @@ declare module ASRProfileList {
 
 /**
  * List of available ASR profiles.
+ * <br>
  * Add the following line to your scenario code to use the ref folder:
  * ```
  * require(Modules.ASR);
@@ -2775,6 +2840,7 @@ declare module ASRProfileList {}
 declare module ASRProfileList {
   /**
    * List of Deepgram profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -2947,6 +3013,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of Google Speech-to-Text profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -3834,6 +3901,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of Microsoft Speech-to-text profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -4679,6 +4747,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of SaluteSpeech profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -4696,6 +4765,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of Tinkoff VoiceKit profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -4713,6 +4783,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of Yandex SpeechKit profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -4805,6 +4876,7 @@ declare module ASRProfileList {
 declare module ASRProfileList {
   /**
    * List of YandexV3 SpeechKit profiles.
+   * <br>
    * Add the following line to your scenario code to use the enum:
    * ```
    * require(Modules.ASR);
@@ -4895,13 +4967,13 @@ declare module ASRProfileList {
 }
 
 /**
-ASR class provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Language or dictionary should be passed to the [VoxEngine.createASR] function.
-
-Add the following line to your scenario code to use the class:
-```
-require(Modules.ASR);
-```
-**/
+ * Represents ASR class provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Language or dictionary should be passed to the [VoxEngine.createASR] function.
+ * <br>
+ * Add the following line to your scenario code to use the class:
+ * ```
+ * require(Modules.ASR);
+ * ```
+ */
 declare class ASR {
   /**
    * @param id
@@ -4937,6 +5009,44 @@ declare class ASR {
 }
 
 /**
+ * @private
+ */
+declare interface BaseRecorderParameters {
+  /**
+   * Whether to restrict access to the record without management API authorization (available only in [VoxEngine.createRecorder]).
+   */
+  secure?: boolean;
+  /**
+   * Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details in the article.
+   */
+  transcribe?: boolean;
+  /**
+   * Transcription language. The parameter uses [ASRLanguage] from the ASR Module as possible values. Note that it is necessary to include the ASR module in the scenario to use the language constants. The parameter is not available for the Recorder module.
+   */
+  language?: ASRLanguage;
+  /**
+   * Whether to use the HD audio. If set to false (default), 8 KHz / 32 kbps mp3 file is generated. Otherwise, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The property is not compatible with lossless: true property.
+   */
+  hd_audio?: boolean;
+  /**
+   * Storage time for recorded files. The default value is 3 months; see possible values in the [RecordExpireTime] list.
+   */
+  expire?: RecordExpireTime;
+  /**
+   * Whether to save the record in flac format. The default value is false. The property is not compatible with hd_audio: true property.
+   */
+  lossless?: boolean;
+  /**
+   * Whether to record video. The default value is false. For video recording use the [Call.record] method call ({video: true}). The parameter is not available for the Recorder module because it could only record an audio.
+   */
+  video?: boolean;
+  /**
+   * The prefix to add to the record names when storing to your S3 storage.
+   */
+  recordNamePrefix?: string;
+}
+
+/**
  * Decodes the data in the Base64 encoding
  * @param data Data to decode
  */
@@ -4963,6 +5073,11 @@ declare function bytes2hex(data: number[], toUpperCase: boolean): string;
 declare function bytes2str(data: number[], encoding: string): string;
 
 /**
+ * The parameters can be passed as arguments to the [Call.answer] method.
+ */
+declare interface CallAnswerParameters extends CallParameters {}
+
+/**
  * @event
  */
 declare enum CallEvents {
@@ -4972,17 +5087,17 @@ declare enum CallEvents {
    * */
   AudioStarted = 'Call.AudioStarted',
   /**
-   * Triggers when blind transfers are enabled by [Call.handleBlindTransfer].
+   * Triggered when blind transfers are enabled by [Call.handleBlindTransfer].
    * @typedef _BlindTransferRequestedEvent
    */
   BlindTransferRequested = 'Call.BlindTransferRequested',
   /**
-   * Triggers after an inbound/outbound call is connected. For inbound call, it happens after the [Call.answer] is called. For outbound call, it happens when a remote peer answers the call.
+   * Triggers after an incoming/outgoing call is connected. For incoming call, it happens after the [Call.answer] is called. For outgoing call, it happens when a remote peer answers the call.
    * @typedef _ConnectedEvent
    */
   Connected = 'Call.Connected',
   /**
-   * Triggers when a call is terminated.
+   * Triggered when a call is terminated.
    * Most frequent status codes (returned when a call is terminated before being answered):<br>
    * <table class="b-list" style="margin-top:10px">
    * <thead><tr><th>Code</th><th>Description</th></tr></thead>
@@ -5000,7 +5115,7 @@ declare enum CallEvents {
    */
   Disconnected = 'Call.Disconnected',
   /**
-   * Triggers when an outbound call is terminated before connection.
+   * Triggered when an outgoing call is terminated before connection.
    * Most frequent status codes:<br>
    * <table class="b-list" style="margin-top:10px">
    * <thead><tr><th>Code</th><th>Description</th></tr></thead>
@@ -5018,17 +5133,17 @@ declare enum CallEvents {
    */
   Failed = 'Call.Failed',
   /**
-   * Triggers when the first video packet is received.
+   * Triggered when the first video packet is received.
    * @typedef _VideoFirstPacketEvent
    */
   FirstVideoPacket = 'Call.Video.FirstPacket',
   /**
-   * Triggers when an INFO message is received.
+   * Triggered when an INFO message is received.
    * @typedef _InfoReceivedEvent
    */
   InfoReceived = 'Call.InfoReceived',
   /**
-   * Triggers when a text message is received.
+   * Triggered when a text message is received.
    * @typedef _MessageReceivedEvent
    */
   MessageReceived = 'Call.MessageReceived',
@@ -5038,24 +5153,24 @@ declare enum CallEvents {
    * */
   MicStatusChange = 'Call.MicStatusChange',
   /**
-   * Triggers when a call is taken off hold.
+   * Triggered when a call is taken off hold.
    * @typedef _OffHoldEvent
    */
   OffHold = 'Call.OffHold',
   /**
-   * Triggers when a call is put on hold.
+   * Triggered when a call is put on hold.
    * @typedef _OnHoldEvent
    */
   OnHold = 'Call.OnHold',
   /**
-   * Triggers when the audio/voice playback is completed.
+   * Triggered when the audio/voice playback is completed.
    * Note that the [Call.stopPlayback] method finishes any media, so the PlaybackFinished event is not triggered. The playback may be started by the [Call.say] or [Call.startPlayback] methods.
    * @typedef _PlaybackFinishedEvent
    */
   PlaybackFinished = 'Call.PlaybackFinished',
   /**
    * Triggers by the [Call.startPlayback] and [Call.say] methods when:<br>
-   * 1) the audio file download to the Voximpant cache is finished;<br>
+   * 1) the audio file download to the Voximplant cache is finished;<br>
    * 2) the audio file is found in the cache (i.e., it is in the cache before).
    * @typedef _PlaybackReadyEvent
    */
@@ -5066,17 +5181,17 @@ declare enum CallEvents {
    */
   PlaybackStarted = 'Call.PlaybackStarted',
   /**
-   * Triggers when a push notification is sent.
+   * Triggered when a push notification is sent.
    * @typedef _PushSentEvent
    */
   PushSent = 'Call.PushSent',
   /**
-   * Triggers when the Voximplant cloud receives the ReInviteAccepted message. This message means that a call received video from the other participant.
+   * Triggered when the Voximplant cloud receives the ReInviteAccepted message. This message means that a call received video from the other participant.
    * @typedef _ReInviteAcceptedEvent
    */
   ReInviteAccepted = 'Call.ReInviteAccepted',
   /**
-   * Triggers when the Voximplant cloud receives the ReInviteReceived message. This message means that a caller:<br>
+   * Triggered when the Voximplant cloud receives the ReInviteReceived message. This message means that a caller:<br>
    * 1) started sending video;<br>
    * 2) started/stopped screensharing;<br>
    * 3) put a call on hold / took a call off hold.
@@ -5084,7 +5199,7 @@ declare enum CallEvents {
    */
   ReInviteReceived = 'Call.ReInviteReceived',
   /**
-   * Triggers when the Voximplant cloud receives the ReInviteRejected message. This message means that a call does not receive video from the other participant.
+   * Triggered when the Voximplant cloud receives the ReInviteRejected message. This message means that a call does not receive video from the other participant.
    * @typedef _ReInviteRejectedEvent
    */
   ReInviteRejected = 'Call.ReInviteRejected',
@@ -5094,33 +5209,33 @@ declare enum CallEvents {
    */
   RecordError = 'Call.RecordError',
   /**
-   * Triggers when call recording is started as a result of the [Call.record] method call.
+   * Triggered when call recording is started as a result of the [Call.record] method call.
    * @typedef _RecordStartedEvent
    */
   RecordStarted = 'Call.RecordStarted',
   /**
-   * Triggers when call recording is stopped. This happens after the [CallEvents.Disconnected] event is triggered.
+   * Triggered when call recording is stopped. This happens after the [CallEvents.Disconnected] event is triggered.
    * @typedef _RecordStoppedEvent
    */
   RecordStopped = 'Call.RecordStopped',
   /**
-   * Triggers after outbound call receives progress signal from a remote peer.
+   * Triggers after outgoing call receives progress signal from a remote peer.
    * @typedef _RingingEvent
    */
   Ringing = 'Call.Ringing',
   /**
-   * Triggers when a call status is changed.
+   * Triggered when a call status is changed.
    * @typedef _StateChangedEvent
    */
   StateChanged = 'Call.StateChanged',
   /**
-   * Triggers when call statistic changed.
+   * Triggered when call statistic changed.
    * @deprecated
    * @typedef _StatisticsEvent
    */
   Statistics = 'Call.Statistics',
   /**
-   * Triggers when a call dial tone is detected (either dial tone or busy tone).
+   * Triggered when a call dial tone is detected (either dial tone or busy tone).
    * There is the deprecated method for enabling the tone detection - 'Call.detectProgressTone'. Note that:<br>
    * 1) triggers only if the [CallEvents.Connected] event is triggered;<br>
    * 2) the event is only triggered once in a call session.
@@ -5128,17 +5243,17 @@ declare enum CallEvents {
    */
   ToneDetected = 'Call.ToneDetected',
   /**
-   * Triggers when a DTMF signal is received. Note that by default DTMF signals do not trigger this event, this behavior needs to be set explicitly via the [Call.handleTones] method.
+   * Triggered when a DTMF signal is received. Note that by default DTMF signals do not trigger this event, this behavior needs to be set explicitly via the [Call.handleTones] method.
    * @typedef _ToneReceivedEvent
    */
   ToneReceived = 'Call.ToneReceived',
   /**
-   * Triggers when a call transfer is complete.
+   * Triggered when a call transfer is complete.
    * @typedef _TransferCompleteEvent
    */
   TransferComplete = 'Call.TransferComplete',
   /**
-   * Triggers when a call transfer is failed.
+   * Triggered when a call transfer is failed.
    * @typedef _TransferFailedEvent
    */
   TransferFailed = 'Call.TransferFailed',
@@ -5149,14 +5264,24 @@ declare enum CallEvents {
   VideoTrackCreated = 'Call.Video.TrackCreated',
   /**
    * Triggers after the first audio packet is received.
-   * @typedef _FirstAudioPacketReceived
+   * @typedef _FirstAudioPacketReceivedEvent
    */
   FirstAudioPacketReceived = 'Call.FirstAudioPacketReceived',
   /**
    * Triggers after the first video packet is received.
-   * @typedef _FirstVideoPacketReceived
+   * @typedef _FirstVideoPacketReceivedEvent
    */
   FirstVideoPacketReceived = 'Call.FirstVideoPacketReceived',
+  /**
+   * Triggers after the RTP stopped.
+   * @typedef _RtpStoppedEvent
+   */
+  RtpStopped = 'Call.RtpStopped',
+  /**
+   * Triggers after the RTP resumed.
+   * @typedef _RtpResumedEvent
+   */
+  RtpResumed = 'Call.RtpResumed',
 }
 
 /**
@@ -5192,8 +5317,10 @@ declare interface _CallEvents {
   [CallEvents.TransferComplete]: _TransferCompleteEvent;
   [CallEvents.TransferFailed]: _TransferFailedEvent;
   [CallEvents.VideoTrackCreated]: _VideoTrackCreatedEvent;
-  [CallEvents.FirstAudioPacketReceived]: _FirstAudioPacketReceived;
-  [CallEvents.FirstVideoPacketReceived]: _FirstVideoPacketReceived;
+  [CallEvents.FirstAudioPacketReceived]: _FirstAudioPacketReceivedEvent;
+  [CallEvents.FirstVideoPacketReceived]: _FirstVideoPacketReceivedEvent;
+  [CallEvents.RtpStopped]: _RtpStoppedEvent;
+  [CallEvents.RtpResumed]: _RtpResumedEvent;
 }
 
 /**
@@ -5528,12 +5655,233 @@ declare interface _VideoTrackCreatedEvent extends _CallRecordEvent {}
 /**
  * @private
  */
-declare interface _FirstAudioPacketReceived extends _CallEvent {}
+declare interface _FirstAudioPacketReceivedEvent extends _CallEvent {}
 
 /**
  * @private
  */
-declare interface _FirstVideoPacketReceived extends _CallEvent {}
+declare interface _FirstVideoPacketReceivedEvent extends _CallEvent {}
+
+/**
+ * @private
+ */
+declare interface _RtpStoppedEvent extends _CallEvent {}
+
+/**
+ * @private
+ */
+declare interface _RtpResumedEvent extends _CallEvent {}
+
+/**
+ * @private
+ */
+declare interface CallParameters {
+  /**
+   * Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name
+   */
+  displayName?: string;
+  /**
+   * Internal information about codecs from the [AppEvents.CallAlerting] event
+   */
+  scheme?: { [id: string]: any };
+  /**
+   * Sets the maximum possible video bitrate for the customer device in kbps
+   */
+  maxVideoBitrate?: number;
+  /**
+   * Whether to disable the RTP header extension for transmission offset if provided
+   */
+  disableExtVideoOffset?: boolean;
+  /**
+   * Whether to disable the RTP header extension for video orientation, `3gpp:video-orientation`, if provided. Browsers that do not support that extension display the video correctly, however, the battery consumption is higher
+   */
+  disableExtVideoOrientation?: boolean;
+  /**
+   * Whether to disable the RTP header extension to control playout delay if provided
+   */
+  disableExtPlayoutDelay?: boolean;
+  /**
+   * Whether to disable the RTP header extension for video timing if provided
+   */
+  disableExtVideoTiming?: boolean;
+  /**
+   * Whether the call is coming from a conference. The default value is false
+   */
+  conferenceCall?: boolean;
+}
+
+/**
+ * [Call] parameters. Can be passed as arguments to the [VoxEngine.callPSTN] method.
+ */
+declare interface CallPSTNParameters {
+  /**
+   * Answering machine or voicemail detector.
+   */
+  amd?: AMD.AnsweringMachineDetector;
+}
+
+/**
+ * The parameters can be passed as arguments to the [Call.record] method.
+ */
+declare interface CallRecordParameters extends BaseRecorderParameters {
+  /**
+   * Whether the sound is stereo. The default value is false. The parameter does not change anything for the Recorder module: it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
+   */
+  stereo?: boolean;
+  /**
+   * Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the Recorder module because the transcription is not available for it.
+   */
+  dict?: ASRDictionary | string[];
+  /**
+   * An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the 'transcribe: true' parameter. The parameter is not available for the Recorder module.
+   */
+  labels?: string[];
+  /**
+   * Transcription provider.
+   */
+  provider?:
+    | TranscriptionProvider.GOOGLE
+    | TranscriptionProvider.TINKOFF
+    | TranscriptionProvider.YANDEX;
+  /**
+   * Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
+   */
+  format?: string;
+  /**
+   * Video parameters.
+   */
+  videoParameters: RecorderVideoParameters;
+}
+
+/**
+ * The parameters can be passed as arguments to the [Call.say] method.
+ */
+declare interface CallSayParameters {
+  /**
+   * Language and voice for TTS. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex], and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  language?: Voice;
+  /**
+   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  progressivePlayback?: boolean;
+  /**
+   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  ttsOptions?: TTSOptions;
+  /**
+   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider">documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   */
+  request?: Object;
+}
+
+/**
+ * [Call] parameters. Can be passed as arguments to the [VoxEngine.callSIP] method.
+ */
+declare interface CallSIPParameters {
+  /**
+   * CallerID of the caller that is displayed to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback.
+   */
+  callerid: string;
+  /**
+   * Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
+   */
+  displayName: string;
+  /**
+   * Password for SIP authentication.
+   */
+  password: string;
+  /**
+   * Username for SIP authentication. If not specified, callerid is used as the username for authentication.
+   */
+  authUser: string;
+  /**
+   * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message.
+   * Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK
+   * (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   */
+  headers: object;
+  /**
+   * Whether the call has video support. Please note that the price for audio-only and video calls is different!
+   */
+  video: boolean;
+  /**
+   * outgoing proxy, e.g. outProxy: "69.167.178.6"
+   */
+  outProxy: string;
+  /**
+   * Identifier of Voximplant SIP registration that is used for outgoing call.
+   */
+  regId: number;
+  /**
+   * Answering machine or voicemail detector.
+   */
+  amd?: AMD.AnsweringMachineDetector;
+}
+
+/**
+ * [Call] parameters. Can be passed as arguments to the [VoxEngine.callUserDirect] method.
+ */
+declare interface CallUserDirectParameters {
+  /**
+   * CallerID to display to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback. IMPORTANT: test numbers rented from Voximplant cannot be used as CallerIDs, use only real numbers.
+   */
+  callerid: string;
+  /**
+   * Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
+   */
+  displayName: string;
+  /**
+   * Send custom tags along with the push notification of an incoming call.
+   */
+  analyticsLabel: string;
+  /**
+   * Optional custom parameters (SIP headers) to be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   */
+  extraHeaders?: { [header: string]: string };
+  /**
+   * Push notification timeout in milliseconds.
+   */
+  pushNotificationTimeout?: number;
+}
+
+/**
+ * [Call] parameters. Can be passed as arguments to the [VoxEngine.callUser] method.
+ */
+declare interface CallUserParameters extends CallParameters {
+  /**
+   * Name of the Voximplant user to call
+   */
+  username: string;
+  /**
+   * CallerID to display to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback. IMPORTANT: test numbers rented from Voximplant cannot be used as CallerID, use only real numbers.
+   */
+  callerid: string;
+  /**
+   * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   */
+  extraHeaders?: { [header: string]: string };
+  /**
+   * Whether the call has video support. Optional. Please note that prices for audio-only and video calls are different!
+   */
+  video?: boolean;
+  /**
+   * Whether to send an RTP extension header to communicate video orientation information (`a=extmap:12 urn:3gpp:video-orientation`). If false, browsers that do not support that extension are correctly displaying video; however, the battery consumption is higher. The default value is true.
+   */
+  videoOrientationExtension?: boolean;
+  /**
+   * Sends custom tags along with the push notification of an incoming call.
+   */
+  analyticsLabel?: string;
+  /**
+   * Answering machine or voicemail detector.
+   */
+  amd?: AMD.AnsweringMachineDetector;
+  /**
+   * Push notification timeout in milliseconds.
+   */
+  pushNotificationTimeout?: number;
+}
 
 declare class Call {
   /**
@@ -5551,9 +5899,9 @@ declare class Call {
    * SDKs can pass customData in two ways:<br>
    * 1) when SDK calls the Voximplant cloud</br>
    * 2) when SDK answers the call from the Voximplant cloud. See the syntax and details in the corresponding references: [WEB SDK call()](/docs/references/websdk/voximplant/client#call) / [WEB SDK answer()](/docs/references/websdk/voximplant/call#answer) / [iOS call:settings:](/docs/references/iossdk/client/viclient#callsettings) / [iOS answerWithSettings](/docs/references/iossdk/call/vicall#answerwithsettings:) / [Android call()](/docs/references/androidsdk/client/iclient#call) / [Android answer()](/docs/references/androidsdk/call/icall#answer)
-   * @param cData Custom call data to set. Maximum size is 200 bytes.
+   * @param customData Custom call data to set. Maximum size is 200 bytes.
    */
-  customData(cData?: string): string | undefined;
+  customData(customData?: string): string;
 
   /**
    * Returns the call's id. Each call in a JavaScript session has its own unique id
@@ -5561,7 +5909,7 @@ declare class Call {
   id(): string;
 
   /**
-   * Whether the call is inbound
+   * Whether the call is incoming
    */
   incoming(): boolean;
 
@@ -5576,7 +5924,7 @@ declare class Call {
   displayName(): string;
 
   /**
-   * Returns a dialed number of the inbound or outbound call.
+   * Returns a dialed number of the incoming or outgoing call.
    */
   number(): string;
 
@@ -5613,25 +5961,22 @@ declare class Call {
   /**
    * Attempts finishing the current call. Triggers one of the following events:
    * 1. [CallEvents.Disconnected] if the call is active before hangup.
-   * 2. [CallEvents.Failed] if it is an outbound call that is not connected previously.
-   *
+   * 2. [CallEvents.Failed] if it is an outgoing call that is not connected previously.
+   * <br>
    * If there are no other active calls and/or SmartQueue requests in the call session, the AppEvents.Terminating and AppEvents.Terminated events are triggered in 60 seconds (see the [session limits](/docs/guides/voxengine/limits) for details).
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the hangup request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   hangup(extraHeaders?: { [header: string]: string }): void;
 
   /**
-   * Answers the inbound call. Use it only for non-P2P call legs connection. Remember that you can use the [Call.startEarlyMedia] method before answering a call.
+   * Answers the incoming call. Use it only for non-P2P call legs connection. Remember that you can use the [Call.startEarlyMedia] method before answering a call.
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [Connected](/docs/references/websdk/voximplant/callevents#connected) event). Example: {'X-header':'value'}
    * @param parameters Custom parameters for answering calls.
    */
-  answer(
-    extraHeaders?: { [header: string]: string },
-    parameters?: VoxEngine.AnswerParameters
-  ): void;
+  answer(extraHeaders?: { [header: string]: string }, parameters?: CallAnswerParameters): void;
 
   /**
-   * Answer the inbound call in the peer-to-peer mode. Use it only for P2P call legs connection.
+   * Answer the incoming call in the peer-to-peer mode. Use it only for P2P call legs connection.
    * @param peerCall The other P2P call leg.
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the  Connected (/docs/references/websdk/enums/callevents.html#connected) event). Example: {'X-header':'value'}
    * @param parameters Custom parameters for answering calls.
@@ -5639,11 +5984,11 @@ declare class Call {
   answerDirect(
     peerCall: Call,
     extraHeaders?: { [header: string]: string },
-    parameters?: VoxEngine.AnswerParameters
+    parameters?: CallAnswerParameters
   ): void;
 
   /**
-   * Rejects the inbound call
+   * Rejects the incoming call
    * @param code SIP status code
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g., see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    * @deprecated Use [Call.reject] instead
@@ -5651,14 +5996,14 @@ declare class Call {
   decline(code: number, extraHeaders?: { [header: string]: string }): void;
 
   /**
-   * Rejects the inbound call. First it triggers the [CallEvents.Disconnected] event immediately. The [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered in 60 seconds.
+   * Rejects the incoming call. First it triggers the [CallEvents.Disconnected] event immediately. The [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered in 60 seconds.
    * @param code SIP status code with the rejection reason. You can pass any [standard SIP code](https://en.wikipedia.org/wiki/List_of_SIP_response_codes) starting with 3xx, 4xx, 5xx and 6xx as a reject reason.
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   reject(code: number, extraHeaders?: { [header: string]: string }): void;
 
   /**
-   * Plays dial tones for the inbound call. The method sends a low-level command to the endpoint device to start playing dial tones for the call. So the dial tones depend on endpoint device's behavior rather than on the Voximplant cloud. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new inbound stream always replaces the previous one.
+   * Plays dial tones for the incoming call. The method sends a low-level command to the endpoint device to start playing dial tones for the call. So the dial tones depend on endpoint device's behavior rather than on the Voximplant cloud. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   ring(extraHeaders?: { [header: string]: string }): void;
@@ -5680,11 +6025,11 @@ declare class Call {
   ): void;
 
   /**
-   * Starts to play an audio file to the answered call. You can stop playback manually via the [Call.stopPlayback] method. Media streams can later be attached via the [Call.sendMediaTo] method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new inbound stream always replaces the previous one.
+   * Starts to play an audio file to the answered call. You can stop playback manually via the [Call.stopPlayback] method. Media streams can later be attached via the [Call.sendMediaTo] method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param url HTTP/HTTPS url to the audio file. The file is cached after the first playing. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
-   * @param startPlaybackOptions Playback parameters: loop, progressive playback, etc.
+   * @param parameters Playback parameters: progressivePlayback, loop, etc.
    */
-  startPlayback(url: string, startPlaybackOptions: VoxEngine.StartPlaybackOptions): void;
+  startPlayback(url: string, parameters: StartPlaybackParameters): void;
 
   /**
    * Say some text to the [CallEvents.Connected] call.
@@ -5692,20 +6037,20 @@ declare class Call {
    * [PlayerEvents.PlaybackFinished] event is triggered with error description.
    * IMPORTANT: each call object can send media to any number
    * of other calls (media units), but can receive only one audio
-   * stream. A new inbound stream always replaces the previous one.
+   * stream. A new incoming stream always replaces the previous one.
    * @param text Message that is played to the call. To put an accent to the specified syllable, use the <say-as stress='1'></say-as> tag.
-   * @param sayOptions Parameters for TTS: language, progressive playback, volume, rate, etc.
+   * @param parameters Parameters for TTS: language, progressivePlayback, volume, rate, etc.
    * @warning This method internally operates with the [Player] class and its events. Use the [VoxEngine.createTTSPlayer] to get more flexibility
    */
-  say(text: string, sayOptions: VoxEngine.SayOptions): void;
+  say(text: string, parameters: CallSayParameters): void;
 
   /**
-   * Starts recording the inbound and outbound audio for this call.
+   * Starts recording the incoming and outgoing audio for this call.
    * This method triggers the [CallEvents.RecordStarted] event.
    * The default quality is 8kHz / 32kbps; the format is __mp3__.
-   * @param params Recorder parameters
+   * @param parameters Recorder parameters
    */
-  record(params: VoxEngine.CallRecordParameters): void;
+  record(parameters: CallRecordParameters): void;
 
   /**
    * Stops audio playback started before via the [Call.startPlayback] method.
@@ -5713,7 +6058,7 @@ declare class Call {
   stopPlayback(): void;
 
   /**
-   * Provides country-specific dial tones. The method sends a command to the Voximplant cloud to start playing dial tones in the call. The dial tones fully depend on the Voximplant cloud. Note that in order to work properly in a call that is not connected yet, you need to call the [Call.startEarlyMedia] method before using this function. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new inbound stream always replaces the previous one.
+   * Provides country-specific dial tones. The method sends a command to the Voximplant cloud to start playing dial tones in the call. The dial tones fully depend on the Voximplant cloud. Note that in order to work properly in a call that is not connected yet, you need to call the [Call.startEarlyMedia] method before using this function. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param country 2-letter country code. Currently supported values are US, RU.
    */
   playProgressTone(country: string): void;
@@ -5725,11 +6070,11 @@ declare class Call {
   sendMessage(text: string): void;
 
   /**
-   * Starts sending media (voice and video) from this call to media unit specified in targetMediaUnit. The target call has to be [CallEvents.Connected] earlier. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new inbound stream always replaces the previous one.
+   * Starts sending media (voice and video) from this call to media unit specified in targetMediaUnit. The target call has to be [CallEvents.Connected] earlier. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param targetMediaUnit Media unit that receives media.
    * @param optional Custom parameters for WebSocket interaction only.
    */
-  sendMediaTo(targetMediaUnit: VoxMediaUnit, optional?: SendMediaOptions): void;
+  sendMediaTo(targetMediaUnit: VoxMediaUnit, optional?: SendMediaParameters): void;
 
   /**
    * Stops sending media (voice and video) from this call to media unit specified in targetMediaUnit.
@@ -5742,7 +6087,7 @@ declare class Call {
    * @param doHandle Whether to enable DTMF analysis. The default values is true
    * @param supportedDtmfTypes The DTMF type to process. The default value is ALL
    */
-  handleTones(doHandle: boolean, supportedDtmfTypes?: VoxEngine.DTMFType): void;
+  handleTones(doHandle: boolean, supportedDtmfTypes?: DTMFType): void;
 
   /**
    * Sends info (SIP INFO) message to the call
@@ -5790,7 +6135,25 @@ declare namespace CallList {}
 
 declare namespace CallList {
   /**
-   * Report error to the CallList module
+   * Reports error to the CallList module asynchronously and continues the call list.
+   * 
+   * Call this method if the call attempt is not successful. If you do not call this method or 
+   * [reportErrorAsync](/docs/references/voxengine/calllist/reporterrorasync), the call list considers this task 
+   * successful and does not make any more attempts to call this task.
+   * 
+   * @param error Error string or JSON
+   */
+  function reportErrorAsync(error: string | Object): Promise<Net.HttpRequestResult>;
+}
+
+declare namespace CallList {
+  /**
+   * Reports error to the CallList module and continues the call list.
+   * 
+   * Call this method if the call attempt is not successful. If you do not call this method or 
+   * [reportError](/docs/references/voxengine/calllist/reporterror), the call list considers this task 
+   * successful and does not make any more attempts to call this task.
+   * 
    * @param error Error string or JSON
    * @param callback Callback to execute when a result is processed
    */
@@ -5798,6 +6161,14 @@ declare namespace CallList {
     error: string | Object,
     callback?: (result: Net.HttpRequestResult) => void
   ): void;
+}
+
+declare namespace CallList {
+  /**
+   * Report progress to the CallList module
+   * @param progress Progress description string or JSON
+   */
+  function reportProgressAsync(progress: string | Object): Promise<Net.HttpRequestResult>;
 }
 
 declare namespace CallList {
@@ -5814,7 +6185,17 @@ declare namespace CallList {
 
 declare namespace CallList {
   /**
-   * Report result to the CallList module
+   * Reports successful result to the CallList module asynchronously, saves the report to result_data field in the sheet, 
+   * stops the calling attempts for this task and proceeds to the next task.
+   * @param result Result description string or JSON
+   */
+  function reportResultAsync(result: string | Object): Promise<Net.HttpRequestResult>;
+}
+
+declare namespace CallList {
+  /**
+   * Reports successful result to the CallList module, saves the report to result_data field in the sheet, 
+   * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
    * @param callback Callback to execute when a result is processed
    */
@@ -5824,9 +6205,53 @@ declare namespace CallList {
   ): void;
 }
 
+declare namespace CallList {
+  /**
+   * Changes parameters for the current task and request another calling attempt with updated data asynchronously.
+   * 
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   * `start_execution_time`, and `end_execution_time`. The new values work for all remaining attempts.
+   * This method does not change the global call list settings.
+   * 
+   * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
+   * 
+   * After an unsuccessful calling attempt, this method executes the 
+   * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
+   * 
+   * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
+   * @param data Data to update
+   */
+  function requestNextAttemptAsync(data: Object): Promise<Net.HttpRequestResult>;
+}
+
+declare namespace CallList {
+  /**
+   * Changes parameters for the current task and request another calling attempt with updated data.
+   * 
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   * `start_execution_time`, and `end_execution_time`. The new values work for all remaining attempts.
+   * This method does not change the global call list settings.
+   * 
+   * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
+   * 
+   * After an unsuccessful calling attempt, this method executes the 
+   * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
+   * 
+   * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
+   * @param data Data to update
+   * @param callback Callback function to execute after the request is done
+   */
+  function requestNextAttempt(
+    data: Object,
+    callback?: (result: Net.HttpRequestResult) => void
+  ): void;
+}
+
 declare module CCAI {
   /**
-   * This class represents a CCAI Agent instance. Add the following line to your scenario code to use the class:
+   * Represents a CCAI Agent instance.
+   * <br>
+   * Add the following line to your scenario code to use the class:
    * ```
    * require(Modules.AI);
    * ```
@@ -5872,7 +6297,12 @@ declare module CCAI {}
 declare module CCAI {
   module Vendor {
     /**
-     * Defines the services to connect to the inbound Dialogflow conversations.
+     * Defines the services to connect to the incoming Dialogflow conversations.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface ConversationProfile {
       /**
@@ -5889,7 +6319,9 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * Conversation settings. Add the following line to your scenario code to use the interface:
+   * Conversation settings.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
    * ```
@@ -5900,7 +6332,7 @@ declare module CCAI {
      */
     agent: Agent;
     /**
-     * Service to connect to the inbound Dialogflow conversation.
+     * Service to connect to the incoming Dialogflow conversation.
      */
     profile: CCAI.Vendor.ConversationProfile;
   }
@@ -5908,7 +6340,9 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * This class represents a CCAI conversation instance. Add the following line to your scenario code to use the class:
+   * Represents a CCAI conversation instance.
+   * <br>
+   * Add the following line to your scenario code to use the class:
    * ```
    * require(Modules.AI);
    * ```
@@ -5952,6 +6386,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Events allow matching intents by event name instead of the natural language input. For instance, the <event: { name: "welcome_event", parameters: { name: "Sam" } }> input can trigger a personalized welcome response. The parameter `name` may be used by the agent in the response: `"Hello #welcome_event.name! What can I do for you today?"`.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface EventInput {
       /**
@@ -5983,6 +6422,11 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI agents.
+     * <br>
+     * Add the following line to your scenario code to use the events:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Agent {
@@ -6022,6 +6466,11 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI conversations.
+     * <br>
+     * Add the following line to your scenario code to use the events:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Conversation {
@@ -6031,17 +6480,17 @@ declare module CCAI {
        */
       Created = 'AI.Events.CcaiConversationCreated',
       /**
-       * Triggers when a conversation profile is created in the specified project.
+       * Triggered when a conversation profile is created in the specified project.
        * @typedef _ConversationProfileCreatedEvent
        */
       ProfileCreated = 'AI.Events.CcaiConversationProfileCreated',
       /**
-       * Triggers when the conversation is completed.
+       * Triggered when the conversation is completed.
        * @typedef _ConversationCompletedEvent
        */
       Completed = 'AI.Events.CcaiConversationCompleted',
       /**
-       * Triggers when a CCAI Conversation instance causes an error.
+       * Triggered when a CCAI Conversation instance causes an error.
        * @typedef _ConversationErrorEvent
        */
       Error = 'AI.Events.CcaiConversationError',
@@ -6098,6 +6547,11 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI participants.
+     * <br>
+     * Add the following line to your scenario code to use the events:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Participant {
@@ -6107,27 +6561,27 @@ declare module CCAI {
        */
       Created = 'AI.Events.CcaiParticipantCreated',
       /**
-       * Triggers when a CCAI Participant instance returns an intent response.
+       * Triggered when a CCAI Participant instance returns an intent response.
        * @typedef _ParticipantResponseEvent
        */
       Response = 'AI.Events.CcaiParticipantResponse',
       /**
-       * Triggers when playback of a single phrase has finished successfully or in case of a playback error.
+       * Triggered when playback of a single phrase has finished successfully or in case of a playback error.
        * @typedef _ParticipantPlaybackFinishedEvent
        */
       PlaybackFinished = 'AI.Events.CcaiParticipantPlaybackFinished',
       /**
-       * Triggers when playback of a single phrase has started.
+       * Triggered when playback of a single phrase has started.
        * @typedef _ParticipantPlaybackStartedEvent
        */
       PlaybackStarted = 'AI.Events.CcaiParticipantPlaybackStarted',
       /**
-       * Triggers when audio_segments from Google are ready to be played.
+       * Triggered when audio_segments from Google are ready to be played.
        * @typedef _ParticipantPlaybackReadyEvent
        */
       PlaybackReady = 'AI.Events.CcaiParticipantPlaybackReady',
       /**
-       * Triggers when [Participant.addPlaybackMarker] is reached.
+       * Triggered when [Participant.addPlaybackMarker] is reached.
        * @typedef _ParticipantMarkerReachedEvent
        */
       MarkerReached = 'AI.Events.CcaiParticipantMarkerReached',
@@ -6179,7 +6633,9 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * Participant settings. Add the following line to your scenario code to use the interface:
+   * Participant settings.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
    * ```
    * require(Modules.AI);
    * ```
@@ -6202,7 +6658,9 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * This class represents a CCAI participant instance. Add the following line to your scenario code to use the class:
+   * Represents a CCAI participant instance.
+   * <br>
+   * Add the following line to your scenario code to use the class:
    * ```
    * require(Modules.AI);
    * ```
@@ -6251,7 +6709,7 @@ declare module CCAI {
     /**
      * Starts sending voice from a Dialogflow CCAI participant to the media unit specified in targetCall.
      */
-    sendMediaTo(targetMediaUnit: VoxMediaUnit, optional?: SendMediaOptions): void;
+    sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
     /**
      * Stops sending voice from a Dialogflow CCAI participant to the media unit specified in targetCall.
@@ -6264,6 +6722,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Represents a single side of the conversation.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface Participant {
       /**
@@ -6304,6 +6767,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Enumeration of the roles a participant can play in a conversation.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     enum Role {
       /**
@@ -6326,6 +6794,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Represents the natural language text to be processed.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface TextInput {
       /**
@@ -6401,27 +6874,27 @@ declare enum ConferenceEvents {
    */
   ConferenceError = 'Conference.Error',
   /**
-   * Triggers when the conference has started. I.e., the call of VoxEngine.createConference triggers the event.
+   * Triggered when the conference has started. I.e., the call of VoxEngine.createConference triggers the event.
    * @typedef _ConferenceEvent
    */
   Started = 'Conference.Started',
   /**
-   * Triggers when the conference is stopped. I.e., the call of Conference.stop triggers the event.
+   * Triggered when the conference is stopped. I.e., the call of Conference.stop triggers the event.
    * @typedef _ConferenceStoppedEvent
    */
   Stopped = 'Conference.Stopped',
   /**
-   * Triggers when the endpoint is added.
+   * Triggered when the endpoint is added.
    * @typedef _ConferenceEndpointEvent
    */
   EndpointAdded = 'Conference.EndpointAdded',
   /**
-   * Triggers when the endpoint is updated.
+   * Triggered when the endpoint is updated.
    * @typedef _ConferenceEndpointEvent
    */
   EndpointUpdated = 'Conference.EndpointUpdated',
   /**
-   * Triggers when the endpoint is removed.
+   * Triggered when the endpoint is removed.
    * @typedef _ConferenceEndpointEvent
    */
   EndpointRemoved = 'Conference.EndpointRemoved',
@@ -6536,8 +7009,33 @@ declare enum ConferenceMode {
 }
 
 /**
+ * [Conference] parameters. Can be passed as arguments to the [VoxEngine.createConference] method.
+ */
+declare interface ConferenceParameters {
+  /**
+   * Whether the audio is high definition. If set to false (default), audio stream has the frequency of 8 KHz. Otherwise, audio stream has the frequency of 48 KHz. Please note that default audio mode costs nothing while the high definition audio is billed additionally - for more details see the pricing page
+   */
+  hd_audio: boolean;
+}
+
+/**
+ * [ConferenceRecorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface ConferenceRecorderParameters extends BaseRecorderParameters {
+  /**
+   * Video parameters for the [ConferenceRecorder] parameters.
+   */
+  videoParameters: RecorderVideoParameters;
+}
+
+/**
  * Represents a conference recorder.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.Recorder);
@@ -6560,14 +7058,14 @@ declare class ConferenceRecorder extends Recorder {
   getPriority(): Endpoint[];
 
   /**
-   * Updates the current video recorder options.
+   * Updates the current video recorder parameters.
    */
-  update(videoOpt: VoxEngine.UpdateVideoOpt): void;
+  update(parameters: UpdateRecorderVideoParameters): void;
 }
 
 /**
  * Represents audio or video conference.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.Conference);
@@ -6594,7 +7092,6 @@ declare class Conference {
     callback?: (ev: _ConferenceEvents[T]) => any
   ): void;
 
-
   /**
    * Stops the conference. Triggers the ConferenceEvents.Stopped event.
    */
@@ -6614,16 +7111,16 @@ declare class Conference {
   /**
    * Creates a new endpoint and adds it to the specified conference. Important! You can only use this function for a conference with the “video conference” option checked in the routing rule.
    * Otherwise, you receive the ConferenceEvents.ConferenceError event with code 102. The maximum number of endpoints is 100.
-   * @param options
+   * @param parameters
    */
-  add(options: EndpointOptions): Endpoint;
+  add(options: EndpointParameters): Endpoint;
 
   /**
    * Starts sending media (voice and video) from this conference to media unit specified in targetCall.
    * @param mediaUnit media unit that receives media
-   * @param optional custom parameters for WebSocket interaction only
+   * @param parameters custom parameters for WebSocket interaction only
    */
-  sendMediaTo(mediaUnit: VoxMediaUnit, optional?: SendMediaOptions): void;
+  sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media (voice and video) from this conference to media unit specified in targetMediaUnit.
@@ -6637,10 +7134,10 @@ declare module Crypto {}
 declare module Crypto {
   /**
    * Calculates HMAC-SHA256 hash of the specified data.
-   * @param key_string Key for calculation purposes
-   * @param data_string String to calculate hash of
+   * @param key Key for calculation purposes
+   * @param data String to calculate hash of
    */
-  function hmac_sha256(key_string: string, data_string: string): string;
+  function hmac_sha256(key: string, data: string): string;
 }
 
 declare module Crypto {
@@ -6669,6 +7166,7 @@ declare module Crypto {
 
 /**
  * See https://dialogflow.com/docs/reference/language
+ * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.AI);
@@ -6866,13 +7364,61 @@ declare enum DialogflowModel {
 }
 
 /**
- * Endpoint options.
+ * Add the following line to your scenario code to use the enum:
+ * ```
+ * require(Modules.AI);
+ * ```
+ */
+declare enum DialogflowSsmlVoiceGender {
+  /**
+   * An unspecified gender, which means that the customer does not care which gender the selected voice has.
+   */
+  UNSPECIFIED = 'SSML_VOICE_GENDER_UNSPECIFIED',
+  /**
+   * A male voice.
+   */
+  MALE = 'SSML_VOICE_GENDER_MALE',
+  /**
+   * A female voice.
+   */
+  FEMALE = 'SSML_VOICE_GENDER_FEMALE',
+  /**
+   * A gender-neutral voice.
+   */
+  NEUTRAL = 'SSML_VOICE_GENDER_NEUTRAL',
+}
+
+/**
+ * The DTMF type.
+ */
+declare enum DTMFType {
+  /**
+   * All types of DTMF tones trigger the CallEvents.ToneReceived event: in-band , RFC 2833 and SIP INFO. Receiving a RFC 2833 tone disables processing of in-band tones to avoid duplicating
+   */
+  ALL,
+  /**
+   * Only RFC 2833 DTMF tones trigger the CallEvents.ToneReceived event
+   */
+  TELEPHONE_EVENT,
+  /**
+   * Only in-band DTMF tones trigger the CallEvents.ToneReceived event
+   */
+  IN_BAND,
+  /**
+   * Only SIP INFO DTMF tones trigger the CallEvents.ToneReceived event
+   */
+  SIP_INFO,
+}
+
+/**
+ * [Endpoint] parameters. Can be passed as arguments to the [Conference.add] method.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.Conference);
  * ```
  */
-declare interface EndpointOptions {
+declare interface EndpointParameters {
   /**
    * Call to be connected to the conference.
    */
@@ -6906,7 +7452,7 @@ declare interface EndpointOptions {
 
 /**
  * Represents any remote media unit in a session. An endpoint can be represented as ASR, Recorder, Player or another Call.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.Conference);
@@ -6936,10 +7482,10 @@ declare class Endpoint {
 
   /**
    * Enables/disables receiving media streams from other conference participants.
-   * @param params
+   * @param parameters
    * @beta
    */
-  manageEndpoint(params: ReceiveParameters): Promise<void>;
+  manageEndpoint(parameters: ReceiveParameters): Promise<void>;
 
   /**
    * Returns the endpoint's Call object if the endpoint is not a player or recorder instance.
@@ -6955,6 +7501,7 @@ declare function hex2bytes(data: string): number[];
 
 /**
  * Global IVR control module.
+ * <br>
  * Add the following line to your scenario code to use the ref folder:
  * ```
  * require(Modules.IVR);
@@ -6965,6 +7512,7 @@ declare module IVR {}
 declare module IVR {
   /**
    * Resets the IVR; i.e., the method clears the list of existed [IVRState] objects. Use it to stop the entire IVR logic (e.g. near the call's ending).
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.IVR);
@@ -6974,7 +7522,8 @@ declare module IVR {
 }
 
 /**
- * IVR menu prompt settings. Note that it is possible to specify playing parameter or a pair of the say and lang parameters.
+ * IVR menu prompt settings. Can be passed via the [IVRSettings.prompt] parameter. Note that it is possible to specify playing parameter or a pair of the say and lang parameters.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.IVR);
@@ -6982,7 +7531,7 @@ declare module IVR {
  */
 declare interface IVRPrompt {
   /**
-   * Voice message to say. Use it together with the lang parameter. SSML is supported; to use it, specify [ttsOptions](/docs/references/voxengine/voxengine/ttsoptions) before creating an IVRState instance:<br><code>IVR.ttsOptions = { "pitch": "low", "rate": "slow", "volume": "loud" }</code>
+   * Voice message to say. Use it together with the lang parameter. SSML is supported; to use it, specify [TTSOptions] before creating an IVRState instance:<br><code>IVR.ttsOptions = { "pitch": "low", "rate": "slow", "volume": "loud" }</code>
    */
   say: string;
   /**
@@ -6996,7 +7545,8 @@ declare interface IVRPrompt {
 }
 
 /**
- * IVR menu state settings
+ * IVR menu state settings. Can be passed via the [IVRState.settings] parameter.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.IVR);
@@ -7012,7 +7562,7 @@ declare interface IVRSettings {
    */
   type: string;
   /**
-   * For inputunknown states - whether input is complete or not (input is passed as string)
+   * For inputunknown states - whether input is complete (input is passed as string)
    */
   inputValidator: (input: string) => boolean;
   /**
@@ -7039,7 +7589,7 @@ declare interface IVRSettings {
 
 /**
  * Represents an IVR menu state.
- *
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.IVR);
@@ -7077,6 +7627,7 @@ declare class IVRState {
 
 /**
  * Count the number of deletions, insertions, or substitutions required to transform str1 into str2. The number shows a measure of the similarity between two strings. It is also known as edit distance.
+ * <br>
  * Add the following line to your scenario code to use the function:
  * ```
  * require(Modules.AI);
@@ -7319,19 +7870,126 @@ declare namespace MeasurementProtocol {
 }
 
 declare enum Modules {
+  /**
+   * Provides the [ACD v1](/docs/guides/smartqueue/acdv1) functionality.
+   * <br>
+   * We recommend using [SmartQueue] instead of ACD v1.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.ACD);
+   * ```
+   */
   ACD,
+  /**
+   * Provides features that use artificial intelligence, such as [voicemail detection](/docs/guides/calls/voicemail).
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
   AI,
+  /**
+   * Provides the [key-value storage](/docs/guides/voxengine/kvs) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.ApplicationStorage);
+   * ```
+   */
   ApplicationStorage,
+  /**
+   * Provides the [speech recognition](/docs/guides/speech/stt) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
   ASR,
+  /**
+   * Provides the [Voximplant Avatar](/docs/guides/ai/avatar) (virtual assistant based on AI and NLP) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Avatar);
+   * ```
+   */
   Avatar,
+  /**
+   * Provides the [audio and video conferencing](/docs/guides/conferences) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Conference);
+   * ```
+   */
   Conference,
+  /**
+   * Provides the [interactive voice menus](/docs/guides/speech/ivr) functionality.
+   * <br>
+   * Instead, you can implement this functionality via the [Call.say], [Call.startPlayback] and [Call.handleTones] methods, but this module gives more straightforward approach.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.IVR);
+   * ```
+   */
   IVR,
+  /**
+   * Provides the [Google Analytics Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/v1) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.MeasurementProtocol);
+   * ```
+   */
   MeasurementProtocol,
-  MediaStatistics,
+  /**
+   * Provides the push notification functionality for [iOS](/docs/guides/sdk/iospush) and [Android](/docs/guides/sdk/androidpush) devices.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.PushService);
+   * ```
+   */
   PushService,
+  /**
+   * Provides the [call recording](/docs/guides/calls/record) and [conference recording](/docs/guides/conferences/record) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Recorder);
+   * ```
+   */
   Recorder,
+  /**
+   * Provides the SmartQueue (ACD v2) functionality for implementing a [contact center](/docs/guides/smartqueue).
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.SmartQueue);
+   * ```
+   */
   SmartQueue,
+  /**
+   * Provides the [streaming](/docs/guides/calls/stream) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.StreamingAgent);
+   * ```
+   */
   StreamingAgent,
+  /**
+   * Provides the [WebSocket connection](/docs/guides/voxengine/websocket) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.WebSocket);
+   * ```
+   */
   WebSocket,
 }
 
@@ -7346,7 +8004,7 @@ declare module Net {
 
 declare module Net {
   /**
-   * Advanced HTTP request options
+   * Advanced HTTP request options.
    */
   interface HttpRequestOptions {
     /**
@@ -7358,15 +8016,17 @@ declare module Net {
      */
     postData?: string | number[];
     /**
-     * Optional request headers
+     * Optional request headers: ['Content-Type: text/html; charset=utf-8', 'User-Agent: YourCustomUserAgent/1.0']
      */
     headers?: string[];
     /**
      * Optional request parameters. They can be specified in the URL itself as well
      */
-    params?: { [key: string]: string };
+    params?: {
+      [key: string]: string;
+    };
     /**
-     * Whether Net.HttpRequestResult.data should contain a list of 1-byte numbers corresponding to HTTP response data. If set to false, Net.HttpRequestResult.data is undefined
+     * Whether [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) should contain a list of 1-byte numbers corresponding to the HTTP response data. If set to false, [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) is undefined
      */
     rawOutput?: boolean;
     /**
@@ -7382,7 +8042,7 @@ declare module Net {
 
 declare module Net {
   /**
-   * HTTP response
+   * HTTP response.
    */
   interface HttpRequestResult {
     /**
@@ -7403,7 +8063,7 @@ declare module Net {
      */
     text?: string;
     /**
-     * If [HttpRequestOptions.rawOutput] is true, data contains a list of 1-byte numbers corresponding to HTTP response data. If [HttpRequestOptions.rawOutput] is false, data is undefined.
+     * If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is true, data contains a list of 1-byte numbers corresponding to HTTP response data. If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is false, data is undefined.
      */
     data?: number[];
     /**
@@ -7457,15 +8117,15 @@ declare module Net {
     /**
      * Alternative HTML body
      */
-    html: string;
+    html?: string;
     /**
      * CC addresses
      */
-    cc: string | string[];
+    cc?: string[];
     /**
      * BCC addresses
      */
-    bcc: string | string[];
+    bcc?: string[];
     /**
      * Mail server port
      */
@@ -7520,8 +8180,8 @@ declare module Net {
 }
 
 /**
- * Which media streams to receive from the endpoint. Consists of optional video and audio keys.
- * 
+ * Which media streams to receive from the endpoint. Can be passed via the [ReceiveParameters] parameter. Consists of optional video and audio keys.
+ * <br>
  * For each key, specify the <b>["default"]</b> value to receive all media streams, specify the empty array <b>[]</b> value to receive no media streams, or specify the media stream IDs (for example, <b>["v1", "v10"]</b>) to receive specific media streams.
  */
 interface ParticipantReceiveParameters {
@@ -7588,40 +8248,46 @@ declare module PhoneNumber {}
  */
 declare enum PlayerEvents {
   /**
-   * Triggers when playback has finished successfully or with an error
+   * Triggered when [Player] created.
+   * @typedef _PlayerCreatedEvent
+   */
+  Created = 'Player.Created',
+
+  /**
+   * Triggers by the [createURLPlayer] and [createTTSPlayer] methods when<br>
+   * 1) the audio file download to the Voximplant cache is finished;<br>
+   * 2) the audio file is found in the cache (i.e., it is in the cache before).
+   * @typedef _PlayerPlaybackReadyEvent
+   */
+  PlaybackReady = 'Player.PlaybackReady',
+
+  /**
+   * Triggered when playback is started. Note that if the [createURLPlayer] method is called with the **onPause** parameter set to true, the event is not triggered; it is triggered after the [Player.resume] method call.
+   * @typedef _PlayerStartedEvent
+   */
+  Started = 'Player.Started',
+
+  /**
+   * Triggers as a result of the [Player.stop] method call.
+   * @typedef _PlayerStoppedEvent
+   */
+  Stopped = 'Player.Stopped',
+
+  /**
+   * Triggered when playback has finished successfully or with an error
    * @typedef _PlayerPlaybackFinishedEvent
    */
   PlaybackFinished = 'Player.PlaybackFinished',
 
   /**
-   * Triggers when [Player.addMarker] is reached
-   * @typedef _PlaybackMarkerReachedEvent
+   * Triggered when [Player.addMarker] is reached
+   * @typedef _PlayerPlaybackMarkerReachedEvent
    */
   PlaybackMarkerReached = 'Player.PlaybackMarkerReached',
 
   /**
-   * Triggers as a result of the [Player.stop] method call.
-   * @typedef _PlayerEvent
-   */
-  Stopped = 'Player.Stopped',
-
-  /**
-   * Triggers when playback is started. Note that if the [createURLPlayer] method is called with the **onPause** parameter set to true, the event is not triggered; it is triggered after the [Player.resume] method call.
-   * @typedef _PlayerEvent
-   */
-  Started = 'Player.Started',
-
-  /**
-   * Triggers by the [createURLPlayer] and [createTTSPlayer] methods when<br>
-   * 1) the audio file download to the Voximpant cache is finished;<br>
-   * 2) the audio file is found in the cache (i.e., it is in the cache before).
-   * @typedef _PlayerEvent
-   */
-  PlaybackReady = 'Player.PlaybackReady',
-
-  /**
-   * Triggers when an audio file is playing faster than it is being loaded.
-   * @typedef _PlayerEvent
+   * Triggered when an audio file is playing faster than it is being loaded.
+   * @typedef _PlayerPlaybackBufferingEvent
    */
   PlaybackBuffering = 'Player.Buffering',
 }
@@ -7630,11 +8296,12 @@ declare enum PlayerEvents {
  * @private
  */
 declare interface _PlayerEvents {
-  [PlayerEvents.PlaybackFinished]: _PlayerPlaybackFinishedEvent;
-  [PlayerEvents.PlaybackMarkerReached]: _PlaybackMarkerReachedEvent;
-  [PlayerEvents.Stopped]: _PlayerStoppedEvent;
-  [PlayerEvents.Started]: _PlayerStartedEvent;
+  [PlayerEvents.Created]: _PlayerCreatedEvent;
   [PlayerEvents.PlaybackReady]: _PlayerPlaybackReadyEvent;
+  [PlayerEvents.Started]: _PlayerStartedEvent;
+  [PlayerEvents.Stopped]: _PlayerStoppedEvent;
+  [PlayerEvents.PlaybackFinished]: _PlayerPlaybackFinishedEvent;
+  [PlayerEvents.PlaybackMarkerReached]: _PlayerPlaybackMarkerReachedEvent;
   [PlayerEvents.PlaybackBuffering]: _PlayerPlaybackBufferingEvent;
 }
 
@@ -7651,17 +8318,12 @@ declare interface _PlayerEvent {
 /**
  * @private
  */
-declare interface _PlayerStoppedEvent extends _PlayerEvent {}
+declare interface _PlayerCreatedEvent extends _PlayerEvent {}
 
 /**
  * @private
  */
 declare interface _PlayerPlaybackReadyEvent extends _PlayerEvent {}
-
-/**
- * @private
- */
-declare interface _PlayerPlaybackBufferingEvent extends _PlayerEvent {}
 
 /**
  * @private
@@ -7676,12 +8338,7 @@ declare interface _PlayerStartedEvent extends _PlayerEvent {
 /**
  * @private
  */
-declare interface _PlaybackMarkerReachedEvent extends _PlayerEvent {
-  /**
-   * The marker offset
-   */
-  offset: number;
-}
+declare interface _PlayerStoppedEvent extends _PlayerEvent {}
 
 /**
  * @private
@@ -7692,6 +8349,21 @@ declare interface _PlayerPlaybackFinishedEvent extends _PlayerEvent {
    */
   error?: string;
 }
+
+/**
+ * @private
+ */
+declare interface _PlayerPlaybackMarkerReachedEvent extends _PlayerEvent {
+  /**
+   * The marker offset
+   */
+  offset: number;
+}
+
+/**
+ * @private
+ */
+declare interface _PlayerPlaybackBufferingEvent extends _PlayerEvent {}
 
 /**
  * Represents an audio player.
@@ -7746,9 +8418,9 @@ declare class Player {
   /**
    * Starts sending media (voice and video) from this call to the media unit specified in targetMediaUnit. Each call can send media to any number of other calls, but can receive from just one. So if targetCall is already receiving media from another call, that link would break.
    * @param mediaUnit Media unit that receives media.
-   * @param optional Custom parameters for WebSocket interaction only.
+   * @param parameters Custom parameters for WebSocket interaction only.
    */
-  sendMediaTo(mediaUnit: VoxMediaUnit, optional?: SendMediaOptions): void;
+  sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stop sending media (voice and video) from this call to media unit specified in targetMediaUnit.
@@ -7758,8 +8430,8 @@ declare class Player {
 }
 
 /**
- * An object that specifies what media streams to receive from each endpoint.
- * 
+ * An object that specifies what media streams to receive from each endpoint. Can be passed via the [EndpointParameters.receiveParameters] parameter or an argument to the [Endpoint.manageEndpoint] method.
+ * <br>
  * The object can accept the following keys:
  * <ul>
  *     <li>A string value with the endpoint ID. Applies the setting only for the specified endpoint.</li>
@@ -7772,6 +8444,52 @@ interface ReceiveParameters {
    * Substitute one of the available keys from the description.
    */
   [remoteParticipantId: string]: ParticipantReceiveParameters;
+}
+
+/**
+ * List of available values for [RecorderParameters.expire] and [ConferenceRecorderParameters.expire] parameters.
+ */
+declare enum RecordExpireTime {
+  DEFAULT = '',
+  SIXMONTHS = '-6m',
+  ONEYEAR = '-1y',
+  TWOYEARS = '-2y',
+  THREEYEARS = '-3y',
+}
+
+/**
+ * An object specifying video frame parameters. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ *  */
+declare interface RecorderDrawArea {
+  /**
+   * Video frame's priority.
+   */
+  priority: number;
+  /**
+   * Video frame's width.
+   */
+  width: number;
+  /**
+   * Video frame's height.
+   */
+  height: number;
+  /**
+   * Video frame's top margin.
+   */
+  top: number;
+  /**
+   * Video frame's left margin.
+   */
+  left: number;
+  /**
+   * The corresponding grid parameters object.
+   */
+  grid: RecorderGridDefinition[];
 }
 
 /**
@@ -7858,8 +8576,400 @@ declare interface _RecorderEvents {
 }
 
 /**
+ * An object specifying grid parameters. Can be passed via the [RecorderDrawArea.grid] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface RecorderGridDefinition {
+  /**
+   * Minimum video frames for the grid.
+   */
+  fromCount: number;
+  /**
+   * Maximum video frames for the grid.
+   */
+  toCount?: number;
+  /**
+   * Number of columns in the grid.
+   */
+  colCount: number;
+  /**
+   * Number of rows in the grid.
+   */
+  rowCount: number;
+}
+
+/**
+ * Enumeration of the recorder video fonts. Can be passed via the [RecorderLabels.font] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the enum:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare enum RecorderLabelFont {
+  ROBOTO_SLAB_SEMI_BOLD = 'RobotoSlab-SemiBold',
+  ROBOTO_SLAB_THIN = 'RobotoSlab-Thin',
+  ROBOTO_CONDENSED_BOLD = 'RobotoCondensed-Bold',
+  ROBOTO_CONDENSED_BOLD_ITALIC = 'RobotoCondensed-BoldItalic',
+  ROBOTO_CONDENSED_ITALIC = 'RobotoCondensed-Italic',
+  ROBOTO_CONDENSED_LIGHT = 'RobotoCondensed-Light',
+  ROBOTO_CONDENSED_LIGHT_ITALIC = 'RobotoCondensed-LightItalic',
+  ROBOTO_CONDENSED_REGULAR = 'RobotoCondensed-Regular',
+  ROBOTO_FLEX_REGULAR = 'RobotoFlex-Regular',
+  ROBOTO_MONO_BOLD = 'RobotoMono-Bold',
+  ROBOTO_MONO_BOLD_ITALIC = 'RobotoMono-BoldItalic',
+  ROBOTO_MONO_EXTRA_LIGHT = 'RobotoMono-ExtraLight',
+  ROBOTO_MONO_EXTRA_LIGHT_ITALIC = 'RobotoMono-ExtraLightItalic',
+  ROBOTO_MONO_ITALIC = 'RobotoMono-Italic',
+  ROBOTO_MONO_LIGHT = 'RobotoMono-Light',
+  ROBOTO_MONO_LIGHT_ITALIC = 'RobotoMono-LightItalic',
+  ROBOTO_MONO_MEDIUM = 'RobotoMono-Medium',
+  ROBOTO_MONO_MEDIUM_ITALIC = 'RobotoMono-MediumItalic',
+  ROBOTO_MONO_REGULAR = 'RobotoMono-Regular',
+  ROBOTO_MONO_SEMI_BOLD = 'RobotoMono-SemiBold',
+  ROBOTO_MONO_SEMI_BOLD_ITALIC = 'RobotoMono-SemiBoldItalic',
+  ROBOTO_MONO_THIN = 'RobotoMono-Thin',
+  ROBOTO_MONO_THIN_ITALIC = 'RobotoMono-ThinItalic',
+  ROBOTO_SERIF_CONDENSED_BLACK = 'RobotoSerif_Condensed-Black',
+  ROBOTO_SERIF_CONDENSED_BLACK_ITALIC = 'RobotoSerif_Condensed-BlackItalic',
+  ROBOTO_SERIF_CONDENSED_BOLD = 'RobotoSerif_Condensed-Bold',
+  ROBOTO_SERIF_CONDENSED_BOLD_ITALIC = 'RobotoSerif_Condensed-BoldItalic',
+  ROBOTO_SERIF_CONDENSED_EXTRA_BOLD = 'RobotoSerif_Condensed-ExtraBold',
+  ROBOTO_SERIF_CONDENSED_EXTRA_BOLD_ITALIC = 'RobotoSerif_Condensed-ExtraBoldItalic',
+  ROBOTO_SERIF_CONDENSED_EXTRA_LIGHT = 'RobotoSerif_Condensed-ExtraLight',
+  ROBOTO_SERIF_CONDENSED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_Condensed-ExtraLightItalic',
+  ROBOTO_SERIF_CONDENSED_ITALIC = 'RobotoSerif_Condensed-Italic',
+  ROBOTO_SERIF_CONDENSED_LIGHT = 'RobotoSerif_Condensed-Light',
+  ROBOTO_SERIF_CONDENSED_LIGHT_ITALIC = 'RobotoSerif_Condensed-LightItalic',
+  ROBOTO_SERIF_CONDENSED_MEDIUM = 'RobotoSerif_Condensed-Medium',
+  ROBOTO_SERIF_CONDENSED_MEDIUM_ITALIC = 'RobotoSerif_Condensed-MediumItalic',
+  ROBOTO_SERIF_CONDENSED_REGULAR = 'RobotoSerif_Condensed-Regular',
+  ROBOTO_SERIF_CONDENSED_SEMI_BOLD = 'RobotoSerif_Condensed-SemiBold',
+  ROBOTO_SERIF_CONDENSED_SEMI_BOLD_ITALIC = 'RobotoSerif_Condensed-SemiBoldItalic',
+  ROBOTO_SERIF_CONDENSED_THIN = 'RobotoSerif_Condensed-Thin',
+  ROBOTO_SERIF_CONDENSED_THIN_ITALIC = 'RobotoSerif_Condensed-ThinItalic',
+  ROBOTO_SERIF_EXPANDED_BLACK = 'RobotoSerif_Expanded-Black',
+  ROBOTO_SERIF_EXPANDED_BLACK_ITALIC = 'RobotoSerif_Expanded-BlackItalic',
+  ROBOTO_SERIF_EXPANDED_BOLD = 'RobotoSerif_Expanded-Bold',
+  ROBOTO_SERIF_EXPANDED_BOLD_ITALIC = 'RobotoSerif_Expanded-BoldItalic',
+  ROBOTO_SERIF_EXPANDED_EXTRA_BOLD = 'RobotoSerif_Expanded-ExtraBold',
+  ROBOTO_SERIF_EXPANDED_EXTRA_BOLD_ITALIC = 'RobotoSerif_Expanded-ExtraBoldItalic',
+  ROBOTO_SERIF_EXPANDED_EXTRA_LIGHT = 'RobotoSerif_Expanded-ExtraLight',
+  ROBOTO_SERIF_EXPANDED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_Expanded-ExtraLightItalic',
+  ROBOTO_SERIF_EXPANDED_ITALIC = 'RobotoSerif_Expanded-Italic',
+  ROBOTO_SERIF_EXPANDED_LIGHT = 'RobotoSerif_Expanded-Light',
+  ROBOTO_SERIF_EXPANDED_LIGHT_ITALIC = 'RobotoSerif_Expanded-LightItalic',
+  ROBOTO_SERIF_EXPANDED_MEDIUM = 'RobotoSerif_Expanded-Medium',
+  ROBOTO_SERIF_EXPANDED_MEDIUM_ITALIC = 'RobotoSerif_Expanded-MediumItalic',
+  ROBOTO_SERIF_EXPANDED_REGULAR = 'RobotoSerif_Expanded-Regular',
+  ROBOTO_SERIF_EXPANDED_SEMI_BOLD = 'RobotoSerif_Expanded-SemiBold',
+  ROBOTO_SERIF_EXPANDED_SEMI_BOLD_ITALIC = 'RobotoSerif_Expanded-SemiBoldItalic',
+  ROBOTO_SERIF_EXPANDED_THIN = 'RobotoSerif_Expanded-Thin',
+  ROBOTO_SERIF_EXPANDED_THIN_ITALIC = 'RobotoSerif_Expanded-ThinItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_BLACK = 'RobotoSerif_ExtraCondensed-Black',
+  ROBOTO_SERIF_EXTRA_CONDENSED_BLACK_ITALIC = 'RobotoSerif_ExtraCondensed-BlackItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_BOLD = 'RobotoSerif_ExtraCondensed-Bold',
+  ROBOTO_SERIF_EXTRA_CONDENSED_BOLD_ITALIC = 'RobotoSerif_ExtraCondensed-BoldItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_EXTRA_BOLD = 'RobotoSerif_ExtraCondensed-ExtraBold',
+  ROBOTO_SERIF_EXTRA_CONDENSED_EXTRA_BOLD_ITALIC = 'RobotoSerif_ExtraCondensed-ExtraBoldItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_EXTRA_LIGHT = 'RobotoSerif_ExtraCondensed-ExtraLight',
+  ROBOTO_SERIF_EXTRA_CONDENSED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_ExtraCondensed-ExtraLightItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_ITALIC = 'RobotoSerif_ExtraCondensed-Italic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_LIGHT = 'RobotoSerif_ExtraCondensed-Light',
+  ROBOTO_SERIF_EXTRA_CONDENSED_LIGHT_ITALIC = 'RobotoSerif_ExtraCondensed-LightItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_MEDIUM = 'RobotoSerif_ExtraCondensed-Medium',
+  ROBOTO_SERIF_EXTRA_CONDENSED_MEDIUM_ITALIC = 'RobotoSerif_ExtraCondensed-MediumItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_REGULAR = 'RobotoSerif_ExtraCondensed-Regular',
+  ROBOTO_SERIF_EXTRA_CONDENSED_SEMI_BOLD = 'RobotoSerif_ExtraCondensed-SemiBold',
+  ROBOTO_SERIF_EXTRA_CONDENSED_SEMI_BOLD_ITALIC = 'RobotoSerif_ExtraCondensed-SemiBoldItalic',
+  ROBOTO_SERIF_EXTRA_CONDENSED_THIN = 'RobotoSerif_ExtraCondensed-Thin',
+  ROBOTO_SERIF_EXTRA_CONDENSED_THIN_ITALIC = 'RobotoSerif_ExtraCondensed-ThinItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_BLACK = 'RobotoSerif_ExtraExpanded-Black',
+  ROBOTO_SERIF_EXTRA_EXPANDED_BLACK_ITALIC = 'RobotoSerif_ExtraExpanded-BlackItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_BOLD = 'RobotoSerif_ExtraExpanded-Bold',
+  ROBOTO_SERIF_EXTRA_EXPANDED_BOLD_ITALIC = 'RobotoSerif_ExtraExpanded-BoldItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_EXTRA_BOLD = 'RobotoSerif_ExtraExpanded-ExtraBold',
+  ROBOTO_SERIF_EXTRA_EXPANDED_EXTRA_BOLD_ITALIC = 'RobotoSerif_ExtraExpanded-ExtraBoldItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_EXTRA_LIGHT = 'RobotoSerif_ExtraExpanded-ExtraLight',
+  ROBOTO_SERIF_EXTRA_EXPANDED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_ExtraExpanded-ExtraLightItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_ITALIC = 'RobotoSerif_ExtraExpanded-Italic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_LIGHT = 'RobotoSerif_ExtraExpanded-Light',
+  ROBOTO_SERIF_EXTRA_EXPANDED_LIGHT_ITALIC = 'RobotoSerif_ExtraExpanded-LightItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_MEDIUM = 'RobotoSerif_ExtraExpanded-Medium',
+  ROBOTO_SERIF_EXTRA_EXPANDED_MEDIUM_ITALIC = 'RobotoSerif_ExtraExpanded-MediumItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_REGULAR = 'RobotoSerif_ExtraExpanded-Regular',
+  ROBOTO_SERIF_EXTRA_EXPANDED_SEMI_BOLD = 'RobotoSerif_ExtraExpanded-SemiBold',
+  ROBOTO_SERIF_EXTRA_EXPANDED_SEMI_BOLD_ITALIC = 'RobotoSerif_ExtraExpanded-SemiBoldItalic',
+  ROBOTO_SERIF_EXTRA_EXPANDED_THIN = 'RobotoSerif_ExtraExpanded-Thin',
+  ROBOTO_SERIF_EXTRA_EXPANDED_THIN_ITALIC = 'RobotoSerif_ExtraExpanded-ThinItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_BLACK = 'RobotoSerif_SemiCondensed-Black',
+  ROBOTO_SERIF_SEMI_CONDENSED_BLACK_ITALIC = 'RobotoSerif_SemiCondensed-BlackItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_BOLD = 'RobotoSerif_SemiCondensed-Bold',
+  ROBOTO_SERIF_SEMI_CONDENSED_BOLD_ITALIC = 'RobotoSerif_SemiCondensed-BoldItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_EXTRA_BOLD = 'RobotoSerif_SemiCondensed-ExtraBold',
+  ROBOTO_SERIF_SEMI_CONDENSED_EXTRA_BOLD_ITALIC = 'RobotoSerif_SemiCondensed-ExtraBoldItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_EXTRA_LIGHT = 'RobotoSerif_SemiCondensed-ExtraLight',
+  ROBOTO_SERIF_SEMI_CONDENSED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_SemiCondensed-ExtraLightItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_ITALIC = 'RobotoSerif_SemiCondensed-Italic',
+  ROBOTO_SERIF_SEMI_CONDENSED_LIGHT = 'RobotoSerif_SemiCondensed-Light',
+  ROBOTO_SERIF_SEMI_CONDENSED_LIGHT_ITALIC = 'RobotoSerif_SemiCondensed-LightItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_MEDIUM = 'RobotoSerif_SemiCondensed-Medium',
+  ROBOTO_SERIF_SEMI_CONDENSED_MEDIUM_ITALIC = 'RobotoSerif_SemiCondensed-MediumItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_REGULAR = 'RobotoSerif_SemiCondensed-Regular',
+  ROBOTO_SERIF_SEMI_CONDENSED_SEMI_BOLD = 'RobotoSerif_SemiCondensed-SemiBold',
+  ROBOTO_SERIF_SEMI_CONDENSED_SEMI_BOLD_ITALIC = 'RobotoSerif_SemiCondensed-SemiBoldItalic',
+  ROBOTO_SERIF_SEMI_CONDENSED_THIN = 'RobotoSerif_SemiCondensed-Thin',
+  ROBOTO_SERIF_SEMI_CONDENSED_THIN_ITALIC = 'RobotoSerif_SemiCondensed-ThinItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_BLACK = 'RobotoSerif_SemiExpanded-Black',
+  ROBOTO_SERIF_SEMI_EXPANDED_BLACK_ITALIC = 'RobotoSerif_SemiExpanded-BlackItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_BOLD = 'RobotoSerif_SemiExpanded-Bold',
+  ROBOTO_SERIF_SEMI_EXPANDED_BOLD_ITALIC = 'RobotoSerif_SemiExpanded-BoldItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_EXTRA_BOLD = 'RobotoSerif_SemiExpanded-ExtraBold',
+  ROBOTO_SERIF_SEMI_EXPANDED_EXTRA_BOLD_ITALIC = 'RobotoSerif_SemiExpanded-ExtraBoldItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_EXTRA_LIGHT = 'RobotoSerif_SemiExpanded-ExtraLight',
+  ROBOTO_SERIF_SEMI_EXPANDED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_SemiExpanded-ExtraLightItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_ITALIC = 'RobotoSerif_SemiExpanded-Italic',
+  ROBOTO_SERIF_SEMI_EXPANDED_LIGHT = 'RobotoSerif_SemiExpanded-Light',
+  ROBOTO_SERIF_SEMI_EXPANDED_LIGHT_ITALIC = 'RobotoSerif_SemiExpanded-LightItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_MEDIUM = 'RobotoSerif_SemiExpanded-Medium',
+  ROBOTO_SERIF_SEMI_EXPANDED_MEDIUM_ITALIC = 'RobotoSerif_SemiExpanded-MediumItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_REGULAR = 'RobotoSerif_SemiExpanded-Regular',
+  ROBOTO_SERIF_SEMI_EXPANDED_SEMI_BOLD = 'RobotoSerif_SemiExpanded-SemiBold',
+  ROBOTO_SERIF_SEMI_EXPANDED_SEMI_BOLD_ITALIC = 'RobotoSerif_SemiExpanded-SemiBoldItalic',
+  ROBOTO_SERIF_SEMI_EXPANDED_THIN = 'RobotoSerif_SemiExpanded-Thin',
+  ROBOTO_SERIF_SEMI_EXPANDED_THIN_ITALIC = 'RobotoSerif_SemiExpanded-ThinItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_BLACK = 'RobotoSerif_UltraCondensed-Black',
+  ROBOTO_SERIF_ULTRA_CONDENSED_BLACK_ITALIC = 'RobotoSerif_UltraCondensed-BlackItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_BOLD = 'RobotoSerif_UltraCondensed-Bold',
+  ROBOTO_SERIF_ULTRA_CONDENSED_BOLD_ITALIC = 'RobotoSerif_UltraCondensed-BoldItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_EXTRA_BOLD = 'RobotoSerif_UltraCondensed-ExtraBold',
+  ROBOTO_SERIF_ULTRA_CONDENSED_EXTRA_BOLD_ITALIC = 'RobotoSerif_UltraCondensed-ExtraBoldItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_EXTRA_LIGHT = 'RobotoSerif_UltraCondensed-ExtraLight',
+  ROBOTO_SERIF_ULTRA_CONDENSED_EXTRA_LIGHT_ITALIC = 'RobotoSerif_UltraCondensed-ExtraLightItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_ITALIC = 'RobotoSerif_UltraCondensed-Italic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_LIGHT = 'RobotoSerif_UltraCondensed-Light',
+  ROBOTO_SERIF_ULTRA_CONDENSED_LIGHT_ITALIC = 'RobotoSerif_UltraCondensed-LightItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_MEDIUM = 'RobotoSerif_UltraCondensed-Medium',
+  ROBOTO_SERIF_ULTRA_CONDENSED_MEDIUM_ITALIC = 'RobotoSerif_UltraCondensed-MediumItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_REGULAR = 'RobotoSerif_UltraCondensed-Regular',
+  ROBOTO_SERIF_ULTRA_CONDENSED_SEMI_BOLD = 'RobotoSerif_UltraCondensed-SemiBold',
+  ROBOTO_SERIF_ULTRA_CONDENSED_SEMI_BOLD_ITALIC = 'RobotoSerif_UltraCondensed-SemiBoldItalic',
+  ROBOTO_SERIF_ULTRA_CONDENSED_THIN = 'RobotoSerif_UltraCondensed-Thin',
+  ROBOTO_SERIF_ULTRA_CONDENSED_THIN_ITALIC = 'RobotoSerif_UltraCondensed-ThinItalic',
+  ROBOTO_SLAB_BLACK = 'RobotoSlab-Black',
+  ROBOTO_SLAB_BOLD = 'RobotoSlab-Bold',
+  ROBOTO_SLAB_EXTRA_BOLD = 'RobotoSlab-ExtraBold',
+  ROBOTO_SLAB_EXTRA_LIGHT = 'RobotoSlab-ExtraLight',
+  ROBOTO_SLAB_LIGHT = 'RobotoSlab-Light',
+  ROBOTO_SLAB_MEDIUM = 'RobotoSlab-Medium',
+  ROBOTO_SLAB_REGULAR = 'RobotoSlab-Regular',
+  ROBOTO_BLACK = 'Roboto-Black',
+  ROBOTO_BLACK_ITALIC = 'Roboto-BlackItalic',
+  ROBOTO_BOLD = 'Roboto-Bold',
+  ROBOTO_BOLD_ITALIC = 'Roboto-BoldItalic',
+  ROBOTO_LIGHT = 'Roboto-Light',
+  ROBOTO_LIGHT_ITALIC = 'Roboto-LightItalic',
+  ROBOTO_MEDIUM = 'Roboto-Medium',
+  ROBOTO_MEDIUM_ITALIC = 'Roboto-MediumItalic',
+  ROBOTO_REGULAR = 'Roboto-Regular',
+  ROBOTO_REGULAR_ITALIC = 'Roboto-RegularItalic',
+  ROBOTO_THIN = 'Roboto-Thin',
+  ROBOTO_THIN_ITALIC = 'Roboto-ThinItalic',
+}
+
+/**
+ * Enumeration of the recorder label position. Can be passed via the [RecorderLabels.position] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the enum:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare enum RecorderLabelPosition {
+  TOP_LEFT = 'top left',
+  TOP_CENTER = 'top center',
+  TOP_RIGHT = 'top right',
+  MIDDLE_LEFT = 'middle left',
+  MIDDLE_CENTER = 'middle center',
+  MIDDLE_RIGHT = 'middle right',
+  BOTTOM_LEFT = 'bottom left',
+  BOTTOM_CENTER = 'bottom center',
+  BOTTOM_RIGHT = 'bottom right',
+}
+
+/**
+ * Enumeration of the recorder label text alignment. Can be passed via the [RecorderLabels.textAlign] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the enum:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare enum RecorderLabelTextAlign {
+  TOP_LEFT = 'T+L',
+  TOP_CENTER = 'T+C',
+  TOP_RIGHT = 'T+R',
+  MIDDLE_LEFT = 'M+L',
+  MIDDLE_CENTER = 'M+C',
+  MIDDLE_RIGHT = 'M+R',
+  BOTTOM_LEFT = 'B+L',
+  BOTTOM_CENTER = 'B+C',
+  BOTTOM_RIGHT = 'B+R',
+}
+
+/**
+ * An object specifying video frame with the participants' name settings. Can be passed via the [RecorderVideoParameters.labels] or [UpdateRecorderVideoParameters.labels] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface RecorderLabels {
+  /**
+   * Participant's label font.
+   * The default value is [RecorderLabelFont.ROBOTO_REGULAR]
+   */
+  font?: RecorderLabelFont;
+  /**
+   * Participant's label text horizontal and vertical alignment.
+   * The default value is [RecorderLabelTextAlign.MIDDLE_LEFT]
+   */
+  textAlign?: RecorderLabelTextAlign;
+  /**
+   * Margin space outside the label in pixels.
+   * The default value is 8
+   */
+  margin?: number;
+  /**
+   * Participant's label position.
+   * The default value is [RecorderLabelPosition.BOTTOM_RIGHT]
+   */
+  position?: RecorderLabelPosition;
+  /**
+   * Participant's label background color in HEX format.
+   * The default value is #c7c7cc
+   */
+  background?: string;
+  /**
+   * Participant's label color in HEX format.
+   * The default value is #000000
+   */
+  color?: string;
+  /**
+   * Participant's label width in pixels.
+   * The default value is 104
+   */
+  width?: number;
+  /**
+   * Participant's label height in pixels.
+   * The default value is 24
+   */
+  height?: number;
+}
+
+/**
+ * [Recorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
+ */
+declare interface RecorderParameters extends ConferenceRecorderParameters {
+  /**
+   * Name of the recorder for the call history.
+   */
+  name?: string;
+  /**
+   * Speech recognition provider.
+   */
+  provider?:
+    | ASRProfileList.Amazon
+    | ASRProfileList.Deepgram
+    | ASRProfileList.Google
+    | ASRProfileList.Microsoft
+    | ASRProfileList.SaluteSpeech
+    | ASRProfileList.Tinkoff
+    | ASRProfileList.Yandex
+    | ASRProfileList.YandexV3;
+}
+
+/**
+ * Enumeration of the video quality profiles. Can be passed via the [RecorderVideoParameters.profile] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare enum RecorderProfile {
+  NHD = 'NHD',
+  VGA = 'VGA',
+  HD = 'HD',
+  FHD = 'FHD',
+  QHD = 'QHD',
+  '4K' = '4K',
+}
+
+/**
+ * An object specifying speaking participant highlight video frame parameters. Can be passed via the [RecorderVideoParameters.vad] or [UpdateRecorderVideoParameters.vad] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface RecorderVad {
+  /**
+   * Highlighting frame thickness in pixels.
+   * For width > 1280 the default value is 3, for width < 1280 the default value is 1
+   */
+  thickness?: number;
+  /**
+   * Highlighting frame color in HEX format.
+   * The default value is #009933
+   */
+  color?: string;
+}
+
+/**
+ * An object specifying recorder video parameters. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface RecorderVideoParameters extends UpdateRecorderVideoParameters {
+  /**
+   * Whether to create single video file of multiple participants.
+   */
+  mixing: boolean;
+  /**
+   * Video quality profile.
+   */
+  profile?: RecorderProfile;
+  /**
+   * Video width in pixels.
+   */
+  width?: number;
+  /**
+   * Video height in pixels.
+   */
+  height?: number;
+  /**
+   * Video bitrate in kbps.
+   */
+  bitrate?: number;
+  /**
+   * Video frames per second.
+   */
+  fps?: number;
+}
+
+/**
  * Represents an audio and video recorder.
- *
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.Recorder);
@@ -7905,10 +9015,192 @@ declare class Recorder {
 
 declare function require(module: Modules): void;
 
-declare interface SendMediaOptions {
+/**
+ * Custom parameters for WebSocket interaction. Can be passed as arguments to the [Call.sendMediaTo], [Conference.sendMediaTo], [Player.sendMediaTo], [WebSocket.sendMediaTo]  methods.
+ */
+declare interface SendMediaParameters {
   tag: string;
   customParameters?: any;
   encoding?: WebSocketAudioEncoding;
+}
+
+/**
+ * @event
+ */
+declare enum SequencePlayerEvents {
+  /**
+   * Triggered when [SequencePlayer] created.
+   * @typedef _SequencePlayerCreatedEvent
+   */
+  Created = 'SequencePlayer.Created',
+
+  /**
+   * Triggered by the [VoxEngine.createSequencePlayer] methods when<br>
+   * 1) all the segments audio files download to the Voximplant cache is finished;<br>
+   * 2) all the audio files is found in the cache (i.e., it is in the cache before).
+   * @typedef _SequencePlayerPlaybackReadyEvent
+   */
+  PlaybackReady = 'SequencePlayer.PlaybackReady',
+
+  /**
+   * Triggered when playback of the first SequencePlayer segment starts.
+   * @typedef _SequencePlayerStartedEvent
+   */
+  Started = 'SequencePlayer.Started',
+
+  /**
+   * Triggers as a result of the [SequencePlayer.stop] method call.
+   * @typedef _SequencePlayerStoppedEvent
+   */
+  Stopped = 'SequencePlayer.Stopped',
+
+  /**
+   * Triggered when playback has finished successfully or with an error.
+   * @typedef _SequencePlayerPlaybackFinishedEvent
+   */
+  PlaybackFinished = 'SequencePlayer.PlaybackFinished',
+
+  /**
+   * Triggered when [SequencePlayer.addMarker] is reached.
+   * @typedef _SequencePlayerPlaybackMarkerReachedEvent
+   */
+  PlaybackMarkerReached = 'SequencePlayer.PlaybackMarkerReached',
+}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerEvents {
+  [SequencePlayerEvents.Created]: _SequencePlayerCreatedEvent;
+  [SequencePlayerEvents.PlaybackReady]: _SequencePlayerPlaybackReadyEvent;
+  [SequencePlayerEvents.Started]: _SequencePlayerStartedEvent;
+  [SequencePlayerEvents.Stopped]: _SequencePlayerStoppedEvent;
+  [SequencePlayerEvents.PlaybackFinished]: _SequencePlayerPlaybackFinishedEvent;
+  [SequencePlayerEvents.PlaybackMarkerReached]: _SequencePlayerPlaybackMarkerReachedEvent;
+}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerEvent {
+  /**
+   * Sequence player that generated the event
+   */
+  sequencePlayer: SequencePlayer;
+}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerCreatedEvent extends _SequencePlayerEvent {}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerPlaybackReadyEvent extends _SequencePlayerEvent {}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerStartedEvent extends _SequencePlayerEvent {}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerStoppedEvent extends _SequencePlayerEvent {}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerPlaybackFinishedEvent extends _SequencePlayerEvent {
+  /**
+   * Error message
+   */
+  error?: string;
+}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerPlaybackMarkerReachedEvent extends _SequencePlayerEvent {
+  /**
+   * The marker offset
+   */
+  offset: number;
+}
+
+/**
+ * Sequence player segment, represented by TTS or URL [Player]. Can be passed via the [SequencePlayerParameters.segments] parameter.
+ * <br>
+ * Same as the [SequencePlaybackSegment](/docs/references/avatarengine/sequenceplaybacksegment).
+ */
+declare type SequencePlayerSegment = TTSPlayerSegment | URLPlayerSegment;
+
+/**
+ * Represents an instance with segments represented by audio and URL players.
+ * <br>
+ * Can be used by calling the [VoxEngine.createSequencePlayer] method.
+ */
+declare class SequencePlayer {
+  /**
+   * Adds a handler for the specified [SequencePlayerEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called
+   * @param event Event class (i.e., [SequencePlayerEvents.PlaybackFinished])
+   * @param callback Handler function. A single parameter is passed - object with event information
+   */
+  addEventListener<T extends keyof _SequencePlayerEvents>(
+    event: SequencePlayerEvents | T,
+    callback: (ev: _SequencePlayerEvents[T]) => any
+  ): void;
+
+  /**
+   * Removes a handler for the specified [SequencePlayerEvents] event
+   * @param event Event class (i.e., [SequencePlayerEvents.PlaybackFinished])
+   * @param callback Handler function. If not specified, all event listeners are removed
+   */
+  removeEventListener<T extends keyof _SequencePlayerEvents>(
+    event: SequencePlayerEvents | T,
+    callback?: (ev: _SequencePlayerEvents[T]) => any
+  ): void;
+
+  /**
+   * Returns the sequence player's id.
+   */
+  id(): string;
+
+  /**
+   * Pauses playback. To continue the playback use the [SequencePlayer.resume] method.
+   */
+  pause(): void;
+
+  /**
+   * Resumes playback after the [SequencePlayer.pause] method is called.
+   */
+  resume(): void;
+
+  /**
+   * Stops playback. The current sequence player's instance with all its segments is destroyed.
+   */
+  stop(): void;
+
+  /**
+   * Adds a playback marker to the specified segment. The [SequencePlayerEvents.PlaybackMarkerReached] event is triggered when the marker is reached.
+   * @param offset Positive/negative offset (ms) from the start/end of media.
+   * @param segment The segment to add the marker.
+   */
+  addMarker(offset: number, segment: PlaybackParameters): void;
+
+  /**
+   * Starts sending media (voice and video) from this call to the media unit specified in targetMediaUnit. Each call can send media to any number of other calls, but can receive from just one. So if targetCall is already receiving media from another call, that link would break.
+   * @param mediaUnit Media unit that receives media.
+   * @param parameters Custom parameters for WebSocket interaction only.
+   */
+  sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+  /**
+   * Stop sending media (voice and video) from this call to media unit specified in targetMediaUnit.
+   * @param mediaUnit Media unit that does not need to receive media from this conference anymore.
+   */
+  stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
 /**
@@ -7926,16 +9218,20 @@ declare function setInterval(callback: () => any, timeout?: number): number;
 declare function setTimeout(callback: () => any, timeout?: number): number;
 
 /**
+ * Add the following line to your scenario code to use the events:
+ * ```
+ * require(Modules.SmartQueue);
+ * ```
  * @event
  */
 declare enum SmartQueueEvents {
   /**
-   * The task is waiting for an agent.
+   * The task is waiting for distribution to an agent. This event occurs every 10 or 15 seconds and contains information about task's position in a queue and approximate response time.
    * @typedef _SmartQueueWaitingEvent
    */
   Waiting = 'SmartQueue.Waiting',
   /**
-   * An agent connected to the task.
+   * An agent responded to the task, e.g. answered the call. This event indicates that SmartQueue processed the task successfully.
    * @typedef _SmartQueueOperatorReachedEvent
    */
   OperatorReached = 'SmartQueue.OperatorReached',
@@ -7945,12 +9241,12 @@ declare enum SmartQueueEvents {
    */
   EnqueueSuccess = 'SmartQueue.EnqueueSuccess',
   /**
-   * SmartQueue starts the task distribution.
+   * SmartQueue distributed the task to an agent. This event can occur multiple times if an agent does not respond during the timeout.
    * @typedef _SmartQueueTaskDistributedEvent
    */
   TaskDistributed = 'SmartQueue.DistributeTask',
   /**
-   * The client disconnected.
+   * The client disconnected.<br><br>When you process the <b>ClientDisconnected</b> event, call the <code>e.cancel()</code> method inside the event manually to cancel the task.
    * @typedef _SmartQueueClientDisconnectedEvent
    */
   ClientDisconnected = 'SmartQueue.ClientDisconnected',
@@ -7971,11 +9267,11 @@ declare enum SmartQueueEvents {
  */
 declare interface _SmartQueueEvents {
   /**
-   * Waiting for an agent to connect.
+   * The task is waiting for distribution to an agent. This event occurs every 10 or 15 seconds and contains information about task's position in a queue and approximate response time.
    */
   [SmartQueueEvents.Waiting]: _SmartQueueWaitingEvent;
   /**
-   * An agent connected to the task.
+   * An agent responded to the task, e.g. answered the call. This event indicates that SmartQueue processed the task successfully.
    */
   [SmartQueueEvents.OperatorReached]: _SmartQueueOperatorReachedEvent;
   /**
@@ -7983,7 +9279,7 @@ declare interface _SmartQueueEvents {
    */
   [SmartQueueEvents.EnqueueSuccess]: _SmartQueueEnqueueSuccessEvent;
   /**
-   * SmartQueue starts task distribution.
+   * SmartQueue distributed the task to an agent. This event can occur multiple times if an agent does not respond during the timeout.
    */
   [SmartQueueEvents.TaskDistributed]: _SmartQueueTaskDistributedEvent;
   /**
@@ -8100,7 +9396,7 @@ declare interface _SmartQueueErrorEvent extends _SmartQueueEvent {
 }
 
 /*
- * Smartqueue skill level is used to characterize an agent or a requirement for an task.
+ * SmartQueue skill level is used to characterize an agent or a requirement for a task. Can be passed via the [SmartQueueTaskParameters.skills] parameter.
  */
 declare interface SmartQueueSkill {
   /**
@@ -8114,13 +9410,13 @@ declare interface SmartQueueSkill {
 }
 
 /*
- * Settings of a certain SmartQueue task.
+ * Settings of a certain [SmartQueueTask]. Can be passed as arguments to the [VoxEngine.enqueueTask] method.
  */
-declare interface SmartQueueTaskSettings {
+declare interface SmartQueueTaskParameters {
   /**
    * Current task's Call object.
    */
-  call: Call;
+  call?: Call;
   /**
    * A timeout in seconds for the task to be accepted by an agent.
    */
@@ -8138,13 +9434,29 @@ declare interface SmartQueueTaskSettings {
    */
   queue: SmartQueue;
   /**
-   * A text string that can be used for passing custom data to your scenario.
+   * Custom data text string for the current task. After you specify the data in this field, you can find it in the [SmartQueueState_Task](/docs/references/httpapi/structure/smartqueuestate_task) object for this task. To get this object, call the [GetSQState](/docs/references/httpapi/smartqueue#getsqstate) method.
    */
   customData: string;
+  /**
+   * Optional custom parameters (SIP headers) to be passed with the task. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   */
+  extraHeaders?: { [header: string]: string };
+  /**
+   * Whether the call has video support. Please note that prices for audio only and video calls are different.
+   */
+  video: boolean;
+  /**
+   * Internal information about codecs.
+   */
+  scheme: string;
+  /**
+   * Maximum possible video bitrate for the customer device in kbps
+   */
+  maxVideoBitrate: number;
 }
 
 /*
- * An task's status enumeration value.
+ * SmartQueue task's status enumeration value.
  */
 declare enum SmartQueueTaskStatus {
   /**
@@ -8169,34 +9481,39 @@ declare enum SmartQueueTaskStatus {
   FAILED,
 }
 
-/*
+/**
  * A SmartQueue task is for a certain agent, which can be a call or a chat.
+ * <br>
+ * Add the following line to your scenario code to use the class:
+ * ```
+ * require(Modules.SmartQueue);
+ * ```
  */
-declare interface SmartQueueTask {
+declare class SmartQueueTask {
   /**
    * Current status of the task, whether it is distributing, connecting, connected, ended or failed.
    */
-  readonly status: SmartQueueTaskStatus;
+  status: SmartQueueTaskStatus;
   /**
    * Reason of task's termination.
    */
-  readonly terminationStatus: TerminationStatus | null;
+  terminationStatus: TerminationStatus | null;
   /**
-   * The task's Call object.
+   * The client's Call object.
    */
-  readonly taskCall: Call;
+  clientCall: Call | null;
   /**
    * The agent's Call object.
    */
-  readonly operatorCall: Call | null;
+  agentCall: Call | null;
   /**
    * SmartQueue task's settings, such as required skills, priority, queue and more.
    */
-  readonly settings: SmartQueueTaskSettings;
+  settings: SmartQueueTaskParameters;
   /**
    * A SmartQueue task's ID.
    */
-  readonly id: string;
+  id: string;
 
   /**
    * Ends the current task.
@@ -8239,7 +9556,22 @@ declare interface SmartQueue {
 }
 
 /**
+ * The parameters can be passed as arguments to the [Call.startPlayback] method.
+ */
+declare interface StartPlaybackParameters {
+  /*
+   * Whether to loop playback.
+   */
+  loop?: boolean;
+  /**
+   * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   */
+  progressivePlayback?: boolean;
+}
+
+/**
  * Result of the [get](/docs/references/voxengine/applicationstorage#get), [put](/docs/references/voxengine/applicationstorage#put), and [delete](/docs/references/voxengine/applicationstorage#delete) methods.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.ApplicationStorage);
@@ -8262,6 +9594,7 @@ declare interface StorageKey {
 
 /**
  * Result of the [keys](/docs/references/voxengine/applicationstorage#keys) method.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.ApplicationStorage);
@@ -8290,67 +9623,59 @@ declare function str2bytes(data: string, encoding: string): number[];
  */
 declare enum StreamingAgentEvents {
   /**
-   * Triggers when a streaming object is connected to a streaming platform.
+   * Triggered when a streaming object is connected to a streaming platform.
    * @typedef _StreamingAgentEvent
-   * @type {string}
    */
   Connected = 'StreamingAgent.Connected',
   /**
-   * Triggers when connection to a streaming platform is failed.
+   * Triggered when connection to a streaming platform is failed.
    * @typedef _StreamingAgentEvent
-   * @type {string}
    */
   ConnectionFailed = 'StreamingAgent.ConnectionFailed',
   /**
    * Triggers if a streaming object cannot be created, e.g., due to incorrect **serverUrl**.
    * @typedef _StreamingAgentEvent
-   * @type {string}
    */
   Error = 'StreamingAgent.Error',
   /**
-   * Triggers when a streaming object is disconnected from a streaming platform.
+   * Triggered when a streaming object is disconnected from a streaming platform.
    * @typedef _StreamingAgentEvent
-   * @type {string}
    */
   Disconnected = 'StreamingAgent.Disconnected',
   /**
-   * Triggers when a stream is successfully started.
+   * Triggered when a stream is successfully started.
    * @typedef _StreamingAgentStreamEvent
    * @type {string}
    */
   StreamStarted = 'StreamingAgent.Stream.Started',
   /**
-   * Triggers when a streaming object caused an error, e.g., due to a codec mismatch.
+   * Triggered when a streaming object caused an error, e.g., due to a codec mismatch.
    * @typedef _StreamingAgentStreamEvent
-   * @type {string}
    */
   StreamError = 'StreamingAgent.Stream.Error',
   /**
-   * Triggers when a stream is stopped.
+   * Triggered when a stream is stopped.
    * @typedef _StreamingAgentStreamEvent
-   * @type {string}
    */
   StreamStopped = 'StreamingAgent.Stream.Stopped',
   /**
-   * Triggers when the audio stream is switched.
+   * Triggered when the audio stream is switched.
    * @typedef _StreamingAgentTrackSwitchedEvent
    */
   AudioSwitched = 'StreamingAgent.Stream.AudioSwitched',
   /**
-   * Triggers when the video stream is switched.
+   * Triggered when the video stream is switched.
    * @typedef _StreamingAgentTrackSwitchedEvent
    */
   VideoSwitched = 'StreamingAgent.Stream.VideoSwitched',
   /**
-   * Triggers when there is audio data in the stream.
-   * @typedef _StreamingAgentTrackStartedEvent
-   * @type {string}
+   * Triggered when there is audio data in the stream.
+   * @typedef _StreamingAgentStreamCreatedEvent
    */
   AudioStreamCreated = 'StreamingAgent.AudioStreamCreated',
   /**
-   * Triggers when there is video data in the stream.
-   * @typedef _StreamingAgentTrackStartedEvent
-   * @type {string}
+   * Triggered when there is video data in the stream.
+   * @typedef _StreamingAgentStreamCreatedEvent
    */
   VideoStreamCreated = 'StreamingAgent.VideoStreamCreated',
 }
@@ -8368,8 +9693,8 @@ declare interface _StreamingAgentEvents {
   [StreamingAgentEvents.StreamError]: _StreamingAgentStreamErrorEvent;
   [StreamingAgentEvents.AudioSwitched]: _StreamingAgentTrackSwitchedEvent;
   [StreamingAgentEvents.VideoSwitched]: _StreamingAgentTrackSwitchedEvent;
-  [StreamingAgentEvents.AudioStreamCreated]: _StreamingAgentTrackStartedEvent;
-  [StreamingAgentEvents.VideoStreamCreated]: _StreamingAgentTrackStartedEvent;
+  [StreamingAgentEvents.AudioStreamCreated]: _StreamingAgentStreamCreatedEvent;
+  [StreamingAgentEvents.VideoStreamCreated]: _StreamingAgentStreamCreatedEvent;
 }
 
 /**
@@ -8440,7 +9765,7 @@ declare interface _StreamingAgentStreamErrorEvent extends _StreamingAgentStreamE
 /**
  * @private
  */
-declare interface _StreamingAgentTrackStartedEvent extends _BaseStreamingAgentEvent {
+declare interface _StreamingAgentStreamCreatedEvent extends _BaseStreamingAgentEvent {
   /**
    * ID of an audio or video track. Equals to -1 if there is no track.
    */
@@ -8458,12 +9783,14 @@ declare interface _StreamingAgentTrackSwitchedEvent extends _StreamingAgentReaso
 }
 
 /**
+ * [StreamingAgent] parameters. Can be passed as arguments to the [VoxEngine.createStreamingAgent] method.
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.StreamingAgent);
  * ```
  */
-declare interface StreamingAgentSettings {
+declare interface StreamingAgentParameters {
   /**
    * Protocol for streaming purposes. Currently only RTMP is supported.
    */
@@ -8492,6 +9819,7 @@ declare interface StreamingAgentSettings {
 
 /**
  * Represents a streaming object to interact with streaming platforms.
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.StreamingAgent);
@@ -8553,6 +9881,9 @@ declare class StreamingAgent {
   setActiveTrack(tracks: { audioTrack?: number; videoTrack?: number }): void;
 }
 
+/**
+ * The SmartQueue task's waiting code
+ */
 declare enum TaskWaitingCode {
   /**
    * The task is not in a queue.
@@ -8572,6 +9903,9 @@ declare enum TaskWaitingCode {
   OVERFLOWED = 503,
 }
 
+/**
+ * The SmartQueue termination status
+ */
 declare enum TerminationStatus {
   /**
    * The task is completed in the scenario (TaskCanceledCode)
@@ -8616,11 +9950,25 @@ declare enum TerminationStatus {
 }
 
 /**
+ * [Player] parameters. Can be passed as arguments to the [VoxEngine.createToneScriptPlayer] method.
+ */
+declare interface ToneScriptPlayerParameters {
+  /**
+   * Whether to loop playback.
+   */
+  loop?: boolean;
+  /**
+   * Whether to use progressive playback. If true, the generated tone is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   */
+  progressivePlayback?: boolean;
+}
+
+/**
  * List of available values for the [CallRecordParameters.provider] parameter.
- *
+ * <br>
  * Note that the Tinkoff VoiceKit and Yandex Speechkit supports only 'ASRLanguage.RUSSIAN_RU' language.
+ * <br>
  * Add the following line to your scenario code to use the enum:
- *
  * ```
  * require(Modules.ASR);
  * ```
@@ -8642,6 +9990,197 @@ declare enum TranscriptionProvider {
      */
     TINKOFF = 'tsc',
 }
+/**
+ * List of available audio effect (profiles that are applied on post synthesized text to speech) for the [TTSOptions.effectsProfileId] parameter.
+ */
+declare enum TTSEffectsProfile {
+  /**
+   * Smartwatches and other wearables, like Apple Watch, Wear OS watch
+   */
+  WearableClassDevice = 'wearable-class-device',
+  /**
+   * Smartphones, like Google Pixel, Samsung Galaxy, Apple iPhone
+   */
+  HandsetClassDevice = 'handset-class-device',
+  /**
+   * Earbuds or headphones for audio playback, like Sennheiser headphones
+   */
+  HeadphoneClassDevice = 'headphone-class-device',
+  /**
+   * Small home speakers, like Google Home Mini
+   */
+  SmallBluetoothSpeakerClassDevice = 'small-bluetooth-speaker-class-device',
+  /**
+   * Smart home speakers, like Google Home
+   */
+  MediumBluetoothSpeakerClassDevice = 'medium-bluetooth-speaker-class-device',
+  /**
+   * Home entertainment systems or smart TVs, like Google Home Max, LG TV
+   */
+  LargeHomeEntertainmentClassDevice = 'large-home-entertainment-class-device',
+  /**
+   * Car speakers, home theaters
+   */
+  LargeAutomotiveClassDevice = 'large-automotive-class-device',
+  /**
+   * Interactive Voice Response (IVR) systems
+   */
+  TelephonyClassApplication = 'telephony-class-application',
+}
+
+/**
+ * Text-to-speech options. Can be passed via the [CallSayParameters.ttsOptions] and [TTSPlayerParameters.ttsOptions] parameter. See the details in the <a href="//www.w3.org/TR/speech-synthesis/#S3.2.4">official specs</a>.
+ */
+declare interface TTSOptions {
+  /**
+   * Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
+   */
+  emotion?: string;
+  /**
+   * Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
+   */
+  pitch?: string;
+  /**
+   * Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
+   */
+  rate?: string;
+  /**
+   * Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
+   */
+  volume?: string;
+  /**
+   * An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
+   */
+  effectsProfileId?: TTSEffectsProfile[];
+  /**
+   * If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
+   */
+  yandexCustomModelName?: string;
+}
+
+/**
+ * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
+ */
+declare interface TTSPlayerParameters {
+  /**
+   * Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  language?: Voice;
+  /**
+   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  progressivePlayback?: boolean;
+  /**
+   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  ttsOptions?: TTSOptions;
+  /**
+   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   */
+  onPause?: boolean;
+  /**
+   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   */
+  request?: Object;
+}
+
+/**
+ * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
+ * <br>
+ * Same as the [VoxEngine.createURLPlayer] method arguments and [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
+ */
+declare interface TTSPlayerSegment {
+  /**
+   * Text to synthesize.
+   */
+  text: string;
+  /**
+   * Optional [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
+   */
+  parameters?: TTSPlayerParameters;
+}
+
+/**
+ * Updates the current video recorder options. Can be passed as arguments to the [ConferenceRecorder.update] method.
+ *
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare interface UpdateRecorderVideoParameters {
+  /**
+   * Video layout settings. If set to 'grid', all the video frames are the same size. If set to 'tribune', one active video frame is bigger than the others. If set to 'custom', you need to provide a layoutSettings option with an object specifying custom layout settings.
+   */
+  layout?: 'grid' | 'tribune' | 'custom';
+  /**
+   * If layout is set to custom, specifies custom video layout settings.
+   */
+  layoutSettings?: RecorderDrawArea[];
+  /**
+   * If layout is set to tribune, specifies which frame is bigger than the others. Set to 'vad' if you want the bigger frame to change to the speaking participant, or specify the participant's ID to show one person constantly.
+   */
+  layoutPriority?: 'vad' | string[];
+  /**
+   * Whether to show the participants' names on their video frames.
+   */
+  labels?: RecorderLabels;
+  /**
+   * Whether to highlight video frame of the speaking participant.
+   */
+  vad?: RecorderVad;
+  /**
+   * HTML color code for the video file background.
+   */
+  background?: string;
+  /**
+   * Video frames' direction, left to right or right to left.
+   */
+  direction?: 'ltr' | 'rtl';
+  /**
+   * How to fill a participant's video source to the conference frame.
+   */
+  objectFit?: 'fill' | 'contain' | 'cover' | 'none';
+  /**
+   * A container to store custom data for the current recorder.
+   */
+  customData?: Object;
+}
+
+/**
+ * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
+ */
+declare interface URLPlayerParameters {
+  /**
+   * Whether to loop playback.
+   */
+  loop?: boolean;
+  /**
+   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   */
+  onPause?: boolean;
+  /**
+   * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   */
+  progressivePlayback?: boolean;
+}
+
+/**
+ * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
+ * <br>
+ * Same as the [VoxEngine.createURLPlayer] method arguments and [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
+ */
+declare interface URLPlayerSegment {
+  /**
+   * Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
+   */
+  url: string;
+  /**
+   * Optional [Player](/docs/references/voxengine/player) parameters.
+   */
+  parameters?: URLPlayerParameters;
+}
+
 /**
  * Generates unique identifier and returns it is string representation
  */
@@ -14054,7 +15593,8 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Allows accepting inbound connections to ensure WebSocket bidirectional exchange.
+   * Allows accepting incoming connections to ensure WebSocket bidirectional exchange.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.WebSocket);
@@ -14064,53 +15604,8 @@ declare namespace VoxEngine {
 }
 
 declare namespace VoxEngine {
-  interface AnswerParameters extends CallParameters {}
-}
-
-declare namespace VoxEngine {
   /**
-   * Base recorder parameters. For INTERNAL usage ONLY.
-   * @private
-   */
-  interface BaseRecorderParameters {
-    /**
-     * Whether to restrict access to the record without management API authorization (available only in [VoxEngine.createRecorder]).
-     */
-    secure?: boolean;
-    /**
-     * Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details in the article.
-     */
-    transcribe?: boolean;
-    /**
-     * Transcription language. The parameter uses [ASRLanguage] from the ASR Module as possible values. Note that it is necessary to include the ASR module in the scenario to use the language constants. The parameter is not available for the Recorder module.
-     */
-    language?: ASRLanguage;
-    /**
-     * Whether to use the HD audio. If set to false (default), 8 KHz / 32 kbps mp3 file is generated. Otherwise, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The property is not compatible with lossless: true property.
-     */
-    hd_audio?: boolean;
-    /**
-     * Storage time for recorded files. The default value is 3 months; see possible values in the [Voxengine.RecordExpireTime](/docs/references/voxengine/voxengine/RecordExpireTime) list.
-     */
-    expire?: RecordExpireTime;
-    /**
-     * Whether to save the record in flac format. The default value is false. The property is not compatible with hd_audio: true property.
-     */
-    lossless?: boolean;
-    /**
-     * Whether to record video. The default value is false. For video recording use the Call.record ({video: true}) method call. The parameter is not available for the Recorder module because it could only record an audio.
-     */
-    video?: boolean;
-    /**
-     * The prefix to add to the record names when storing to your S3 storage.
-     */
-    recordNamePrefix?: string;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Makes a call to a conference via Conference module. If there is no such conference, it is created in the first method's call. The method is designed to be called in a simple inbound scenario, then it can trigger another special scenario which contains logic of the conference.
+   * Makes a call to a conference via Conference module. If there is no such conference, it is created in the first method's call. The method is designed to be called in a simple incoming scenario, then it can trigger another special scenario which contains logic of the conference.
    * The method can trigger the Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param conferenceId ID of the conference. The parameter has to be the same as the pattern in the rule so the method triggers appropriate rule with conference logic.
    * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. Normally it is some phone number that can be used for callback. IMPORTANT: you cannot use test numbers rented from Voximplant as CallerID, use only real numbers.
@@ -14129,327 +15624,122 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * @private
-   */
-  interface CallParameters {
-    /**
-     * Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name
-     */
-    displayName?: string;
-    /**
-     * Internal information about codecs from the [AppEvents.CallAlerting] event
-     */
-    scheme?: { [id: string]: any };
-    /**
-     * Sets the maximum possible video bitrate for the customer device in kbps
-     */
-    maxVideoBitrate?: number;
-    /**
-     * Whether to disable the RTP header extension for transmission offset if provided
-     */
-    disableExtVideoOffset?: boolean;
-    /**
-     * Whether to disable the RTP header extension for video orientation, `3gpp:video-orientation`, if provided. Browsers that do not support that extension display the video correctly, however, the battery consumption is higher
-     */
-    disableExtVideoOrientation?: boolean;
-    /**
-     * Whether to disable the RTP header extension to control playout delay if provided
-     */
-    disableExtPlayoutDelay?: boolean;
-    /**
-     * Whether to disable the RTP header extension for video timing if provided
-     */
-    disableExtVideoTiming?: boolean;
-    /**
-     * Whether the call is coming from a conference. The default value is false
-     */
-    conferenceCall?: boolean;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * VoxEngine.callPSTN parameters
-   */
-  interface CallPSTNParameters {
-    /**
-     * Answering machine or voicemail detector.
-     */
-    amd?: AMD.AnsweringMachineDetector;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Starts an outbound call to the specified phone number. Calls that are more expensive than 20 cents per minute and calls to Africa are blocked by default for security reasons.
+   * Starts an outgoing call to the specified phone number. Calls that are more expensive than 20 cents per minute and calls to Africa are blocked by default for security reasons.
    * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param number phone number to start a call to in the international format (E.164)
    * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. A valid phone number that can be used to call back is required. Following phone numbers can be used:
    * * A real phone number that is [rented](https://manage.voximplant.com/numbers/my_numbers) from Voximplant. **IMPORTANT**: test numbers cannot be used.
    * * Any phone number that is [verified](https://manage.voximplant.com/settings/caller_ids) via an automated call from Voximplant and confirmation code.
-   * * A phone number from an inbound call to the rented number. It can be retrieved as [Caller ID](/docs/references/voxengine/call#callerid).
+   * * A phone number from an incoming call to the rented number. It can be retrieved as [Caller ID](/docs/references/voxengine/call#callerid).
    * @param parameters Object with callPSTN parameters.
    */
-  function callPSTN(
-    number: string,
-    callerid: string,
-    parameters?: VoxEngine.CallPSTNParameters
-  ): Call;
+  function callPSTN(number: string, callerid: string, parameters?: CallPSTNParameters): Call;
 }
 
 declare namespace VoxEngine {
   /**
-   * Recorder parameters. The parameters can be passed as arguments to the [Call.record] method.
-   */
-  interface CallRecordParameters extends BaseRecorderParameters {
-    /**
-     * Whether the sound is stereo. The default value is false. The parameter does not change anything for the Recorder module: it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
-     */
-    stereo?: boolean;
-    /**
-     * Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the Recorder module because the transcription is not available for it.
-     */
-    dict?: ASRDictionary | string[];
-    /**
-     * An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the 'transcribe: true' parameter. The parameter is not available for the Recorder module.
-     */
-    labels?: string[];
-    /**
-     * Transcription provider.
-     */
-    provider?:
-      | TranscriptionProvider.GOOGLE
-      | TranscriptionProvider.TINKOFF
-      | TranscriptionProvider.YANDEX;
-    /**
-     * Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
-     */
-    format?: string;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * VoxEngine.callSIP parameters
-   */
-  interface CallSIPParameters {
-    /**
-     * CallerID of the caller that is displayed to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback.
-     */
-    callerid: string;
-    /**
-     * Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
-     */
-    displayName: string;
-    /**
-     * Password for SIP authentication.
-     */
-    password: string;
-    /**
-     * Username for SIP authentication. If not specified, callerid is used as the username for authentication.
-     */
-    authUser: string;
-    /**
-     * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message.
-     * Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK
-     * (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-     */
-    headers: object;
-    /**
-     * Whether the call has video support. Please note that the price for audio-only and video calls is different!
-     */
-    video: boolean;
-    /**
-     * Outbound proxy, e.g. outProxy: "69.167.178.6"
-     */
-    outProxy: string;
-    /**
-     * Identifier of Voximplant SIP registration that is used for outbound call.
-     */
-    regId: number;
-    /**
-     * Answering machine or voicemail detector.
-     */
-    amd?: AMD.AnsweringMachineDetector;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Starts an outbound call to the external SIP system or to another user of the same application. Supported codecs are: [G.722](https://www.itu.int/rec/T-REC-G.722), [G.711 (u-law and a-law)](https://www.itu.int/rec/T-REC-G.711), [Opus](http://opus-codec.org/), [ILBC](https://webrtc.org/license/ilbc-freeware/), [H.264](https://www.itu.int/rec/T-REC-H.264), [VP8](https://tools.ietf.org/html/rfc6386). The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
+   * Starts an outgoing call to the external SIP system or to another user of the same application. Supported codecs are: [G.722](https://www.itu.int/rec/T-REC-G.722), [G.711 (u-law and a-law)](https://www.itu.int/rec/T-REC-G.711), [Opus](https://opus-codec.org/), [ILBC](https://webrtc.org/license/ilbc-freeware/), [H.264](https://www.itu.int/rec/T-REC-H.264), [VP8](https://tools.ietf.org/html/rfc6386). The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param to SIP URI to make a call to. Example of an external call: **sip:alice@example.org**. Examples with TLS usage: **sips:alice@example.org:5061** ; **alice@example.org:5061;transport=tls**. The format for calls to another user of the same Voximplant application: user-of-the-application@application.account.voximplant.com
    * @param parameters Object with callSIP parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively.
    * @param scheme Internal information about codecs from the AppEvents.CallAlerting event.
    */
-  function callSIP(to: string, parameters: VoxEngine.CallSIPParameters): Call;
+  function callSIP(to: string, parameters: CallSIPParameters): Call;
 }
 
 declare namespace VoxEngine {
   /**
-   * Parameters for the VoxEngine.callUserDirect method
-   */
-  interface CallUserDirectParameters {
-    /**
-     * CallerID to display to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback. IMPORTANT: test numbers rented from Voximplant cannot be used as CallerIDs, use only real numbers.
-     */
-    callerid: string;
-    /**
-     * Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
-     */
-    displayName: string;
-    /**
-     * Send custom tags along with the push notification of an inbound call.
-     */
-    analyticsLabel: string;
-    /**
-     * Optional custom parameters (SIP headers) to be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-     */
-    extraHeaders?: { [header: string]: string };
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Start an outbound call to the specified Voximplant user in peer-to-peer mode.
+   * Start an outgoing call to the specified Voximplant user in peer-to-peer mode.
    * The JavaScript scenario with this method and the destination user should be both within the same Voximplant application.
    * Audio playback and recording does not work. P2P mode is available only for calls between SDKs.
-   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. **IMPORTANT**: calling this method makes impossible to use the non-P2P mode for a new call and specified inboundCall.
+   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. **IMPORTANT**: calling this method makes impossible to use the non-P2P mode for a new call and specified incomingCall.
    * So the following methods cannot be used: [Call.say], [Call.sendDigits], [Call.sendMediaTo], [Call.stopMediaTo].
-   * @param incomingCall Inbound call that needs to be forwarded
+   * @param incomingCall incoming call that needs to be forwarded
    * @param username Name of the Voximplant user to call
    * @param parameters Object with callUserDirect parameters ("callerid", "displayName", "analyticsLabel" and "extraHeaders")
    */
   function callUserDirect(
     incomingCall: Call,
     username: string,
-    parameters: VoxEngine.CallUserDirectParameters
+    parameters: CallUserDirectParameters
   ): Call;
 }
 
 declare namespace VoxEngine {
-  interface CallUserParameters extends CallParameters {
-    /**
-     * Name of the Voximplant user to call
-     */
-    username: string;
-    /**
-     * CallerID to display to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback. IMPORTANT: test numbers rented from Voximplant cannot be used as CallerID, use only real numbers.
-     */
-    callerid: string;
-    /**
-     * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-     */
-    extraHeaders?: { [header: string]: string };
-    /**
-     * Whether the call has video support. Optional. Please note that prices for audio-only and video calls are different!
-     */
-    video?: boolean;
-    /**
-     * Whether to send an RTP extension header to communicate video orientation information (`a=extmap:12 urn:3gpp:video-orientation`). If false, browsers that do not support that extension are correctly displaying video; however, the battery consumption is higher. The default value is true.
-     */
-    videoOrientationExtension?: boolean;
-    /**
-     * Sends custom tags along with the push notification of an inbound call.
-     */
-    analyticsLabel?: string;
-    /**
-     * Answering machine or voicemail detector.
-     */
-    amd?: AMD.AnsweringMachineDetector;
-  }
-}
-
-declare namespace VoxEngine {
   /**
-   * Starts an outbound call to the specified Voximplant user. The JavaScript scenario that uses this method and user being called should be both associated with the same Voximplant application.
+   * Starts an outgoing call to the specified Voximplant user. The JavaScript scenario that uses this method and user being called should be both associated with the same Voximplant application.
    * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param parameters Object with callUser parameters.
    */
-  function callUser(parameters: VoxEngine.CallUserParameters): Call;
-}
-
-declare namespace VoxEngine {
-  /**
-   * Parameters object for the callConference method
-   */
-  interface ConferenceParameters {
-    /**
-     * Whether the audio is high definition. If set to false (default), audio stream has the frequency of 8 KHz. Otherwise, audio stream has the frequency of 48 KHz. Please note that default audio mode costs nothing while the high definition audio is billed additionally - for more details see the pricing page
-     */
-    hd_audio: boolean;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * [ConferenceRecorder] parameters. The parameters can be passed as arguments to the [VoxEngine.createRecorder] method.
-   */
-  interface ConferenceRecorderParameters extends BaseRecorderParameters {
-    /**
-     * Video options for [ConferenceRecorder] parameters.
-     */
-    videoopt: VideoOpt;
-  }
+  function callUser(parameters: CallUserParameters): Call;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a new speech recognizer and starts recognition. Sources can later be attached via the [Call.sendMediaTo] method etc.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.ASR);
    * ```
-   * @param param ASR parameters. IMPORTANT: the **profile** parameter is required, the other parameters are optional.
+   * @param parameters ASR parameters. IMPORTANT: the **profile** parameter is required, the other parameters are optional.
    */
-  function createASR(param: ASRParameters): ASR;
+  function createASR(parameters: ASRParameters): ASR;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a new conference.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.Conference);
    * ```
-   * @param params
+   * @param parameters
    */
-  function createConference(params: ConferenceParameters): Conference;
+  function createConference(parameters: ConferenceParameters): Conference;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a new audio recorder. Sources can later be attached via the [Call.sendMediaTo] method.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.Recorder);
    * ```
-   * @param options Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to 'false'.
+   * @param parameters Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to 'false'.
    */
-  function createRecorder(options?: VoxEngine.RecorderParameters): Recorder | ConferenceRecorder;
+  function createRecorder(parameters?: RecorderParameters): Recorder | ConferenceRecorder;
+}
+
+declare namespace VoxEngine {
+  /**
+   * Creates a new sequence player instance.
+   * @param parameters [SequencePlayer] parameters: segments,etc.
+   **/
+  function createSequencePlayer(parameters: SequencePlayerParameters): SequencePlayer;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a streaming object. Sources can later be attached via the [Call.sendMediaTo] method.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.StreamingAgent);
    * ```
-   * @param options Object with streaming parameters.
+   * @param parameters Object with streaming parameters.
    */
-  function createStreamingAgent(options: StreamingAgentSettings): StreamingAgent;
+  function createStreamingAgent(parameters: StreamingAgentParameters): StreamingAgent;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a new audio player with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. Media streams can later be attached via the [Call.sendMediaTo] method etc.
    * @param script ToneScript string
-   * @param toneScriptPlayerOptions Parameters for ToneScript: loop, progressivePlayback, etc.
+   * @param parameters Parameters for ToneScript: loop, progressivePlayback, etc.
    **/
-  function createToneScriptPlayer(
-    script: string,
-    toneScriptPlayerOptions: VoxEngine.ToneScriptPlayerOptions
-  ): Player;
+  function createToneScriptPlayer(script: string, parameters: ToneScriptPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
@@ -14457,33 +15747,34 @@ declare namespace VoxEngine {
    * Creates a new audio player with specified text; TTS is used to play this text. Media streams can later be attached via the [Call.sendMediaTo]  method etc.
    * If the text length exceeds 1500 characters, the [PlayerEvents.PlaybackFinished] event is triggered with error description. After the very first playing, a phrase is cached; each createTTSPlayer instance stores the cache data up to 2 weeks. Note that cache addresses only the URL, without additional headers. The cached phrase is available for all applications and further sessions.
    * @param text Text to synthesize
-   * @param ttsPlayerOptions Parameters for TTS: language, progressive playback, volume, rate, etc.
+   * @param parameters Optional [Player] parameters: language, progressivePlayback, volume, rate, etc.
    **/
-  function createTTSPlayer(text: string, ttsPlayerOptions: VoxEngine.TTSPlayerOptions): Player;
+  function createTTSPlayer(text: string, parameters: TTSPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a new audio player with specified audio file URL.
-   *
+   * <br>
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
    * Note that cache addresses only the URL, without additional headers.
    * The cached file is available for all applications and further sessions.
-   *
+   * <br>
    * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.
-   *
+   * <br>
    * Media streams can later be attached via the [Call.sendMediaTo]
-   * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new inbound stream always replaces the previous one.
+   * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param url Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
-   * @param urlPlayerOptions Optional parameters: progressive playback, loop, onPause, etc.
+   * @param parameters Optional [Player] parameters: progressivePlayback, loop, onPause, etc.
    **/
-  function createURLPlayer(url: string, urlPlayerOptions?: VoxEngine.URLPlayerOptions): Player;
+  function createURLPlayer(url: string, parameters?: URLPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
    * Creates a WebSocket object. Sources can later be attached via the [Call.sendMediaTo] method.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.WebSocket);
@@ -14499,52 +15790,29 @@ declare namespace VoxEngine {
    * Set or get custom string associated with current JavaScript session.
    * There are two kinds of the customData values: one is for JavaScript session (i.e., VoxEngine object), another is for the particular call (i.e., Call.customData and web SDK parameter of the method).
    * It is possible to use them at the same time because they are independent entities. Remember that if you receive some value from web SDK, it does not overwrite the VoxEngine's value. Any of customData's type values can be later obtained from call history via management API or control panel.
-   * @param cData Custom session data to set. Maximum size is 200 bytes.
+   * @param customData Custom session data to set. Maximum size is 200 bytes.
    */
-  function customData(cData?: string): string | undefined;
+  function customData(customData?: string): string;
 }
 
 declare namespace VoxEngine {
   /**
    * Destroys an existing conference.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.Conference);
    * ```
-   * @param conf
+   * @param conference
    */
-  function destroyConference(conf: Conference): void;
-}
-
-declare namespace VoxEngine {
-  /**
-   * The DTMF type.
-   */
-  enum DTMFType {
-    /**
-     * All types of DTMF tones trigger the CallEvents.ToneReceived event: in-band , RFC 2833 and SIP INFO. Receiving a RFC 2833 tone disables processing of in-band tones to avoid duplicating
-     */
-    ALL,
-    /**
-     * Only RFC 2833 DTMF tones trigger the CallEvents.ToneReceived event
-     */
-    TELEPHONE_EVENT,
-    /**
-     * Only in-band DTMF tones trigger the CallEvents.ToneReceived event
-     */
-    IN_BAND,
-    /**
-     * Only SIP INFO DTMF tones trigger the CallEvents.ToneReceived event
-     */
-    SIP_INFO,
-  }
+  function destroyConference(conference: Conference): void;
 }
 
 declare namespace VoxEngine {
   /**
    * Adds all default event listeners to pass signaling information between two calls. The source code of the method is available on [GitHub](https://github.com/voximplant/easyprocess).
-   * @param call1 Inbound alerting call
-   * @param call2 Newly created outbound call
+   * @param call1 incoming alerting call
+   * @param call2 Newly created outgoing call
    * @param onEstablishedCallback Function to be called once the call is established. Both call1 and call2 are passed to this function as parameters
    * @param direct Whether the call is in the P2P mode. It is The default value is false.
    */
@@ -14559,33 +15827,34 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Adds a new request to the specified queue. The request is dispatched to the free agent according to the agent's status (must be "Ready") and skills.
+   * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.ACD);
    * ```
    * @param queueName The name of the queue, to where the call is directed. Queue name must be specified exactly as in the control panel
    * @param callerid ID of the caller which is put to the queue. After request is dispatched to the agent, it is possible to get this ID by assigning a handler to the ACDEvents.OperatorReached event. The call is stored in the operatorCall property, so you can use the Call.callerid() method. IMPORTANT: virtual numbers rented from Voximplant cannot be used as CallerID, use only real numbers.
-   * @param params Object with extra parameters.
+   * @param parameters Object with extra parameters.
    */
   function enqueueACDRequest(
     queueName: string,
     callerid: string,
-    params?: ACDEnqueueParams
+    parameters?: ACDEnqueueParameters
   ): ACDRequest;
 }
 
 declare namespace VoxEngine {
   /**
-   * Puts the task to a queue
+   * Appends the task to the SmartQueue.
    */
-  function enqueueTask(settings: SmartQueueTaskSettings): SmartQueueTask;
+  function enqueueTask(parameters: SmartQueueTaskParameters): SmartQueueTask;
 }
 
 declare namespace VoxEngine {
   /**
-   * Helper function to forward an inbound call to PSTN. The method handles numbers only in the E.164 format by default. If you need to handle a number in another format, pass an additional function (as a parameter) to the method. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
+   * Helper function to forward an incoming call to PSTN. The method handles numbers only in the E.164 format by default. If you need to handle a number in another format, pass an additional function (as a parameter) to the method. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
    * @param numberTransform Optional function used to transform dialed number to international format. This function accepts dialed number and returns phone number in E.164 format
-   * @param onEstablishedCallback Optional function that is invoked after a call is established. Both calls (inbound and outbound) are passed to this function
+   * @param onEstablishedCallback Optional function that is invoked after a call is established. Both calls (incoming and outgoing) are passed to this function
    * @param options An object with a number used as the callerid that is displayed to the callee. Whitespaces are not allowed. A valid phone number that can be used to call back if required.
    */
   function forwardCallToPSTN(
@@ -14597,8 +15866,8 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Helper function to forward an inbound call to a dialed SIP URI. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (inbound and outbound) are passed to this function
+   * Helper function to forward an incoming call to a dialed SIP URI. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
+   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    * @param video Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
   function forwardCallToSIP(
@@ -14609,8 +15878,8 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Helper function to forward an inbound call to a user of the current application in the P2P mode. Dialed number is considered as username. Due to the P2P mode, media player and recording do not work. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (inbound and outbound) are passed to this function
+   * Helper function to forward an incoming call to a user of the current application in the P2P mode. Dialed number is considered as username. Due to the P2P mode, media player and recording do not work. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
+   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    */
   function forwardCallToUserDirect(
     onEstablishedCallback?: (call1: Call, call2: Call) => void
@@ -14619,8 +15888,8 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Helper function to forward an inbound call to a user of the current application. Dialed number is considered as username. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (inbound and outbound) are passed to this function
+   * Helper function to forward an incoming call to a user of the current application. Dialed number is considered as username. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
+   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    * @param video Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
   function forwardCallToUser(
@@ -14631,50 +15900,13 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Helper function to play sound to inbound call. It terminates a call in three cases:
+   * Helper function to play sound to incoming call. It terminates a call in three cases:
    * 1) playback is finished
    * 2) call failed
    * 3) call disconnected
    * @param fileURL URL of audio (mp3) file to play
    */
   function playSoundAndHangup(fileURL: string): void;
-}
-
-declare namespace VoxEngine {
-  /**
-   * List of available values for the [RecorderParameters.expire](/docs/references/voxengine/voxengine/recorderparameters#expire) parameter.
-   */
-  enum RecordExpireTime {
-    DEFAULT = '',
-    SIXMONTHS = '-6m',
-    ONEYEAR = '-1y',
-    TWOYEARS = '-2y',
-    THREEYEARS = '-3y',
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * [Recorder] parameters. The parameters can be passed as arguments to the [VoxEngine.createRecorder] method.
-   */
-  interface RecorderParameters extends ConferenceRecorderParameters {
-    /**
-     * Name of the recorder for the call history.
-     */
-    name?: string;
-    /**
-     * Speech recognition provider.
-     */
-    provider?:
-      | ASRProfileList.Amazon
-      | ASRProfileList.Deepgram
-      | ASRProfileList.Google
-      | ASRProfileList.Microsoft
-      | ASRProfileList.SaluteSpeech
-      | ASRProfileList.Tinkoff
-      | ASRProfileList.Yandex
-      | ASRProfileList.YandexV3;
-  }
 }
 
 declare namespace VoxEngine {
@@ -14691,30 +15923,6 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Options of the [Call.say] method.
-   */
-  interface SayOptions {
-    /**
-     * Language and voice for TTS. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex], and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    language?: Voice;
-    /**
-     * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    progressivePlayback?: boolean;
-    /**
-     * Optional parameters for TTS. Note that support of the [VoxEngine.TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    ttsOptions?: VoxEngine.TTSOptions;
-    /**
-     * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="https://voximplant.com/docs/guides/speech/tts#passing-parameters-directly-to-the-provider">documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
-     */
-    request?: Object;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
    * Start sending media between mediaUnit1 and mediaUnit2. This method binds two audio/video streams.
    * @param mediaUnit1 First media unit
    * @param mediaUnit2 Second media unit
@@ -14722,20 +15930,14 @@ declare namespace VoxEngine {
   function sendMediaBetween(mediaUnit1: VoxMediaUnit, mediaUnit2: VoxMediaUnit): void;
 }
 
-declare namespace VoxEngine {
+/**
+ * [SequencePlayer] parameters. Can be passed as arguments to the [VoxEngine.createSequencePlayer] method.
+ */
+declare interface SequencePlayerParameters {
   /**
-   * Options for the [Call.startPlayback] method.
+   * Array of the segments.
    */
-  interface StartPlaybackOptions {
-    /*l
-     * Whether to loop playback.
-     */
-    loop?: boolean;
-    /**
-     * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
-     */
-    progressivePlayback?: boolean;
-  }
+  segments: SequencePlayerSegment[];
 }
 
 declare namespace VoxEngine {
@@ -14752,307 +15954,6 @@ declare namespace VoxEngine {
    * Terminates the current JavaScript session. All audio/video streams are disconnected and scenario execution stops. Note that after this function, only the [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered.
    */
   function terminate(): void;
-}
-
-declare namespace VoxEngine {
-  /**
-   * Options for the [VoxEngine.createToneScriptPlayer] method.
-   */
-  interface ToneScriptPlayerOptions {
-    /**
-     * Whether to loop playback.
-     */
-    loop?: boolean;
-    /**
-     * Whether to use progressive playback or not. If true, the generated tone is delivered in chunks which reduces delay before a method call and playback. The default value is false.
-     */
-    progressivePlayback?: boolean;
-  }
-}
-
-declare namespace VoxEngine {
-  enum TTSEffectsProfile {
-    /**
-     * Smart watches and other wearables, like Apple Watch, Wear OS watch
-     */
-    WearableClassDevice = 'wearable-class-device',
-    /**
-     * Smartphones, like Google Pixel, Samsung Galaxy, Apple iPhone
-     */
-    HandsetClassDevice = 'handset-class-device',
-    /**
-     * Earbuds or headphones for audio playback, like Sennheiser headphones
-     */
-    HeadphoneClassDevice = 'headphone-class-device',
-    /**
-     * Small home speakers, like Google Home Mini
-     */
-    SmallBluetoothSpeakerClassDevice = 'small-bluetooth-speaker-class-device',
-    /**
-     * Smart home speakers, like Google Home
-     */
-    MediumBluetoothSpeakerClassDevice = 'medium-bluetooth-speaker-class-device',
-    /**
-     * Home entertainment systems or smart TVs, like Google Home Max, LG TV
-     */
-    LargeHomeEntertainmentClassDevice = 'large-home-entertainment-class-device',
-    /**
-     * Car speakers, home theaters
-     */
-    LargeAutomotiveClassDevice = 'large-automotive-class-device',
-    /**
-     * Interactive Voice Response (IVR) systems
-     */
-    TelephonyClassApplication = 'telephony-class-application',
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Options for text-to-speech. See the details in the <a href="//www.w3.org/TR/speech-synthesis/#S3.2.4">official specs</a>.
-   */
-  interface TTSOptions {
-    /**
-     * Voice sentiment. For Yandex voices, works only for <a href="https://voximplant.com/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
-     */
-    emotion?: string;
-    /**
-     * Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
-     */
-    pitch?: string;
-    /**
-     * Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
-     */
-    rate?: string;
-    /**
-     * Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
-     */
-    volume?: string;
-    /**
-     * An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
-     */
-    effectsProfileId?: VoxEngine.TTSEffectsProfile[];
-    /**
-     * If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
-     */
-    yandexCustomModelName?: string;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Options for the [VoxEngine.createTTSPlayer] method.
-   */
-  interface TTSPlayerOptions {
-    /**
-     * Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    language?: Voice;
-    /**
-     * Whether to use progressive playback or not. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    progressivePlayback?: boolean;
-    /**
-     * Optional parameters for TTS. Note that support of the [VoxEngine.TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-     */
-    ttsOptions?: VoxEngine.TTSOptions;
-    /**
-     * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
-     */
-    onPause?: boolean;
-    /**
-     * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="https://voximplant.com/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
-     */
-    request?: Object;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Updates the current video recorder options.
-   */
-  interface UpdateVideoOpt {
-    /**
-     * Video layout settings. If set to 'grid', all the video frames are the same size. If set to 'tribune', one active video frame is bigger than the others. If set to 'custom', you need to provide a layoutSettings option with an object specifying custom layout settings.
-     */
-    layout?: 'grid' | 'tribune' | 'custom';
-    /**
-     * If layout is set to custom, specifies custom video layout settings.
-     */
-    layoutSettings?: VoxTilerDrawArea[];
-    /**
-     * If layout is set to tribune, specifies which frame is bigger than the others. Set to 'vad' if you want the bigger frame to change to the speaking participant, or specify the participant's ID to show one person constantly.
-     */
-    layoutPriority?: 'vad' | string[];
-    /**
-     * Whether to show the participants' names on their video frames.
-     */
-    labels?: boolean;
-    /**
-     * Whether to highlight video frame of the speaking participant.
-     */
-    vad?: boolean;
-    /**
-     * HTML color code for the video file background.
-     */
-    background?: string;
-    /**
-     * Video frames' direction, left to right or right to left.
-     */
-    direction?: 'ltr' | 'rtl';
-    /**
-     * How to fill a participant's video source to the conference frame.
-     */
-    objectFit?: 'fill' | 'contain' | 'cover' | 'none';
-    /**
-     * A container to store custom data for the current recorder.
-     */
-    customData?: any;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * Options for the [VoxEngine.createURLPlayer] method.
-   */
-  interface URLPlayerOptions {
-    /**
-     * Whether to loop playback.
-     */
-    loop?: boolean;
-    /**
-     * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
-     */
-    onPause?: boolean;
-    /**
-     * Whether to use progressive playback or not. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
-     */
-    progressivePlayback?: boolean;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * An object which contains options for video recorder.
-   */
-  interface VideoOpt {
-    /**
-     * Whether to create single video file of multiple participants.
-     */
-    mixing: boolean;
-    /**
-     * Video quality profile.
-     */
-    profile?: 'nHD' | 'VGA' | 'HD' | 'FHD' | 'QHD' | '4K';
-    /**
-     * Video width in pixels.
-     */
-    width?: number;
-    /**
-     * Video height in pixels.
-     */
-    height?: number;
-    /**
-     * Video bitrate in kbps.
-     */
-    bitrate?: number;
-    /**
-     * Video frames per second.
-     */
-    fps?: number;
-    /**
-     * Video layout settings. If set to 'grid', all the video frames are the same size. If set to 'tribune', one active video frame is bigger than the others. If set to 'custom', you need to provide a layoutSettings option with an object specifying custom layout settings.
-     */
-    layout?: 'grid' | 'tribune' | 'custom';
-    /**
-     * If layout is set to custom, specifies custom video layout settings.
-     */
-    layoutSettings?: VoxTilerDrawArea[];
-    /**
-     * If layout is set to tribune, specifies which frame is bigger than the others. Set to 'vad' if you want the bigger frame to change to the speaking participant, or specify the participant's ID to show one person constantly.
-     */
-    layoutPriority?: 'vad' | string[];
-    /**
-     * Whether to show the participants' names on their video frames.
-     */
-    labels?: boolean;
-    /**
-     * Whether to highlight video frame of the speaking participant.
-     */
-    vad?: boolean;
-    /**
-     * HTML color code for the video file background.
-     */
-    background?: string;
-    /**
-     * Video frames' direction, left to right or right to left.
-     */
-    direction?: 'ltr' | 'rtl';
-    /**
-     * How to fill a participant's video source to the conference frame.
-     */
-    objectFit?: 'fill' | 'contain' | 'cover' | 'none';
-    /**
-     * A container to store custom data for the current recorder.
-     */
-    customData?: Object;
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * An object specifying video frame options.
-   */
-  interface VoxTilerDrawArea {
-    /**
-     * Video frame's priority.
-     */
-    priority: number;
-    /**
-     * Video frame's width.
-     */
-    width: number;
-    /**
-     * Video frame's height.
-     */
-    height: number;
-    /**
-     * Video frame's top margin.
-     */
-    top: number;
-    /**
-     * Video frame's left margin.
-     */
-    left: number;
-    /**
-     * The corresponding grid options object.
-     */
-    grid: VoxTilerGridDefinition[];
-  }
-}
-
-declare namespace VoxEngine {
-  /**
-   * An object specifying grid options.
-   */
-  interface VoxTilerGridDefinition {
-    /**
-     * Minimum video frames for the grid.
-     */
-    fromCount: number;
-    /**
-     * Maximum video frames for the grid.
-     */
-    toCount?: number;
-    /**
-     * Number of columns in the grid.
-     */
-    colCount: number;
-    /**
-     * Number of rows in the grid.
-     */
-    rowCount: number;
-  }
 }
 
 declare namespace VoxEngine {}
@@ -15117,12 +16018,12 @@ declare namespace VoximplantAvatar {
     handleUtterance(text: string): Promise<void>;
 
     /**
-     * Signalizes avatar, that timeout occurred for waiting for the customer input.
+     * Triggers the [AvatarState.onTimeout](/docs/references/avatarengine/avatarstate#ontimeout) callback function in the avatar scenario.
      */
     handleTimeout(): Promise<void>;
 
     /**
-     * Transfers control to the avatar so it starts a conversation. Should be called only after the [VoximplantAvatar.Events.Loaded](/docs/references/voxengine/voximplantavatar/events#loaded) event is triggered.
+     * Transfers control to the avatar, so it starts a conversation. Should be called only after the [VoximplantAvatar.Events.Loaded](/docs/references/voxengine/voximplantavatar/events#loaded) event is triggered.
      */
     start(): void;
   }
@@ -15149,7 +16050,7 @@ declare namespace VoximplantAvatar {
 declare namespace VoximplantAvatar {
   /**
    * Avatar events.
-   *
+   * <br>
    * Add the following line to your scenario code to use the events:
    * ```
    * require(Modules.Avatar);
@@ -15158,27 +16059,27 @@ declare namespace VoximplantAvatar {
    */
   enum Events {
     /**
-     * Triggers when an avatar script is loaded and ready to use.
+     * Triggered when an avatar script is loaded and ready to use.
      * @typedef _AvatarLoadedEvent
      */
     Loaded = 'AvatarEvents.Loaded',
     /**
-     * Triggers when an avatar ends a conversation with a customer.
+     * Triggered when an avatar ends a conversation with a customer.
      * @typedef _AvatarFinishEvent
      */
     Finish = 'AvatarEvents.Finish',
     /**
-     * Triggers when an avatar parses a customer's phrase. The recognized phrase can be used for debugging and logging recognition results if needed.
+     * Triggered when an avatar parses a customer's phrase. The recognized phrase can be used for debugging and logging recognition results if needed.
      * @typedef _AvatarUtteranceParsedEvent
      */
     UtteranceParsed = 'AvatarEvents.UtteranceParsed',
     /**
-     * Triggers when an avatar is ready to reply to a customer.
+     * Triggered when an avatar is ready to reply to a customer.
      * @typedef _AvatarReplyEvent
      */
     Reply = 'AvatarEvents.Reply',
     /**
-     * Triggers when an error occurs.
+     * Triggered when an error occurs.
      * @typedef _AvatarErrorEvent
      */
     Error = 'AvatarEvents.Error',
@@ -15198,30 +16099,41 @@ declare namespace VoximplantAvatar {
   /**
    * @private
    */
-  interface _AvatarLoadedEvent {}
+  interface _AvatarEvent {
+    avatar: Avatar;
+  }
 
   /**
    * @private
    */
-  interface _AvatarFinishEvent {
+  interface _AvatarLoadedEvent extends _AvatarEvent {}
+
+  /**
+   * @private
+   */
+  interface _AvatarFinishEvent extends _AvatarEvent {
     /**
      * Utterance to reply to the customer with
      */
     utterance?: string;
     /**
-     * Additional data returned from the avatar. Can be passed through the [AvatarResponseParameters.customData](/docs/references/avatarengine/avatarresponseparameters#customdata) parameter
+     * Additional data returned from the avatar. Can be passed via the [AvatarResponseParameters.customData](/docs/references/avatarengine/avatarresponseparameters#customdata) parameter
      */
     customData?: Object;
     /**
      * Current avatar state
      */
     currentState: string;
+    /**
+     * Avatar text and voice [ChannelParameters](/docs/references/avatarengine/channelparameters)
+     */
+    channelParameters?: ChannelParameters;
   }
 
   /**
    * @private
    */
-  interface _AvatarUtteranceParsedEvent {
+  interface _AvatarUtteranceParsedEvent extends _AvatarEvent {
     /**
      * Recognized phrase text
      */
@@ -15263,7 +16175,7 @@ declare namespace VoximplantAvatar {
   /**
    * @private
    */
-  interface _AvatarReplyEvent {
+  interface _AvatarReplyEvent extends _AvatarEvent {
     /**
      * Utterance to reply to the customer with
      */
@@ -15281,7 +16193,7 @@ declare namespace VoximplantAvatar {
      */
     listen?: true;
     /**
-     * Additional data returned from an avatar. Can be passed through the [AvatarResponseParameters.customData](/docs/references/avatarengine/avatarresponseparameters#customdata) parameter
+     * Additional data returned from an avatar. Can be passed via the [AvatarResponseParameters.customData](/docs/references/avatarengine/avatarresponseparameters#customdata) parameter
      */
     customData?: Object;
     /**
@@ -15296,12 +16208,16 @@ declare namespace VoximplantAvatar {
      * Optional number value that specifies how long an avatar listens to the user after saying its utterance (or during it, if interruptions are enabled)
      */
     listenTimeout?: number;
+    /**
+     * Avatar text and voice [ChannelParameters](/docs/references/avatarengine/channelparameters)
+     */
+    channelParameters?: ChannelParameters;
   }
 
   /**
    * @private
    */
-  interface _AvatarErrorEvent {
+  interface _AvatarErrorEvent extends _AvatarEvent {
     /**
      * Error description
      */
@@ -15327,25 +16243,29 @@ declare namespace VoximplantAvatar {
      */
     asrParameters: ASRParameters;
     /**
-     * TTS options
+     * Optional [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
      */
-    ttsPlayerOptions: VoxEngine.TTSPlayerOptions;
+    ttsPlayerOptions: TTSPlayerParameters;
     /**
      * End of phrase timeout in milliseconds. If the ASR is running in the interim mode, we may not wait for the final response from the ASR, but instead, take the last interim, after which there are no new ones during this timeout. It allows us to reduce the time of voice recognition. This parameter should be set individually for each ASR vendor. **1000ms** is a good default value not to interrupt the user aggressively
      */
     asrEndOfPhraseDetectorTimeout?: number;
     /**
-     * No input timeout in milliseconds. If no user input came from ASR during this period of time - then avatar is notified, that timeout occurred. Default value is 10 seconds
+     * ASR listen timeout in milliseconds. If there is no response from the customer, the [AvatarState.onTimeout](/docs/references/avatarengine/avatarstate#ontimeout) required callback function executes. You can override the global timeout via the [AvatarResponseParameters.listenTimeout](/docs/references/avatarengine/avatarresponseparameters#listentimeout) parameter for the current response. Default value is 10000 milliseconds (10 seconds)
      */
-    asrNoInputTimeout?: number;
+    defaultListenTimeout?: number;
     /**
-     * Triggers when the avatar finishes talking. Returns a dictionary with the data collected during the avatar working process
+     * Triggered when the avatar finishes talking. Returns a dictionary with the data collected during the avatar working process
      */
-    onFinishCallback?: (avatarFinishEvent: VoximplantAvatar._AvatarFinishEvent) => void | Promise<void>;
+    onFinishCallback?: (
+      avatarFinishEvent: VoximplantAvatar._AvatarFinishEvent
+    ) => void | Promise<void>;
     /**
      * Event handler that defines what happens to the call in case of internal errors of the avatar (for example, playing an error phrase or transferring the call to an agent)
      */
-    onErrorCallback?: (avatarErrorEvent: VoximplantAvatar._AvatarErrorEvent) => void | Promise<void>;
+    onErrorCallback?: (
+      avatarErrorEvent: VoximplantAvatar._AvatarErrorEvent
+    ) => void | Promise<void>;
   }
 }
 
@@ -15371,7 +16291,7 @@ declare namespace VoximplantAvatar {
      * @param callback Handler function. A single parameter is passed - object with event information
      */
     addEventListener<T extends keyof VoximplantAvatar._VoiceAvatarEvents>(
-      event: VoximplantAvatar.Events | ASREvents | PlayerEvents | T,
+      event: VoximplantAvatar.Events | ASREvents | PlayerEvents | SequencePlayerEvents | T,
       callback: (ev: VoximplantAvatar._VoiceAvatarEvents[T]) => any
     ): void;
 
@@ -15381,7 +16301,7 @@ declare namespace VoximplantAvatar {
      * @param callback Handler function
      */
     removeEventListener<T extends keyof VoximplantAvatar._VoiceAvatarEvents>(
-      event: VoximplantAvatar.Events | ASREvents | PlayerEvents | T,
+      event: VoximplantAvatar.Events | ASREvents | PlayerEvents | SequencePlayerEvents | T,
       callback: (ev: VoximplantAvatar._VoiceAvatarEvents[T]) => any
     ): void;
   }
@@ -15389,7 +16309,7 @@ declare namespace VoximplantAvatar {
 
 /**
  * Represents an ML-powered bot engine that allows your system to handle natural conversations with users.
- *
+ * <br>
  * Add the following line to your scenario code to use the ref folder:
  * ```
  * require(Modules.Avatar);
@@ -15400,11 +16320,12 @@ declare namespace VoximplantAvatar {}
 declare type VoxMediaUnit = Call | Player | Conference | Recorder | WebSocket | StreamingAgent;
 
 /**
+ * Available audio encoding formats to pass to 'encoding'. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is 'PCM8'.
+ * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.WebSocket);
  * ```
- * Available audio encoding formats to pass to 'encoding'. The default value is 'PCM8'.
  */
 declare enum WebSocketAudioEncoding {
   /**
@@ -15507,27 +16428,27 @@ declare enum WebsocketCloseCode {
  */
 declare enum WebSocketEvents {
   /**
-   * Triggers when the WebSocket connection is closed. [WebSocket.onclose] is called right before any other handlers.
+   * Triggered when the WebSocket connection is closed. [WebSocket.onclose] is called right before any other handlers.
    * @typedef _WebSocketCloseEvent
    */
   CLOSE = 'WebSocket.Close',
   /**
-   * Triggers when an error occurs during the WebSocket connection. [WebSocket.onerror] is called right before any other handlers.
+   * Triggered when an error occurs during the WebSocket connection. [WebSocket.onerror] is called right before any other handlers.
    * @typedef _WebSocketErrorEvent
    */
   ERROR = 'WebSocket.Error',
   /**
-   * Triggers when a message is received by a target object. [WebSocket.onmessage] is called right before any other handlers.
+   * Triggered when a message is received by a target object. [WebSocket.onmessage] is called right before any other handlers.
    * @typedef _WebSocketMessageEvent
    */
   MESSAGE = 'WebSocket.Message',
   /**
-   * Triggers when the WebSocket connection is opened. [WebSocket.onopen] is called right before any other handlers.
+   * Triggered when the WebSocket connection is opened. [WebSocket.onopen] is called right before any other handlers.
    * @typedef _WebSocketOpenEvent
    */
   OPEN = 'WebSocket.Open',
   /**
-   * Triggers when the audio stream sent by a third party through a WebSocket is started playing.
+   * Triggered when the audio stream sent by a third party through a WebSocket is started playing.
    * @typedef _WebSocketMediaStartedEvent
    */
   MEDIA_STARTED = 'WebSocket.MEDIA_STARTED',
@@ -15626,6 +16547,9 @@ declare interface _WebSocketMediaEndedEvent extends _WebSocketEvent {
   mediaInfo: WebSocketMediaInfo;
 }
 
+/**
+ * Information about the audio stream that can be obtained after the stream stops or pauses (1-sec silence).
+ */
 declare interface WebSocketMediaInfo {
   /**
    * Audio stream duration.
@@ -15659,7 +16583,8 @@ declare enum WebSocketReadyState {
 }
 
 /**
- * Represents a WebSocket object that provides the API for creating and managing an outbound or inbound WebSocket connection, as well as for sending and receiving data to/from it.
+ * Represents a WebSocket object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
+ * <br>
  * Add the following line to your scenario code to use the class:
  * ```
  * require(Modules.WebSocket);
@@ -15706,7 +16631,7 @@ declare class WebSocket {
   readonly readyState: WebSocketReadyState;
 
   /**
-   * Returns the absolute URL of the WebSocket. For outbound connection, it is the URL to which to connect; for inbound, it is the WebSocket session URL.
+   * Returns the absolute URL of the WebSocket. For outgoing connection, it is the URL to which to connect; for incoming, it is the WebSocket session URL.
    */
   readonly url: string;
 
@@ -15746,14 +16671,13 @@ declare class WebSocket {
   /**
    * Starts sending media with the specified parameters to the target unit. WebSocket works in real time and the recommended duration of one audio chunk is 20ms.
    * @param targetMediaUnit Media unit that receives media.
-   * @param optional Custom parameters for WebSocket interaction only.
+   * @param parameters Custom parameters for WebSocket interaction only.
    */
-  sendMediaTo(targetMediaUnit: VoxMediaUnit, optional: SendMediaOptions): void;
+  sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media with the specified parameters to the target unit.
    * @param targetMediaUnit Media unit that stops receiving media.
-   * @param optional Custom parameters for WebSocket interaction only.
    */
-  stopMediaTo(targetMediaUnit: VoxMediaUnit, optional: SendMediaOptions): void;
+  stopMediaTo(targetMediaUnit: VoxMediaUnit): void;
 }

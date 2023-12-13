@@ -30,7 +30,6 @@ npm-debug.log*
 !.yarn/cache
 
 voxfiles/**
-opensource/**
 
 bin/**/*.js
 bin/**/*.d.ts

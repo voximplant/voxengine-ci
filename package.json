@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "Apache-2.0",
   "keywords": [
@@ -78,15 +78,13 @@
     "sinon": "11.1.1",
     "ts-node": "10.2.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "bin/**/*.js",
     "bin/**/*.d.ts",
     "lib/**/*.js",
     "lib/**/*.d.ts",
-    "typings/**/*.d.ts"
+    "typings/**/*.d.ts",
+    "NOTICE"
   ],
   "bin": "bin/voxengine-ci.js",
   "packageManager": "yarn@3.2.0"

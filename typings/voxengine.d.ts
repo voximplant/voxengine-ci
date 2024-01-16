@@ -6064,7 +6064,7 @@ declare class Call {
   playProgressTone(country: string): void;
 
   /**
-   * Sends a text message to the call. See the similar methods in the Android SDKs.
+   * Sends a text message to the call.
    * @param text Message text. Maximum size is 8192 bytes according to the limits.
    */
   sendMessage(text: string): void;
@@ -7494,6 +7494,13 @@ declare class Endpoint {
 }
 
 /**
+ * Converts the date to the specified local timezone. Note that `new Date()` always returns time in the UTC+0 timezone.
+ * @param timezone Local timezone in the AREA/LOCATION format of the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+ * @param date Instance of the `Date` object.
+ */
+declare function getLocalTime(timezone: string, date: Date): Date;
+
+/**
  * Creates an array of numbers from parsing a hex string
  * @param data Hex string like "cafec0de"
  */
@@ -8016,9 +8023,9 @@ declare module Net {
      */
     postData?: string | number[];
     /**
-     * Optional request headers: ['Content-Type: text/html; charset=utf-8', 'User-Agent: YourCustomUserAgent/1.0']
+     * Optional request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
      */
-    headers?: string[];
+    headers?: { [key: string]: string };
     /**
      * Optional request parameters. They can be specified in the URL itself as well
      */
@@ -8165,7 +8172,7 @@ declare module Net {
    * @param to To address or list of addresses
    * @param title Message title
    * @param body Message body
-   * @param callback Function to be called on completion
+   * @param callback Function to be called on completion. The function receives a response object of type [SendMailResult] as a first argument
    * @param options Advanced settings
    */
   function sendMail(
@@ -15960,7 +15967,7 @@ declare namespace VoxEngine {}
 
 declare namespace VoximplantAvatar {
   /**
-   * Avatar configuration object.
+   * [Avatar](/docs/references/voxengine/voximplantavatar/avatar) configuration object. Can be passed as arguments to the [VoximplantAvatar.createAvatar] method.
    */
   interface AvatarConfig {
     /**
@@ -16227,7 +16234,7 @@ declare namespace VoximplantAvatar {
 
 declare namespace VoximplantAvatar {
   /**
-   * VoiceAvatar configuration.
+   * [VoiceAvatar](/docs/references/voxengine/voximplantavatar/voiceavatar) configuration. Can be passed as arguments to the [VoximplantAvatar.createVoiceAvatar] method.
    */
   interface VoiceAvatarConfig {
     /**
@@ -16245,7 +16252,7 @@ declare namespace VoximplantAvatar {
     /**
      * Optional [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
      */
-    ttsPlayerOptions: TTSPlayerParameters;
+    ttsPlayerParameters: TTSPlayerParameters;
     /**
      * End of phrase timeout in milliseconds. If the ASR is running in the interim mode, we may not wait for the final response from the ASR, but instead, take the last interim, after which there are no new ones during this timeout. It allows us to reduce the time of voice recognition. This parameter should be set individually for each ASR vendor. **1000ms** is a good default value not to interrupt the user aggressively
      */
@@ -16261,7 +16268,9 @@ declare namespace VoximplantAvatar {
       avatarFinishEvent: VoximplantAvatar._AvatarFinishEvent
     ) => void | Promise<void>;
     /**
-     * Event handler that defines what happens to the call in case of internal errors of the avatar (for example, playing an error phrase or transferring the call to an agent)
+     * Event handler that defines what happens to the call in case of internal errors of the avatar (for example, playing an error phrase or transferring the call to an agent).
+     * <br>
+     * NOTE: the handler ends current javascript session using the [VoxEngine.terminate] method by default
      */
     onErrorCallback?: (
       avatarErrorEvent: VoximplantAvatar._AvatarErrorEvent

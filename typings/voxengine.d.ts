@@ -935,12 +935,7 @@ declare namespace AMD {
 }
 
 /**
- * The AI module provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
- * <br>
- * Add the following line to your scenario code to use the ref folder:
- * ```
- * require(Modules.AI);
- * ```
+ * The AMD provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
  */
 declare namespace AMD {}
 
@@ -989,10 +984,6 @@ declare namespace AMD {
 
 declare namespace AMD {
   /**
-   * Add the following line to your scenario code to use the events:
-   * ```
-   * require(Modules.AI);
-   * ```
    * @event
    */
   enum Events {
@@ -6250,11 +6241,6 @@ declare namespace CallList {
 declare module CCAI {
   /**
    * Represents a CCAI Agent instance.
-   * <br>
-   * Add the following line to your scenario code to use the class:
-   * ```
-   * require(Modules.AI);
-   * ```
    */
   class Agent {
     constructor(agentId: string, region?: string);
@@ -6286,23 +6272,12 @@ declare module CCAI {
   }
 }
 
-/**
- * Add the following line to your scenario code to use the ref folder:
- * ```
- * require(Modules.AI);
- * ```
- */
 declare module CCAI {}
 
 declare module CCAI {
   module Vendor {
     /**
      * Defines the services to connect to the incoming Dialogflow conversations.
-     * <br>
-     * Add the following line to your scenario code to use the interface:
-     * ```
-     * require(Modules.AI);
-     * ```
      */
     interface ConversationProfile {
       /**
@@ -6320,11 +6295,6 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Conversation settings.
-   * <br>
-   * Add the following line to your scenario code to use the interface:
-   * ```
-   * require(Modules.AI);
-   * ```
    */
   interface ConversationSettings {
     /**
@@ -6341,11 +6311,6 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Represents a CCAI conversation instance.
-   * <br>
-   * Add the following line to your scenario code to use the class:
-   * ```
-   * require(Modules.AI);
-   * ```
    */
   class Conversation {
     constructor(settings: CCAI.ConversationSettings);
@@ -6386,11 +6351,6 @@ declare module CCAI {
   module Vendor {
     /**
      * Events allow matching intents by event name instead of the natural language input. For instance, the <event: { name: "welcome_event", parameters: { name: "Sam" } }> input can trigger a personalized welcome response. The parameter `name` may be used by the agent in the response: `"Hello #welcome_event.name! What can I do for you today?"`.
-     * <br>
-     * Add the following line to your scenario code to use the interface:
-     * ```
-     * require(Modules.AI);
-     * ```
      */
     interface EventInput {
       /**
@@ -6422,11 +6382,6 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI agents.
-     * <br>
-     * Add the following line to your scenario code to use the events:
-     * ```
-     * require(Modules.AI);
-     * ```
      * @event
      */
     enum Agent {
@@ -6466,11 +6421,6 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI conversations.
-     * <br>
-     * Add the following line to your scenario code to use the events:
-     * ```
-     * require(Modules.AI);
-     * ```
      * @event
      */
     enum Conversation {
@@ -6534,12 +6484,6 @@ declare module CCAI {
 }
 
 declare module CCAI {
-  /**
-   * Add the following line to your scenario code to use the ref folder:
-   * ```
-   * require(Modules.AI);
-   * ```
-   */
   module Events {}
 }
 
@@ -6547,11 +6491,6 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI participants.
-     * <br>
-     * Add the following line to your scenario code to use the events:
-     * ```
-     * require(Modules.AI);
-     * ```
      * @event
      */
     enum Participant {
@@ -6634,11 +6573,6 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Participant settings.
-   * <br>
-   * Add the following line to your scenario code to use the interface:
-   * ```
-   * require(Modules.AI);
-   * ```
    */
   interface ParticipantSettings {
     /**
@@ -6659,11 +6593,6 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Represents a CCAI participant instance.
-   * <br>
-   * Add the following line to your scenario code to use the class:
-   * ```
-   * require(Modules.AI);
-   * ```
    */
   class Participant {
     /**
@@ -6722,11 +6651,6 @@ declare module CCAI {
   module Vendor {
     /**
      * Represents a single side of the conversation.
-     * <br>
-     * Add the following line to your scenario code to use the interface:
-     * ```
-     * require(Modules.AI);
-     * ```
      */
     interface Participant {
       /**
@@ -6754,7 +6678,6 @@ declare module CCAI {
        * * The length of the user id must be <= 256 characters.
        */
       obfuscated_external_user_id?: string;
-
       /**
        * Optional. Key-value filters on the metadata of documents returned by article suggestion. If specified, article suggestion only returns suggested documents that match all filters in their Document.metadata. Multiple values for a metadata key should be concatenated by a comma. For example, filters to match all documents that have 'US' or 'CA' in their market metadata values and 'agent' in their user metadata values are documents_metadata_filters { key: "market" value: "US,CA" } documents_metadata_filters { key: "user" value: "agent" }
        */
@@ -6767,11 +6690,6 @@ declare module CCAI {
   module Vendor {
     /**
      * Enumeration of the roles a participant can play in a conversation.
-     * <br>
-     * Add the following line to your scenario code to use the interface:
-     * ```
-     * require(Modules.AI);
-     * ```
      */
     enum Role {
       /**
@@ -6794,11 +6712,6 @@ declare module CCAI {
   module Vendor {
     /**
      * Represents the natural language text to be processed.
-     * <br>
-     * Add the following line to your scenario code to use the interface:
-     * ```
-     * require(Modules.AI);
-     * ```
      */
     interface TextInput {
       /**
@@ -6818,12 +6731,6 @@ declare module CCAI {
 }
 
 declare module CCAI {
-  /**
-   * Add the following line to your scenario code to use the ref folder:
-   * ```
-   * require(Modules.AI);
-   * ```
-   */
   module Vendor {}
 }
 
@@ -7634,11 +7541,6 @@ declare class IVRState {
 
 /**
  * Count the number of deletions, insertions, or substitutions required to transform str1 into str2. The number shows a measure of the similarity between two strings. It is also known as edit distance.
- * <br>
- * Add the following line to your scenario code to use the function:
- * ```
- * require(Modules.AI);
- * ```
  * @param str1 First string
  * @param str2 Second string
  */
@@ -7889,7 +7791,7 @@ declare enum Modules {
    */
   ACD,
   /**
-   * Provides features that use artificial intelligence, such as [voicemail detection](/docs/guides/calls/voicemail).
+   * Provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
    * <br>
    * Add the following line to your scenario code to use the module:
    * ```
@@ -7989,15 +7891,6 @@ declare enum Modules {
    * ```
    */
   StreamingAgent,
-  /**
-   * Provides the [WebSocket connection](/docs/guides/voxengine/websocket) functionality.
-   * <br>
-   * Add the following line to your scenario code to use the module:
-   * ```
-   * require(Modules.WebSocket);
-   * ```
-   */
-  WebSocket,
 }
 
 declare module Net {
@@ -15601,11 +15494,6 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Allows accepting incoming connections to ensure WebSocket bidirectional exchange.
-   * <br>
-   * Add the following line to your scenario code to use the function:
-   * ```
-   * require(Modules.WebSocket);
-   * ```
    */
   function allowWebSocketConnections(): void;
 }
@@ -15781,11 +15669,6 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Creates a WebSocket object. Sources can later be attached via the [Call.sendMediaTo] method.
-   * <br>
-   * Add the following line to your scenario code to use the function:
-   * ```
-   * require(Modules.WebSocket);
-   * ```
    * @param url URL to which to connect (wss:// + domain + path).
    * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'.
    */
@@ -16330,11 +16213,6 @@ declare type VoxMediaUnit = Call | Player | Conference | Recorder | WebSocket | 
 
 /**
  * Available audio encoding formats to pass to 'encoding'. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is 'PCM8'.
- * <br>
- * Add the following line to your scenario code to use the enum:
- * ```
- * require(Modules.WebSocket);
- * ```
  */
 declare enum WebSocketAudioEncoding {
   /**
@@ -16359,12 +16237,6 @@ declare enum WebSocketAudioEncoding {
   OPUS,
 }
 
-/**
- * Add the following line to your scenario code to use the enum:
- * ```
- * require(Modules.WebSocket);
- * ```
- */
 declare enum WebsocketCloseCode {
   /**
    * Normal connection closure.
@@ -16429,10 +16301,6 @@ declare enum WebsocketCloseCode {
 }
 
 /**
- * Add the following line to your scenario code to use the events:
- * ```
- * require(Modules.WebSocket);
- * ```
  * @event
  */
 declare enum WebSocketEvents {
@@ -16566,12 +16434,6 @@ declare interface WebSocketMediaInfo {
   duration: number;
 }
 
-/**
- * Add the following line to your scenario code to use the enum:
- * ```
- * require(Modules.WebSocket);
- * ```
- */
 declare enum WebSocketReadyState {
   /**
    * Connection is closed or cannot be opened.
@@ -16593,11 +16455,6 @@ declare enum WebSocketReadyState {
 
 /**
  * Represents a WebSocket object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
- * <br>
- * Add the following line to your scenario code to use the class:
- * ```
- * require(Modules.WebSocket);
- * ```
  * @param url URL to connect (wss:// + domain + path).
  * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'.
  */

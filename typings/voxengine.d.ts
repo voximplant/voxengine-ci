@@ -1081,6 +1081,10 @@ declare namespace AMD {
      * Peru
      */
     PE = 'pe',
+    /**
+     * United States
+     */
+    US = 'us',
   }
 }
 
@@ -2183,344 +2187,6 @@ declare enum ASRLanguage {
   URDU_IN = 'ur-IN',
 }
 
-declare module ASRModelList {
-  /**
-   * List of Amazon Polly models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Amazon {
-    /**
-     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
-     * @const
-     */
-    default,
-  }
-}
-
-/**
- * List of available ASR models.
- * <br>
- * Add the following line to your scenario code to use the ref folder:
- * ```
- * require(Modules.ASR);
- * ```
- * @namespace
- */
-declare module ASRModelList {}
-
-declare module ASRModelList {
-  /**
-   * List of Deepgram models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Deepgram {
-    /**
-     * The default **General** model.
-     * @const
-     */
-    default,
-    /**
-     * Optimized for everyday audio processing.
-     * @const
-     */
-    general,
-    /**
-     * Optimized for everyday audio processing. Applies the newest ASR module with higher accuracy.
-     */
-    general_enhanced,
-    /**
-     * Optimized for conference room settings, which include multiple speakers with a single microphone.
-     * @const
-     */
-    meeting,
-    /**
-     * Optimized for conference room settings, which include multiple speakers with a single microphone. Applies the newest ASR module with higher accuracy.
-     * @const
-     */
-    meeting_enhanced,
-    /**
-     * Optimized for low-bandwidth audio phone calls.
-     * @const
-     */
-    phonecall,
-    /**
-     * Optimized for low-bandwidth audio phone calls. Applies the newest ASR module with higher accuracy.
-     * @const
-     */
-    phonecall_enhanced,
-    /**
-     * Optimized for low-bandwidth audio clips with a single speaker. Derived from the phonecall model.
-     * @const
-     */
-    voicemail,
-    /**
-     * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented.
-     * @const
-     */
-    finance,
-    /**
-     * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented. Applies the newest ASR module with higher accuracy.
-     * @const
-     */
-    finance_enhanced,
-    /**
-     * Optimized to allow artificial intelligence technologies, such as chatbots, to interact with people in a human-like way.
-     * @const
-     */
-    conversational,
-    /**
-     * Optimized for audio sourced from videos.
-     * @const
-     */
-    video,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of Google Speech-to-Text models. The **enhanced** models cost more than the standard rate.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Google {
-    /**
-     * Best for audio that is not one of the specific audio models. For example, long-form audio. Ideally the audio is high-fidelity, recorded at a 16khz or greater sampling rate.
-     * @const
-     */
-    default,
-
-    /**
-     * **Default** model with more accurate recognition.
-     * @const
-     */
-    default_enhanced,
-
-    /**
-     * Best for short queries such as voice commands or voice search.
-     * @const
-     */
-    command_and_search,
-
-    /**
-     * **Command_and_search** model with more accurate recognition.
-     * @const
-     */
-    command_and_search_enhanced,
-
-    /**
-     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
-     * @const
-     */
-    phone_call,
-
-    /**
-     * **Phone_call** model with more accurate recognition.
-     * @const
-     */
-    phone_call_enhanced,
-
-    /**
-     * Best for audio that originated from video or includes multiple speakers. Ideally the audio is recorded at a 16khz or greater sampling rate.
-     * @const
-     */
-    video,
-
-    /**
-     * **Video** model with more accurate recognition.
-     * @const
-     */
-    video_enhanced,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of Microsoft Speech-to-text models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Microsoft {
-    /**
-     * Best for generic, day-to-day language and if there is little or no background noise.
-     * @const
-     */
-    default,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of SaluteSpeech models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum SaluteSpeech {
-    /**
-     * The default **General** model.
-     * @const
-     */
-    default,
-    /**
-     * Short arbitrary phrases, e.g., search queries.
-     * @const
-     */
-    general,
-    /**
-     * The model for media usage.
-     * @const
-     */
-    media,
-    /**
-     * The model to use in a call center.
-     * @const
-     */
-    callcenter,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of Tinkoff VoiceKit models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Tinkoff {
-    /**
-     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
-     * @const
-     */
-    default,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of Yandex SpeechKit models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Yandex {
-    /**
-     * The default **General** model.
-     * @const
-     */
-    default,
-    /**
-     * Addresses, organizations, and geographical features.
-     * @const
-     */
-    maps,
-    /**
-     * Short arbitrary phrases, e.g., search queries.
-     * @const
-     */
-    general,
-    /**
-     * Short arbitrary phrases, e.g., search queries. Release candidate version.
-     * @const
-     */
-    generalrc,
-    /**
-     * Cardinal numbers and delimiters (comma, period).
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    numbers,
-    /**
-     * Month names, cardinal and ordinal numbers.
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    dates,
-    /**
-     * People's first and last names, as well as requests to put someone on the phone.
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    names,
-  }
-}
-
-declare module ASRModelList {
-  /**
-   * List of YandexV3 SpeechKit models.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum YandexV3 {
-    /**
-     * The default **General** model.
-     * @const
-     */
-    default,
-    /**
-     * Addresses, organizations, and geographical features.
-     * @const
-     */
-    maps,
-    /**
-     * Short arbitrary phrases, e.g., search queries.
-     * @const
-     */
-    general,
-    /**
-     * Short arbitrary phrases, e.g., search queries. Release candidate version.
-     * @const
-     */
-    generalrc,
-    /**
-     * Cardinal numbers and delimiters (comma, period).
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    numbers,
-    /**
-     * Month names, cardinal and ordinal numbers.
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    dates,
-    /**
-     * People's first and last names, as well as requests to put someone on the phone.
-     * <br>
-     * Supported by [ASRProfileList.Yandex.ru_RU] only.
-     * @const
-     */
-    names,
-  }
-}
-
 /**
  * List of available models for ASR.
  * <br>
@@ -2560,2420 +2226,6 @@ declare enum ASRModel {
    * @deprecated For [ASRParameters] 'model' parameter use [ASRModelList] instead.
    */
   DEFAULT = 'default',
-}
-
-/**
- * [ASR] parameters. Can be passed as arguments to the [VoxEngine.createASR] method.
- * <br>
- * Add the following line to your scenario code to use the interface:
- * ```
- * require(Modules.ASR);
- * ```
- */
-declare interface ASRParameters {
-  /**
-   * Profile that specifies an ASR provider and a language to use.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
-   */
-  profile:
-    | ASRProfileList.Amazon
-    | ASRProfileList.Deepgram
-    | ASRProfileList.Google
-    | ASRProfileList.Microsoft
-    | ASRProfileList.SaluteSpeech
-    | ASRProfileList.Tinkoff
-    | ASRProfileList.Yandex
-    | ASRProfileList.YandexV3;
-
-  /**
-   * Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
-   */
-  model?:
-    | ASRModelList.Amazon
-    | ASRModelList.Deepgram
-    | ASRModelList.Google
-    | ASRModelList.Microsoft
-    | ASRModelList.SaluteSpeech
-    | ASRModelList.Tinkoff
-    | ASRModelList.Yandex
-    | ASRModelList.YandexV3;
-
-  /**
-   * Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-   */
-  interimResults?: boolean;
-
-  /**
-   * Whether to enable single utterance. The default value is **false**, so:
-   * <br>
-   * 1) if the speech is shorter than 60 sec, [ASREvents.Result] is triggered in unpredictable time. You could mute the mic when the speech is over - this increases the probability of [ASREvents.Result] catching;
-   * <br>
-   * 2) if the speech is longer than 60 sec, [ASREvents.Result] is triggered each 60 seconds.
-   * <br>
-   * If it is **true**, the [ASREvents.Result] is triggered after every utterance.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-   * <br>
-   * *Note: for the SaluteSpeech provider the default value is **true**.*
-   */
-  singleUtterance?: boolean;
-
-  /**
-   * Preferable words to recognize. Note that **phraseHints** do not limit the recognition to the specific list. Instead, words in the specified list has a higher chance to be selected.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   */
-  phraseHints?: string[];
-
-  /**
-   * Whether to enable profanity filter. The default value is **false**.
-   * <br>
-   * If set to **true**, the server attempts to filter out profanities, replacing all but the initial character in each filtered word with asterisks, e.g. "f***". If set to **false** or omitted, profanities are not filtered out.
-   * <br>
-   * <br>
-   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
-   */
-  profanityFilter?: boolean;
-
-  /**
-   * Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  beta?: boolean;
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * The recognition result contains a [_ASRResultEvent.channelTag] field to state which channel that result belongs to. If set to **false** or omitted, only the first channel is recognized.
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  enableSeparateRecognitionPerChannel?: boolean;
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * A list of up to 3 additional BCP-47 language tags, listing possible alternative languages of the supplied audio. See [Language Support](https://cloud.google.com/speech-to-text/docs/languages) for a list of the currently supported language codes.
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  alternativeLanguageCodes?: string[];
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * If set to **true**, the top result includes a list of words and the start and end time offsets (timestamps) for those words. If set to **false** or omitted, no word-level time offset information is returned. The default value is **false**.
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  enableWordTimeOffsets?: boolean;
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * If set to **true**, the top result includes a list of words and the confidence for those words. If set to **false** or omitted, no word-level confidence information is returned. The default value is **false**.
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  enableWordConfidence?: boolean;
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * If set to **true**, adds punctuation to recognition result hypotheses. This feature is only available in select languages. Setting this for requests in other languages has no effect at all. The **false** value does not add punctuation to result hypotheses. The default value is **false**.
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  enableAutomaticPunctuation?: boolean;
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * Config to enable speaker diarization and set additional parameters to make diarization better suited for your application.
-   * <br>
-   * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#SpeakerDiarizationConfig).
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  diarizationConfig?: {
-    /**
-     * If set to **true**, enables speaker detection for each recognized word in the top alternative of the recognition result.
-     */
-    enableSpeakerDiarization: boolean;
-  };
-
-  /**
-   * v1p1beta1 Speech API feature.
-   * <br>
-   * Metadata regarding this request.
-   * <br>
-   * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#RecognitionMetadata).
-   * <br>
-   * Requires the **beta** parameter set to **true**.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  metadata?: {
-    /**
-     * The audio type that most closely describes the audio being recognized. Possible values are: **MICROPHONE_DISTANCE_UNSPECIFIED**, **NEARFIELD**, **MIDFIELD**, **FARFIELD**.
-     */
-    microphoneDistance: string;
-  };
-
-  /**
-   * Increase the recognition model bias by assigning more weight to some phrases than others. **Phrases** is the word array, **boost** is the weight in the range of 1..20.
-   * <br>
-   * <br>
-   * *Available for providers: Google.*
-   * @beta
-   */
-  speechContexts?: {
-    phrases: string[];
-    boost: number;
-  };
-
-  /**
-   * Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
-   * <br>
-   * <br>
-   * *Available for providers: Deepgram, Google, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
-   */
-  request?: Object;
-}
-
-declare module ASRProfileList {
-  /**
-   * List of Amazon Polly profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Amazon {
-    /**
-     * English (United Kingdom)
-     * @const
-     */
-    en_GB,
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-    /**
-     * Spanish (United States)
-     * @const
-     */
-    es_US,
-    /**
-     * French (Canada)
-     * @const
-     */
-    fr_CA,
-    /**
-     * French (France)
-     * @const
-     */
-    fr_FR,
-  }
-}
-
-/**
- * List of available ASR profiles.
- * <br>
- * Add the following line to your scenario code to use the ref folder:
- * ```
- * require(Modules.ASR);
- * ```
- * @namespace
- */
-declare module ASRProfileList {}
-
-declare module ASRProfileList {
-  /**
-   * List of Deepgram profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Deepgram {
-    /**
-     * Chinese (China)
-     * @const
-     */
-    zh,
-    /**
-     * Chinese (Simplified)
-     * @const
-     */
-    zh_CN,
-    /**
-     * Chinese (Traditional)
-     * @const
-     */
-    zh_TW,
-    /**
-     * Danish (Denmark)
-     * @const
-     */
-    da,
-    /**
-     * Dutch (Netherlands)
-     * @const
-     */
-    nl,
-    /**
-     * English (Common)
-     * @const
-     */
-    en,
-    /**
-     * English (Australia)
-     * @const
-     */
-    en_AU,
-    /**
-     * English (Great Britain)
-     * @const
-     */
-    en_GB,
-    /**
-     * English (Indonesia)
-     * @const
-     */
-    en_IN,
-    /**
-     * English (New Zealand)
-     * @const
-     */
-    en_NZ,
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-    /**
-     * French (France)
-     * @const
-     */
-    fr,
-    /**
-     * French (Canada)
-     * @const
-     */
-    fr_CA,
-    /**
-     * German (Germany)
-     * @const
-     */
-    de,
-    /**
-     * Hindi (India)
-     * @const
-     */
-    hi,
-    /**
-     * Hindi (Latin)
-     * @const
-     */
-    hi_Latn,
-    /**
-     * Indonesian (Indonesia)
-     * @const
-     */
-    id,
-    /**
-     * Italian (Italy)
-     * @const
-     */
-    it,
-    /**
-     * Japanese (Japan)
-     * @const
-     */
-    ja,
-    /**
-     * Korean (Korea)
-     * @const
-     */
-    ko,
-    /**
-     * Norwegian (Norway)
-     * @const
-     */
-    no,
-    /**
-     * Polish (Poland)
-     * @const
-     */
-    pl,
-    /**
-     * Portuguese (Common)
-     * @const
-     */
-    pt,
-    /**
-     * Portuguese (Brazil)
-     * @const
-     */
-    pt_BR,
-    /**
-     * Portuguese (Portugal)
-     * @const
-     */
-    pt_PT,
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru,
-    /**
-     * Spanish (Spain)
-     * @const
-     */
-    es,
-    /**
-     * Spanish (Latin America)
-     * @const
-     */
-    'es-419',
-    /**
-     * Swedish (Sweden)
-     * @const
-     */
-    sv,
-    /**
-     * Tamil (India)
-     * @const
-     */
-    ta,
-    /**
-     * Turkish (Turkey)
-     * @const
-     */
-    tr,
-    /**
-     * Ukrainian (Ukraine)
-     * @const
-     */
-    uk,
-  }
-}
-
-declare module ASRProfileList {
-  /**
-   * List of Google Speech-to-Text profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Google {
-    /**
-     * Afrikaans (South Africa)
-     * @const
-     */
-    af_ZA,
-
-    /**
-     * Albanian (Albania)
-     * @const
-     */
-    sq_AL,
-
-    /**
-     * Amharic (Ethiopia)
-     * @const
-     */
-    am_ET,
-
-    /**
-     * Arabic (Algeria)
-     * @const
-     */
-    ar_DZ,
-
-    /**
-     * Arabic (Bahrain)
-     * @const
-     */
-    ar_BH,
-
-    /**
-     * Arabic (Egypt)
-     * @const
-     */
-    ar_EG,
-
-    /**
-     * Arabic (Iraq)
-     * @const
-     */
-    ar_IQ,
-
-    /**
-     * Arabic (Israel)
-     * @const
-     */
-    ar_IL,
-
-    /**
-     * Arabic (Jordan)
-     * @const
-     */
-    ar_JO,
-
-    /**
-     * Arabic (Kuwait)
-     * @const
-     */
-    ar_KW,
-
-    /**
-     * Arabic (Lebanon)
-     * @const
-     */
-    ar_LB,
-
-    /**
-     * Arabic (Mauritania)
-     * @const
-     */
-    ar_MR,
-
-    /**
-     * Arabic (Morocco)
-     * @const
-     */
-    ar_MA,
-
-    /**
-     * Arabic (Oman)
-     * @const
-     */
-    ar_OM,
-
-    /**
-     * Arabic (Qatar)
-     * @const
-     */
-    ar_QA,
-
-    /**
-     * Arabic (Saudi Arabia)
-     * @const
-     */
-    ar_SA,
-
-    /**
-     * Arabic (State of Palestine)
-     * @const
-     */
-    ar_PS,
-
-    /**
-     * Arabic (Tunisia)
-     * @const
-     */
-    ar_TN,
-
-    /**
-     * Arabic (United Arab Emirates)
-     * @const
-     */
-    ar_AE,
-
-    /**
-     * Arabic (Yemen)
-     * @const
-     */
-    ar_YE,
-
-    /**
-     * Armenian (Armenia)
-     * @const
-     */
-    hy_AM,
-
-    /**
-     * Azerbaijani (Azerbaijan)
-     * @const
-     */
-    az_AZ,
-
-    /**
-     * Basque (Spain)
-     * @const
-     */
-    eu_ES,
-
-    /**
-     * Bengali (Bangladesh)
-     * @const
-     */
-    bn_BD,
-
-    /**
-     * Bengali (India)
-     * @const
-     */
-    bn_IN,
-
-    /**
-     * Bosnian (Bosnia and Herzegovina)
-     * @const
-     */
-    bs_BA,
-
-    /**
-     * Bulgarian (Bulgaria)
-     * @const
-     */
-    bg_BG,
-
-    /**
-     * Burmese (Myanmar)
-     * @const
-     */
-    my_MM,
-
-    /**
-     * Catalan (Spain)
-     * @const
-     */
-    ca_ES,
-
-    /**
-     * Chinese, Cantonese (Traditional Hong Kong)
-     * @const
-     */
-    yue_Hant_HK,
-
-    /**
-     * Chinese, Mandarin (Simplified, China)
-     * @const
-     */
-    cmn_Hans_CN,
-
-    /**
-     * Chinese, Mandarin (Traditional, Taiwan)
-     * @const
-     */
-    cmn_Hant_TW,
-
-    /**
-     * Croatian (Croatia)
-     * @const
-     */
-    hr_HR,
-
-    /**
-     * Czech (Czech Republic)
-     * @const
-     */
-    cs_CZ,
-
-    /**
-     * Danish (Denmark)
-     * @const
-     */
-    da_DK,
-
-    /**
-     * Dutch (Belgium)
-     * @const
-     */
-    nl_BE,
-
-    /**
-     * Dutch (Netherlands)
-     * @const
-     */
-    nl_NL,
-
-    /**
-     * English (Australia)
-     * @const
-     */
-    en_AU,
-
-    /**
-     * English (Canada)
-     * @const
-     */
-    en_CA,
-
-    /**
-     * English (Ghana)
-     * @const
-     */
-    en_GH,
-
-    /**
-     * English (Hong Kong)
-     * @const
-     */
-    en_HK,
-
-    /**
-     * English (India)
-     * @const
-     */
-    en_IN,
-
-    /**
-     * English (Ireland)
-     * @const
-     */
-    en_IE,
-
-    /**
-     * English (Kenya)
-     * @const
-     */
-    en_KE,
-
-    /**
-     * English (New Zealand)
-     * @const
-     */
-    en_NZ,
-
-    /**
-     * English (Nigeria)
-     * @const
-     */
-    en_NG,
-
-    /**
-     * English (Pakistan)
-     * @const
-     */
-    en_PK,
-
-    /**
-     * English (Philippines)
-     * @const
-     */
-    en_PH,
-
-    /**
-     * English (Singapore)
-     * @const
-     */
-    en_SG,
-
-    /**
-     * English (South Africa)
-     * @const
-     */
-    en_ZA,
-
-    /**
-     * English (Tanzania)
-     * @const
-     */
-    en_TZ,
-
-    /**
-     * English (United Kingdom)
-     * @const
-     */
-    en_GB,
-
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-
-    /**
-     * Estonian (Estonia)
-     * @const
-     */
-    et_EE,
-
-    /**
-     * Filipino (Philippines)
-     * @const
-     */
-    fil_PH,
-
-    /**
-     * Finnish (Finland)
-     * @const
-     */
-    fi_FI,
-
-    /**
-     * French (Belgium)
-     * @const
-     */
-    fr_BE,
-
-    /**
-     * French (Canada)
-     * @const
-     */
-    fr_CA,
-
-    /**
-     * French (France)
-     * @const
-     */
-    fr_FR,
-
-    /**
-     * French (Switzerland)
-     * @const
-     */
-    fr_CH,
-
-    /**
-     * Galician (Spain)
-     * @const
-     */
-    gl_ES,
-
-    /**
-     * Georgian (Georgia)
-     * @const
-     */
-    ka_GE,
-
-    /**
-     * German (Austria)
-     * @const
-     */
-    de_AT,
-
-    /**
-     * German (Germany)
-     * @const
-     */
-    de_DE,
-
-    /**
-     * German (Switzerland)
-     * @const
-     */
-    de_CH,
-
-    /**
-     * Greek (Greece)
-     * @const
-     */
-    el_GR,
-
-    /**
-     * Gujarati (India)
-     * @const
-     */
-    gu_IN,
-
-    /**
-     * Hebrew (Israel)
-     * @const
-     */
-    iw_IL,
-
-    /**
-     * Hindi (India)
-     * @const
-     */
-    hi_IN,
-
-    /**
-     * Hungarian (Hungary)
-     * @const
-     */
-    hu_HU,
-
-    /**
-     * Icelandic (Iceland)
-     * @const
-     */
-    is_IS,
-
-    /**
-     * Indonesian (Indonesia)
-     * @const
-     */
-    id_ID,
-
-    /**
-     * Italian (Italy)
-     * @const
-     */
-    it_IT,
-
-    /**
-     * Italian (Switzerland)
-     * @const
-     */
-    it_CH,
-
-    /**
-     * Japanese (Japan)
-     * @const
-     */
-    ja_JP,
-
-    /**
-     * Javanese (Indonesia)
-     * @const
-     */
-    jv_ID,
-
-    /**
-     * Kannada (India)
-     * @const
-     */
-    kn_IN,
-
-    /**
-     * Kazakh (Kazakhstan)
-     * @const
-     */
-    kk_KZ,
-
-    /**
-     * Khmer (Cambodia)
-     * @const
-     */
-    km_KH,
-
-    /**
-     * Kinyarwanda (Rwanda)
-     * @const
-     */
-    rw_RW,
-
-    /**
-     * Korean (South Korea)
-     * @const
-     */
-    ko_KR,
-
-    /**
-     * Lao (Laos)
-     * @const
-     */
-    lo_LA,
-
-    /**
-     * Latvian (Latvia)
-     * @const
-     */
-    lv_LV,
-
-    /**
-     * Lithuanian (Lithuania)
-     * @const
-     */
-    lt_LT,
-
-    /**
-     * Macedonian (North Macedonia)
-     * @const
-     */
-    mk_MK,
-
-    /**
-     * Malay (Malaysia)
-     * @const
-     */
-    ms_MY,
-
-    /**
-     * Malayalam (India)
-     * @const
-     */
-    ml_IN,
-
-    /**
-     * Marathi (India)
-     * @const
-     */
-    mr_IN,
-
-    /**
-     * Mongolian (Mongolia)
-     * @const
-     */
-    mn_MN,
-
-    /**
-     * Nepali (Nepal)
-     * @const
-     */
-    ne_NP,
-
-    /**
-     * Norwegian Bokmål (Norway)
-     * @const
-     */
-    no_NO,
-
-    /**
-     * Persian (Iran)
-     * @const
-     */
-    fa_IR,
-
-    /**
-     * Polish (Poland)
-     * @const
-     */
-    pl_PL,
-
-    /**
-     * Portuguese (Brazil)
-     * @const
-     */
-    pt_BR,
-
-    /**
-     * Portuguese (Portugal)
-     * @const
-     */
-    pt_PT,
-
-    /**
-     * Punjabi (Gurmukhi India)
-     * @const
-     */
-    pa_Guru_IN,
-
-    /**
-     * Romanian (Romania)
-     * @const
-     */
-    ro_RO,
-
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-
-    /**
-     * Serbian (Serbia)
-     * @const
-     */
-    sr_RS,
-
-    /**
-     * Sinhala (Sri Lanka)
-     * @const
-     */
-    si_LK,
-
-    /**
-     * Slovak (Slovakia)
-     * @const
-     */
-    sk_SK,
-
-    /**
-     * Slovenian (Slovenia)
-     * @const
-     */
-    sl_SI,
-
-    /**
-     * Southern Sotho (South Africa)
-     * @const
-     */
-    st_ZA,
-
-    /**
-     * Spanish (Argentina)
-     * @const
-     */
-    es_AR,
-
-    /**
-     * Spanish (Bolivia)
-     * @const
-     */
-    es_BO,
-
-    /**
-     * Spanish (Chile)
-     * @const
-     */
-    es_CL,
-
-    /**
-     * Spanish (Colombia)
-     * @const
-     */
-    es_CO,
-
-    /**
-     * Spanish (Costa Rica)
-     * @const
-     */
-    es_CR,
-
-    /**
-     * Spanish (Dominican Republic)
-     * @const
-     */
-    es_DO,
-
-    /**
-     * Spanish (Ecuador)
-     * @const
-     */
-    es_EC,
-
-    /**
-     * Spanish (El Salvador)
-     * @const
-     */
-    es_SV,
-
-    /**
-     * Spanish (Guatemala)
-     * @const
-     */
-    es_GT,
-
-    /**
-     * Spanish (Honduras)
-     * @const
-     */
-    es_HN,
-
-    /**
-     * Spanish (Mexico)
-     * @const
-     */
-    es_MX,
-
-    /**
-     * Spanish (Nicaragua)
-     * @const
-     */
-    es_NI,
-
-    /**
-     * Spanish (Panama)
-     * @const
-     */
-    es_PA,
-
-    /**
-     * Spanish (Paraguay)
-     * @const
-     */
-    es_PY,
-
-    /**
-     * Spanish (Peru)
-     * @const
-     */
-    es_PE,
-
-    /**
-     * Spanish (Puerto Rico)
-     * @const
-     */
-    es_PR,
-
-    /**
-     * Spanish (Spain)
-     * @const
-     */
-    es_ES,
-
-    /**
-     * Spanish (United States)
-     * @const
-     */
-    es_US,
-
-    /**
-     * Spanish (Uruguay)
-     * @const
-     */
-    es_UY,
-
-    /**
-     * Spanish (Venezuela)
-     * @const
-     */
-    es_VE,
-
-    /**
-     * Sundanese (Indonesia)
-     * @const
-     */
-    su_ID,
-
-    /**
-     * Swahili (Kenya)
-     * @const
-     */
-    sw_KE,
-
-    /**
-     * Swahili (Tanzania)
-     * @const
-     */
-    sw_TZ,
-
-    /**
-     * Swati (Latin, South Africa)
-     * @const
-     */
-    ss_Latn_ZA,
-
-    /**
-     * Swedish (Sweden)
-     * @const
-     */
-    sv_SE,
-
-    /**
-     * Tamil (India)
-     * @const
-     */
-    ta_IN,
-
-    /**
-     * Tamil (Malaysia)
-     * @const
-     */
-    ta_MY,
-
-    /**
-     * Tamil (Singapore)
-     * @const
-     */
-    ta_SG,
-
-    /**
-     * Tamil (Sri Lanka)
-     * @const
-     */
-    ta_LK,
-
-    /**
-     * Telugu (India)
-     * @const
-     */
-    te_IN,
-
-    /**
-     * Thai (Thailand)
-     * @const
-     */
-    th_TH,
-
-    /**
-     * Tsonga (South Africa)
-     * @const
-     */
-    ts_ZA,
-
-    /**
-     * Tswana (Latin, South Africa)
-     * @const
-     */
-    tn_Latn_ZA,
-
-    /**
-     * Turkish (Turkey)
-     * @const
-     */
-    tr_TR,
-
-    /**
-     * Ukrainian (Ukraine)
-     * @const
-     */
-    uk_UA,
-
-    /**
-     * Urdu (India)
-     * @const
-     */
-    ur_IN,
-
-    /**
-     * Urdu (Pakistan)
-     * @const
-     */
-    ur_PK,
-
-    /**
-     * Uzbek (Uzbekistan)
-     * @const
-     */
-    uz_UZ,
-
-    /**
-     * Venda (South Africa)
-     * @const
-     */
-    ve_ZA,
-
-    /**
-     * Vietnamese (Vietnam)
-     * @const
-     */
-    vi_VN,
-
-    /**
-     * Xhosa (South Africa)
-     * @const
-     */
-    xh_ZA,
-
-    /**
-     * Zulu (South Africa)
-     * @const
-     */
-    zu_ZA,
-
-  }
-}
-declare module ASRProfileList {
-  /**
-   * List of Microsoft Speech-to-text profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Microsoft {
-    /**
-     * Afrikaans (South Africa)
-     * @const
-     */
-    af_ZA,
-
-    /**
-     * Amharic (Ethiopia)
-     * @const
-     */
-    am_ET,
-
-    /**
-     * Arabic (United Arab Emirates)
-     * @const
-     */
-    ar_AE,
-
-    /**
-     * Arabic (Bahrain)
-     * @const
-     */
-    ar_BH,
-
-    /**
-     * Arabic (Algeria)
-     * @const
-     */
-    ar_DZ,
-
-    /**
-     * Arabic (Egypt)
-     * @const
-     */
-    ar_EG,
-
-    /**
-     * Arabic (Israel)
-     * @const
-     */
-    ar_IL,
-
-    /**
-     * Arabic (Iraq)
-     * @const
-     */
-    ar_IQ,
-
-    /**
-     * Arabic (Jordan)
-     * @const
-     */
-    ar_JO,
-
-    /**
-     * Arabic (Kuwait)
-     * @const
-     */
-    ar_KW,
-
-    /**
-     * Arabic (Lebanon)
-     * @const
-     */
-    ar_LB,
-
-    /**
-     * Arabic (Libya)
-     * @const
-     */
-    ar_LY,
-
-    /**
-     * Arabic (Morocco)
-     * @const
-     */
-    ar_MA,
-
-    /**
-     * Arabic (Oman)
-     * @const
-     */
-    ar_OM,
-
-    /**
-     * Arabic (Palestinian Authority)
-     * @const
-     */
-    ar_PS,
-
-    /**
-     * Arabic (Qatar)
-     * @const
-     */
-    ar_QA,
-
-    /**
-     * Arabic (Saudi Arabia)
-     * @const
-     */
-    ar_SA,
-
-    /**
-     * Arabic (Syria)
-     * @const
-     */
-    ar_SY,
-
-    /**
-     * Arabic (Tunisia)
-     * @const
-     */
-    ar_TN,
-
-    /**
-     * Arabic (Yemen)
-     * @const
-     */
-    ar_YE,
-
-    /**
-     * Azerbaijani (Latin, Azerbaijan)
-     * @const
-     */
-    az_AZ,
-
-    /**
-     * Bulgarian (Bulgaria)
-     * @const
-     */
-    bg_BG,
-
-    /**
-     * Bengali (India)
-     * @const
-     */
-    bn_IN,
-
-    /**
-     * Bosnian (Bosnia and Herzegovina)
-     * @const
-     */
-    bs_BA,
-
-    /**
-     * Catalan
-     * @const
-     */
-    ca_ES,
-
-    /**
-     * Czech (Czechia)
-     * @const
-     */
-    cs_CZ,
-
-    /**
-     * Welsh (United Kingdom)
-     * @const
-     */
-    cy_GB,
-
-    /**
-     * Danish (Denmark)
-     * @const
-     */
-    da_DK,
-
-    /**
-     * German (Austria)
-     * @const
-     */
-    de_AT,
-
-    /**
-     * German (Switzerland)
-     * @const
-     */
-    de_CH,
-
-    /**
-     * German (Germany)
-     * @const
-     */
-    de_DE,
-
-    /**
-     * Greek (Greece)
-     * @const
-     */
-    el_GR,
-
-    /**
-     * English (Australia)
-     * @const
-     */
-    en_AU,
-
-    /**
-     * English (Canada)
-     * @const
-     */
-    en_CA,
-
-    /**
-     * English (United Kingdom)
-     * @const
-     */
-    en_GB,
-
-    /**
-     * English (Ghana)
-     * @const
-     */
-    en_GH,
-
-    /**
-     * English (Hong Kong SAR)
-     * @const
-     */
-    en_HK,
-
-    /**
-     * English (Ireland)
-     * @const
-     */
-    en_IE,
-
-    /**
-     * English (India)
-     * @const
-     */
-    en_IN,
-
-    /**
-     * English (Kenya)
-     * @const
-     */
-    en_KE,
-
-    /**
-     * English (Nigeria)
-     * @const
-     */
-    en_NG,
-
-    /**
-     * English (New Zealand)
-     * @const
-     */
-    en_NZ,
-
-    /**
-     * English (Philippines)
-     * @const
-     */
-    en_PH,
-
-    /**
-     * English (Singapore)
-     * @const
-     */
-    en_SG,
-
-    /**
-     * English (Tanzania)
-     * @const
-     */
-    en_TZ,
-
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-
-    /**
-     * English (South Africa)
-     * @const
-     */
-    en_ZA,
-
-    /**
-     * Spanish (Argentina)
-     * @const
-     */
-    es_AR,
-
-    /**
-     * Spanish (Bolivia)
-     * @const
-     */
-    es_BO,
-
-    /**
-     * Spanish (Chile)
-     * @const
-     */
-    es_CL,
-
-    /**
-     * Spanish (Colombia)
-     * @const
-     */
-    es_CO,
-
-    /**
-     * Spanish (Costa Rica)
-     * @const
-     */
-    es_CR,
-
-    /**
-     * Spanish (Cuba)
-     * @const
-     */
-    es_CU,
-
-    /**
-     * Spanish (Dominican Republic)
-     * @const
-     */
-    es_DO,
-
-    /**
-     * Spanish (Ecuador)
-     * @const
-     */
-    es_EC,
-
-    /**
-     * Spanish (Spain)
-     * @const
-     */
-    es_ES,
-
-    /**
-     * Spanish (Equatorial Guinea)
-     * @const
-     */
-    es_GQ,
-
-    /**
-     * Spanish (Guatemala)
-     * @const
-     */
-    es_GT,
-
-    /**
-     * Spanish (Honduras)
-     * @const
-     */
-    es_HN,
-
-    /**
-     * Spanish (Mexico)
-     * @const
-     */
-    es_MX,
-
-    /**
-     * Spanish (Nicaragua)
-     * @const
-     */
-    es_NI,
-
-    /**
-     * Spanish (Panama)
-     * @const
-     */
-    es_PA,
-
-    /**
-     * Spanish (Peru)
-     * @const
-     */
-    es_PE,
-
-    /**
-     * Spanish (Puerto Rico)
-     * @const
-     */
-    es_PR,
-
-    /**
-     * Spanish (Paraguay)
-     * @const
-     */
-    es_PY,
-
-    /**
-     * Spanish (El Salvador)
-     * @const
-     */
-    es_SV,
-
-    /**
-     * Spanish (United States)
-     * @const
-     */
-    es_US,
-
-    /**
-     * Spanish (Uruguay)
-     * @const
-     */
-    es_UY,
-
-    /**
-     * Spanish (Venezuela)
-     * @const
-     */
-    es_VE,
-
-    /**
-     * Estonian (Estonia)
-     * @const
-     */
-    et_EE,
-
-    /**
-     * Basque
-     * @const
-     */
-    eu_ES,
-
-    /**
-     * Persian (Iran)
-     * @const
-     */
-    fa_IR,
-
-    /**
-     * Finnish (Finland)
-     * @const
-     */
-    fi_FI,
-
-    /**
-     * Filipino (Philippines)
-     * @const
-     */
-    fil_PH,
-
-    /**
-     * French (Belgium)
-     * @const
-     */
-    fr_BE,
-
-    /**
-     * French (Canada)
-     * @const
-     */
-    fr_CA,
-
-    /**
-     * French (Switzerland)
-     * @const
-     */
-    fr_CH,
-
-    /**
-     * French (France)
-     * @const
-     */
-    fr_FR,
-
-    /**
-     * Irish (Ireland)
-     * @const
-     */
-    ga_IE,
-
-    /**
-     * Galician
-     * @const
-     */
-    gl_ES,
-
-    /**
-     * Gujarati (India)
-     * @const
-     */
-    gu_IN,
-
-    /**
-     * Hebrew (Israel)
-     * @const
-     */
-    he_IL,
-
-    /**
-     * Hindi (India)
-     * @const
-     */
-    hi_IN,
-
-    /**
-     * Croatian (Croatia)
-     * @const
-     */
-    hr_HR,
-
-    /**
-     * Hungarian (Hungary)
-     * @const
-     */
-    hu_HU,
-
-    /**
-     * Armenian (Armenia)
-     * @const
-     */
-    hy_AM,
-
-    /**
-     * Indonesian (Indonesia)
-     * @const
-     */
-    id_ID,
-
-    /**
-     * Icelandic (Iceland)
-     * @const
-     */
-    is_IS,
-
-    /**
-     * Italian (Switzerland)
-     * @const
-     */
-    it_CH,
-
-    /**
-     * Italian (Italy)
-     * @const
-     */
-    it_IT,
-
-    /**
-     * Japanese (Japan)
-     * @const
-     */
-    ja_JP,
-
-    /**
-     * Javanese (Latin, Indonesia)
-     * @const
-     */
-    jv_ID,
-
-    /**
-     * Georgian (Georgia)
-     * @const
-     */
-    ka_GE,
-
-    /**
-     * Kazakh (Kazakhstan)
-     * @const
-     */
-    kk_KZ,
-
-    /**
-     * Khmer (Cambodia)
-     * @const
-     */
-    km_KH,
-
-    /**
-     * Kannada (India)
-     * @const
-     */
-    kn_IN,
-
-    /**
-     * Korean (Korea)
-     * @const
-     */
-    ko_KR,
-
-    /**
-     * Lao (Laos)
-     * @const
-     */
-    lo_LA,
-
-    /**
-     * Lithuanian (Lithuania)
-     * @const
-     */
-    lt_LT,
-
-    /**
-     * Latvian (Latvia)
-     * @const
-     */
-    lv_LV,
-
-    /**
-     * Macedonian (North Macedonia)
-     * @const
-     */
-    mk_MK,
-
-    /**
-     * Malayalam (India)
-     * @const
-     */
-    ml_IN,
-
-    /**
-     * Mongolian (Mongolia)
-     * @const
-     */
-    mn_MN,
-
-    /**
-     * Marathi (India)
-     * @const
-     */
-    mr_IN,
-
-    /**
-     * Malay (Malaysia)
-     * @const
-     */
-    ms_MY,
-
-    /**
-     * Maltese (Malta)
-     * @const
-     */
-    mt_MT,
-
-    /**
-     * Burmese (Myanmar)
-     * @const
-     */
-    my_MM,
-
-    /**
-     * Norwegian Bokmål (Norway)
-     * @const
-     */
-    nb_NO,
-
-    /**
-     * Nepali (Nepal)
-     * @const
-     */
-    ne_NP,
-
-    /**
-     * Dutch (Belgium)
-     * @const
-     */
-    nl_BE,
-
-    /**
-     * Dutch (Netherlands)
-     * @const
-     */
-    nl_NL,
-
-    /**
-     * Punjabi (India)
-     * @const
-     */
-    pa_IN,
-
-    /**
-     * Polish (Poland)
-     * @const
-     */
-    pl_PL,
-
-    /**
-     * Pashto (Afghanistan)
-     * @const
-     */
-    ps_AF,
-
-    /**
-     * Portuguese (Brazil)
-     * @const
-     */
-    pt_BR,
-
-    /**
-     * Portuguese (Portugal)
-     * @const
-     */
-    pt_PT,
-
-    /**
-     * Romanian (Romania)
-     * @const
-     */
-    ro_RO,
-
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-
-    /**
-     * Sinhala (Sri Lanka)
-     * @const
-     */
-    si_LK,
-
-    /**
-     * Slovak (Slovakia)
-     * @const
-     */
-    sk_SK,
-
-    /**
-     * Slovenian (Slovenia)
-     * @const
-     */
-    sl_SI,
-
-    /**
-     * Somali (Somalia)
-     * @const
-     */
-    so_SO,
-
-    /**
-     * Albanian (Albania)
-     * @const
-     */
-    sq_AL,
-
-    /**
-     * Serbian (Cyrillic, Serbia)
-     * @const
-     */
-    sr_RS,
-
-    /**
-     * Swedish (Sweden)
-     * @const
-     */
-    sv_SE,
-
-    /**
-     * Swahili (Kenya)
-     * @const
-     */
-    sw_KE,
-
-    /**
-     * Swahili (Tanzania)
-     * @const
-     */
-    sw_TZ,
-
-    /**
-     * Tamil (India)
-     * @const
-     */
-    ta_IN,
-
-    /**
-     * Telugu (India)
-     * @const
-     */
-    te_IN,
-
-    /**
-     * Thai (Thailand)
-     * @const
-     */
-    th_TH,
-
-    /**
-     * Turkish (Türkiye)
-     * @const
-     */
-    tr_TR,
-
-    /**
-     * Ukrainian (Ukraine)
-     * @const
-     */
-    uk_UA,
-
-    /**
-     * Urdu (India)
-     * @const
-     */
-    ur_IN,
-
-    /**
-     * Uzbek (Latin, Uzbekistan)
-     * @const
-     */
-    uz_UZ,
-
-    /**
-     * Vietnamese (Vietnam)
-     * @const
-     */
-    vi_VN,
-
-    /**
-     * Chinese (Wu, Simplified)
-     * @const
-     */
-    wuu_CN,
-
-    /**
-     * Chinese (Cantonese, Simplified)
-     * @const
-     */
-    yue_CN,
-
-    /**
-     * Chinese (Mandarin, Simplified)
-     * @const
-     */
-    zh_CN,
-
-    /**
-     * Chinese (Jilu Mandarin, Simplified)
-     * @const
-     */
-    zh_CN_shandong,
-
-    /**
-     * Chinese (Southwestern Mandarin, Simplified)
-     * @const
-     */
-    zh_CN_sichuan,
-
-    /**
-     * Chinese (Cantonese, Traditional)
-     * @const
-     */
-    zh_HK,
-
-    /**
-     * Chinese (Taiwanese Mandarin, Traditional)
-     * @const
-     */
-    zh_TW,
-
-    /**
-     * Zulu (South Africa)
-     * @const
-     */
-    zu_ZA,
-
-  }
-}
-
-declare module ASRProfileList {
-  /**
-   * List of SaluteSpeech profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum SaluteSpeech {
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-  }
-}
-
-declare module ASRProfileList {
-  /**
-   * List of Tinkoff VoiceKit profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Tinkoff {
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-  }
-}
-
-declare module ASRProfileList {
-  /**
-   * List of Yandex SpeechKit profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum Yandex {
-    /**
-     * Automatic language recognition
-     * @const
-     */
-    auto,
-    /**
-     * German (Germany)
-     * @const
-     */
-    de_DE,
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-    /**
-     * Spanish (Spain)
-     * @const
-     */
-    es_ES,
-    /**
-     * Finnish (Finland)
-     * @const
-     */
-    fi_FI,
-    /**
-     * French (France)
-     * @const
-     */
-    fr_FR,
-    /**
-     * Italian (Italy)
-     * @const
-     */
-    it_IT,
-    /**
-     * Kazakh (Kazakhstan)
-     * @const
-     */
-    kk_KK,
-    /**
-     * Dutch (Holland)
-     * @const
-     */
-    nl_NL,
-    /**
-     * Polish (Poland)
-     * @const
-     */
-    pl_PL,
-    /**
-     * Portuguese (Portugal)
-     * @const
-     */
-    pt_PT,
-    /**
-     * Portuguese (Brazilian)
-     * @const
-     */
-    pt_BR,
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-    /**
-     * Swedish (Sweden)
-     * @const
-     */
-    sv_SE,
-    /**
-     * Turkish (Turkey)
-     * @const
-     */
-    tr_TR,
-    /**
-     * Uzbek (Uzbekistan)
-     * @const
-     */
-    uz_UZ,
-  }
-}
-
-declare module ASRProfileList {
-  /**
-   * List of YandexV3 SpeechKit profiles.
-   * <br>
-   * Add the following line to your scenario code to use the enum:
-   * ```
-   * require(Modules.ASR);
-   * ```
-   */
-  enum YandexV3 {
-    /**
-     * Automatic language recognition
-     * @const
-     */
-    auto,
-    /**
-     * German (Germany)
-     * @const
-     */
-    de_DE,
-    /**
-     * English (United States)
-     * @const
-     */
-    en_US,
-    /**
-     * Spanish (Spain)
-     * @const
-     */
-    es_ES,
-    /**
-     * Finnish (Finland)
-     * @const
-     */
-    fi_FI,
-    /**
-     * French (France)
-     * @const
-     */
-    fr_FR,
-    /**
-     * Italian (Italy)
-     * @const
-     */
-    it_IT,
-    /**
-     * Kazakh (Kazakhstan)
-     * @const
-     */
-    kk_KK,
-    /**
-     * Dutch (Holland)
-     * @const
-     */
-    nl_NL,
-    /**
-     * Polish (Poland)
-     * @const
-     */
-    pl_PL,
-    /**
-     * Portuguese (Portugal)
-     * @const
-     */
-    pt_PT,
-    /**
-     * Portuguese (Brazilian)
-     * @const
-     */
-    pt_BR,
-    /**
-     * Russian (Russia)
-     * @const
-     */
-    ru_RU,
-    /**
-     * Swedish (Sweden)
-     * @const
-     */
-    sv_SE,
-    /**
-     * Turkish (Turkey)
-     * @const
-     */
-    tr_TR,
-    /**
-     * Uzbek (Uzbekistan)
-     * @const
-     */
-    uz_UZ,
-  }
 }
 
 /**
@@ -5057,32 +2309,6 @@ declare interface BaseRecorderParameters {
 }
 
 /**
- * Decodes the data in the Base64 encoding
- * @param data Data to decode
- */
-declare function base64_decode(data: string): number[];
-
-/**
- * Encodes a string or array of integers from 0 to 255 to the Base64 encoding
- * @param data String or array of integers from 0 to 255 to encode
- */
-declare function base64_encode(data: string | number[]): string;
-
-/**
- * Creates a hex string from given bytes array.
- * @param data Array of numbers to convert into a string
- * @param toUpperCase Whether the resulting string has uppercase 'A-F' chars. Default is 'false'.
- */
-declare function bytes2hex(data: number[], toUpperCase: boolean): string;
-
-/**
- * Creates a string from an array of numbers with specified encoding
- * @param data Array of integers from 0 to 255 to create a string from
- * @param encoding Encoding to use for string creation, the default value is "utf-8".
- */
-declare function bytes2str(data: number[], encoding: string): string;
-
-/**
  * The parameters can be passed as arguments to the [Call.answer] method.
  */
 declare interface CallAnswerParameters extends CallParameters {}
@@ -5096,6 +2322,17 @@ declare enum CallEvents {
    * @typedef _AudioStartedEvent
    * */
   AudioStarted = 'Call.AudioStarted',
+  /**
+   * Triggers when [voicemail detection](/docs/guides/calls/voicemail-detection) system connects to the VMD/AMD server and starts detecting voicemail.
+   * @typedef _AudioIdentificationStartedEvent
+   * */
+  AudioIdentificationStarted = 'Call.AudioIdentificationStarted',
+  /**
+   * Triggers when [voicemail detection](/docs/guides/calls/voicemail-detection) ends detecting voicemail and the audio identification result is received.
+   * @typedef _AudioIdentificationResultEvent
+   * @hidden
+   */
+  AudioIdentificationResult = 'Call.AudioIdentificationResult',
   /**
    * Triggered when blind transfers are enabled by [Call.handleBlindTransfer].
    * @typedef _BlindTransferRequestedEvent
@@ -5299,6 +2536,8 @@ declare enum CallEvents {
  */
 declare interface _CallEvents {
   [CallEvents.AudioStarted]: _AudioStartedEvent;
+  [CallEvents.AudioIdentificationStarted]: _AudioIdentificationStartedEvent;
+  [CallEvents.AudioIdentificationResult]: _AudioIdentificationResultEvent;
   [CallEvents.BlindTransferRequested]: _BlindTransferRequestedEvent;
   [CallEvents.Connected]: _ConnectedEvent;
   [CallEvents.Disconnected]: _DisconnectedEvent;
@@ -5365,6 +2604,20 @@ declare interface _CallHeaderEvent extends _CallEvent {
  * @private
  */
 declare interface _AudioStartedEvent extends _CallHeaderEvent {}
+
+/**
+ * @private
+ */
+declare interface _AudioIdentificationStartedEvent extends _CallEvent {}
+
+/**
+ * @private
+ */
+declare interface _AudioIdentificationResultEvent extends _CallEvent {
+  audioType: AMD.ResultClass;
+  audioSubType: AMD.ResultSubtype;
+  confidence: number;
+}
 
 /**
  * @private
@@ -5749,10 +3002,7 @@ declare interface CallRecordParameters extends BaseRecorderParameters {
   /**
    * Transcription provider.
    */
-  provider?:
-    | TranscriptionProvider.GOOGLE
-    | TranscriptionProvider.TINKOFF
-    | TranscriptionProvider.YANDEX;
+  provider?: TranscriptionProvider;
   /**
    * Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
    */
@@ -6754,18 +4004,6 @@ declare module CCAI {
 }
 
 /**
- * Cancels a timed, repeating action which is previously established by a call to setInterval().
- * @param intervalID The identifier of the repeated action you want to cancel. This ID is returned by the corresponding call to setInterval().
- */
-declare function clearInterval(intervalID: number): void;
-
-/**
- * Cancels a timeout previously established by calling setTimeout().
- * @param timeoutID The identifier of the timeout you want to cancel. This ID is returned by the corresponding call to setTimeout().
- */
-declare function clearTimeout(timeoutID: number): void;
-
-/**
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.Conference);
@@ -7091,7 +4329,7 @@ declare module Crypto {
 }
 
 /**
- * See https://dialogflow.com/docs/reference/language
+ * See https://cloud.google.com/dialogflow/es/docs/reference/language#table
  * <br>
  * Add the following line to your scenario code to use the enum:
  * ```
@@ -7100,133 +4338,493 @@ declare module Crypto {
  */
 declare enum DialogflowLanguage {
   /**
-   * Brazilian portuguese. Supported features: Recognition, Text-to-Speech.
+   * Afrikaans.
    */
-  PORTUGUESE_BR = 'pt-BR',
+  AF = 'af',
   /**
-   * Chinese Cantonese. Supported features: Recognition.
+   * Albanian.
    */
-  CHINESE_HK = 'zh-HK',
+  SQ = 'sq',
   /**
-   * Chinese Simplified. Supported features: Recognition, Sentiment Analysis.
+   * Amharic.
    */
-  CHINESE_CN = 'zh-CN',
+  AM = 'am',
   /**
-   * Chinese Traditional. Supported features: Recognition, Sentiment Analysis.
+   * Armenian.
    */
-  CHINESE_TW = 'zh-TW',
+  HY = 'hy',
   /**
-   * Danish. Supported features: Recognition.
+   * Azerbaijani.
    */
-  DANISH = 'da',
+  AZ = 'az',
   /**
-   * Dutch. Supported features: Recognition, Text-to-Speech.
+   * Basque.
    */
-  DUTCH = 'nl',
+  EU = 'eu',
   /**
-   * US English. Supported features: Recognition, Text-to-Speech, Telephony, Knowledge Connectors, Sentiment Analysis.
+   * Belarusian.
    */
-  ENGLISH = 'en',
+  BE = 'be',
   /**
-   * Australian English. Supported features: Recognition, Text-to-Speech, Knowledge Connectors.
+   * Bangla.
    */
-  ENGLISH_AU = 'en-AU',
+  BN = 'bn',
   /**
-   * Canadian English. Supported features: Recognition, Text-to-Speech, Knowledge Connectors.
+   * Bangla (Bangladesh).
    */
-  ENGLISH_CA = 'en-CA',
+  BN_BD = 'bn-bd',
   /**
-   * British English. Supported features: Recognition, Text-to-Speech, Knowledge Connectors.
+   * Bangla (India).
    */
-  ENGLISH_GB = 'en-GB',
+  BN_IN = 'bn-in',
   /**
-   * Indian English. Supported features: Recognition, Text-to-Speech, Knowledge Connectors.
+   * Bosnian.
    */
-  ENGLISH_IN = 'en-IN',
+  BS = 'bs',
   /**
-   * US English (equivalent to ENGLISH). Supported features: Recognition, Text-to-Speech, Telephony, Knowledge Connectors, Sentiment Analysis.
+   * Bulgarian.
    */
-  ENGLISH_US = 'en-US',
+  BG = 'bg',
   /**
-   * French. Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Catalan.
    */
-  FRENCH = 'fr',
+  CA = 'ca',
   /**
-   * Canadian French. Supported features: Recognition, Text-to-Speech.
+   * Cebuano.
    */
-  FRENCH_CA = 'fr-CA',
+  CEB = 'ceb',
   /**
-   * France (equivalent to FRENCH). Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Nyanja.
    */
-  FRENCH_FR = 'fr-FR',
+  NY = 'ny',
   /**
-   * German. Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Chinese (Hong Kong SAR China).
    */
-  GERMAN = 'de',
+  ZH_HK = 'zh-hk',
   /**
-   * Hindi. Supported features: Recognition.
+   * Chinese (China).
    */
-  HINDI = 'hi',
+  ZH_CN = 'zh-cn',
   /**
-   * Indonesian. Supported features: Recognition.
+   * Chinese (Taiwan).
    */
-  INDONESIAN = 'id',
+  ZH_TW = 'zh-tw',
   /**
-   * Italian. Supported features: Recognition, Sentiment Analysis.
+   * Corsican.
    */
-  ITALIAN = 'it',
+  CO = 'co',
   /**
-   * Japanese. Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Croatian.
    */
-  JAPANESE = 'ja',
+  HR = 'hr',
   /**
-   * Korean. Supported features: Recognition, Sentiment Analysis.
+   * Czech.
    */
-  KOREAN = 'ko',
+  CS = 'cs',
   /**
-   * Norwegian. Supported features: Recognition.
+   * Danish.
    */
-  NORWEGIAN = 'no',
+  DA = 'da',
   /**
-   * Portuguese. Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Dutch.
    */
-  PORTUGUES = 'pt',
+  NL = 'nl',
   /**
-   * Brazilian Portuguese. Supported features: Recognition, Text-to-Speech.
+   * English.
    */
-  PORTUGUES_BR = 'pt-BR',
+  EN = 'en',
   /**
-   * Russian. Supported features: Recognition.
+   * Australian English.
    */
-  RUSSIAN = 'ru',
+  EN_AU = 'en-au',
   /**
-   * Spanish. Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * Canadian English.
    */
-  SPANISH = 'es',
+  EN_CA = 'en-ca',
   /**
-   * Latin American Spanish Supported features: Recognition.
+   * British English.
    */
-  SPANISH_419 = 'es-419',
+  EN_GB = 'en-gb',
   /**
-   * Spanish (equivalent to SPANISH). Supported features: Recognition, Text-to-Speech, Sentiment Analysis.
+   * English (India).
    */
-  SPANISH_ES = 'es-ES',
+  EN_IN = 'en-in',
   /**
-   * Swedish. Supported features: Recognition.
+   * American English.
    */
-  SWEDISH = 'sv',
+  EN_US = 'en-us',
   /**
-   * Thai. Supported features: Recognition.
+   * Esperanto.
    */
-  THAI = 'th',
+  EO = 'eo',
   /**
-   * Ukranian. Supported features: Recognition.
+   * Estonian.
    */
-  UKRANIAN = 'uk',
+  ET = 'et',
   /**
-   * Polish. Supported features: Recognition, Text-to-Speech.
+   * Filipino.
    */
-  POLISH = 'pl',
+  FIL = 'fil',
+  /**
+   * Filipino (Philippines).
+   */
+  FIL_PH = 'fil-ph',
+  /**
+   * Finnish.
+   */
+  FI = 'fi',
+  /**
+   * French.
+   */
+  FR = 'fr',
+  /**
+   * Canadian French.
+   */
+  FR_CA = 'fr-ca',
+  /**
+   * French (France).
+   */
+  FR_FR = 'fr-fr',
+  /**
+   * Western Frisian.
+   */
+  FY = 'fy',
+  /**
+   * Galician.
+   */
+  GL = 'gl',
+  /**
+   * Georgian.
+   */
+  KA = 'ka',
+  /**
+   * German.
+   */
+  DE = 'de',
+  /**
+   * Greek.
+   */
+  EL = 'el',
+  /**
+   * Gujarati.
+   */
+  GU = 'gu',
+  /**
+   * Haitian Creole.
+   */
+  HT = 'ht',
+  /**
+   * Hausa.
+   */
+  HA = 'ha',
+  /**
+   * Hindi.
+   */
+  HI = 'hi',
+  /**
+   * Hmong.
+   */
+  HMN = 'hmn',
+  /**
+   * Hungarian.
+   */
+  HU = 'hu',
+  /**
+   * Icelandic.
+   */
+  IS = 'is',
+  /**
+   * Igbo.
+   */
+  IG = 'ig',
+  /**
+   * Indonesian.
+   */
+  ID = 'id',
+  /**
+   * Irish.
+   */
+  GA = 'ga',
+  /**
+   * Italian.
+   */
+  IT = 'it',
+  /**
+   * Japanese.
+   */
+  JA = 'ja',
+  /**
+   * Javanese.
+   */
+  JV = 'jv',
+  /**
+   * Kannada.
+   */
+  KN = 'kn',
+  /**
+   * Kazakh.
+   */
+  KK = 'kk',
+  /**
+   * Khmer.
+   */
+  KM = 'km',
+  /**
+   * Kinyarwanda.
+   */
+  RW = 'rw',
+  /**
+   * Korean.
+   */
+  KO = 'ko',
+  /**
+   * Kurdish.
+   */
+  KU = 'ku',
+  /**
+   * Kyrgyz.
+   */
+  KY = 'ky',
+  /**
+   * Latin.
+   */
+  LA = 'la',
+  /**
+   * Latvian.
+   */
+  LV = 'lv',
+  /**
+   * Lithuanian.
+   */
+  LT = 'lt',
+  /**
+   * Luxembourgish.
+   */
+  LB = 'lb',
+  /**
+   * Macedonian.
+   */
+  MK = 'mk',
+  /**
+   * Malagasy.
+   */
+  MG = 'mg',
+  /**
+   * Malay.
+   */
+  MS = 'ms',
+  /**
+   * Malay (Malaysia).
+   */
+  MS_MY = 'ms-my',
+  /**
+   * Malayalam.
+   */
+  ML = 'ml',
+  /**
+   * Maltese.
+   */
+  MT = 'mt',
+  /**
+   * Māori.
+   */
+  MI = 'mi',
+  /**
+   * Marathi.
+   */
+  MR = 'mr',
+  /**
+   * Marathi (India).
+   */
+  MR_IN = 'mr-in',
+  /**
+   * Mongolian.
+   */
+  MN = 'mn',
+  /**
+   * Nepali.
+   */
+  NE = 'ne',
+  /**
+   * Norwegian.
+   */
+  NO = 'no',
+  /**
+   * Odia.
+   */
+  OR = 'or',
+  /**
+   * Polish.
+   */
+  PL = 'pl',
+  /**
+   * Brazilian Portuguese.
+   */
+  PT_BR = 'pt-br',
+  /**
+   * Portuguese.
+   */
+  PT = 'pt',
+  /**
+   * Punjabi.
+   */
+  PA = 'pa',
+  /**
+   * Romanian.
+   */
+  RO = 'ro',
+  /**
+   * Romanian (Romania).
+   */
+  RO_RO = 'ro-ro',
+  /**
+   * Russian.
+   */
+  RU = 'ru',
+  /**
+   * Samoan.
+   */
+  SM = 'sm',
+  /**
+   * Scottish Gaelic.
+   */
+  GD = 'gd',
+  /**
+   * Serbian.
+   */
+  SR = 'sr',
+  /**
+   * Southern Sotho.
+   */
+  ST = 'st',
+  /**
+   * Shona.
+   */
+  SN = 'sn',
+  /**
+   * Sinhala.
+   */
+  SI = 'si',
+  /**
+   * Sinhala (Sri Lanka).
+   */
+  SI_LK = 'si-lk',
+  /**
+   * Slovak.
+   */
+  SK = 'sk',
+  /**
+   * Slovenian.
+   */
+  SL = 'sl',
+  /**
+   * Somali.
+   */
+  SO = 'so',
+  /**
+   * Spanish.
+   */
+  ES = 'es',
+  /**
+   * Latin American Spanish.
+   */
+  ES_419 = 'es-419',
+  /**
+   * European Spanish.
+   */
+  ES_ES = 'es-es',
+  /**
+   * Sundanese.
+   */
+  SU = 'su',
+  /**
+   * Swahili.
+   */
+  SW = 'sw',
+  /**
+   * Swedish.
+   */
+  SV = 'sv',
+  /**
+   * Tajik.
+   */
+  TG = 'tg',
+  /**
+   * Tamil.
+   */
+  TA = 'ta',
+  /**
+   * Tamil (India).
+   */
+  TA_IN = 'ta-in',
+  /**
+   * Tamil (Sri Lanka).
+   */
+  TA_LK = 'ta-lk',
+  /**
+   * Tamil (Malaysia).
+   */
+  TA_MY = 'ta-my',
+  /**
+   * Tamil (Singapore).
+   */
+  TA_SG = 'ta-sg',
+  /**
+   * Tatar.
+   */
+  TT = 'tt',
+  /**
+   * Telugu.
+   */
+  TE = 'te',
+  /**
+   * Telugu (India).
+   */
+  TE_IN = 'te-in',
+  /**
+   * Thai.
+   */
+  TH = 'th',
+  /**
+   * Turkish.
+   */
+  TR = 'tr',
+  /**
+   * Turkmen.
+   */
+  TK = 'tk',
+  /**
+   * Ukrainian.
+   */
+  UK = 'uk',
+  /**
+   * Uzbek.
+   */
+  UZ = 'uz',
+  /**
+   * Vietnamese.
+   */
+  VI = 'vi',
+  /**
+   * Vietnamese (Vietnam).
+   */
+  VI_VN = 'vi-vn',
+  /**
+   * Welsh.
+   */
+  CY = 'cy',
+  /**
+   * Xhosa.
+   */
+  XH = 'xh',
+  /**
+   * Yoruba.
+   */
+  YO = 'yo',
+  /**
+   * Zulu.
+   */
+  ZU = 'zu',
 }
 
 /**
@@ -7420,19 +5018,6 @@ declare class Endpoint {
 }
 
 /**
- * Converts the date to the specified local timezone. Note that `new Date()` always returns time in the UTC+0 timezone.
- * @param timezone Local timezone in the AREA/LOCATION format of the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
- * @param date Instance of the `Date` object.
- */
-declare function getLocalTime(timezone: string, date: Date): Date;
-
-/**
- * Creates an array of numbers from parsing a hex string
- * @param data Hex string like "cafec0de"
- */
-declare function hex2bytes(data: string): number[];
-
-/**
  * Global IVR control module.
  * <br>
  * Add the following line to your scenario code to use the ref folder:
@@ -7558,29 +5143,12 @@ declare class IVRState {
   enter(call: Call): void;
 }
 
-/**
- * Count the number of deletions, insertions, or substitutions required to transform str1 into str2. The number shows a measure of the similarity between two strings. It is also known as edit distance.
- * @param str1 First string
- * @param str2 Second string
- */
-declare function levenshtein_distance(str1: string, str2: string): number;
-
 declare namespace Logger {
   /**
    * Whether to disable DTMF logging
    * @param flag The default value is false
    */
   function hideTones(flag: boolean): void;
-}
-
-declare namespace Logger {}
-
-declare namespace Logger {
-  /**
-   * Writes a specified message to the session logger. Logs are stored in the [call history](https://manage.voximplant.com/calls).
-   * @param message Message to write. Maximum length is 15000 characters
-   */
-  function write(message: string): void;
 }
 
 declare namespace MeasurementProtocol {
@@ -7923,77 +5491,6 @@ declare module Net {
 
 declare module Net {
   /**
-   * Advanced HTTP request options.
-   */
-  interface HttpRequestOptions {
-    /**
-     * HTTP request type as a string: 'GET', 'POST' etc. The default value is 'GET'
-     */
-    method?: string;
-    /**
-     * Optional. Raw UTF-8 encoded data string or an array of bytes in any encoding generated by [str2bytes](/docs/references/voxengine/str2bytes) to send as the HTTP request body when 'method' is set to 'POST', 'PUT', or 'PATCH'
-     */
-    postData?: string | number[];
-    /**
-     * Optional request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
-     */
-    headers?: { [key: string]: string };
-    /**
-     * Optional request parameters. They can be specified in the URL itself as well
-     */
-    params?: {
-      [key: string]: string;
-    };
-    /**
-     * Whether [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) should contain a list of 1-byte numbers corresponding to the HTTP response data. If set to false, [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) is undefined
-     */
-    rawOutput?: boolean;
-    /**
-     * If set, overrides default HTTP request timeout, in seconds, the default value is 90 seconds. Timeout can only be decreased
-     */
-    timeout?: number;
-    /**
-     * Whether to enable logging the POST request body. The default value is false
-     */
-    enableSystemLog?: boolean;
-  }
-}
-
-declare module Net {
-  /**
-   * HTTP response.
-   */
-  interface HttpRequestResult {
-    /**
-     * Response code. HTTP code (2xx-5xx) or one of our internal status codes
-     * <table><tr><td>0</td><td><a href="//voximplant.com/docs/references/voxengine/">Voxengine limits</a> are violated (e.g. HTTP request count exceeded)</td></tr><tr><td>-1</td><td>Unknown error</td></tr><tr><td>-2</td><td>Malformed URL</td></tr><tr><td>-3</td><td>Host not found</td></tr><tr><td>-4</td><td>Connection error</td></tr><tr><td>-5</td><td>Too many redirects</td></tr><tr><td>-6</td><td>Network error</td></tr><tr><td>-7</td><td>Timeout</td></tr><tr><td>-8</td><td>Internal error</td></tr><tr><td>-9</td><td>Server response is larger than 2 MB</td></tr></table>
-     */
-    code: number;
-    /**
-     * HTTP header string returned by the remote server, without processing
-     */
-    raw_headers?: string;
-    /**
-     * List of dictionaries with key and value fields representing HTTP headers returned by the remote server
-     */
-    headers?: { key: string; value: string }[];
-    /**
-     * HTTP response body if Content-Type is not binary
-     */
-    text?: string;
-    /**
-     * If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is true, data contains a list of 1-byte numbers corresponding to HTTP response data. If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is false, data is undefined.
-     */
-    data?: number[];
-    /**
-     * In case of an error contains the error description
-     */
-    error?: string;
-  }
-}
-
-declare module Net {
-  /**
    * Performs a regular HTTP or HTTPS request. To perform an HTTPS request, insert "https://" at the URL's beginning. GET is the default request method. TCP connect timeout is 6 seconds and total request timeout is 90 seconds. Learn more about the [limits](/docs/guides/voxengine/limits).
    * @param url HTTP url to query
    * @param callback Function to be called on completion. The function receives a response object of type [HttpRequestResult] as a first argument
@@ -8005,8 +5502,6 @@ declare module Net {
     options?: HttpRequestOptions
   ): void;
 }
-
-declare module Net {}
 
 declare module Net {
   /**
@@ -9050,8 +6545,6 @@ declare interface _SequencePlayerPlaybackMarkerReachedEvent extends _SequencePla
 
 /**
  * Sequence player segment, represented by TTS or URL [Player]. Can be passed via the [SequencePlayerParameters.segments] parameter.
- * <br>
- * Same as the [SequencePlaybackSegment](/docs/references/avatarengine/sequenceplaybacksegment).
  */
 declare type SequencePlayerSegment = TTSPlayerSegment | URLPlayerSegment;
 
@@ -9121,20 +6614,6 @@ declare class SequencePlayer {
    */
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
-
-/**
- * Repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.
- * @param callback A function to be executed every specified milliseconds. The function should not have any parameters, and no return value is expected.
- * @param timeout The time, in milliseconds (thousandths of a second), the timer specifies the delay between executions of the specified function or code. If this parameter is less than 100, a value of 100 is used. Note that the actual delay might be longer.
- */
-declare function setInterval(callback: () => any, timeout?: number): number;
-
-/**
- * Sets a timer which executes a function or specified piece of code once after the timer expires.
- * @param callback A function to be executed after the timer expires.
- * @param timeout The time, in milliseconds (thousandths of a second), the timer should wait before the specified function or code is executed. If this parameter is omitted, a value of 0 is used, meaning execute "immediately", or more accurately, as soon as possible. Note that in either case, the actual delay may be longer than intended
- */
-declare function setTimeout(callback: () => any, timeout?: number): number;
 
 /**
  * Add the following line to your scenario code to use the events:
@@ -9527,13 +7006,6 @@ declare interface StoragePage {
 }
 
 /**
- * Creates an array of numbers from parsing string in specified codepage
- * @param data String to parse
- * @param encoding String encoding, the default value is "utf-8".
- */
-declare function str2bytes(data: string, encoding: string): number[];
-
-/**
  * Add the following line to your scenario code to use the events:
  * ```
  * require(Modules.StreamingAgent);
@@ -9910,103 +7382,9 @@ declare enum TranscriptionProvider {
     TINKOFF = 'tsc',
 }
 /**
- * List of available audio effect (profiles that are applied on post synthesized text to speech) for the [TTSOptions.effectsProfileId] parameter.
- */
-declare enum TTSEffectsProfile {
-  /**
-   * Smartwatches and other wearables, like Apple Watch, Wear OS watch
-   */
-  WearableClassDevice = 'wearable-class-device',
-  /**
-   * Smartphones, like Google Pixel, Samsung Galaxy, Apple iPhone
-   */
-  HandsetClassDevice = 'handset-class-device',
-  /**
-   * Earbuds or headphones for audio playback, like Sennheiser headphones
-   */
-  HeadphoneClassDevice = 'headphone-class-device',
-  /**
-   * Small home speakers, like Google Home Mini
-   */
-  SmallBluetoothSpeakerClassDevice = 'small-bluetooth-speaker-class-device',
-  /**
-   * Smart home speakers, like Google Home
-   */
-  MediumBluetoothSpeakerClassDevice = 'medium-bluetooth-speaker-class-device',
-  /**
-   * Home entertainment systems or smart TVs, like Google Home Max, LG TV
-   */
-  LargeHomeEntertainmentClassDevice = 'large-home-entertainment-class-device',
-  /**
-   * Car speakers, home theaters
-   */
-  LargeAutomotiveClassDevice = 'large-automotive-class-device',
-  /**
-   * Interactive Voice Response (IVR) systems
-   */
-  TelephonyClassApplication = 'telephony-class-application',
-}
-
-/**
- * Text-to-speech options. Can be passed via the [CallSayParameters.ttsOptions] and [TTSPlayerParameters.ttsOptions] parameter. See the details in the <a href="//www.w3.org/TR/speech-synthesis/#S3.2.4">official specs</a>.
- */
-declare interface TTSOptions {
-  /**
-   * Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
-   */
-  emotion?: string;
-  /**
-   * Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
-   */
-  pitch?: string;
-  /**
-   * Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
-   */
-  rate?: string;
-  /**
-   * Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
-   */
-  volume?: string;
-  /**
-   * An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
-   */
-  effectsProfileId?: TTSEffectsProfile[];
-  /**
-   * If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
-   */
-  yandexCustomModelName?: string;
-}
-
-/**
- * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
- */
-declare interface TTSPlayerParameters {
-  /**
-   * Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-   */
-  language?: Voice;
-  /**
-   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-   */
-  progressivePlayback?: boolean;
-  /**
-   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
-   */
-  ttsOptions?: TTSOptions;
-  /**
-   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
-   */
-  onPause?: boolean;
-  /**
-   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
-   */
-  request?: Object;
-}
-
-/**
  * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
  * <br>
- * Same as the [VoxEngine.createURLPlayer] method arguments and [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
+ * Same as the [VoxEngine.createTTSPlayer] method arguments. Has a similar interface to [TTSPlaybackParameters](/docs/references/avatarengine/ttsplaybackparameters).
  */
 declare interface TTSPlayerSegment {
   /**
@@ -10067,27 +7445,9 @@ declare interface UpdateRecorderVideoParameters {
 }
 
 /**
- * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
- */
-declare interface URLPlayerParameters {
-  /**
-   * Whether to loop playback.
-   */
-  loop?: boolean;
-  /**
-   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
-   */
-  onPause?: boolean;
-  /**
-   * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
-   */
-  progressivePlayback?: boolean;
-}
-
-/**
  * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
  * <br>
- * Same as the [VoxEngine.createURLPlayer] method arguments and [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
+ * Same as the [VoxEngine.createURLPlayer] method arguments. Has a similar interface to [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
  */
 declare interface URLPlayerSegment {
   /**
@@ -10099,11 +7459,6 @@ declare interface URLPlayerSegment {
    */
   parameters?: URLPlayerParameters;
 }
-
-/**
- * Generates unique identifier and returns it is string representation
- */
-declare function uuidgen(): string;
 
 declare namespace VoiceList {
   /**
@@ -12820,6 +10175,7 @@ declare namespace VoiceList {
     const yue_HK_Standard_D: Voice;
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of IBM languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -13013,9 +10369,9 @@ declare namespace VoiceList {
   /**
    * List of Microsoft languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
-  namespace Microsoft {
-  }
+  namespace Microsoft {}
 }
+
 declare namespace VoiceList {
   namespace Microsoft {
     /**
@@ -13023,7 +10379,6 @@ declare namespace VoiceList {
      * @namespace
      */
     namespace Neural {
-
       /**
        * Neural Microsoft voice, Afrikaans (South Africa) Female, AdriNeural.
        * @const
@@ -13767,6 +11122,12 @@ declare namespace VoiceList {
        * @const
        */
       const en_TZ_ElimuNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, English (United States) Female, AvaNeural.
+       * @const
+       */
+      const en_US_AvaNeural: Voice;
 
       /**
        * Neural Microsoft voice, English (United States) Male, AndrewNeural.
@@ -15569,6 +12930,18 @@ declare namespace VoiceList {
       const wuu_CN_YunzheNeural: Voice;
 
       /**
+       * Neural Microsoft voice, Chinese (Cantonese, Simplified) Female, XiaoMinNeural.
+       * @const
+       */
+      const yue_CN_XiaoMinNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, Chinese (Cantonese, Simplified) Male, YunSongNeural.
+       * @const
+       */
+      const yue_CN_YunSongNeural: Voice;
+
+      /**
        * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoxiaoNeural.
        * @const
        */
@@ -15774,6 +13147,7 @@ declare namespace VoiceList {
     }
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of SaluteSpeech languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -15908,15 +13282,15 @@ declare namespace VoiceList {
        */
       const ru_RU_alena: Voice;
       /**
-       * Yandex voice, Russian male, Ermil.
-       * @const
-       */
-      const ru_RU_ermil: Voice;
-      /**
        * Neural Yandex voice, Russian male, Filipp.
        * @const
        */
       const ru_RU_filipp: Voice;
+      /**
+       * Yandex voice, Russian male, Ermil.
+       * @const
+       */
+      const ru_RU_ermil: Voice;
       /**
        * Yandex voice, Russian female, Jane.
        * @const
@@ -15954,11 +13328,118 @@ declare namespace VoiceList {
   }
 }
 
-declare type Voice = {
-  provider?: string;
-  voice?: string;
-  language: string;
-};
+declare namespace VoiceList {
+  /**
+   * List of YandexV3 SpeechKit languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   */
+  namespace YandexV3 {
+    /**
+     * Neural Yandex voice, German female, Lea.
+     * @const
+     */
+    const de_DE_lea: Voice;
+    /**
+     * Neural Yandex voice, English (US) male, John.
+     * @const
+     */
+    const en_US_john: Voice;
+    /**
+     * Neural Yandex voice, Hebrew female, Naomi.
+     * @const
+     */
+    const he_IL_naomi: Voice;
+    /**
+     * Yandex voice, Kazakh (Kazakhstan) male, Amira.
+     * @const
+     */
+    const kk_KK_amira: Voice;
+    /**
+     * Yandex voice, Kazakh (Kazakhstan) male, Madi.
+     * @const
+     */
+    const kk_KK_madi: Voice;
+    /**
+     * Neural Yandex voice, Russian female, Alena.
+     * @const
+     */
+    const ru_RU_alena: Voice;
+    /**
+     * Neural Yandex voice, Russian male, Filipp.
+     * @const
+     */
+    const ru_RU_filipp: Voice;
+    /**
+     * Yandex voice, Russian male, Ermil.
+     * @const
+     */
+    const ru_RU_ermil: Voice;
+    /**
+     * Yandex voice, Russian female, Jane.
+     * @const
+     */
+    const ru_RU_jane: Voice;
+    /**
+     * Yandex voice, Russian male, Madirus.
+     * @const
+     */
+    const ru_RU_madirus: Voice;
+    /**
+     * Yandex voice, Russian female, Omazh.
+     * @const
+     */
+    const ru_RU_omazh: Voice;
+    /**
+     * Yandex voice, Russian male, Zahar.
+     * @const
+     */
+    const ru_RU_zahar: Voice;
+    /**
+     * Yandex voice, Russian female, Dasha.
+     * @const
+     */
+    const ru_RU_dasha: Voice;
+    /**
+     * Yandex voice, Russian female, Julia.
+     * @const
+     */
+    const ru_RU_julia: Voice;
+    /**
+     * Yandex voice, Russian female, Lera.
+     * @const
+     */
+    const ru_RU_lera: Voice;
+    /**
+     * Yandex voice, Russian female, Masha.
+     * @const
+     */
+    const ru_RU_masha: Voice;
+    /**
+     * Yandex voice, Russian female, Marina.
+     * @const
+     */
+    const ru_RU_marina: Voice;
+    /**
+     * Yandex voice, Russian male, Alexander.
+     * @const
+     */
+    const ru_RU_alexander: Voice;
+    /**
+     * Yandex voice, Russian male, Kirill.
+     * @const
+     */
+    const ru_RU_kirill: Voice;
+    /**
+     * Yandex voice, Russian male, Anton.
+     * @const
+     */
+    const ru_RU_anton: Voice;
+    /**
+     * Yandex voice, Uzbek (Uzbekistan) female, Nigora.
+     * @const
+     */
+    const uz_UZ_nigora: Voice;
+  }
+}
 
 declare namespace VoxEngine {
   /**
@@ -16343,7 +13824,7 @@ declare namespace VoximplantAvatar {
      */
     customData?: Object;
     /**
-     * Whether an avatar should return detailed information on recognizing the user input (i.e. whether the **intents** are passed to [VoximplantAvatar.Events.UtteranceParsed](/docs/references/voxengine/voximplantavatar/events#utteranceparsed) in the avatar script)
+     * Whether an avatar should return detailed information on recognizing the user input (i.e. whether the **intents** are passed to [VoximplantAvatar.Events.UtteranceParsed](/docs/references/voxengine/voximplantavatar/events#utteranceparsed) in the avatar script). NOTE: starting from the text implementation the avatar always returns detailed information
      */
     extended?: boolean;
   }
@@ -17028,3 +14509,3398 @@ declare class WebSocket {
    */
   stopMediaTo(targetMediaUnit: VoxMediaUnit): void;
 }
+
+declare module ASRModelList {
+  /**
+   * List of Amazon Polly models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Amazon {
+    /**
+     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
+     * @const
+     */
+    default,
+  }
+}
+
+/**
+ * List of available ASR models.
+ * <br>
+ * Add the following line to your scenario code to use the ref folder:
+ * ```
+ * require(Modules.ASR);
+ * ```
+ * @namespace
+ */
+declare module ASRModelList {}
+
+declare module ASRModelList {
+  /**
+   * List of Deepgram models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Deepgram {
+    /**
+     * The default **General** model.
+     * @const
+     */
+    default,
+    /**
+     * Optimized for everyday audio processing.
+     * @const
+     */
+    general,
+    /**
+     * Optimized for everyday audio processing. Applies the newest ASR module with higher accuracy.
+     */
+    general_enhanced,
+    /**
+     * Optimized for conference room settings, which include multiple speakers with a single microphone.
+     * @const
+     */
+    meeting,
+    /**
+     * Optimized for conference room settings, which include multiple speakers with a single microphone. Applies the newest ASR module with higher accuracy.
+     * @const
+     */
+    meeting_enhanced,
+    /**
+     * Optimized for low-bandwidth audio phone calls.
+     * @const
+     */
+    phonecall,
+    /**
+     * Optimized for low-bandwidth audio phone calls. Applies the newest ASR module with higher accuracy.
+     * @const
+     */
+    phonecall_enhanced,
+    /**
+     * Optimized for low-bandwidth audio clips with a single speaker. Derived from the phonecall model.
+     * @const
+     */
+    voicemail,
+    /**
+     * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented.
+     * @const
+     */
+    finance,
+    /**
+     * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented. Applies the newest ASR module with higher accuracy.
+     * @const
+     */
+    finance_enhanced,
+    /**
+     * Optimized to allow artificial intelligence technologies, such as chatbots, to interact with people in a human-like way.
+     * @const
+     */
+    conversational,
+    /**
+     * Optimized for audio sourced from videos.
+     * @const
+     */
+    video,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of Google Speech-to-Text models. The **enhanced** models cost more than the standard rate.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Google {
+    /**
+     * Best for audio that is not one of the specific audio models. For example, long-form audio. Ideally the audio is high-fidelity, recorded at a 16khz or greater sampling rate.
+     * @const
+     */
+    default,
+
+    /**
+     * **Default** model with more accurate recognition.
+     * @const
+     */
+    default_enhanced,
+
+    /**
+     * Best for short queries such as voice commands or voice search.
+     * @const
+     */
+    command_and_search,
+
+    /**
+     * **Command_and_search** model with more accurate recognition.
+     * @const
+     */
+    command_and_search_enhanced,
+
+    /**
+     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
+     * @const
+     */
+    phone_call,
+
+    /**
+     * **Phone_call** model with more accurate recognition.
+     * @const
+     */
+    phone_call_enhanced,
+
+    /**
+     * Best for audio that originated from video or includes multiple speakers. Ideally the audio is recorded at a 16khz or greater sampling rate.
+     * @const
+     */
+    video,
+
+    /**
+     * **Video** model with more accurate recognition.
+     * @const
+     */
+    video_enhanced,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of Microsoft Speech-to-text models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Microsoft {
+    /**
+     * Best for generic, day-to-day language and if there is little or no background noise.
+     * @const
+     */
+    default,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of SaluteSpeech models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum SaluteSpeech {
+    /**
+     * The default **General** model.
+     * @const
+     */
+    default,
+    /**
+     * Short arbitrary phrases, e.g., search queries.
+     * @const
+     */
+    general,
+    /**
+     * The model for media usage.
+     * @const
+     */
+    media,
+    /**
+     * The model to use in a call center.
+     * @const
+     */
+    callcenter,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of Tinkoff VoiceKit models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Tinkoff {
+    /**
+     * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
+     * @const
+     */
+    default,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of Yandex SpeechKit models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Yandex {
+    /**
+     * The default **General** model.
+     * @const
+     */
+    default,
+    /**
+     * Short arbitrary phrases, e.g., search queries.
+     * @const
+     */
+    general,
+    /**
+     * Short arbitrary phrases, e.g., search queries. Release candidate version.
+     * @const
+     */
+    generalrc,
+    /**
+     * Month names, cardinal and ordinal numbers.
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    dates,
+    /**
+     * People's first and last names, as well as requests to put someone on the phone.
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    names,
+    /**
+     * Addresses, organizations, and geographical features.
+     * @const
+     * @deprecated
+     */
+    maps,
+    /**
+     * Cardinal numbers and delimiters (comma, period).
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    numbers,
+  }
+}
+
+declare module ASRModelList {
+  /**
+   * List of YandexV3 SpeechKit models.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum YandexV3 {
+    /**
+     * The default **General** model.
+     * @const
+     */
+    default,
+    /**
+     * Short arbitrary phrases, e.g., search queries.
+     * @const
+     */
+    general,
+    /**
+     * Short arbitrary phrases, e.g., search queries. Release candidate version.
+     * @const
+     */
+    generalrc,
+    /**
+     * Month names, cardinal and ordinal numbers.
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    dates,
+    /**
+     * People's first and last names, as well as requests to put someone on the phone.
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    names,
+    /**
+     * Addresses, organizations, and geographical features.
+     * @const
+     * @deprecated
+     */
+    maps,
+    /**
+     * Cardinal numbers and delimiters (comma, period).
+     * <br>
+     * Supported by [ASRProfileList.Yandex.ru_RU] only.
+     * @const
+     * @deprecated
+     */
+    numbers,
+  }
+}
+
+/**
+ * [ASR] parameters. Can be passed as arguments to the [VoxEngine.createASR] method.
+ * <br>
+ * Add the following line to your scenario code to use the interface:
+ * ```
+ * require(Modules.ASR);
+ * ```
+ */
+declare interface ASRParameters {
+  /**
+   * Profile that specifies an ASR provider and a language to use.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  profile:
+    | ASRProfileList.Amazon
+    | ASRProfileList.Deepgram
+    | ASRProfileList.Google
+    | ASRProfileList.Microsoft
+    | ASRProfileList.SaluteSpeech
+    | ASRProfileList.Tinkoff
+    | ASRProfileList.Yandex
+    | ASRProfileList.YandexV3;
+
+  /**
+   * Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  model?:
+    | ASRModelList.Amazon
+    | ASRModelList.Deepgram
+    | ASRModelList.Google
+    | ASRModelList.Microsoft
+    | ASRModelList.SaluteSpeech
+    | ASRModelList.Tinkoff
+    | ASRModelList.Yandex
+    | ASRModelList.YandexV3;
+
+  /**
+   * Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  interimResults?: boolean;
+
+  /**
+   * Whether to enable single utterance. The default value is **false**, so:
+   * <br>
+   * 1) if the speech is shorter than 60 sec, [ASREvents.Result] is triggered in unpredictable time. You could mute the mic when the speech is over - this increases the probability of [ASREvents.Result] catching;
+   * <br>
+   * 2) if the speech is longer than 60 sec, [ASREvents.Result] is triggered each 60 seconds.
+   * <br>
+   * If it is **true**, the [ASREvents.Result] is triggered after every utterance.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * <br>
+   * *Note: for the SaluteSpeech provider the default value is **true**.*
+   */
+  singleUtterance?: boolean;
+
+  /**
+   * Preferable words to recognize. Note that **phraseHints** do not limit the recognition to the specific list. Instead, words in the specified list has a higher chance to be selected.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   */
+  phraseHints?: string[];
+
+  /**
+   * Whether to enable profanity filter. The default value is **false**.
+   * <br>
+   * If set to **true**, the server attempts to filter out profanities, replacing all but the initial character in each filtered word with asterisks, e.g. "f***". If set to **false** or omitted, profanities are not filtered out.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  profanityFilter?: boolean;
+
+  /**
+   * Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  beta?: boolean;
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * The recognition result contains a [_ASRResultEvent.channelTag] field to state which channel that result belongs to. If set to **false** or omitted, only the first channel is recognized.
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableSeparateRecognitionPerChannel?: boolean;
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * A list of up to 3 additional BCP-47 language tags, listing possible alternative languages of the supplied audio. See [Language Support](https://cloud.google.com/speech-to-text/docs/languages) for a list of the currently supported language codes.
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  alternativeLanguageCodes?: string[];
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * If set to **true**, the top result includes a list of words and the start and end time offsets (timestamps) for those words. If set to **false** or omitted, no word-level time offset information is returned. The default value is **false**.
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableWordTimeOffsets?: boolean;
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * If set to **true**, the top result includes a list of words and the confidence for those words. If set to **false** or omitted, no word-level confidence information is returned. The default value is **false**.
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableWordConfidence?: boolean;
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * If set to **true**, adds punctuation to recognition result hypotheses. This feature is only available in select languages. Setting this for requests in other languages has no effect at all. The **false** value does not add punctuation to result hypotheses. The default value is **false**.
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableAutomaticPunctuation?: boolean;
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * Config to enable speaker diarization and set additional parameters to make diarization better suited for your application.
+   * <br>
+   * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#SpeakerDiarizationConfig).
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  diarizationConfig?: {
+    /**
+     * If set to **true**, enables speaker detection for each recognized word in the top alternative of the recognition result.
+     */
+    enableSpeakerDiarization: boolean;
+  };
+
+  /**
+   * v1p1beta1 Speech API feature.
+   * <br>
+   * Metadata regarding this request.
+   * <br>
+   * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#RecognitionMetadata).
+   * <br>
+   * Requires the **beta** parameter set to **true**.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  metadata?: {
+    /**
+     * The audio type that most closely describes the audio being recognized. Possible values are: **MICROPHONE_DISTANCE_UNSPECIFIED**, **NEARFIELD**, **MIDFIELD**, **FARFIELD**.
+     */
+    microphoneDistance: string;
+  };
+
+  /**
+   * Increase the recognition model bias by assigning more weight to some phrases than others. **Phrases** is the word array, **boost** is the weight in the range of 1..20.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  speechContexts?: [
+    {
+      phrases: string[];
+      boost: number;
+    }
+  ];
+
+  /**
+   * TODO: fix description
+   * Maximum number of recognition hypotheses to be returned.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  maxAlternatives: number;
+
+  /**
+   * TODO: fix description
+   * Speech adaptation configuration.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  adaptation: Object;
+
+  /**
+   * TODO: fix description
+   * The spoken punctuation behavior for the call.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableSpokenPunctuation: boolean;
+
+  /**
+   * TODO: fix description
+   * The spoken emoji behavior for the call.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  enableSpokenEmojis: boolean;
+
+  /**
+   * TODO: fix description
+   * The spoken emoji behavior for the call.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  useEnhanced: boolean;
+
+  /**
+   * TODO: fix description
+   * Transcription normalization configuration. Use transcription normalization to automatically replace parts of the transcript with phrases of your choosing.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
+   * @beta
+   */
+  transcriptNormalization: {
+    entries: [
+      {
+        search: string;
+        replace: string;
+        caseSensitive: boolean;
+      }
+    ];
+  };
+
+  /**
+   * Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
+   * <br>
+   * <br>
+   * *Available for providers: Deepgram, Google, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  request?: Object;
+}
+
+declare module ASRProfileList {
+  /**
+   * List of Amazon Polly profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Amazon {
+    /**
+     * English (United Kingdom)
+     * @const
+     */
+    en_GB,
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+    /**
+     * Spanish (United States)
+     * @const
+     */
+    es_US,
+    /**
+     * French (Canada)
+     * @const
+     */
+    fr_CA,
+    /**
+     * French (France)
+     * @const
+     */
+    fr_FR,
+  }
+}
+
+/**
+ * List of available ASR profiles.
+ * <br>
+ * Add the following line to your scenario code to use the ref folder:
+ * ```
+ * require(Modules.ASR);
+ * ```
+ * @namespace
+ */
+declare module ASRProfileList {}
+
+declare module ASRProfileList {
+  /**
+   * List of Deepgram profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Deepgram {
+    /**
+     * Chinese (China)
+     * @const
+     */
+    zh,
+    /**
+     * Chinese (Simplified)
+     * @const
+     */
+    zh_CN,
+    /**
+     * Chinese (Traditional)
+     * @const
+     */
+    zh_TW,
+    /**
+     * Danish (Denmark)
+     * @const
+     */
+    da,
+    /**
+     * Dutch (Netherlands)
+     * @const
+     */
+    nl,
+    /**
+     * English (Common)
+     * @const
+     */
+    en,
+    /**
+     * English (Australia)
+     * @const
+     */
+    en_AU,
+    /**
+     * English (Great Britain)
+     * @const
+     */
+    en_GB,
+    /**
+     * English (Indonesia)
+     * @const
+     */
+    en_IN,
+    /**
+     * English (New Zealand)
+     * @const
+     */
+    en_NZ,
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+    /**
+     * French (France)
+     * @const
+     */
+    fr,
+    /**
+     * French (Canada)
+     * @const
+     */
+    fr_CA,
+    /**
+     * German (Germany)
+     * @const
+     */
+    de,
+    /**
+     * Hindi (India)
+     * @const
+     */
+    hi,
+    /**
+     * Hindi (Latin)
+     * @const
+     */
+    hi_Latn,
+    /**
+     * Indonesian (Indonesia)
+     * @const
+     */
+    id,
+    /**
+     * Italian (Italy)
+     * @const
+     */
+    it,
+    /**
+     * Japanese (Japan)
+     * @const
+     */
+    ja,
+    /**
+     * Korean (Korea)
+     * @const
+     */
+    ko,
+    /**
+     * Norwegian (Norway)
+     * @const
+     */
+    no,
+    /**
+     * Polish (Poland)
+     * @const
+     */
+    pl,
+    /**
+     * Portuguese (Common)
+     * @const
+     */
+    pt,
+    /**
+     * Portuguese (Brazil)
+     * @const
+     */
+    pt_BR,
+    /**
+     * Portuguese (Portugal)
+     * @const
+     */
+    pt_PT,
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru,
+    /**
+     * Spanish (Spain)
+     * @const
+     */
+    es,
+    /**
+     * Spanish (Latin America)
+     * @const
+     */
+    'es-419',
+    /**
+     * Swedish (Sweden)
+     * @const
+     */
+    sv,
+    /**
+     * Tamil (India)
+     * @const
+     */
+    ta,
+    /**
+     * Turkish (Turkey)
+     * @const
+     */
+    tr,
+    /**
+     * Ukrainian (Ukraine)
+     * @const
+     */
+    uk,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of Google Speech-to-Text profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Google {
+    /**
+     * Afrikaans (South Africa)
+     * @const
+     */
+    af_ZA,
+
+    /**
+     * Albanian (Albania)
+     * @const
+     */
+    sq_AL,
+
+    /**
+     * Amharic (Ethiopia)
+     * @const
+     */
+    am_ET,
+
+    /**
+     * Arabic (Algeria)
+     * @const
+     */
+    ar_DZ,
+
+    /**
+     * Arabic (Bahrain)
+     * @const
+     */
+    ar_BH,
+
+    /**
+     * Arabic (Egypt)
+     * @const
+     */
+    ar_EG,
+
+    /**
+     * Arabic (Iraq)
+     * @const
+     */
+    ar_IQ,
+
+    /**
+     * Arabic (Israel)
+     * @const
+     */
+    ar_IL,
+
+    /**
+     * Arabic (Jordan)
+     * @const
+     */
+    ar_JO,
+
+    /**
+     * Arabic (Kuwait)
+     * @const
+     */
+    ar_KW,
+
+    /**
+     * Arabic (Lebanon)
+     * @const
+     */
+    ar_LB,
+
+    /**
+     * Arabic (Mauritania)
+     * @const
+     */
+    ar_MR,
+
+    /**
+     * Arabic (Morocco)
+     * @const
+     */
+    ar_MA,
+
+    /**
+     * Arabic (Oman)
+     * @const
+     */
+    ar_OM,
+
+    /**
+     * Arabic (Qatar)
+     * @const
+     */
+    ar_QA,
+
+    /**
+     * Arabic (Saudi Arabia)
+     * @const
+     */
+    ar_SA,
+
+    /**
+     * Arabic (State of Palestine)
+     * @const
+     */
+    ar_PS,
+
+    /**
+     * Arabic (Syria)
+     * @const
+     */
+    ar_SY,
+
+    /**
+     * Arabic (Tunisia)
+     * @const
+     */
+    ar_TN,
+
+    /**
+     * Arabic (United Arab Emirates)
+     * @const
+     */
+    ar_AE,
+
+    /**
+     * Arabic (Yemen)
+     * @const
+     */
+    ar_YE,
+
+    /**
+     * Armenian (Armenia)
+     * @const
+     */
+    hy_AM,
+
+    /**
+     * Azerbaijani (Azerbaijan)
+     * @const
+     */
+    az_AZ,
+
+    /**
+     * Basque (Spain)
+     * @const
+     */
+    eu_ES,
+
+    /**
+     * Bengali (Bangladesh)
+     * @const
+     */
+    bn_BD,
+
+    /**
+     * Bengali (India)
+     * @const
+     */
+    bn_IN,
+
+    /**
+     * Bosnian (Bosnia and Herzegovina)
+     * @const
+     */
+    bs_BA,
+
+    /**
+     * Bulgarian (Bulgaria)
+     * @const
+     */
+    bg_BG,
+
+    /**
+     * Burmese (Myanmar)
+     * @const
+     */
+    my_MM,
+
+    /**
+     * Catalan (Spain)
+     * @const
+     */
+    ca_ES,
+
+    /**
+     * Chinese, Cantonese (Traditional Hong Kong)
+     * @const
+     */
+    yue_Hant_HK,
+
+    /**
+     * Chinese, Mandarin (Simplified, China)
+     * @const
+     */
+    cmn_Hans_CN,
+
+    /**
+     * Chinese, Mandarin (Traditional, Taiwan)
+     * @const
+     */
+    cmn_Hant_TW,
+
+    /**
+     * Croatian (Croatia)
+     * @const
+     */
+    hr_HR,
+
+    /**
+     * Czech (Czech Republic)
+     * @const
+     */
+    cs_CZ,
+
+    /**
+     * Danish (Denmark)
+     * @const
+     */
+    da_DK,
+
+    /**
+     * Dutch (Belgium)
+     * @const
+     */
+    nl_BE,
+
+    /**
+     * Dutch (Netherlands)
+     * @const
+     */
+    nl_NL,
+
+    /**
+     * English (Australia)
+     * @const
+     */
+    en_AU,
+
+    /**
+     * English (Canada)
+     * @const
+     */
+    en_CA,
+
+    /**
+     * English (Ghana)
+     * @const
+     */
+    en_GH,
+
+    /**
+     * English (Hong Kong)
+     * @const
+     */
+    en_HK,
+
+    /**
+     * English (India)
+     * @const
+     */
+    en_IN,
+
+    /**
+     * English (Ireland)
+     * @const
+     */
+    en_IE,
+
+    /**
+     * English (Kenya)
+     * @const
+     */
+    en_KE,
+
+    /**
+     * English (New Zealand)
+     * @const
+     */
+    en_NZ,
+
+    /**
+     * English (Nigeria)
+     * @const
+     */
+    en_NG,
+
+    /**
+     * English (Pakistan)
+     * @const
+     */
+    en_PK,
+
+    /**
+     * English (Philippines)
+     * @const
+     */
+    en_PH,
+
+    /**
+     * English (Singapore)
+     * @const
+     */
+    en_SG,
+
+    /**
+     * English (South Africa)
+     * @const
+     */
+    en_ZA,
+
+    /**
+     * English (Tanzania)
+     * @const
+     */
+    en_TZ,
+
+    /**
+     * English (United Kingdom)
+     * @const
+     */
+    en_GB,
+
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+
+    /**
+     * Estonian (Estonia)
+     * @const
+     */
+    et_EE,
+
+    /**
+     * Filipino (Philippines)
+     * @const
+     */
+    fil_PH,
+
+    /**
+     * Finnish (Finland)
+     * @const
+     */
+    fi_FI,
+
+    /**
+     * French (Belgium)
+     * @const
+     */
+    fr_BE,
+
+    /**
+     * French (Canada)
+     * @const
+     */
+    fr_CA,
+
+    /**
+     * French (France)
+     * @const
+     */
+    fr_FR,
+
+    /**
+     * French (Switzerland)
+     * @const
+     */
+    fr_CH,
+
+    /**
+     * Galician (Spain)
+     * @const
+     */
+    gl_ES,
+
+    /**
+     * Georgian (Georgia)
+     * @const
+     */
+    ka_GE,
+
+    /**
+     * German (Austria)
+     * @const
+     */
+    de_AT,
+
+    /**
+     * German (Germany)
+     * @const
+     */
+    de_DE,
+
+    /**
+     * German (Switzerland)
+     * @const
+     */
+    de_CH,
+
+    /**
+     * Greek (Greece)
+     * @const
+     */
+    el_GR,
+
+    /**
+     * Gujarati (India)
+     * @const
+     */
+    gu_IN,
+
+    /**
+     * Hebrew (Israel)
+     * @const
+     */
+    iw_IL,
+
+    /**
+     * Hindi (India)
+     * @const
+     */
+    hi_IN,
+
+    /**
+     * Hungarian (Hungary)
+     * @const
+     */
+    hu_HU,
+
+    /**
+     * Icelandic (Iceland)
+     * @const
+     */
+    is_IS,
+
+    /**
+     * Indonesian (Indonesia)
+     * @const
+     */
+    id_ID,
+
+    /**
+     * Italian (Italy)
+     * @const
+     */
+    it_IT,
+
+    /**
+     * Italian (Switzerland)
+     * @const
+     */
+    it_CH,
+
+    /**
+     * Japanese (Japan)
+     * @const
+     */
+    ja_JP,
+
+    /**
+     * Javanese (Indonesia)
+     * @const
+     */
+    jv_ID,
+
+    /**
+     * Kannada (India)
+     * @const
+     */
+    kn_IN,
+
+    /**
+     * Kazakh (Kazakhstan)
+     * @const
+     */
+    kk_KZ,
+
+    /**
+     * Khmer (Cambodia)
+     * @const
+     */
+    km_KH,
+
+    /**
+     * Kinyarwanda (Rwanda)
+     * @const
+     */
+    rw_RW,
+
+    /**
+     * Korean (South Korea)
+     * @const
+     */
+    ko_KR,
+
+    /**
+     * Lao (Laos)
+     * @const
+     */
+    lo_LA,
+
+    /**
+     * Latvian (Latvia)
+     * @const
+     */
+    lv_LV,
+
+    /**
+     * Lithuanian (Lithuania)
+     * @const
+     */
+    lt_LT,
+
+    /**
+     * Macedonian (North Macedonia)
+     * @const
+     */
+    mk_MK,
+
+    /**
+     * Malay (Malaysia)
+     * @const
+     */
+    ms_MY,
+
+    /**
+     * Malayalam (India)
+     * @const
+     */
+    ml_IN,
+
+    /**
+     * Marathi (India)
+     * @const
+     */
+    mr_IN,
+
+    /**
+     * Mongolian (Mongolia)
+     * @const
+     */
+    mn_MN,
+
+    /**
+     * Nepali (Nepal)
+     * @const
+     */
+    ne_NP,
+
+    /**
+     * Norwegian Bokmål (Norway)
+     * @const
+     */
+    no_NO,
+
+    /**
+     * Persian (Iran)
+     * @const
+     */
+    fa_IR,
+
+    /**
+     * Polish (Poland)
+     * @const
+     */
+    pl_PL,
+
+    /**
+     * Portuguese (Brazil)
+     * @const
+     */
+    pt_BR,
+
+    /**
+     * Portuguese (Portugal)
+     * @const
+     */
+    pt_PT,
+
+    /**
+     * Punjabi (Gurmukhi India)
+     * @const
+     */
+    pa_Guru_IN,
+
+    /**
+     * Romanian (Romania)
+     * @const
+     */
+    ro_RO,
+
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+
+    /**
+     * Serbian (Serbia)
+     * @const
+     */
+    sr_RS,
+
+    /**
+     * Sinhala (Sri Lanka)
+     * @const
+     */
+    si_LK,
+
+    /**
+     * Slovak (Slovakia)
+     * @const
+     */
+    sk_SK,
+
+    /**
+     * Slovenian (Slovenia)
+     * @const
+     */
+    sl_SI,
+
+    /**
+     * Southern Sotho (South Africa)
+     * @const
+     */
+    st_ZA,
+
+    /**
+     * Spanish (Argentina)
+     * @const
+     */
+    es_AR,
+
+    /**
+     * Spanish (Bolivia)
+     * @const
+     */
+    es_BO,
+
+    /**
+     * Spanish (Chile)
+     * @const
+     */
+    es_CL,
+
+    /**
+     * Spanish (Colombia)
+     * @const
+     */
+    es_CO,
+
+    /**
+     * Spanish (Costa Rica)
+     * @const
+     */
+    es_CR,
+
+    /**
+     * Spanish (Dominican Republic)
+     * @const
+     */
+    es_DO,
+
+    /**
+     * Spanish (Ecuador)
+     * @const
+     */
+    es_EC,
+
+    /**
+     * Spanish (El Salvador)
+     * @const
+     */
+    es_SV,
+
+    /**
+     * Spanish (Guatemala)
+     * @const
+     */
+    es_GT,
+
+    /**
+     * Spanish (Honduras)
+     * @const
+     */
+    es_HN,
+
+    /**
+     * Spanish (Mexico)
+     * @const
+     */
+    es_MX,
+
+    /**
+     * Spanish (Nicaragua)
+     * @const
+     */
+    es_NI,
+
+    /**
+     * Spanish (Panama)
+     * @const
+     */
+    es_PA,
+
+    /**
+     * Spanish (Paraguay)
+     * @const
+     */
+    es_PY,
+
+    /**
+     * Spanish (Peru)
+     * @const
+     */
+    es_PE,
+
+    /**
+     * Spanish (Puerto Rico)
+     * @const
+     */
+    es_PR,
+
+    /**
+     * Spanish (Spain)
+     * @const
+     */
+    es_ES,
+
+    /**
+     * Spanish (United States)
+     * @const
+     */
+    es_US,
+
+    /**
+     * Spanish (Uruguay)
+     * @const
+     */
+    es_UY,
+
+    /**
+     * Spanish (Venezuela)
+     * @const
+     */
+    es_VE,
+
+    /**
+     * Sundanese (Indonesia)
+     * @const
+     */
+    su_ID,
+
+    /**
+     * Swahili (Kenya)
+     * @const
+     */
+    sw_KE,
+
+    /**
+     * Swahili (Tanzania)
+     * @const
+     */
+    sw_TZ,
+
+    /**
+     * Swati (Latin, South Africa)
+     * @const
+     */
+    ss_Latn_ZA,
+
+    /**
+     * Swedish (Sweden)
+     * @const
+     */
+    sv_SE,
+
+    /**
+     * Tamil (India)
+     * @const
+     */
+    ta_IN,
+
+    /**
+     * Tamil (Malaysia)
+     * @const
+     */
+    ta_MY,
+
+    /**
+     * Tamil (Singapore)
+     * @const
+     */
+    ta_SG,
+
+    /**
+     * Tamil (Sri Lanka)
+     * @const
+     */
+    ta_LK,
+
+    /**
+     * Telugu (India)
+     * @const
+     */
+    te_IN,
+
+    /**
+     * Thai (Thailand)
+     * @const
+     */
+    th_TH,
+
+    /**
+     * Tsonga (South Africa)
+     * @const
+     */
+    ts_ZA,
+
+    /**
+     * Tswana (Latin, South Africa)
+     * @const
+     */
+    tn_Latn_ZA,
+
+    /**
+     * Turkish (Turkey)
+     * @const
+     */
+    tr_TR,
+
+    /**
+     * Ukrainian (Ukraine)
+     * @const
+     */
+    uk_UA,
+
+    /**
+     * Urdu (India)
+     * @const
+     */
+    ur_IN,
+
+    /**
+     * Urdu (Pakistan)
+     * @const
+     */
+    ur_PK,
+
+    /**
+     * Uzbek (Uzbekistan)
+     * @const
+     */
+    uz_UZ,
+
+    /**
+     * Venda (South Africa)
+     * @const
+     */
+    ve_ZA,
+
+    /**
+     * Vietnamese (Vietnam)
+     * @const
+     */
+    vi_VN,
+
+    /**
+     * Xhosa (South Africa)
+     * @const
+     */
+    xh_ZA,
+
+    /**
+     * Zulu (South Africa)
+     * @const
+     */
+    zu_ZA,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of Microsoft Speech-to-text profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Microsoft {
+    /**
+     * Afrikaans (South Africa)
+     * @const
+     */
+    af_ZA,
+
+    /**
+     * Amharic (Ethiopia)
+     * @const
+     */
+    am_ET,
+
+    /**
+     * Arabic (United Arab Emirates)
+     * @const
+     */
+    ar_AE,
+
+    /**
+     * Arabic (Bahrain)
+     * @const
+     */
+    ar_BH,
+
+    /**
+     * Arabic (Algeria)
+     * @const
+     */
+    ar_DZ,
+
+    /**
+     * Arabic (Egypt)
+     * @const
+     */
+    ar_EG,
+
+    /**
+     * Arabic (Israel)
+     * @const
+     */
+    ar_IL,
+
+    /**
+     * Arabic (Iraq)
+     * @const
+     */
+    ar_IQ,
+
+    /**
+     * Arabic (Jordan)
+     * @const
+     */
+    ar_JO,
+
+    /**
+     * Arabic (Kuwait)
+     * @const
+     */
+    ar_KW,
+
+    /**
+     * Arabic (Lebanon)
+     * @const
+     */
+    ar_LB,
+
+    /**
+     * Arabic (Libya)
+     * @const
+     */
+    ar_LY,
+
+    /**
+     * Arabic (Morocco)
+     * @const
+     */
+    ar_MA,
+
+    /**
+     * Arabic (Oman)
+     * @const
+     */
+    ar_OM,
+
+    /**
+     * Arabic (Palestinian Authority)
+     * @const
+     */
+    ar_PS,
+
+    /**
+     * Arabic (Qatar)
+     * @const
+     */
+    ar_QA,
+
+    /**
+     * Arabic (Saudi Arabia)
+     * @const
+     */
+    ar_SA,
+
+    /**
+     * Arabic (Syria)
+     * @const
+     */
+    ar_SY,
+
+    /**
+     * Arabic (Tunisia)
+     * @const
+     */
+    ar_TN,
+
+    /**
+     * Arabic (Yemen)
+     * @const
+     */
+    ar_YE,
+
+    /**
+     * Azerbaijani (Latin, Azerbaijan)
+     * @const
+     */
+    az_AZ,
+
+    /**
+     * Bulgarian (Bulgaria)
+     * @const
+     */
+    bg_BG,
+
+    /**
+     * Bengali (India)
+     * @const
+     */
+    bn_IN,
+
+    /**
+     * Bosnian (Bosnia and Herzegovina)
+     * @const
+     */
+    bs_BA,
+
+    /**
+     * Catalan
+     * @const
+     */
+    ca_ES,
+
+    /**
+     * Czech (Czechia)
+     * @const
+     */
+    cs_CZ,
+
+    /**
+     * Welsh (United Kingdom)
+     * @const
+     */
+    cy_GB,
+
+    /**
+     * Danish (Denmark)
+     * @const
+     */
+    da_DK,
+
+    /**
+     * German (Austria)
+     * @const
+     */
+    de_AT,
+
+    /**
+     * German (Switzerland)
+     * @const
+     */
+    de_CH,
+
+    /**
+     * German (Germany)
+     * @const
+     */
+    de_DE,
+
+    /**
+     * Greek (Greece)
+     * @const
+     */
+    el_GR,
+
+    /**
+     * English (Australia)
+     * @const
+     */
+    en_AU,
+
+    /**
+     * English (Canada)
+     * @const
+     */
+    en_CA,
+
+    /**
+     * English (United Kingdom)
+     * @const
+     */
+    en_GB,
+
+    /**
+     * English (Ghana)
+     * @const
+     */
+    en_GH,
+
+    /**
+     * English (Hong Kong SAR)
+     * @const
+     */
+    en_HK,
+
+    /**
+     * English (Ireland)
+     * @const
+     */
+    en_IE,
+
+    /**
+     * English (India)
+     * @const
+     */
+    en_IN,
+
+    /**
+     * English (Kenya)
+     * @const
+     */
+    en_KE,
+
+    /**
+     * English (Nigeria)
+     * @const
+     */
+    en_NG,
+
+    /**
+     * English (New Zealand)
+     * @const
+     */
+    en_NZ,
+
+    /**
+     * English (Philippines)
+     * @const
+     */
+    en_PH,
+
+    /**
+     * English (Singapore)
+     * @const
+     */
+    en_SG,
+
+    /**
+     * English (Tanzania)
+     * @const
+     */
+    en_TZ,
+
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+
+    /**
+     * English (South Africa)
+     * @const
+     */
+    en_ZA,
+
+    /**
+     * Spanish (Argentina)
+     * @const
+     */
+    es_AR,
+
+    /**
+     * Spanish (Bolivia)
+     * @const
+     */
+    es_BO,
+
+    /**
+     * Spanish (Chile)
+     * @const
+     */
+    es_CL,
+
+    /**
+     * Spanish (Colombia)
+     * @const
+     */
+    es_CO,
+
+    /**
+     * Spanish (Costa Rica)
+     * @const
+     */
+    es_CR,
+
+    /**
+     * Spanish (Cuba)
+     * @const
+     */
+    es_CU,
+
+    /**
+     * Spanish (Dominican Republic)
+     * @const
+     */
+    es_DO,
+
+    /**
+     * Spanish (Ecuador)
+     * @const
+     */
+    es_EC,
+
+    /**
+     * Spanish (Spain)
+     * @const
+     */
+    es_ES,
+
+    /**
+     * Spanish (Equatorial Guinea)
+     * @const
+     */
+    es_GQ,
+
+    /**
+     * Spanish (Guatemala)
+     * @const
+     */
+    es_GT,
+
+    /**
+     * Spanish (Honduras)
+     * @const
+     */
+    es_HN,
+
+    /**
+     * Spanish (Mexico)
+     * @const
+     */
+    es_MX,
+
+    /**
+     * Spanish (Nicaragua)
+     * @const
+     */
+    es_NI,
+
+    /**
+     * Spanish (Panama)
+     * @const
+     */
+    es_PA,
+
+    /**
+     * Spanish (Peru)
+     * @const
+     */
+    es_PE,
+
+    /**
+     * Spanish (Puerto Rico)
+     * @const
+     */
+    es_PR,
+
+    /**
+     * Spanish (Paraguay)
+     * @const
+     */
+    es_PY,
+
+    /**
+     * Spanish (El Salvador)
+     * @const
+     */
+    es_SV,
+
+    /**
+     * Spanish (United States)
+     * @const
+     */
+    es_US,
+
+    /**
+     * Spanish (Uruguay)
+     * @const
+     */
+    es_UY,
+
+    /**
+     * Spanish (Venezuela)
+     * @const
+     */
+    es_VE,
+
+    /**
+     * Estonian (Estonia)
+     * @const
+     */
+    et_EE,
+
+    /**
+     * Basque
+     * @const
+     */
+    eu_ES,
+
+    /**
+     * Persian (Iran)
+     * @const
+     */
+    fa_IR,
+
+    /**
+     * Finnish (Finland)
+     * @const
+     */
+    fi_FI,
+
+    /**
+     * Filipino (Philippines)
+     * @const
+     */
+    fil_PH,
+
+    /**
+     * French (Belgium)
+     * @const
+     */
+    fr_BE,
+
+    /**
+     * French (Canada)
+     * @const
+     */
+    fr_CA,
+
+    /**
+     * French (Switzerland)
+     * @const
+     */
+    fr_CH,
+
+    /**
+     * French (France)
+     * @const
+     */
+    fr_FR,
+
+    /**
+     * Irish (Ireland)
+     * @const
+     */
+    ga_IE,
+
+    /**
+     * Galician
+     * @const
+     */
+    gl_ES,
+
+    /**
+     * Gujarati (India)
+     * @const
+     */
+    gu_IN,
+
+    /**
+     * Hebrew (Israel)
+     * @const
+     */
+    he_IL,
+
+    /**
+     * Hindi (India)
+     * @const
+     */
+    hi_IN,
+
+    /**
+     * Croatian (Croatia)
+     * @const
+     */
+    hr_HR,
+
+    /**
+     * Hungarian (Hungary)
+     * @const
+     */
+    hu_HU,
+
+    /**
+     * Armenian (Armenia)
+     * @const
+     */
+    hy_AM,
+
+    /**
+     * Indonesian (Indonesia)
+     * @const
+     */
+    id_ID,
+
+    /**
+     * Icelandic (Iceland)
+     * @const
+     */
+    is_IS,
+
+    /**
+     * Italian (Switzerland)
+     * @const
+     */
+    it_CH,
+
+    /**
+     * Italian (Italy)
+     * @const
+     */
+    it_IT,
+
+    /**
+     * Japanese (Japan)
+     * @const
+     */
+    ja_JP,
+
+    /**
+     * Javanese (Latin, Indonesia)
+     * @const
+     */
+    jv_ID,
+
+    /**
+     * Georgian (Georgia)
+     * @const
+     */
+    ka_GE,
+
+    /**
+     * Kazakh (Kazakhstan)
+     * @const
+     */
+    kk_KZ,
+
+    /**
+     * Khmer (Cambodia)
+     * @const
+     */
+    km_KH,
+
+    /**
+     * Kannada (India)
+     * @const
+     */
+    kn_IN,
+
+    /**
+     * Korean (Korea)
+     * @const
+     */
+    ko_KR,
+
+    /**
+     * Lao (Laos)
+     * @const
+     */
+    lo_LA,
+
+    /**
+     * Lithuanian (Lithuania)
+     * @const
+     */
+    lt_LT,
+
+    /**
+     * Latvian (Latvia)
+     * @const
+     */
+    lv_LV,
+
+    /**
+     * Macedonian (North Macedonia)
+     * @const
+     */
+    mk_MK,
+
+    /**
+     * Malayalam (India)
+     * @const
+     */
+    ml_IN,
+
+    /**
+     * Mongolian (Mongolia)
+     * @const
+     */
+    mn_MN,
+
+    /**
+     * Marathi (India)
+     * @const
+     */
+    mr_IN,
+
+    /**
+     * Malay (Malaysia)
+     * @const
+     */
+    ms_MY,
+
+    /**
+     * Maltese (Malta)
+     * @const
+     */
+    mt_MT,
+
+    /**
+     * Burmese (Myanmar)
+     * @const
+     */
+    my_MM,
+
+    /**
+     * Norwegian Bokmål (Norway)
+     * @const
+     */
+    nb_NO,
+
+    /**
+     * Nepali (Nepal)
+     * @const
+     */
+    ne_NP,
+
+    /**
+     * Dutch (Belgium)
+     * @const
+     */
+    nl_BE,
+
+    /**
+     * Dutch (Netherlands)
+     * @const
+     */
+    nl_NL,
+
+    /**
+     * Punjabi (India)
+     * @const
+     */
+    pa_IN,
+
+    /**
+     * Polish (Poland)
+     * @const
+     */
+    pl_PL,
+
+    /**
+     * Pashto (Afghanistan)
+     * @const
+     */
+    ps_AF,
+
+    /**
+     * Portuguese (Brazil)
+     * @const
+     */
+    pt_BR,
+
+    /**
+     * Portuguese (Portugal)
+     * @const
+     */
+    pt_PT,
+
+    /**
+     * Romanian (Romania)
+     * @const
+     */
+    ro_RO,
+
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+
+    /**
+     * Sinhala (Sri Lanka)
+     * @const
+     */
+    si_LK,
+
+    /**
+     * Slovak (Slovakia)
+     * @const
+     */
+    sk_SK,
+
+    /**
+     * Slovenian (Slovenia)
+     * @const
+     */
+    sl_SI,
+
+    /**
+     * Somali (Somalia)
+     * @const
+     */
+    so_SO,
+
+    /**
+     * Albanian (Albania)
+     * @const
+     */
+    sq_AL,
+
+    /**
+     * Serbian (Cyrillic, Serbia)
+     * @const
+     */
+    sr_RS,
+
+    /**
+     * Swedish (Sweden)
+     * @const
+     */
+    sv_SE,
+
+    /**
+     * Swahili (Kenya)
+     * @const
+     */
+    sw_KE,
+
+    /**
+     * Swahili (Tanzania)
+     * @const
+     */
+    sw_TZ,
+
+    /**
+     * Tamil (India)
+     * @const
+     */
+    ta_IN,
+
+    /**
+     * Telugu (India)
+     * @const
+     */
+    te_IN,
+
+    /**
+     * Thai (Thailand)
+     * @const
+     */
+    th_TH,
+
+    /**
+     * Turkish (Türkiye)
+     * @const
+     */
+    tr_TR,
+
+    /**
+     * Ukrainian (Ukraine)
+     * @const
+     */
+    uk_UA,
+
+    /**
+     * Urdu (India)
+     * @const
+     */
+    ur_IN,
+
+    /**
+     * Uzbek (Latin, Uzbekistan)
+     * @const
+     */
+    uz_UZ,
+
+    /**
+     * Vietnamese (Vietnam)
+     * @const
+     */
+    vi_VN,
+
+    /**
+     * Chinese (Wu, Simplified)
+     * @const
+     */
+    wuu_CN,
+
+    /**
+     * Chinese (Cantonese, Simplified)
+     * @const
+     */
+    yue_CN,
+
+    /**
+     * Chinese (Mandarin, Simplified)
+     * @const
+     */
+    zh_CN,
+
+    /**
+     * Chinese (Jilu Mandarin, Simplified)
+     * @const
+     */
+    zh_CN_shandong,
+
+    /**
+     * Chinese (Southwestern Mandarin, Simplified)
+     * @const
+     */
+    zh_CN_sichuan,
+
+    /**
+     * Chinese (Cantonese, Traditional)
+     * @const
+     */
+    zh_HK,
+
+    /**
+     * Chinese (Taiwanese Mandarin, Traditional)
+     * @const
+     */
+    zh_TW,
+
+    /**
+     * Zulu (South Africa)
+     * @const
+     */
+    zu_ZA,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of SaluteSpeech profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum SaluteSpeech {
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of Tinkoff VoiceKit profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Tinkoff {
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of Yandex SpeechKit profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum Yandex {
+    /**
+     * Automatic language recognition
+     * @const
+     */
+    auto,
+    /**
+     * German (Germany)
+     * @const
+     */
+    de_DE,
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+    /**
+     * Spanish (Spain)
+     * @const
+     */
+    es_ES,
+    /**
+     * Finnish (Finland)
+     * @const
+     */
+    fi_FI,
+    /**
+     * French (France)
+     * @const
+     */
+    fr_FR,
+    /**
+     * Hebrew (Israel)
+     * @const
+     */
+    he_HE,
+    /**
+     * Italian (Italy)
+     * @const
+     */
+    it_IT,
+    /**
+     * Kazakh (Kazakhstan)
+     * @const
+     */
+    kk_KK,
+    /**
+     * Dutch (Holland)
+     * @const
+     */
+    nl_NL,
+    /**
+     * Polish (Poland)
+     * @const
+     */
+    pl_PL,
+    /**
+     * Portuguese (Portugal)
+     * @const
+     */
+    pt_PT,
+    /**
+     * Portuguese (Brazilian)
+     * @const
+     */
+    pt_BR,
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+    /**
+     * Swedish (Sweden)
+     * @const
+     */
+    sv_SE,
+    /**
+     * Turkish (Turkey)
+     * @const
+     */
+    tr_TR,
+    /**
+     * Uzbek (Uzbekistan)
+     * @const
+     */
+    uz_UZ,
+  }
+}
+
+declare module ASRProfileList {
+  /**
+   * List of YandexV3 SpeechKit profiles.
+   * <br>
+   * Add the following line to your scenario code to use the enum:
+   * ```
+   * require(Modules.ASR);
+   * ```
+   */
+  enum YandexV3 {
+    /**
+     * Automatic language recognition
+     * @const
+     */
+    auto,
+    /**
+     * German (Germany)
+     * @const
+     */
+    de_DE,
+    /**
+     * English (United States)
+     * @const
+     */
+    en_US,
+    /**
+     * Spanish (Spain)
+     * @const
+     */
+    es_ES,
+    /**
+     * Finnish (Finland)
+     * @const
+     */
+    fi_FI,
+    /**
+     * French (France)
+     * @const
+     */
+    fr_FR,
+    /**
+     * Hebrew (Israel)
+     * @const
+     */
+    he_HE,
+    /**
+     * Italian (Italy)
+     * @const
+     */
+    it_IT,
+    /**
+     * Kazakh (Kazakhstan)
+     * @const
+     */
+    kk_KK,
+    /**
+     * Dutch (Holland)
+     * @const
+     */
+    nl_NL,
+    /**
+     * Polish (Poland)
+     * @const
+     */
+    pl_PL,
+    /**
+     * Portuguese (Portugal)
+     * @const
+     */
+    pt_PT,
+    /**
+     * Portuguese (Brazilian)
+     * @const
+     */
+    pt_BR,
+    /**
+     * Russian (Russia)
+     * @const
+     */
+    ru_RU,
+    /**
+     * Swedish (Sweden)
+     * @const
+     */
+    sv_SE,
+    /**
+     * Turkish (Turkey)
+     * @const
+     */
+    tr_TR,
+    /**
+     * Uzbek (Uzbekistan)
+     * @const
+     */
+    uz_UZ,
+  }
+}
+
+/**
+ * Decodes the data in the Base64 encoding
+ * @param data Data to decode
+ */
+declare function base64_decode(data: string): number[];
+
+/**
+ * Encodes a string or array of integers from 0 to 255 to the Base64 encoding
+ * @param data String or array of integers from 0 to 255 to encode
+ */
+declare function base64_encode(data: string | number[]): string;
+
+/**
+ * Creates a hex string from given bytes array.
+ * @param data Array of numbers to convert into a string
+ * @param toUpperCase Whether the resulting string has uppercase 'A-F' chars. Default is 'false'.
+ */
+declare function bytes2hex(data: number[], toUpperCase: boolean): string;
+
+/**
+ * Creates a string from an array of numbers with specified encoding
+ * @param data Array of integers from 0 to 255 to create a string from
+ * @param encoding Encoding to use for string creation, the default value is "utf-8".
+ */
+declare function bytes2str(data: number[], encoding: string): string;
+
+/**
+ * Avatar text and voice channel parameters. Can be passed via the [AvatarResponseParameters.channelParameters](/docs/references/avatarengine/avatarresponseparameters#channelparameters) parameter.
+ */
+declare interface ChannelParameters {
+  /**
+   * Avatar voice channel parameters
+   */
+  voice?: VoiceChannelParameters;
+  /**
+   * Avatar text channel parameters
+   */
+  text?: TextChannelParameters;
+}
+
+/**
+ * Cancels a timed, repeating action which is previously established by a call to setInterval().
+ * @param intervalID The identifier of the repeated action you want to cancel. This ID is returned by the corresponding call to setInterval().
+ */
+declare function clearInterval(intervalID: number): void;
+
+/**
+ * Cancels a timeout previously established by calling setTimeout().
+ * @param timeoutID The identifier of the timeout you want to cancel. This ID is returned by the corresponding call to setTimeout().
+ */
+declare function clearTimeout(timeoutID: number): void;
+
+/**
+ * Converts the date to the specified local timezone. Note that `new Date()` always returns time in the UTC+0 timezone.
+ * @param timezone Local timezone in the AREA/LOCATION format of the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+ * @param date Instance of the `Date` object.
+ */
+declare function getLocalTime(timezone: string, date: Date): Date;
+
+/**
+ * Creates an array of numbers from parsing a hex string
+ * @param data Hex string like "cafec0de"
+ */
+declare function hex2bytes(data: string): number[];
+
+/**
+ * Count the number of deletions, insertions, or substitutions required to transform str1 into str2. The number shows a measure of the similarity between two strings. It is also known as edit distance.
+ * @param str1 First string
+ * @param str2 Second string
+ */
+declare function levenshtein_distance(str1: string, str2: string): number;
+
+declare namespace Logger {}
+
+declare namespace Logger {
+  /**
+   * Writes a specified message to the session logger. Logs are stored in the [call history](https://manage.voximplant.com/calls).
+   * @param message Message to write. Maximum length is 15000 characters
+   */
+  function write(message: string): void;
+}
+
+declare module Net {
+  /**
+   * Advanced HTTP request options.
+   */
+  interface HttpRequestOptions {
+    /**
+     * HTTP request type as a string: 'GET', 'POST' etc. The default value is 'GET'
+     */
+    method?: string;
+    /**
+     * Optional. Raw UTF-8 encoded data string or an array of bytes in any encoding generated by [str2bytes](/docs/references/voxengine/str2bytes) to send as the HTTP request body when 'method' is set to 'POST', 'PUT', or 'PATCH'
+     */
+    postData?: string | number[];
+    /**
+     * Optional request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
+     */
+    headers?: { [key: string]: string };
+    /**
+     * Optional request parameters. They can be specified in the URL itself as well
+     */
+    params?: {
+      [key: string]: string;
+    };
+    /**
+     * Whether [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) should contain a list of 1-byte numbers corresponding to the HTTP response data. If set to false, [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) is undefined
+     */
+    rawOutput?: boolean;
+    /**
+     * If set, overrides default HTTP request timeout, in seconds, the default value is 90 seconds. Timeout can only be decreased
+     */
+    timeout?: number;
+    /**
+     * Whether to enable logging the POST request body. The default value is false
+     */
+    enableSystemLog?: boolean;
+  }
+}
+
+declare module Net {
+  /**
+   * HTTP response.
+   */
+  interface HttpRequestResult {
+    /**
+     * Response code. HTTP code (2xx-5xx) or one of our internal status codes
+     * <table><tr><td>0</td><td><a href="//voximplant.com/docs/references/voxengine/">Voxengine limits</a> are violated (e.g. HTTP request count exceeded)</td></tr><tr><td>-1</td><td>Unknown error</td></tr><tr><td>-2</td><td>Malformed URL</td></tr><tr><td>-3</td><td>Host not found</td></tr><tr><td>-4</td><td>Connection error</td></tr><tr><td>-5</td><td>Too many redirects</td></tr><tr><td>-6</td><td>Network error</td></tr><tr><td>-7</td><td>Timeout</td></tr><tr><td>-8</td><td>Internal error</td></tr><tr><td>-9</td><td>Server response is larger than 2 MB</td></tr></table>
+     */
+    code: number;
+    /**
+     * HTTP header string returned by the remote server, without processing
+     */
+    raw_headers?: string;
+    /**
+     * List of dictionaries with key and value fields representing HTTP headers returned by the remote server
+     */
+    headers?: { key: string; value: string }[];
+    /**
+     * HTTP response body if Content-Type is not binary
+     */
+    text?: string;
+    /**
+     * If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is true, data contains a list of 1-byte numbers corresponding to HTTP response data. If [HttpRequestOptions.rawOutput](/docs/references/voxengine/net/httprequestoptions#rawoutput) is false, data is undefined.
+     */
+    data?: number[];
+    /**
+     * In case of an error contains the error description
+     */
+    error?: string;
+  }
+}
+
+declare module Net {}
+
+/**
+ * Avatar voice channel playback parameters. Can be passed via the [VoiceChannelParameters.playback] parameter.
+ */
+declare type PlaybackParameters = TTSPlaybackParameters | URLPlaybackParameters | SequencePlaybackParameters;
+
+/**
+ * Can be passed via the [RichContentButtonItem.action] parameter.
+ */
+declare interface RichContentButtonAction {
+  /**
+   * Rich content type.
+   */
+  type: 'text' | 'location' | 'camera' | 'camera_roll' | 'phone_call' | 'contact' | 'uri';
+  /**
+   * Optional. Used for the "uri" type only.
+   */
+  uri?: string;
+}
+
+/**
+ * Can be passed via the [RichContentButtons.items] parameter.
+ */
+declare interface RichContentButtonItem {
+  /**
+   * Rich content button text.
+   */
+  text: string;
+  /**
+   * Rich content button action.
+   */
+  action: RichContentButtonAction;
+  /**
+   * Message to the avatar when the button is clicked.
+   */
+  payload?: any;
+}
+
+/**
+ * Can be passed via the [RichContent.buttons] parameter.
+ */
+declare interface RichContentButtons {
+  /**
+   * Rich content button text.
+   */
+  text: string;
+  /**
+   * Rich content button items.
+   */
+  items: RichContentButtonItem[];
+}
+
+/*
+ * Can be passed via the [RichContent.contact] parameter.
+ */
+declare interface RichContentContact {
+  name: string;
+  number: string;
+  avatar?: string;
+}
+
+/**
+ * Can be passed via the [RichContent.externalLink] parameter.
+ */
+declare interface RichContentExternalLink {
+  /**
+   * Link's text.
+   */
+  caption: string;
+  /**
+   * Link's URL address.
+   */
+  url: string;
+}
+
+/**
+ * Can be passed via the [RichContent.image] or [RichContent.file] parameter.
+ */
+declare interface RichContentFile {
+  /**
+   * URL to the image/file location.
+   */
+  url: string;
+  /**
+   * Caption for the image/file.
+   */
+  caption: string;
+  /**
+   * File name.
+   */
+  fileName: string;
+  /**
+   * File size.
+   */
+  fileSize: number;
+  /**
+   * Content type.
+   */
+  contentType: string;
+}
+
+/**
+ * Can be passed via the [RichContent.location] parameter.
+ */
+declare interface RichContentLocation {
+  latitude: number;
+  longitude: number;
+  address?: string;
+}
+
+/**
+ * Can be passed via the [RichContent.video] or [RichContent.audio] parameter.
+ */
+declare interface RichContentMedia extends RichContentFile {
+  duration: number;
+}
+
+/**
+ * Can be passed via the [TextChannelParameters.richContent] parameter.
+ */
+declare interface RichContent {
+  /**
+   * Button for the rich content response.
+   */
+  buttons?: RichContentButtons;
+  /**
+   * Location for the rich content response.
+   */
+  location?: RichContentLocation;
+  /**
+   * Image for the rich content response.
+   */
+  image?: RichContentFile;
+  /**
+   * File for the rich content response.
+   */
+  file?: RichContentFile;
+  /**
+   * Video for the rich content response.
+   */
+  video?: RichContentMedia;
+  /**
+   * Audio for the rich content response.
+   */
+  audio?: RichContentMedia;
+  /**
+   * Link for the rich content response.
+   */
+  externalLink?: RichContentExternalLink;
+  /**
+   * Contact data for the rich content response.
+   */
+  contact?: RichContentContact;
+  /**
+   * Text string for the rich content response.
+   */
+  text?: string;
+}
+
+/**
+ * Avatar voice channel sequence playback parameters. Can be passed via the [VoiceChannelParameters.playback] parameter.
+ */
+declare interface SequencePlaybackParameters {
+  /**
+   * Array of the segments.
+   */
+  segments: SequencePlaybackSegment[];
+}
+
+/**
+ * Sequence of the voice channel TTS and URL playback segments. Can be passed via the [SequencePlaybackParameters.segments] parameter.
+ */
+declare type SequencePlaybackSegment = TTSPlaybackParameters | URLPlaybackParameters;
+
+/**
+ * Repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.
+ * @param callback A function to be executed every specified milliseconds. The function should not have any parameters, and no return value is expected.
+ * @param timeout The time, in milliseconds (thousandths of a second), the timer specifies the delay between executions of the specified function or code. If this parameter is less than 100, a value of 100 is used. Note that the actual delay might be longer.
+ */
+declare function setInterval(callback: () => any, timeout?: number): number;
+
+/**
+ * Sets a timer which executes a function or specified piece of code once after the timer expires.
+ * @param callback A function to be executed after the timer expires.
+ * @param timeout The time, in milliseconds (thousandths of a second), the timer should wait before the specified function or code is executed. If this parameter is omitted, a value of 0 is used, meaning execute "immediately", or more accurately, as soon as possible. Note that in either case, the actual delay may be longer than intended
+ */
+declare function setTimeout(callback: () => any, timeout?: number): number;
+
+/**
+ * Creates an array of numbers from parsing string in specified codepage
+ * @param data String to parse
+ * @param encoding String encoding, the default value is "utf-8".
+ */
+declare function str2bytes(data: string, encoding: string): number[];
+
+/**
+ * Avatar text channel parameters. Can be passed via the [ChannelParameters.text] parameter.
+ */
+declare interface TextChannelParameters {
+  /**
+   * Response of the rich content type.
+   */
+  richContent: RichContent;
+}
+
+/**
+ * List of available audio effect (profiles that are applied on post synthesized text to speech) for the [TTSOptions.effectsProfileId] parameter.
+ */
+declare enum TTSEffectsProfile {
+  /**
+   * Smartwatches and other wearables, like Apple Watch, Wear OS watch
+   */
+  WearableClassDevice = 'wearable-class-device',
+  /**
+   * Smartphones, like Google Pixel, Samsung Galaxy, Apple iPhone
+   */
+  HandsetClassDevice = 'handset-class-device',
+  /**
+   * Earbuds or headphones for audio playback, like Sennheiser headphones
+   */
+  HeadphoneClassDevice = 'headphone-class-device',
+  /**
+   * Small home speakers, like Google Home Mini
+   */
+  SmallBluetoothSpeakerClassDevice = 'small-bluetooth-speaker-class-device',
+  /**
+   * Smart home speakers, like Google Home
+   */
+  MediumBluetoothSpeakerClassDevice = 'medium-bluetooth-speaker-class-device',
+  /**
+   * Home entertainment systems or smart TVs, like Google Home Max, LG TV
+   */
+  LargeHomeEntertainmentClassDevice = 'large-home-entertainment-class-device',
+  /**
+   * Car speakers, home theaters
+   */
+  LargeAutomotiveClassDevice = 'large-automotive-class-device',
+  /**
+   * Interactive Voice Response (IVR) systems
+   */
+  TelephonyClassApplication = 'telephony-class-application',
+}
+
+/**
+ * Text-to-speech options. Can be passed via the [CallSayParameters.ttsOptions] and [TTSPlayerParameters.ttsOptions] parameter. See the details in the <a href="//www.w3.org/TR/speech-synthesis/#S3.2.4">official specs</a>.
+ */
+declare interface TTSOptions {
+  /**
+   * Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
+   */
+  emotion?: string;
+  /**
+   * Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
+   */
+  pitch?: string;
+  /**
+   * Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
+   */
+  rate?: string;
+  /**
+   * Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
+   */
+  volume?: string;
+  /**
+   * An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
+   */
+  effectsProfileId?: TTSEffectsProfile[];
+  /**
+   * If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
+   */
+  yandexCustomModelName?: string;
+}
+
+/**
+ * Avatar voice channel TTS playback parameters. Can be passed via the [VoiceChannelParameters.playback] parameter.
+ * <br>
+ * Has a similar interface to [URLPlayerSegment].
+ */
+declare interface TTSPlaybackParameters {
+  /**
+   * Text to synthesize.
+   * <br>
+   * NOTE: this parameter is required for the [AvatarState] (not for the [AvatarFormState]), so if you want to use the value from the [VoximplantAvatar.Events.Reply](/docs/references/voxengine/voximplantavatar/events#reply) event's "utterance" parameter, specify it into the "text" parameter.
+   */
+  text: string;
+  /**
+   * Whether to enable the playback interruption.
+   * <br>
+   * NOTE: the segment with 'allowPlaybackInterruption' parameter should be always followed by another segment eligible for playback interruption or should be the last segment.
+   */
+  allowPlaybackInterruption: true;
+  /**
+   * Optional [Player](/docs/references/voxengine/player) parameters.
+   * <br>
+   * NOTE: the default value is inherited from the [VoiceAvatarConfig.ttsPlayerOptions](/docs/references/voxengine/voximplantavatar/voiceavatarconfig) parameter.
+   */
+  parameters?: TTSPlayerParameters;
+}
+
+/**
+ * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
+ */
+declare interface TTSPlayerParameters {
+  /**
+   * Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  language?: Voice;
+  /**
+   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  progressivePlayback?: boolean;
+  /**
+   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   */
+  ttsOptions?: TTSOptions;
+  /**
+   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   */
+  onPause?: boolean;
+  /**
+   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   */
+  request?: Object;
+}
+
+/**
+ * Avatar voice channel URL playback parameters. Can be passed via the [VoiceChannelParameters.playback] parameter.
+ * <br>
+ * Has a similar interface to [URLPlayerSegment](/docs/references/voxengine/urlplayersegment).
+ */
+declare interface URLPlaybackParameters {
+  /**
+   * Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
+   */
+  url: string;
+  /**
+   * Whether to enable the playback interruption.
+   * <br>
+   * NOTE: the segment with 'allowPlaybackInterruption' parameter should be always followed by another segment eligible for playback interruption or should be the last segment.
+   */
+  allowPlaybackInterruption: true;
+  /**
+   * Optional [Player](/docs/references/voxengine/player) parameters.
+   * <br>
+   * Same as [URLPlayerParameters](/docs/references/voxengine/urlplayerparameters).
+   */
+  parameters?: URLPlayerParameters;
+}
+
+/**
+ * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
+ */
+declare interface URLPlayerParameters {
+  /**
+   * Whether to loop playback.
+   */
+  loop?: boolean;
+  /**
+   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   */
+  onPause?: boolean;
+  /**
+   * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   */
+  progressivePlayback?: boolean;
+}
+
+/**
+ * Generates unique identifier and returns it is string representation
+ */
+declare function uuidgen(): string;
+
+/**
+ * Avatar voice channel parameters. Can be passed via the [ChannelParameters.voice](/docs/references/avatarengine/channelparameters#voice) parameter.
+ */
+declare interface VoiceChannelParameters {
+  /**
+   * Optional [ASR](/docs/references/voxengine/asr) parameters.
+   * <br>
+   * NOTE: the default value is inherited from the [VoiceAvatarConfig.asrParameters](/docs/references/voxengine/voximplantavatar/voiceavatarconfig#asrparameters) parameter.
+   */
+  asr?: ASRParameters;
+  /**
+   * Avatar voice channel playback parameters.
+   * <br>
+   * NOTE: the default value is inherited from the [VoiceAvatarConfig.ttsPlayerOptions](/docs/references/voxengine/voximplantavatar/voiceavatarconfig#ttsplayeroptions) parameter.
+   */
+  playback?: PlaybackParameters;
+}
+
+declare type Voice = {
+  provider?: string;
+  voice?: string;
+  language: string;
+};

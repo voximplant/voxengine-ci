@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "Apache-2.0",
   "keywords": [

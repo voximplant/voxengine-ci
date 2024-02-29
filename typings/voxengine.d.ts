@@ -6793,6 +6793,38 @@ declare interface _SmartQueueErrorEvent extends _SmartQueueEvent {
   description: string;
 }
 
+/**
+ * SmartQueue task distribution mode. Can be passed via the [SmartQueueOperatorSettings.mode] parameter.
+ */
+declare enum SmartQueueOperatorSettingsMode {
+  /**
+   * Cancels the task if it is impossible to select the specific operator
+   */
+  STRICT = 'STRICT',
+  /**
+   * Distributes the task to another operator if it is impossible to select the specific operator
+   */
+  SMART = 'SMART',
+}
+
+/*
+ * SmartQueue task operator settings. Can be passed via the [SmartQueueTaskParameters.operatorSettings] parameter.
+ */
+declare interface SmartQueueOperatorSettings {
+  /**
+   * Operator's id
+   */
+  operatorId: number;
+  /**
+   * Task distribution mode
+   */
+  mode: SmartQueueOperatorSettingsMode;
+  /**
+   * Timeout (in seconds) to search for a specific operator. The default value is 0
+   */
+  timeout: number;
+}
+
 /*
  * SmartQueue skill level is used to characterize an agent or a requirement for a task. Can be passed via the [SmartQueueTaskParameters.skills] parameter.
  */
@@ -6815,6 +6847,10 @@ declare interface SmartQueueTaskParameters {
    * Current task's Call object.
    */
   call?: Call;
+  /**
+   * Task's operator settings.
+   */
+  operatorSettings?: SmartQueueOperatorSettings;
   /**
    * A timeout in seconds for the task to be accepted by an agent.
    */

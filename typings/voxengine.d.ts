@@ -14,7 +14,7 @@ declare interface ACDEnqueueParameters {
    */
   priority: number;
   /**
-   * Optional extra headers to be passed with the call to the agent.
+   * Optional. Extra headers to be passed with the call to the agent.
    * Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which switches to another agent if current one does not answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60).
    * The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
@@ -600,7 +600,7 @@ declare namespace AI {
      */
     userId?: string;
     /**
-     * Whether to use beta. Optional. The Voximplant Dialogflow Connector uses Dialogflow v2 Beta by default. Set false to use the non-Beta version of Dialogflow v2.
+     * Optional. Whether to use beta. The Voximplant Dialogflow Connector uses Dialogflow v2 Beta by default. Set false to use the non-Beta version of Dialogflow v2.
      */
     beta?: boolean;
     /**
@@ -1058,6 +1058,10 @@ declare namespace AMD {
      */
     BR = 'br',
     /**
+     * Chile
+     */
+    CL = 'cl',
+    /**
      * Colombia
      */
     CO = 'colombia',
@@ -1308,7 +1312,7 @@ declare interface _CallAlertingEvent {
    */
   headers: { [header: string]: string };
   /**
-   * Optional: Custom data for the current call object. It can be passed from Web SDK via the [Client.call](/docs/references/websdk/voximplant/client#call) method in the *customData* parameter.
+   * Optional. Custom data for the current call object. It can be passed from Web SDK via the [Client.call](/docs/references/websdk/voximplant/client#call) method in the *customData* parameter.
    */
   customData: string;
   /**
@@ -2279,7 +2283,7 @@ declare interface BaseRecorderParameters {
    */
   secure?: boolean;
   /**
-   * Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details in the article.
+   * Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details [in the article](/docs/guides/speech/asr).
    */
   transcribe?: boolean;
   /**
@@ -2303,7 +2307,7 @@ declare interface BaseRecorderParameters {
    */
   video?: boolean;
   /**
-   * The prefix to add to the record names when storing to your S3 storage.
+   * The prefix to add to the record names when storing to your S3 storage. Works only for custom S3-compatible storages.
    */
   recordNamePrefix?: string;
 }
@@ -2595,7 +2599,7 @@ declare interface _CallEvent {
  */
 declare interface _CallHeaderEvent extends _CallEvent {
   /**
-   * Optional SIP headers received with the message (the ones starting with "X-")
+   * Optional. SIP headers received with the message (the ones starting with "X-")
    */
   headers?: { [header: string]: string };
 }
@@ -2634,11 +2638,11 @@ declare interface _BlindTransferRequestedEvent extends _CallHeaderEvent {
  */
 declare interface _ConnectedEvent extends _CallEvent {
   /**
-   * Optional: Custom data that was passed from the client with call accept command
+   * Optional. Custom data that was passed from the client with call accept command
    */
   customData?: string;
   /**
-   * Optional SIP headers received with the message (the ones starting with "X-")
+   * Optional. SIP headers received with the message (the ones starting with "X-")
    */
   headers: { [header: string]: string };
 }
@@ -2747,7 +2751,7 @@ declare interface _OnHoldEvent extends _CallEvent {}
  */
 declare interface _PlaybackFinishedEvent extends _CallEvent {
   /**
-   * Optional: Error that occurred during the playback
+   * Optional. Error that occurred during the playback
    */
   error?: string;
 }
@@ -2891,7 +2895,7 @@ declare interface _ToneReceivedEvent extends _CallEvent {
  */
 declare interface _TransferCompleteEvent extends _CallHeaderEvent {
   /**
-   * The transfer roles. Optional.
+   * Optional. The transfer roles.
    */
   role?: 'transferor' | 'target' | 'transferee';
 }
@@ -3026,7 +3030,7 @@ declare interface CallSayParameters {
    */
   progressivePlayback?: boolean;
   /**
-   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   ttsOptions?: TTSOptions;
   /**
@@ -3056,7 +3060,7 @@ declare interface CallSIPParameters {
    */
   authUser: string;
   /**
-   * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message.
+   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message.
    * Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK
    * (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
@@ -3096,7 +3100,7 @@ declare interface CallUserDirectParameters {
    */
   analyticsLabel: string;
   /**
-   * Optional custom parameters (SIP headers) to be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * Optional. Custom parameters (SIP headers) to be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   extraHeaders?: { [header: string]: string };
   /**
@@ -3118,11 +3122,11 @@ declare interface CallUserParameters extends CallParameters {
    */
   callerid: string;
   /**
-   * Optional custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   extraHeaders?: { [header: string]: string };
   /**
-   * Whether the call has video support. Optional. Please note that prices for audio-only and video calls are different!
+   * Optional. Whether the call has video support. Please note that prices for audio-only and video calls are different!
    */
   video?: boolean;
   /**
@@ -3224,13 +3228,13 @@ declare class Call {
    * 2. [CallEvents.Failed] if it is an outgoing call that is not connected previously.
    * <br>
    * If there are no other active calls and/or SmartQueue requests in the call session, the AppEvents.Terminating and AppEvents.Terminated events are triggered in 60 seconds (see the [session limits](/docs/guides/voxengine/limits) for details).
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the hangup request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the hangup request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   hangup(extraHeaders?: { [header: string]: string }): void;
 
   /**
    * Answers the incoming call. Use it only for non-P2P call legs connection. Remember that you can use the [Call.startEarlyMedia] method before answering a call.
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [Connected](/docs/references/websdk/voximplant/callevents#connected) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [Connected](/docs/references/websdk/voximplant/callevents#connected) event). Example: {'X-header':'value'}
    * @param parameters Custom parameters for answering calls.
    */
   answer(extraHeaders?: { [header: string]: string }, parameters?: CallAnswerParameters): void;
@@ -3238,7 +3242,7 @@ declare class Call {
   /**
    * Answer the incoming call in the peer-to-peer mode. Use it only for P2P call legs connection.
    * @param peerCall The other P2P call leg.
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the  Connected (/docs/references/websdk/enums/callevents.html#connected) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the  Connected (/docs/references/websdk/enums/callevents.html#connected) event). Example: {'X-header':'value'}
    * @param parameters Custom parameters for answering calls.
    */
   answerDirect(
@@ -3250,7 +3254,7 @@ declare class Call {
   /**
    * Rejects the incoming call
    * @param code SIP status code
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g., see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g., see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    * @deprecated Use [Call.reject] instead
    */
   decline(code: number, extraHeaders?: { [header: string]: string }): void;
@@ -3258,23 +3262,23 @@ declare class Call {
   /**
    * Rejects the incoming call. First it triggers the [CallEvents.Disconnected] event immediately. The [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered in 60 seconds.
    * @param code SIP status code with the rejection reason. You can pass any [standard SIP code](https://en.wikipedia.org/wiki/List_of_SIP_response_codes) starting with 3xx, 4xx, 5xx and 6xx as a reject reason.
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   reject(code: number, extraHeaders?: { [header: string]: string }): void;
 
   /**
    * Plays dial tones for the incoming call. The method sends a low-level command to the endpoint device to start playing dial tones for the call. So the dial tones depend on endpoint device's behavior rather than on the Voximplant cloud. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   ring(extraHeaders?: { [header: string]: string }): void;
 
   /**
    * Informs the call endpoint that early media is sent before accepting the call. It allows playing voicemail prompt or music before establishing the connection. It does not allow to listen to call endpoint. Note that unanswered call can be in "early media" state only for 60 seconds, see the [session limits](/docs/guides/voxengine/limits) for details.
-   * @param extraHeaders Optional custom parameters (SIP headers) that should be passed with the request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-   * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event. Optional
-   * @param maxVideoBitrate Set the maximum possible video bitrate for the customer device in kbps. Optional
-   * @param audioLevelExtension
-   * @param conferenceCall Whether the call is coming from a conference. Optional. The default value is false
+   * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param scheme Optional. Internal information about codecs from the [AppEvents.CallAlerting] event
+   * @param maxVideoBitrate Optional. Set the maximum possible video bitrate for the customer device in kbps
+   * @param audioLevelExtension Optional
+   * @param conferenceCall Optional. Whether the call is coming from a conference. The default value is false
    */
   startEarlyMedia(
     extraHeaders?: { [header: string]: string },
@@ -3286,7 +3290,7 @@ declare class Call {
 
   /**
    * Starts to play an audio file to the answered call. You can stop playback manually via the [Call.stopPlayback] method. Media streams can later be attached via the [Call.sendMediaTo] method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param url HTTP/HTTPS url to the audio file. The file is cached after the first playing. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
+   * @param url HTTP/HTTPS url to the audio file. The file is cached after the first playing. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
    * @param parameters Playback parameters: progressivePlayback, loop, etc.
    */
   startPlayback(url: string, parameters: StartPlaybackParameters): void;
@@ -3332,9 +3336,9 @@ declare class Call {
   /**
    * Starts sending media (voice and video) from this call to media unit specified in targetMediaUnit. The target call has to be [CallEvents.Connected] earlier. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param targetMediaUnit Media unit that receives media.
-   * @param optional Custom parameters for WebSocket interaction only.
+   * @param parameters Optional. Custom parameters for WebSocket interaction only.
    */
-  sendMediaTo(targetMediaUnit: VoxMediaUnit, optional?: SendMediaParameters): void;
+  sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media (voice and video) from this call to media unit specified in targetMediaUnit.
@@ -3353,7 +3357,7 @@ declare class Call {
    * Sends info (SIP INFO) message to the call
    * @param mimeType MIME type of the message
    * @param body Message content. Maximum size is 8192 bytes according to the limits
-   * @param headers Optional headers to be passed with the message. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}.
+   * @param headers Optional. Headers to be passed with the message. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}.
    */
   sendInfo(mimeType: string, body: string, headers?: { [header: string]: string }): void;
 
@@ -5478,6 +5482,15 @@ declare enum Modules {
    * ```
    */
   StreamingAgent,
+  /**
+   * Provides the [Voximplant HTTP API](https://voximplant.com/docs/references/httpapi) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.VoximplantApi);
+   * ```
+   */
+  VoximplantApi,
 }
 
 declare module Net {
@@ -5649,7 +5662,7 @@ declare module PhoneNumber {
      */
     number: string;
     /**
-     * Optional error string. Possible values are: INVALID\_COUNTRY\_CODE, NOT\_A\_NUMBER, TOO\_SHORT\_AFTER\_IDD, TOO\_SHORT\_NSN, TOO\_LONG\_NSN
+     * Optional. Error string. Possible values are: INVALID\_COUNTRY\_CODE, NOT\_A\_NUMBER, TOO\_SHORT\_AFTER\_IDD, TOO\_SHORT\_NSN, TOO\_LONG\_NSN
      */
     error?: string;
   }
@@ -5694,6 +5707,12 @@ declare enum PlayerEvents {
   PlaybackFinished = 'Player.PlaybackFinished',
 
   /**
+   * Triggered when playback has finished with an error
+   * @typedef _PlayerErrorEvent
+   */
+  Error = 'Player.Error',
+
+  /**
    * Triggered when [Player.addMarker] is reached
    * @typedef _PlayerPlaybackMarkerReachedEvent
    */
@@ -5715,6 +5734,7 @@ declare interface _PlayerEvents {
   [PlayerEvents.Started]: _PlayerStartedEvent;
   [PlayerEvents.Stopped]: _PlayerStoppedEvent;
   [PlayerEvents.PlaybackFinished]: _PlayerPlaybackFinishedEvent;
+  [PlayerEvents.Error]: _PlayerErrorEvent;
   [PlayerEvents.PlaybackMarkerReached]: _PlayerPlaybackMarkerReachedEvent;
   [PlayerEvents.PlaybackBuffering]: _PlayerPlaybackBufferingEvent;
 }
@@ -5762,6 +5782,16 @@ declare interface _PlayerPlaybackFinishedEvent extends _PlayerEvent {
    * Error message
    */
   error?: string;
+}
+
+/**
+ * @private
+ */
+declare interface _PlayerErrorEvent extends _PlayerEvent {
+  /**
+   * Error message
+   */
+  error: string;
 }
 
 /**
@@ -6430,7 +6460,7 @@ declare class Recorder {
 declare function require(module: Modules): void;
 
 /**
- * Custom parameters for WebSocket interaction. Can be passed as arguments to the [Call.sendMediaTo], [Conference.sendMediaTo], [Player.sendMediaTo], [WebSocket.sendMediaTo]  methods.
+ * Custom parameters for WebSocket interaction. Can be passed as arguments to the [VoxMediaUnit] **sendMediaTo** method.
  */
 declare interface SendMediaParameters {
   tag: string;
@@ -6475,6 +6505,12 @@ declare enum SequencePlayerEvents {
   PlaybackFinished = 'SequencePlayer.PlaybackFinished',
 
   /**
+   * Triggered when playback has finished with an error
+   * @typedef _SequencePlayerErrorEvent
+   */
+  Error = 'SequencePlayer.Error',
+
+  /**
    * Triggered when [SequencePlayer.addMarker] is reached.
    * @typedef _SequencePlayerPlaybackMarkerReachedEvent
    */
@@ -6489,6 +6525,7 @@ declare interface _SequencePlayerEvents {
   [SequencePlayerEvents.PlaybackReady]: _SequencePlayerPlaybackReadyEvent;
   [SequencePlayerEvents.Started]: _SequencePlayerStartedEvent;
   [SequencePlayerEvents.Stopped]: _SequencePlayerStoppedEvent;
+  [SequencePlayerEvents.Error]: _SequencePlayerErrorEvent;
   [SequencePlayerEvents.PlaybackFinished]: _SequencePlayerPlaybackFinishedEvent;
   [SequencePlayerEvents.PlaybackMarkerReached]: _SequencePlayerPlaybackMarkerReachedEvent;
 }
@@ -6531,6 +6568,16 @@ declare interface _SequencePlayerPlaybackFinishedEvent extends _SequencePlayerEv
    * Error message
    */
   error?: string;
+}
+
+/**
+ * @private
+ */
+declare interface _SequencePlayerErrorEvent extends _SequencePlayerEvent {
+  /**
+   * Error message
+   */
+  error: string;
 }
 
 /**
@@ -6872,7 +6919,7 @@ declare interface SmartQueueTaskParameters {
    */
   customData: string;
   /**
-   * Optional custom parameters (SIP headers) to be passed with the task. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * Optional. Custom parameters (SIP headers) to be passed with the task. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   extraHeaders?: { [header: string]: string };
   /**
@@ -7428,7 +7475,7 @@ declare interface TTSPlayerSegment {
    */
   text: string;
   /**
-   * Optional [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
+   * Optional. [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
    */
   parameters?: TTSPlayerParameters;
 }
@@ -7487,11 +7534,11 @@ declare interface UpdateRecorderVideoParameters {
  */
 declare interface URLPlayerSegment {
   /**
-   * Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
+   * Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
    */
   url: string;
   /**
-   * Optional [Player](/docs/references/voxengine/player) parameters.
+   * Optional. [Player](/docs/references/voxengine/player) parameters.
    */
   parameters?: URLPlayerParameters;
 }
@@ -7502,220 +7549,364 @@ declare namespace VoiceList {
    */
   namespace Amazon {
     /**
-     * Amazon voice, English (US) female, Joanna.
-     * @const
-     */
-    const en_US_Joanna: Voice;
-    /**
-     * Amazon voice, English (US) male, Joey.
-     * @const
-     */
-    const en_US_Joey: Voice;
-    /**
-     * Amazon voice, English (UK) female, Amy.
-     * @const
-     */
-    const en_GB_Amy: Voice;
-    /**
-     * Amazon voice, English (UK) male, Brian.
-     * @const
-     */
-    const en_GB_Brian: Voice;
-    /**
-     * Amazon voice, English (Australia) female, Nicole.
-     * @const
-     */
-    const en_AU_Nicole: Voice;
-    /**
-     * Amazon voice, English (Australia) male, Russell.
-     * @const
-     */
-    const en_AU_Russell: Voice;
-    /**
-     * Amazon voice, Spanish (US) female, Penelope.
-     * @const
-     */
-    const es_US_Penelope: Voice;
-    /**
-     * Amazon voice, Spanish (US) male, Miguel.
-     * @const
-     */
-    const es_US_Miguel: Voice;
-    /**
-     * Amazon voice, Japanese (Japan) female, Mizuki.
-     * @const
-     */
-    const ja_JP_Mizuki: Voice;
-    /**
-     * Amazon voice, Japanese (Japan) male, Takumi.
-     * @const
-     */
-    const ja_JP_Takumi: Voice;
-    /**
-     * Amazon voice, Portuguese (Brazil) female, Vitoria.
-     * @const
-     */
-    const pt_BR_Vitoria: Voice;
-    /**
-     * Amazon voice, Portuguese (Brazil) male, Ricardo.
-     * @const
-     */
-    const pt_BR_Ricardo: Voice;
-    /**
-     * Amazon voice, Portuguese (Portugal) female, Ines.
-     * @const
-     */
-    const pt_PT_Ines: Voice;
-    /**
-     * Amazon voice, Portuguese (Portugal) male, Cristiano.
-     * @const
-     */
-    const pt_PT_Cristiano: Voice;
-    /**
-     * Amazon voice, Spanish (European) female, Conchita.
-     * @const
-     */
-    const es_ES_Conchita: Voice;
-    /**
-     * Amazon voice, Spanish (Mexico) female, Mia.
-     * @const
-     */
-    const es_MX_Mia: Voice;
-    /**
-     * Amazon voice, Spanish (European) male, Enrique.
-     * @const
-     */
-    const es_ES_Enrique: Voice;
-    /**
-     * Amazon voice, Danish (Denmark) female, Naja.
-     * @const
-     */
-    const da_DK_Naja: Voice;
-    /**
-     * Amazon voice, Danish (Denmark) male, Mads.
-     * @const
-     */
-    const da_DK_Mads: Voice;
-    /**
-     * Amazon voice, French (France) female, Celine.
-     * @const
-     */
-    const fr_FR_Celine: Voice;
-    /**
-     * Amazon voice, French (France) male, Mathieu.
-     * @const
-     */
-    const fr_FR_Mathieu: Voice;
-    /**
-     * Amazon voice, Norwegian (Norway) female, Liv.
-     * @const
-     */
-    const nb_NO_Liv: Voice;
-    /**
-     * Amazon voice, Dutch (Netherlands) female, Lotte.
-     * @const
-     */
-    const nl_NL_Lotte: Voice;
-    /**
-     * Amazon voice, Dutch (Netherlands) male, Ruben.
-     * @const
-     */
-    const nl_NL_Ruben: Voice;
-    /**
-     * Amazon voice, Polish (Poland) female, Maja.
-     * @const
-     */
-    const pl_PL_Maja: Voice;
-    /**
-     * Amazon voice, Polish (Poland) male, Jan.
-     * @const
-     */
-    const pl_PL_Jan: Voice;
-    /**
-     * Amazon voice, Italian (Italy) female, Carla.
-     * @const
-     */
-    const it_IT_Carla: Voice;
-    /**
-     * Amazon voice, Italian (Italy) male, Giorgio.
-     * @const
-     */
-    const it_IT_Giorgio: Voice;
-    /**
-     * Amazon voice, Turkish (Turkiye) female, Filiz.
+     * Amazon voice, Turkish Female, Filiz.
      * @const
      */
     const tr_TR_Filiz: Voice;
+
     /**
-     * Amazon voice, German (Germany) female, Marlene.
-     * @const
-     */
-    const de_DE_Marlene: Voice;
-    /**
-     * Amazon voice, German (Germany) male, Hans.
-     * @const
-     */
-    const de_DE_Hans: Voice;
-    /**
-     * Amazon voice, Swedish (Sweden) female, Astrid.
+     * Amazon voice, Swedish Female, Astrid.
      * @const
      */
     const sv_SE_Astrid: Voice;
+
     /**
-     * Amazon voice, French (Canada) female, Chantal.
-     * @const
-     */
-    const fr_CA_Chantal: Voice;
-    /**
-     * Amazon voice, Arabic female, Zeina.
-     * @const
-     */
-    const ar_SA_Zeina: Voice;
-    /**
-     * Amazon voice, English (India) female, Aditi.
-     * @const
-     */
-    const en_IN_Aditi: Voice;
-    /**
-     * Amazon voice, English (Welsh) female, Gwyneth.
-     * @const
-     */
-    const cy_GB_Gwyneth: Voice;
-    /**
-     * Amazon voice, English (Welsh) male, Geraint.
-     * @const
-     */
-    const cy_GB_Geraint: Voice;
-    /**
-     * Amazon voice, Hindi (India) female, Aditi.
-     * @const
-     */
-    const hi_IN_Aditi: Voice;
-    /**
-     * Amazon voice, Icelandic (Iceland) female, Dora.
-     * @const
-     */
-    const is_IS_Dora: Voice;
-    /**
-     * Amazon voice, Icelandic (Iceland) male, Karl.
-     * @const
-     */
-    const is_IS_Karl: Voice;
-    /**
-     * Amazon voice, Romanian (Romania) female, Carmen.
-     * @const
-     */
-    const ro_RO_Carmen: Voice;
-    /**
-     * Amazon voice, Russian (Russia) male, Maxim.
-     * @const
-     */
-    const ru_RU_Maxim: Voice;
-    /**
-     * Amazon voice, Russian (Russia) female, Tatyana.
+     * Amazon voice, Russian Female, Tatyana.
      * @const
      */
     const ru_RU_Tatyana: Voice;
+
+    /**
+     * Amazon voice, Russian Male, Maxim.
+     * @const
+     */
+    const ru_RU_Maxim: Voice;
+
+    /**
+     * Amazon voice, Romanian Female, Carmen.
+     * @const
+     */
+    const ro_RO_Carmen: Voice;
+
+    /**
+     * Amazon voice, Portuguese Female, Inês.
+     * @const
+     */
+    const pt_PT_Ines: Voice;
+
+    /**
+     * Amazon voice, Portuguese Male, Cristiano.
+     * @const
+     */
+    const pt_PT_Cristiano: Voice;
+
+    /**
+     * Amazon voice, Brazilian Portuguese Female, Vitória.
+     * @const
+     */
+    const pt_BR_Vitoria: Voice;
+
+    /**
+     * Amazon voice, Brazilian Portuguese Male, Ricardo.
+     * @const
+     */
+    const pt_BR_Ricardo: Voice;
+
+    /**
+     * Amazon voice, Brazilian Portuguese Female (second voice), Camila.
+     * @const
+     */
+    const pt_BR_Camila: Voice;
+
+    /**
+     * Amazon voice, Polish Female, Maja.
+     * @const
+     */
+    const pl_PL_Maja: Voice;
+
+    /**
+     * Amazon voice, Polish Male, Jan.
+     * @const
+     */
+    const pl_PL_Jan: Voice;
+
+    /**
+     * Amazon voice, Polish Male (second voice), Jacek.
+     * @const
+     */
+    const pl_PL_Jacek: Voice;
+
+    /**
+     * Amazon voice, Polish Female (second voice), Ewa.
+     * @const
+     */
+    const pl_PL_Ewa: Voice;
+
+    /**
+     * Amazon voice, Dutch Male, Ruben.
+     * @const
+     */
+    const nl_NL_Ruben: Voice;
+
+    /**
+     * Amazon voice, Dutch Female, Lotte.
+     * @const
+     */
+    const nl_NL_Lotte: Voice;
+
+    /**
+     * Amazon voice, Norwegian Female, Liv.
+     * @const
+     */
+    const nb_NO_Liv: Voice;
+
+    /**
+     * Amazon voice, Korean Female, Seoyeon.
+     * @const
+     */
+    const ko_KR_Seoyeon: Voice;
+
+    /**
+     * Amazon voice, Japanese Male, Takumi.
+     * @const
+     */
+    const ja_JP_Takumi: Voice;
+
+    /**
+     * Amazon voice, Japanese Female, Mizuki.
+     * @const
+     */
+    const ja_JP_Mizuki: Voice;
+
+    /**
+     * Amazon voice, Italian Female, Bianca.
+     * @const
+     */
+    const it_IT_Bianca: Voice;
+
+    /**
+     * Amazon voice, Italian Male, Giorgio.
+     * @const
+     */
+    const it_IT_Giorgio: Voice;
+
+    /**
+     * Amazon voice, Italian Female (second voice), Carla.
+     * @const
+     */
+    const it_IT_Carla: Voice;
+
+    /**
+     * Amazon voice, Icelandic Male, Karl.
+     * @const
+     */
+    const is_IS_Karl: Voice;
+
+    /**
+     * Amazon voice, Icelandic Female, Dóra.
+     * @const
+     */
+    const is_IS_Dora: Voice;
+
+    /**
+     * Amazon voice, French Male, Mathieu.
+     * @const
+     */
+    const fr_FR_Mathieu: Voice;
+
+    /**
+     * Amazon voice, French Female, Léa.
+     * @const
+     */
+    const fr_FR_Lea: Voice;
+
+    /**
+     * Amazon voice, French Female (second voice), Céline.
+     * @const
+     */
+    const fr_FR_Celine: Voice;
+
+    /**
+     * Amazon voice, Canadian French Female, Chantal.
+     * @const
+     */
+    const fr_CA_Chantal: Voice;
+
+    /**
+     * Amazon voice, US Spanish Female, Penélope.
+     * @const
+     */
+    const es_US_Penelope: Voice;
+
+    /**
+     * Amazon voice, US Spanish Male, Miguel.
+     * @const
+     */
+    const es_US_Miguel: Voice;
+
+    /**
+     * Amazon voice, US Spanish Female (second voice), Lupe.
+     * @const
+     */
+    const es_US_Lupe: Voice;
+
+    /**
+     * Amazon voice, Mexican Spanish Female, Mia.
+     * @const
+     */
+    const es_MX_Mia: Voice;
+
+    /**
+     * Amazon voice, Castilian Spanish Female, Lucia.
+     * @const
+     */
+    const es_ES_Lucia: Voice;
+
+    /**
+     * Amazon voice, Castilian Spanish Male, Enrique.
+     * @const
+     */
+    const es_ES_Enrique: Voice;
+
+    /**
+     * Amazon voice, Castilian Spanish Female (second voice), Conchita.
+     * @const
+     */
+    const es_ES_Conchita: Voice;
+
+    /**
+     * Amazon voice, Welsh English Male, Geraint.
+     * @const
+     */
+    const en_GB_WLS_Geraint: Voice;
+
+    /**
+     * Amazon voice, US English Female, Salli.
+     * @const
+     */
+    const en_US_Salli: Voice;
+
+    /**
+     * Amazon voice, US English Male, Matthew.
+     * @const
+     */
+    const en_US_Matthew: Voice;
+
+    /**
+     * Amazon voice, US English Female (second voice), Kimberly.
+     * @const
+     */
+    const en_US_Kimberly: Voice;
+
+    /**
+     * Amazon voice, US English Female (third voice), Kendra.
+     * @const
+     */
+    const en_US_Kendra: Voice;
+
+    /**
+     * Amazon voice, US English Male (second voice), Justin.
+     * @const
+     */
+    const en_US_Justin: Voice;
+
+    /**
+     * Amazon voice, US English Male (third voice), Joey.
+     * @const
+     */
+    const en_US_Joey: Voice;
+
+    /**
+     * Amazon voice, US English Female (fourth voice), Joanna.
+     * @const
+     */
+    const en_US_Joanna: Voice;
+
+    /**
+     * Amazon voice, US English Female (fifth voice), Ivy.
+     * @const
+     */
+    const en_US_Ivy: Voice;
+
+    /**
+     * Amazon voice, Indian English Female, Raveena.
+     * @const
+     */
+    const en_IN_Raveena: Voice;
+
+    /**
+     * Amazon voice, Indian English Female (second voice), Aditi.
+     * @const
+     */
+    const en_IN_Aditi: Voice;
+
+    /**
+     * Amazon voice, British English Female, Emma.
+     * @const
+     */
+    const en_GB_Emma: Voice;
+
+    /**
+     * Amazon voice, British English Male, Brian.
+     * @const
+     */
+    const en_GB_Brian: Voice;
+
+    /**
+     * Amazon voice, British English Female (second voice), Amy.
+     * @const
+     */
+    const en_GB_Amy: Voice;
+
+    /**
+     * Amazon voice, Australian English Male, Russell.
+     * @const
+     */
+    const en_AU_Russell: Voice;
+
+    /**
+     * Amazon voice, Australian English Female, Nicole.
+     * @const
+     */
+    const en_AU_Nicole: Voice;
+
+    /**
+     * Amazon voice, German Female, Vicki.
+     * @const
+     */
+    const de_DE_Vicki: Voice;
+
+    /**
+     * Amazon voice, German Female (second voice), Marlene.
+     * @const
+     */
+    const de_DE_Marlene: Voice;
+
+    /**
+     * Amazon voice, German Male, Hans.
+     * @const
+     */
+    const de_DE_Hans: Voice;
+
+    /**
+     * Amazon voice, Danish Female, Naja.
+     * @const
+     */
+    const da_DK_Naja: Voice;
+
+    /**
+     * Amazon voice, Danish Male, Mads.
+     * @const
+     */
+    const da_DK_Mads: Voice;
+
+    /**
+     * Amazon voice, Welsh Female, Gwyneth.
+     * @const
+     */
+    const cy_GB_Gwyneth: Voice;
+
+    /**
+     * Amazon voice, Chinese Mandarin Female, Zhiyu.
+     * @const
+     */
+    const cmn_CN_Zhiyu: Voice;
+
+    /**
+     * Amazon voice, Arabic Female, Zeina.
+     * @const
+     */
+    const arb_Zeina: Voice;
   }
 }
 
@@ -7727,81 +7918,358 @@ declare namespace VoiceList {
      */
     namespace Neural {
       /**
-       * Neural Amazon voice, English (UK) female, Amy.
+       * Neural Amazon voice, Belgian French Female, Isabelle.
        * @const
        */
-      const en_GB_Amy: Voice;
+      const fr_BE_Isabelle: Voice;
 
       /**
-       * Neural Amazon voice, English (UK) female, Emma.
+       * Neural Amazon voice, US English Female, Danielle.
        * @const
        */
-      const en_GB_Emma: Voice;
+      const en_US_Danielle: Voice;
 
       /**
-       * Neural Amazon voice, English (UK) male, Brian.
+       * Neural Amazon voice, US English Male, Gregory.
        * @const
        */
-      const en_GB_Brian: Voice;
+      const en_US_Gregory: Voice;
 
       /**
-       * Neural Amazon voice, English (US) female, Ivy.
+       * Neural Amazon voice, Turkish Female, Burcu.
        * @const
        */
-      const en_US_Ivy: Voice;
+      const tr_TR_Burcu: Voice;
 
       /**
-       * Neural Amazon voice, English (US) female, Joanna.
+       * Neural Amazon voice, US English Male, Kevin.
        * @const
        */
-      const en_US_Joanna: Voice;
+      const en_US_Kevin: Voice;
 
       /**
-       * Neural Amazon voice, English (US) female, Kendra.
+       * Neural Amazon voice, Swedish Female, Elin.
        * @const
        */
-      const en_US_Kendra: Voice;
+      const sv_SE_Elin: Voice;
 
       /**
-       * Neural Amazon voice, English (US) female, Kimberly.
+       * Neural Amazon voice, Portuguese Female, Inês.
        * @const
        */
-      const en_US_Kimberly: Voice;
+      const pt_PT_Ines: Voice;
 
       /**
-       * Neural Amazon voice, English (US) female, Salli.
+       * Neural Amazon voice, Brazilian Portuguese Female, Vitória.
        * @const
        */
-      const en_US_Salli: Voice;
+      const pt_BR_Vitoria: Voice;
 
       /**
-       * Neural Amazon voice, English (US) male, Joey.
-       * @const
-       */
-      const en_US_Joey: Voice;
-
-      /**
-       * Neural Amazon voice, English (US) male, Justin.
-       * @const
-       */
-      const en_US_Justin: Voice;
-
-      /**
-       * Neural Amazon voice, English (US) male, Matthew.
-       * @const
-       */
-      const en_US_Matthew: Voice;
-      /**
-       * Neural Amazon voice, Portuguese (Brazil) female, Camila.
+       * Neural Amazon voice, Brazilian Portuguese Female (second voice), Camila.
        * @const
        */
       const pt_BR_Camila: Voice;
 
       /**
-       * Neural Amazon voice, Spanish (US) female, Lupe.
+       * Neural Amazon voice, Polish Female, Ola.
+       * @const
+       */
+      const pl_PL_Ola: Voice;
+
+      /**
+       * Neural Amazon voice, Belgian Dutch Female, Lisa.
+       * @const
+       */
+      const nl_BE_Lisa: Voice;
+
+      /**
+       * Neural Amazon voice, Dutch Female, Laura.
+       * @const
+       */
+      const nl_NL_Laura: Voice;
+
+      /**
+       * Neural Amazon voice, Norwegian Female, Ida.
+       * @const
+       */
+      const nb_NO_Ida: Voice;
+
+      /**
+       * Neural Amazon voice, Korean Female, Seoyeon.
+       * @const
+       */
+      const ko_KR_Seoyeon: Voice;
+
+      /**
+       * Neural Amazon voice, Japanese Female, Kazuha.
+       * @const
+       */
+      const ja_JP_Kazuha: Voice;
+
+      /**
+       * Neural Amazon voice, Japanese Female (second voice), Tomoko.
+       * @const
+       */
+      const ja_JP_Tomoko: Voice;
+
+      /**
+       * Neural Amazon voice, Japanese Male, Takumi.
+       * @const
+       */
+      const ja_JP_Takumi: Voice;
+
+      /**
+       * Neural Amazon voice, Italian Female, Bianca.
+       * @const
+       */
+      const it_IT_Bianca: Voice;
+
+      /**
+       * Neural Amazon voice, French Female, Léa.
+       * @const
+       */
+      const fr_FR_Lea: Voice;
+
+      /**
+       * Neural Amazon voice, Canadian French Female, Gabrielle.
+       * @const
+       */
+      const fr_CA_Gabrielle: Voice;
+
+      /**
+       * Neural Amazon voice, US Spanish Female, Lupe.
        * @const
        */
       const es_US_Lupe: Voice;
+
+      /**
+       * Neural Amazon voice, Mexican Spanish Female, Mia.
+       * @const
+       */
+      const es_MX_Mia: Voice;
+
+      /**
+       * Neural Amazon voice, Castilian Spanish Female, Lucia.
+       * @const
+       */
+      const es_ES_Lucia: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female, Salli.
+       * @const
+       */
+      const en_US_Salli: Voice;
+
+      /**
+       * Neural Amazon voice, US English Male, Matthew.
+       * @const
+       */
+      const en_US_Matthew: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female (second voice), Kimberly.
+       * @const
+       */
+      const en_US_Kimberly: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female (third voice), Kendra.
+       * @const
+       */
+      const en_US_Kendra: Voice;
+
+      /**
+       * Neural Amazon voice, US English Male (second voice), Justin.
+       * @const
+       */
+      const en_US_Justin: Voice;
+
+      /**
+       * Neural Amazon voice, US English Male (third voice), Joey.
+       * @const
+       */
+      const en_US_Joey: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female (fourth voice), Joanna.
+       * @const
+       */
+      const en_US_Joanna: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female (fifth voice), Ivy.
+       * @const
+       */
+      const en_US_Ivy: Voice;
+
+      /**
+       * Neural Amazon voice, New Zealand English Female, Aria.
+       * @const
+       */
+      const en_NZ_Aria: Voice;
+
+      /**
+       * Neural Amazon voice, South African English Female, Ayanda.
+       * @const
+       */
+      const en_ZA_Ayanda: Voice;
+
+      /**
+       * Neural Amazon voice, British English Female, Emma.
+       * @const
+       */
+      const en_GB_Emma: Voice;
+
+      /**
+       * Neural Amazon voice, British English Male, Brian.
+       * @const
+       */
+      const en_GB_Brian: Voice;
+
+      /**
+       * Neural Amazon voice, British English Female (second voice), Amy.
+       * @const
+       */
+      const en_GB_Amy: Voice;
+
+      /**
+       * Neural Amazon voice, Australian English Female, Olivia.
+       * @const
+       */
+      const en_AU_Olivia: Voice;
+
+      /**
+       * Neural Amazon voice, German Female, Vicki.
+       * @const
+       */
+      const de_DE_Vicki: Voice;
+
+      /**
+       * Neural Amazon voice, Danish Female, Sofie.
+       * @const
+       */
+      const da_DK_Sofie: Voice;
+
+      /**
+       * Neural Amazon voice, Chinese Mandarin Female, Zhiyu.
+       * @const
+       */
+      const cmn_CN_Zhiyu: Voice;
+
+      /**
+       * Neural Amazon voice, Gulf Arabic Female, Hala.
+       * @const
+       */
+      const ar_AE_Hala: Voice;
+
+      /**
+       * Neural Amazon voice, Catalan Female, Arlet.
+       * @const
+       */
+      const ca_ES_Arlet: Voice;
+
+      /**
+       * Neural Amazon voice, German Female, Hannah.
+       * @const
+       */
+      const de_AT_Hannah: Voice;
+
+      /**
+       * Neural Amazon voice, US English Female, Ruth.
+       * @const
+       */
+      const en_US_Ruth: Voice;
+
+      /**
+       * Neural Amazon voice, US English Male, Stephen.
+       * @const
+       */
+      const en_US_Stephen: Voice;
+
+      /**
+       * Neural Amazon voice, Indian English Female, Kajal.
+       * @const
+       */
+      const en_IN_Kajal: Voice;
+
+      /**
+       * Neural Amazon voice, Cantonese Female, Hiujin.
+       * @const
+       */
+      const yue_CN_Hiujin: Voice;
+
+      /**
+       * Neural Amazon voice, Finnish Female, Suvi.
+       * @const
+       */
+      const fi_FI_Suvi: Voice;
+
+      /**
+       * Neural Amazon voice, Irish English Female, Niamh.
+       * @const
+       */
+      const en_IE_Niamh: Voice;
+
+      /**
+       * Neural Amazon voice, British English Male, Arthur.
+       * @const
+       */
+      const en_GB_Arthur: Voice;
+
+      /**
+       * Neural Amazon voice, German Male, Daniel.
+       * @const
+       */
+      const de_DE_Daniel: Voice;
+
+      /**
+       * Neural Amazon voice, Canadian French Male, Liam.
+       * @const
+       */
+      const fr_CA_Liam: Voice;
+
+      /**
+       * Neural Amazon voice, US Spanish Male, Pedro.
+       * @const
+       */
+      const es_US_Pedro: Voice;
+
+      /**
+       * Neural Amazon voice, Castilian Spanish Male, Sergio.
+       * @const
+       */
+      const es_ES_Sergio: Voice;
+
+      /**
+       * Neural Amazon voice, Mexican Spanish Male, Andrés.
+       * @const
+       */
+      const es_MX_Andres: Voice;
+
+      /**
+       * Neural Amazon voice, French Male, Rémi.
+       * @const
+       */
+      const fr_FR_Remi: Voice;
+
+      /**
+       * Neural Amazon voice, Italian Male, Adriano.
+       * @const
+       */
+      const it_IT_Adriano: Voice;
+
+      /**
+       * Neural Amazon voice, Brazilian Portuguese Male, Thiago.
+       * @const
+       */
+      const pt_BR_Thiago: Voice;
+
+      /**
+       * Neural Amazon voice, Gulf Arabic Male, Zayd.
+       * @const
+       */
+      const ar_AE_Zayd: Voice;
     }
   }
 }
@@ -8568,6 +9036,11 @@ declare namespace VoiceList {
      * Google voice, American English male.
      * @const
      */
+    const en_US_Casual_K: Voice;
+    /**
+     * Google voice, American English male.
+     * @const
+     */
     const en_US_Journey_D: Voice;
     /**
      * Google voice, American English female.
@@ -9125,6 +9598,16 @@ declare namespace VoiceList {
      */
     const gu_IN_Standard_B: Voice;
     /**
+     * Google voice, Gujarati (India) female (second voice).
+     * @const
+     */
+    const gu_IN_Standard_C: Voice;
+    /**
+     * Google voice, Gujarati (India) male (second voice).
+     * @const
+     */
+    const gu_IN_Standard_D: Voice;
+    /**
      * Google voice, Gujarati (India) female. Powered by WaveNet.
      * @const
      */
@@ -9134,6 +9617,16 @@ declare namespace VoiceList {
      * @const
      */
     const gu_IN_Wavenet_B: Voice;
+    /**
+     * Google voice, Gujarati (India) female (second voice). Powered by WaveNet.
+     * @const
+     */
+    const gu_IN_Wavenet_C: Voice;
+    /**
+     * Google voice, Gujarati (India) male (second voice). Powered by WaveNet.
+     * @const
+     */
+    const gu_IN_Wavenet_D: Voice;
     /**
      * Google voice, Hebrew (Israel) female.
      * @const
@@ -9509,6 +10002,16 @@ declare namespace VoiceList {
      * @const
      */
     const ml_IN_Standard_B: Voice;
+    /**
+     * Google voice, Malayalam (India) female (second voice).
+     * @const
+     */
+    const ml_IN_Standard_C: Voice;
+    /**
+     * Google voice, Malayalam (India) male (second voice).
+     * @const
+     */
+    const ml_IN_Standard_D: Voice;
     /**
      * Google voice, Malayalam (India) female. Powered by WaveNet.
      * @const
@@ -10325,6 +10828,14 @@ declare namespace VoiceList {
        * @const
        */
       const pt_BR_Isabela: Voice;
+      /** * Neural IBM voice, English(United Kingdom) female, Charlotte.
+       * @const
+       */
+      const en_GB_Charlotte: Voice;
+      /** * Neural IBM voice, English(United Kingdom) female, James.
+       * @const
+       */
+      const en_GB_James: Voice;
       /** * Neural IBM voice, English(United Kingdom) female, Kate.
        * @const
        */
@@ -10357,10 +10868,18 @@ declare namespace VoiceList {
        * @const
        */
       const en_US_Olivia: Voice;
+      /** * Neural IBM voice, French(Canadian) female, Louise.
+       * @const
+       */
+      const fr_CA_Louise: Voice;
       /** * Neural IBM voice, French female, Renee.
        * @const
        */
       const fr_FR_Renee: Voice;
+      /** * Neural IBM voice, French female, Nicolas.
+       * @const
+       */
+      const fr_FR_Nicolas: Voice;
       /** * Neural IBM voice, German female, Birgit.
        * @const
        */
@@ -10397,6 +10916,38 @@ declare namespace VoiceList {
        * @const
        */
       const es_US_Sofia: Voice;
+      /** * Neural IBM voice, Korean female, Jin.
+       * @const
+       */
+      const ko_KR_Jin: Voice;
+      /** * Neural IBM voice, Dutch(Netherlands) female, Merel.
+       * @const
+       */
+      const nl_NL_Merel: Voice;
+      /** * Neural IBM voice, English(Australian) female, Heidi.
+       * @const
+       */
+      const en_AU_Heidi_Expressive: Voice;
+      /** * Neural IBM voice, English(Australian) female, Jack.
+       * @const
+       */
+      const en_AU_Jack_Expressive: Voice;
+      /** * Neural IBM voice, English(United States) female, Allison.
+       * @const
+       */
+      const en_US_Allison_Expressive: Voice;
+      /** * Neural IBM voice, English(United States) female, Emma.
+       * @const
+       */
+      const en_US_Emma_Expressive: Voice;
+      /** * Neural IBM voice, English(United States) female, Lisa.
+       * @const
+       */
+      const en_US_Lisa_Expressive: Voice;
+      /** * Neural IBM voice, English(United States) female, Michael.
+       * @const
+       */
+      const en_US_Michael_Expressive: Voice;
     }
   }
 }
@@ -10806,6 +11357,12 @@ declare namespace VoiceList {
       const de_DE_ElkeNeural: Voice;
 
       /**
+       * Neural Microsoft voice, German (Germany) Male, FlorianMultilingualNeural.
+       * @const
+       */
+      const de_DE_FlorianMultilingualNeural: Voice;
+
+      /**
        * Neural Microsoft voice, German (Germany) Female, GiselaNeural.
        * @const
        */
@@ -10852,6 +11409,12 @@ declare namespace VoiceList {
        * @const
        */
       const de_DE_RalfNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, German (Germany) Female, SeraphinaMultilingualNeural.
+       * @const
+       */
+      const de_DE_SeraphinaMultilingualNeural: Voice;
 
       /**
        * Neural Microsoft voice, German (Germany) Female, TanjaNeural.
@@ -11250,16 +11813,34 @@ declare namespace VoiceList {
       const en_US_AnaNeural: Voice;
 
       /**
+       * Neural Microsoft voice, English (United States) Male, AndrewMultilingualNeural.
+       * @const
+       */
+      const en_US_AndrewMultilingualNeural: Voice;
+
+      /**
        * Neural Microsoft voice, English (United States) Female, AshleyNeural.
        * @const
        */
       const en_US_AshleyNeural: Voice;
 
       /**
+       * Neural Microsoft voice, English (United States) Female, AvaMultilingualNeural.
+       * @const
+       */
+      const en_US_AvaMultilingualNeural: Voice;
+
+      /**
        * Neural Microsoft voice, English (United States) Male, BrandonNeural.
        * @const
        */
       const en_US_BrandonNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, English (United States) Male, BrianMultilingualNeural.
+       * @const
+       */
+      const en_US_BrianMultilingualNeural: Voice;
 
       /**
        * Neural Microsoft voice, English (United States) Male, ChristopherNeural.
@@ -11280,6 +11861,12 @@ declare namespace VoiceList {
       const en_US_ElizabethNeural: Voice;
 
       /**
+       * Neural Microsoft voice, English (United States) Female, EmmaMultilingualNeural.
+       * @const
+       */
+      const en_US_EmmaMultilingualNeural: Voice;
+
+      /**
        * Neural Microsoft voice, English (United States) Male, EricNeural.
        * @const
        */
@@ -11296,12 +11883,6 @@ declare namespace VoiceList {
        * @const
        */
       const en_US_JennyMultilingualNeural: Voice;
-
-      /**
-       * Neural Microsoft voice, English (United States) Female, JennyMultilingualV2Neural.
-       * @const
-       */
-      const en_US_JennyMultilingualV2Neural: Voice;
 
       /**
        * Neural Microsoft voice, English (United States) Female, MichelleNeural.
@@ -11530,6 +12111,12 @@ declare namespace VoiceList {
        * @const
        */
       const es_ES_VeraNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, Spanish (Spain) Female, XimenaNeural.
+       * @const
+       */
+      const es_ES_XimenaNeural: Voice;
 
       /**
        * Neural Microsoft voice, Spanish (Equatorial Guinea) Female, TeresaNeural.
@@ -11862,6 +12449,12 @@ declare namespace VoiceList {
       const fr_CA_AntoineNeural: Voice;
 
       /**
+       * Neural Microsoft voice, French (Canada) Male, ThierryNeural.
+       * @const
+       */
+      const fr_CA_ThierryNeural: Voice;
+
+      /**
        * Neural Microsoft voice, French (Switzerland) Female, ArianeNeural.
        * @const
        */
@@ -11944,6 +12537,18 @@ declare namespace VoiceList {
        * @const
        */
       const fr_FR_MauriceNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, French (France) Male, RemyMultilingualNeural.
+       * @const
+       */
+      const fr_FR_RemyMultilingualNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, French (France) Female, VivienneMultilingualNeural.
+       * @const
+       */
+      const fr_FR_VivienneMultilingualNeural: Voice;
 
       /**
        * Neural Microsoft voice, French (France) Male, YvesNeural.
@@ -12132,6 +12737,12 @@ declare namespace VoiceList {
       const it_IT_GianniNeural: Voice;
 
       /**
+       * Neural Microsoft voice, Italian (Italy) Male, GiuseppeNeural.
+       * @const
+       */
+      const it_IT_GiuseppeNeural: Voice;
+
+      /**
        * Neural Microsoft voice, Italian (Italy) Female, ImeldaNeural.
        * @const
        */
@@ -12292,6 +12903,12 @@ declare namespace VoiceList {
        * @const
        */
       const ko_KR_GookMinNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, Korean (Korea) Male, HyunsuNeural.
+       * @const
+       */
+      const ko_KR_HyunsuNeural: Voice;
 
       /**
        * Neural Microsoft voice, Korean (Korea) Female, JiMinNeural.
@@ -12604,6 +13221,12 @@ declare namespace VoiceList {
        * @const
        */
       const pt_BR_NicolauNeural: Voice;
+
+      /**
+       * Neural Microsoft voice, Portuguese (Brazil) Female, ThalitaNeural.
+       * @const
+       */
+      const pt_BR_ThalitaNeural: Voice;
 
       /**
        * Neural Microsoft voice, Portuguese (Brazil) Male, ValerioNeural.
@@ -13048,12 +13671,6 @@ declare namespace VoiceList {
        * @const
        */
       const zh_CN_XiaoshuangNeural: Voice;
-
-      /**
-       * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoxuanNeural.
-       * @const
-       */
-      const zh_CN_XiaoxuanNeural: Voice;
 
       /**
        * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoyanNeural.
@@ -13503,7 +14120,7 @@ declare namespace VoxEngine {
    * @param conferenceId ID of the conference. The parameter has to be the same as the pattern in the rule so the method triggers appropriate rule with conference logic.
    * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. Normally it is some phone number that can be used for callback. IMPORTANT: you cannot use test numbers rented from Voximplant as CallerID, use only real numbers.
    * @param displayName Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name.
-   * @param headers Optional SIP headers to be passed with a call to conference. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * @param headers Optional. SIP headers to be passed with a call to conference. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event.
    */
   function callConference(
@@ -13568,7 +14185,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new speech recognizer and starts recognition. Sources can later be attached via the [Call.sendMediaTo] method etc.
+   * Creates a new [ASR] (speech recognizer) object and starts recognition. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -13594,7 +14211,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new audio recorder. Sources can later be attached via the [Call.sendMediaTo] method.
+   * Creates a new [Recorder] (audio recorder) or [ConferenceRecorder] (conference recorder) object. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -13615,7 +14232,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a streaming object. Sources can later be attached via the [Call.sendMediaTo] method.
+   * Creates a new [StreamingAgent] object. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -13628,7 +14245,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new audio player with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. Media streams can later be attached via the [Call.sendMediaTo] method etc.
+   * Creates a new [Player] (audio player) object with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param script ToneScript string
    * @param parameters Parameters for ToneScript: loop, progressivePlayback, etc.
    **/
@@ -13637,17 +14254,17 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new audio player with specified text; TTS is used to play this text. Media streams can later be attached via the [Call.sendMediaTo]  method etc.
+   * Creates a new [Player] (audio player) object with specified text; TTS is used to play this text. Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * If the text length exceeds 1500 characters, the [PlayerEvents.PlaybackFinished] event is triggered with error description. After the very first playing, a phrase is cached; each createTTSPlayer instance stores the cache data up to 2 weeks. Note that cache addresses only the URL, without additional headers. The cached phrase is available for all applications and further sessions.
    * @param text Text to synthesize
-   * @param parameters Optional [Player] parameters: language, progressivePlayback, volume, rate, etc.
+   * @param parameters Optional. [Player] parameters: language, progressivePlayback, volume, rate, etc.
    **/
   function createTTSPlayer(text: string, parameters: TTSPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new audio player with specified audio file URL.
+   * Creates a new [Player] (aydio player) object with specified audio file URL.
    * <br>
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
@@ -13656,17 +14273,17 @@ declare namespace VoxEngine {
    * <br>
    * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.
    * <br>
-   * Media streams can later be attached via the [Call.sendMediaTo]
+   * Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param url Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
-   * @param parameters Optional [Player] parameters: progressivePlayback, loop, onPause, etc.
+   * @param url Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
+   * @param parameters Optional. [Player] parameters: progressivePlayback, loop, onPause, etc.
    **/
-  function createURLPlayer(url: string, parameters?: URLPlayerParameters): Player;
+  function createURLPlayer(url: URLPlayerRequest, parameters?: URLPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a WebSocket object. Sources can later be attached via the [Call.sendMediaTo] method.
+   * Creates a new [WebSocket] object. Media streams can later be attached via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param url URL to which to connect (wss:// + domain + path).
    * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'.
    */
@@ -13741,8 +14358,8 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Helper function to forward an incoming call to PSTN. The method handles numbers only in the E.164 format by default. If you need to handle a number in another format, pass an additional function (as a parameter) to the method. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param numberTransform Optional function used to transform dialed number to international format. This function accepts dialed number and returns phone number in E.164 format
-   * @param onEstablishedCallback Optional function that is invoked after a call is established. Both calls (incoming and outgoing) are passed to this function
+   * @param numberTransform Optional. Function used to transform dialed number to international format. This function accepts dialed number and returns phone number in E.164 format
+   * @param onEstablishedCallback Optional. Function that is invoked after a call is established. Both calls (incoming and outgoing) are passed to this function
    * @param options An object with a number used as the callerid that is displayed to the callee. Whitespaces are not allowed. A valid phone number that can be used to call back if required.
    */
   function forwardCallToPSTN(
@@ -13755,7 +14372,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Helper function to forward an incoming call to a dialed SIP URI. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
+   * @param onEstablishedCallback Optional. Function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    * @param video Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
   function forwardCallToSIP(
@@ -13767,7 +14384,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Helper function to forward an incoming call to a user of the current application in the P2P mode. Dialed number is considered as username. Due to the P2P mode, media player and recording do not work. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
+   * @param onEstablishedCallback Optional. Function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    */
   function forwardCallToUserDirect(
     onEstablishedCallback?: (call1: Call, call2: Call) => void
@@ -13777,7 +14394,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Helper function to forward an incoming call to a user of the current application. Dialed number is considered as username. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
-   * @param onEstablishedCallback Optional function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
+   * @param onEstablishedCallback Optional. Function that is invoked after call is established. Both calls (incoming and outgoing) are passed to this function
    * @param video Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
   function forwardCallToUser(
@@ -13845,6 +14462,5535 @@ declare namespace VoxEngine {
 }
 
 declare namespace VoxEngine {}
+
+
+declare namespace VoximplantApi {
+    interface AccountInfo {
+        /**
+         * The account's ID
+         */
+        accountId: number;
+        /**
+         * The account's name
+         */
+        accountName: string;
+        /**
+         * The account's email
+         */
+        accountEmail: string;
+        /**
+         * The account API key. Use password or api_key authentication to show the api_key
+         */
+        apiKey?: string;
+        /**
+         * The first name
+         */
+        accountFirstName?: string;
+        /**
+         * The last name
+         */
+        accountLastName?: string;
+        /**
+         * The UTC account created time in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created: Date;
+        /**
+         * The notification language code (2 symbols, ISO639-1). Examples: en, ru
+         */
+        languageCode?: string;
+        /**
+         * The account location (timezone). Examples: America/Los_Angeles, Etc/GMT-8, Etc/GMT+10
+         */
+        location?: string;
+        /**
+         * The min balance value to notify by email or SMS
+         */
+        minBalanceToNotify?: number;
+        /**
+         * Whether Voximplant notifications are required
+         */
+        accountNotifications?: boolean;
+        /**
+         * Whether Voximplant plan changing notifications are required
+         */
+        tariffChangingNotifications?: boolean;
+        /**
+         * Whether Voximplant news notifications are required
+         */
+        newsNotifications?: boolean;
+        /**
+         * The company or businessman name
+         */
+        billingAddressName?: string;
+        /**
+         * The billing address country code (2 symbols, ISO 3166-1 alpha-2). Examples: US, RU, GB
+         */
+        billingAddressCountryCode?: string;
+        /**
+         * The office address
+         */
+        billingAddressAddress?: string;
+        /**
+         * The office ZIP
+         */
+        billingAddressZip?: string;
+        /**
+         * The office phone number
+         */
+        billingAddressPhone?: string;
+        /**
+         * The office state (US) or province (Canada), up to 100 characters. Examples: California, Illinois, British Columbia
+         */
+        billingAddressState?: string;
+        /**
+         * Whether the account is ctive
+         */
+        active: boolean;
+        /**
+         * Whether account is blocked by Voximplant admins
+         */
+        frozen?: boolean;
+        /**
+         * The account's money
+         */
+        balance?: number;
+        /**
+         * The account's credit limit
+         */
+        creditLimit?: number;
+        /**
+         * The currency code (USD, RUR, EUR, ...)
+         */
+        currency?: string;
+        /**
+         * Whether Robokassa payments are allowed
+         */
+        supportRobokassa?: boolean;
+        /**
+         * Whether Bank card payments are allowed
+         */
+        supportBankCard?: boolean;
+        /**
+         * Whether Bank invoices are allowed
+         */
+        supportInvoice?: boolean;
+        /**
+         * The custom data
+         */
+        accountCustomData?: string;
+        /**
+         * The allowed access entries (the API function names)
+         */
+        accessEntries?: string[];
+        /**
+         * Whether the admin user permissions are granted
+         */
+        withAccessEntries?: boolean;
+        /**
+         * If URL is specified, Voximplant cloud makes HTTP POST requests to it when something happens. For a full list of reasons see the <b>type</b> field of the [AccountCallback] structure. The HTTP request has a JSON-encoded body that conforms to the [AccountCallbacks] structure
+         */
+        callbackUrl?: string;
+        /**
+         * If salt string is specified, each HTTP request made by the Voximplant cloud toward the <b>callback_url</b> has a <b>salt</b> field set to MD5 hash of account information and salt. That hash can be used be a developer to ensure that HTTP request is made by the Voximplant cloud
+         */
+        callbackSalt?: string;
+        /**
+         * Whether to send an email when a JS error occures
+         */
+        sendJsError?: boolean;
+        /**
+         * The payments limits applicable to each payment method
+         */
+        billingLimits?: BillingLimits;
+        /**
+         * Whether to activate one-way SMS
+         */
+        a2pSmsEnabled?: boolean;
+    }
+    interface BillingLimits {
+        /**
+         * The Robokassa limits
+         */
+        robokassa?: BillingLimitInfo;
+        /**
+         * The bank card limits
+         */
+        bankCard?: BankCardBillingLimitInfo;
+        /**
+         * The invoice limits
+         */
+        invoice?: BillingLimitInfo;
+    }
+    interface BillingLimitInfo {
+        /**
+         * The minimum amount
+         */
+        minAmount: number;
+        /**
+         * The currency
+         */
+        currency: string;
+    }
+    interface BankCardBillingLimitInfo {
+        /**
+         * The minimum amount
+         */
+        minAmount: number;
+        /**
+         * The currency
+         */
+        currency: string;
+    }
+    interface ApplicationInfo {
+        /**
+         * The application ID
+         */
+        applicationId: number;
+        /**
+         * The full application name
+         */
+        applicationName: string;
+        /**
+         * The application editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+        /**
+         * Whether a secure storage for logs and records is enabled
+         */
+        secureRecordStorage: boolean;
+    }
+    interface UserInfo {
+        /**
+         * The user ID
+         */
+        userId: number;
+        /**
+         * The user name
+         */
+        userName: string;
+        /**
+         * The display user name
+         */
+        userDisplayName: string;
+        /**
+         * Whether the user is active. Inactive users cannot log in to applications
+         */
+        userActive: boolean;
+        /**
+         * Whether the user uses the parent account's money, 'false' if the user has a separate balance
+         */
+        parentAccounting: boolean;
+        /**
+         * The current user's money in the currency specified for the account. The value is the number rounded to 4 decimal places and it changes during the calls, transcribing, purchases etc
+         */
+        liveBalance: number;
+        /**
+         * The current user's money in the currency specified for the account. The value is the number rounded to 4 decimal places. The parameter is the alias to live_balance by default. But there is a possibility to make the alias to fixed_balance: just to pass return_live_balance=false into the [GetAccountInfo] method
+         */
+        balance: number;
+        /**
+         * The last committed balance which has been approved by billing's transaction
+         */
+        fixedBalance: number;
+        /**
+         * The custom data
+         */
+        userCustomData?: string;
+        /**
+         * The bound applications
+         */
+        applications?: ApplicationInfo[];
+        /**
+         * The bound skills
+         */
+        skills?: SkillInfo[];
+        /**
+         * The bound ACD queues
+         */
+        acdQueues?: ACDQueueOperatorInfo[];
+        /**
+         * The ACD operator status. The following values are possible: OFFLINE, ONLINE, READY, BANNED, IN_SERVICE, AFTER_SERVICE, TIMEOUT, DND
+         */
+        acdStatus?: string;
+        /**
+         * The ACD status changing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        acdStatusChangeTime: Date;
+        /**
+         * The user editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created: Date;
+        /**
+         * The user editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+    }
+    interface SipWhiteListInfo {
+        /**
+         * The SIP white list item ID
+         */
+        sipWhitelistId: number;
+        /**
+         * The network address in format A.B.C.D/L
+         */
+        sipWhitelistNetwork: string;
+        /**
+         * The network address description
+         */
+        description?: string;
+    }
+    interface CallSessionInfo {
+        /**
+         * The routing rule name
+         */
+        ruleName: string;
+        /**
+         * The application name
+         */
+        applicationName: string;
+        /**
+         * The unique JS session identifier
+         */
+        callSessionHistoryId: number;
+        /**
+         * The account ID that initiates the JS session
+         */
+        accountId: number;
+        /**
+         * The application ID that initiates the JS session
+         */
+        applicationId: number;
+        /**
+         * The user ID that initiates the JS session
+         */
+        userId: number;
+        /**
+         * The start date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        startDate: Date;
+        /**
+         * The entire JS session duration in seconds. The session can contain multiple calls
+         */
+        duration?: number;
+        /**
+         * The initiator IP address
+         */
+        initiatorAddress: string;
+        /**
+         * The media server IP address
+         */
+        mediaServerAddress: string;
+        /**
+         * The link to the session log. The log retention policy is 1 month, after that time this field clears. If you have issues accessing the log file, check if the application has "Secure storage of applications and logs" feature enabled. In this case, you need to <a href='/docs/guides/managementapi/secureobjects'>authorize</a>.
+         */
+        logFileUrl: string;
+        /**
+         * Finish reason. Possible values are __Normal termination__, __Insufficient funds__, __Internal error (billing timeout)__, __Terminated administratively__, __JS session error__, __Timeout__
+         */
+        finishReason?: string;
+        /**
+         * Calls within the JS session, including durations, cost, phone numbers and other information
+         */
+        calls?: CallInfo[];
+        /**
+         * Used resources
+         */
+        otherResourceUsage?: ResourceUsage[];
+        /**
+         * Bound records
+         */
+        records?: Record[];
+        /**
+         * Custom data
+         */
+        customData?: string;
+    }
+    interface CallInfo {
+        /**
+         * The call history ID
+         */
+        callId: number;
+        /**
+         * The start time in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        startTime: Date;
+        /**
+         * The call duration in seconds
+         */
+        duration?: number;
+        /**
+         * The local number on the platform side
+         */
+        localNumber: string;
+        /**
+         * The remote number on the client side
+         */
+        remoteNumber: string;
+        /**
+         * The type of the remote number, such as PSTN, mobile, user or sip address
+         */
+        remoteNumberType: string;
+        /**
+         * Whether the call is incoming
+         */
+        incoming: boolean;
+        /**
+         * Whether the call is successful
+         */
+        successful: boolean;
+        /**
+         * The transaction ID
+         */
+        transactionId: number;
+        /**
+         * The record URL
+         */
+        recordUrl?: string;
+        /**
+         * The media server IP address
+         */
+        mediaServerAddress: string;
+        /**
+         * The call cost
+         */
+        cost?: number;
+        /**
+         * The custom data passed to the JS session
+         */
+        customData?: string;
+    }
+    interface TransactionInfo {
+        /**
+         * The transaction ID
+         */
+        transactionId: number;
+        /**
+         * The account ID
+         */
+        accountId: string;
+        /**
+         * The transaction date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        performedAt: Date;
+        /**
+         * The transaction amount, $
+         */
+        amount: number;
+        /**
+         * The amount currency (USD, RUR, EUR, ...).
+         */
+        currency: string;
+        /**
+         * The transaction type. The following values are possible: gift_revoke, resource_charge, money_distribution, subscription_charge, subscription_installation_charge, card_periodic_payment, card_overrun_payment, card_payment, rub_card_periodic_payment, rub_card_overrun_payment, rub_card_payment, robokassa_payment, gift, promo, adjustment, wire_transfer, us_wire_transfer, refund, discount, mgp_charge, mgp_startup, mgp_business, mgp_big_business, mgp_enterprise, mgp_large_enterprise, techsupport_charge, tax_charge, monthly_fee_charge, grace_credit_payment, grace_credit_provision, mau_charge, mau_overrun, im_charge, im_overrun, fmc_charge, sip_registration_charge, development_fee, money_transfer_to_child, money_transfer_to_parent, money_acceptance_from_child, money_acceptance_from_parent, phone_number_installation, phone_number_charge, toll_free_phone_number_installation, toll_free_phone_number_charge, services, user_money_transfer, paypal_payment, paypal_overrun_payment, paypal_periodic_payment
+         */
+        transactionType: string;
+        /**
+         * The transaction description
+         */
+        transactionDescription?: string;
+    }
+    interface ResourceUsage {
+        /**
+         * The resource usage ID
+         */
+        resourceUsageId: number;
+        /**
+         * The resource type. The possible values are CALLSESSION, VIDEOCALL, VIDEORECORD, VOICEMAILDETECTION, YANDEXASR, ASR, TRANSCRIPTION, TTS_TEXT_GOOGLE, TTS_YANDEX, AUDIOHDCONFERENCE
+         */
+        resourceType: string;
+        /**
+         * The resource cost
+         */
+        cost?: number;
+        /**
+         * The description
+         */
+        description?: string;
+        /**
+         * The start resource using time in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        usedAt: Date;
+        /**
+         * The transaction ID
+         */
+        transactionId: number;
+        /**
+         * The resource quantity
+         */
+        resourceQuantity?: number;
+        /**
+         * The resource unit
+         */
+        unit?: string;
+        /**
+         * The reference to call
+         */
+        refCallId?: number;
+    }
+    interface Record {
+        /**
+         * The record ID
+         */
+        recordId: number;
+        /**
+         * The record name
+         */
+        recordName?: string;
+        /**
+         * The record cost
+         */
+        cost?: number;
+        /**
+         * The start recording time in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        startTime: Date;
+        /**
+         * The call duration in seconds
+         */
+        duration?: number;
+        /**
+         * The record URL.  If you have issues accessing the record file, check if the application has "Secure storage of applications and logs" feature enabled. In this case, you need to <a href='/docs/guides/managementapi/secureobjects'>authorize</a>.
+         */
+        recordUrl?: string;
+        /**
+         * The transaction ID
+         */
+        transactionId: number;
+        /**
+         * The file size
+         */
+        fileSize?: number;
+        /**
+         * Transcription URL. To open the URL, please add authorization parameters and <b>record_id</b> to it
+         */
+        transcriptionUrl?: string;
+        /**
+         * The status of transcription. The possible values are Not required, In progress, Complete
+         */
+        transcriptionStatus?: string;
+    }
+    interface QueueInfo {
+        /**
+         * The ACD queue ID
+         */
+        acdQueueId: number;
+        /**
+         * The queue name
+         */
+        acdQueueName: string;
+        /**
+         * The application ID
+         */
+        applicationId?: number;
+        /**
+         * The integer queue priority. The highest priority is 0
+         */
+        acdQueuePriority: number;
+        /**
+         * The value in the range of [0.5 ... 1.0]. The value 1.0 means the service probability 100% in challenge with a lower priority queue
+         */
+        serviceProbability: number;
+        /**
+         * Whether to enable the auto binding of operators to a queue by skills comparing
+         */
+        autoBinding: boolean;
+        /**
+         * The maximum predicted waiting time in minutes. When a call is going to be enqueued to the queue, its predicted waiting time should be less or equal to the maximum predicted waiting time; otherwise, a call would be rejected
+         */
+        maxWaitingTime?: number;
+        /**
+         * The maximum number of calls that can be enqueued into this queue
+         */
+        maxQueueSize?: number;
+        /**
+         * The average service time in seconds. Specify the parameter to correct or initialize the waiting time prediction
+         */
+        averageServiceTime?: number;
+        /**
+         * The ACD queue creating UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created: Date;
+        /**
+         * The ACD queue editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+        /**
+         * The ACD queue deleting UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        deleted?: Date;
+        /**
+         * The queue users info
+         */
+        users?: QueueUsers[];
+        /**
+         * The queue skills info
+         */
+        skills?: QueueSkills[];
+        /**
+         * The service level thresholds in seconds
+         */
+        slThresholds?: number[];
+        /**
+         * Number of agents bound to the queue
+         */
+        operatorcount?: number;
+    }
+    interface QueueSkills {
+        /**
+         * The skill ID
+         */
+        skillId: number;
+        /**
+         * The skill name
+         */
+        skillName: string;
+    }
+    interface QueueUsers {
+        /**
+         * The user ID
+         */
+        userId: number;
+    }
+    interface ACDState {
+        /**
+         * The queues' states
+         */
+        acdQueues: ACDQueueState[];
+    }
+    interface ACDQueueState {
+        /**
+         * The ACD queue ID
+         */
+        acdQueueId: number;
+        /**
+         * List of operators with the 'READY' state that can accept a call from this queue
+         */
+        readyOperators: ACDReadyOperatorState[];
+        /**
+         * Number of ready operators
+         */
+        readyOperatorsCount: number;
+        /**
+         * List of operators with the 'READY' state that cannot accept a call from this queue. Operator cannot accept a call if they are temporarily banned or they are servicing a call right now
+         */
+        lockedOperators: ACDLockedOperatorState[];
+        /**
+         * Number of locked operators
+         */
+        lockedOperatorsCount: number;
+        /**
+         * List of operators with the 'AFTER_SERVICE' state. This state is set right after a call is ended to indicate a call postprocessing
+         */
+        afterServiceOperators: ACDAfterServiceOperatorState[];
+        /**
+         * Number of operators with the 'AFTER SERVICE' state
+         */
+        afterServiceOperatorCount: number;
+        /**
+         * List of calls enqueued into this queue that are being serviced right now by operators
+         */
+        servicingCalls: ACDServicingCallState[];
+        /**
+         * List of calls enqueued into this queue that are not yet serviced by operators
+         */
+        waitingCalls: ACDWaitingCallState[];
+    }
+    interface ACDReadyOperatorState {
+        /**
+         * The user ID of the operator
+         */
+        userId: number;
+        /**
+         * The user name of the operator
+         */
+        userName: string;
+        /**
+         * The display user name of the operator
+         */
+        userDisplayName: string;
+        /**
+         * The idle duration in seconds. The minimum of the duration after the last hangup and the duration after the operator status changing to READY
+         */
+        idleDuration: number;
+    }
+    interface ACDLockedOperatorState {
+        /**
+         * The user ID of the operator
+         */
+        userId: number;
+        /**
+         * The user name of the operator
+         */
+        userName: string;
+        /**
+         * The display user name of the operator
+         */
+        userDisplayName: string;
+        /**
+         * The UTC time when the operator becomes unavailable in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        unreached?: Date;
+        /**
+         * The operator locks
+         */
+        locks?: ACDLock[];
+        /**
+         * The ACD operator calls
+         */
+        acdCalls?: ACDOperatorCall[];
+        /**
+         * The operator <a href='/docs/references/websdk/voximplant/operatoracdstatuses'>status string</a>. 'BANNED' string indicates temporarily <a href='/docs/guides/smartqueue/acdv1'>banned operators</a>. The following values are possible: READY, BANNED
+         */
+        status?: string;
+    }
+    interface ACDAfterServiceOperatorState {
+        /**
+         * The user ID of the operator
+         */
+        userId: number;
+        /**
+         * The user name of the operator
+         */
+        userName: string;
+        /**
+         * The display user name of the operator
+         */
+        userDisplayName: string;
+        /**
+         * The operator <a href='/docs/references/websdk/voximplant/operatoracdstatuses'>status string</a>
+         */
+        status?: string;
+    }
+    interface ACDLock {
+        /**
+         * The ACD lock ID
+         */
+        id: string;
+        /**
+         * The UTC lock created time in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created: Date;
+    }
+    interface ACDOperatorCall {
+        /**
+         * The ACD session history ID of the request
+         */
+        acdSessionHistoryId: number;
+        /**
+         * The internal ACD session history ID
+         */
+        acdRequestId: string;
+        /**
+         * The ACD queue ID
+         */
+        acdQueueId: number;
+        /**
+         * The ACD queue name
+         */
+        acdQueueName: string;
+        /**
+         * The client callerid
+         */
+        callerid?: string;
+        /**
+         * The begin time of the request in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        beginTime: Date;
+        /**
+         * The submission time of the request in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        submitted?: Date;
+    }
+    interface ACDServicingCallState {
+        /**
+         * The user ID of the operator
+         */
+        userId: number;
+        /**
+         * The user name of the operator
+         */
+        userName: string;
+        /**
+         * The display user name of the operator
+         */
+        userDisplayName: string;
+        /**
+         * The request priority
+         */
+        priority: number;
+        /**
+         * The client callerid
+         */
+        callerid?: string;
+        /**
+         * The begin time of the request in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        beginTime: Date;
+        /**
+         * The waiting time before servicing in seconds
+         */
+        waitingTime: number;
+        /**
+         * The ACD session history ID of the request
+         */
+        acdSessionHistoryId: number;
+    }
+    interface ACDWaitingCallState {
+        /**
+         * The user ID of the operator to try to service the request
+         */
+        userId?: number;
+        /**
+         * The user name of the operator
+         */
+        userName: string;
+        /**
+         * The display user name of the operator
+         */
+        userDisplayName: string;
+        /**
+         * The request priority
+         */
+        priority: number;
+        /**
+         * The client callerid
+         */
+        callerid?: string;
+        /**
+         * The begin time of the request in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        beginTime: Date;
+        /**
+         * The waiting time in seconds
+         */
+        waitingTime: number;
+        /**
+         * The predicted minutes left to start servicing
+         */
+        minutesToSubmit: number;
+        /**
+         * The ACD session history ID of the request
+         */
+        acdSessionHistoryId: number;
+    }
+    interface AttachedPhoneInfo {
+        /**
+         * The phone ID
+         */
+        phoneId: number;
+        /**
+         * The phone number
+         */
+        phoneNumber: string;
+        /**
+         * The phone monthly charge
+         */
+        phonePrice: number;
+        /**
+         * The phone country code (2 symbols)
+         */
+        phoneCountryCode: string;
+        /**
+         * The next renewal date in format: YYYY-MM-DD
+         */
+        phoneNextRenewal: Date;
+        /**
+         * The purchase date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        phonePurchaseDate: Date;
+        /**
+         * Whether the subscription is frozen
+         */
+        deactivated: boolean;
+        /**
+         * Whether the subscription is cancelled
+         */
+        canceled: boolean;
+        /**
+         * Whether to charge automatically
+         */
+        autoCharge: boolean;
+        /**
+         * The id of the bound application
+         */
+        applicationId?: number;
+        /**
+         * The name of the bound application
+         */
+        applicationName?: string;
+        /**
+         * The id of the bound rule
+         */
+        ruleId?: number;
+        /**
+         * The name of the bound rule
+         */
+        ruleName?: string;
+        /**
+         * The phone category name (MOBILE, GEOGRAPHIC, TOLLFREE, MOSCOW495)
+         */
+        categoryName: string;
+        /**
+         * Whether the verification is required for the account
+         */
+        requiredVerification?: boolean;
+        /**
+         * The account verification status. The following values are possible: REQUIRED, IN_PROGRESS, VERIFIED
+         */
+        verificationStatus?: string;
+        /**
+         * Unverified phone hold until the date in format: YYYY-MM-DD (if the account verification is required). The number is detached on that day automatically!
+         */
+        unverifiedHoldUntil?: Date;
+        /**
+         * Whether a not verified account can use the phone
+         */
+        canBeUsed: boolean;
+        /**
+         * Whether SMS is supported for this phone number. SMS needs to be explicitly enabled via the [ControlSms] Management API before sending or receiving SMS. If SMS is supported and enabled, SMS can be sent from this phone number via the [SendSmsMessage] Management API and received via the [InboundSmsCallback] property of the HTTP callback. See <a href='/docs/guides/managementapi/callbacks'>this article</a> for HTTP callback details
+         */
+        isSmsSupported: boolean;
+        /**
+         * Whether SMS sending and receiving is enabled for this phone number via the [ControlSms] Management API
+         */
+        isSmsEnabled: boolean;
+        /**
+         * If set, the callback of an incoming SMS is sent to this url, otherwise, it is sent to the general account URL
+         */
+        incomingSmsCallbackUrl?: string;
+        /**
+         * Whether you need to make a request to enable calls to emergency numbers
+         */
+        emergencyCallsToBeEnabled: boolean;
+        /**
+         * Whether calls to emergency numbers are enabled
+         */
+        emergencyCallsEnabled: boolean;
+        /**
+         * Phone number subscription ID
+         */
+        subscriptionId: number;
+        /**
+         * Full application name, e.g. myapp.myaccount.n1.voximplant.com
+         */
+        extendedApplicationName?: string;
+        /**
+         * Phone region name
+         */
+        phoneRegionName?: string;
+        /**
+         * UTC date of an event associated with the number in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+    }
+    interface CallerIDInfo {
+        /**
+         * The callerID id
+         */
+        calleridId: number;
+        /**
+         * The callerID number
+         */
+        calleridNumber: string;
+        /**
+         * Whether active
+         */
+        active: boolean;
+        /**
+         * The code entering attempts left for the unverified callerID
+         */
+        codeEnteringAttemptsLeft?: number;
+        /**
+         * The verification call attempts left for the unverified callerID
+         */
+        verificationCallAttemptsLeft?: number;
+        /**
+         * The verification ending date in format: YYYY-MM-DD (for the verified callerID)
+         */
+        verifiedUntil?: Date;
+    }
+    interface OutboundTestPhonenumberInfo {
+        /**
+         * The personal phone number
+         */
+        phoneNumber: string;
+        /**
+         * Whether the phone number is verified
+         */
+        isVerified: boolean;
+        /**
+         * The country code
+         */
+        countryCode: string;
+    }
+    interface ACDQueueOperatorInfo {
+        /**
+         * The ACD queue ID
+         */
+        acdQueueId: number;
+        /**
+         * The ACD queue name
+         */
+        acdQueueName: string;
+        /**
+         * Whether the user is bound to the ACD queue in manual mode if false
+         */
+        autoLink: boolean;
+    }
+    interface SkillInfo {
+        /**
+         * The skill ID
+         */
+        skillId: number;
+        /**
+         * The skill name
+         */
+        skillName: string;
+    }
+    interface ExchangeRates {
+        /**
+         * The RUR exchange rate
+         */
+        RUR?: number;
+        /**
+         * The KZT exchange rate
+         */
+        KZT?: number;
+        /**
+         * The EUR exchange rate
+         */
+        EUR?: number;
+        /**
+         * The USD exchange rate. It is always equal to 1
+         */
+        USD?: number;
+    }
+    interface CallList {
+        /**
+         * The list ID
+         */
+        listId: number;
+        /**
+         * The list name
+         */
+        listName: string;
+        /**
+         * The priority of the call list
+         */
+        priority: number;
+        /**
+         * The rule id
+         */
+        ruleId: number;
+        /**
+         * The maximum number of simultaneous tasks
+         */
+        maxSimultaneous: number;
+        /**
+         * The number of task attempts run, which failed to call
+         */
+        numAttempts: number;
+        /**
+         * The date of submitted the list in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        dtSubmit: Date;
+        /**
+         * The completion date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        dtComplete?: Date;
+        /**
+         * The interval between attempts in seconds
+         */
+        intervalSeconds: number;
+        /**
+         * The status name. The possible values are __In progress__, __Completed__, __Canceled__
+         */
+        status: string;
+    }
+    interface SIPRegistration {
+        /**
+         * The SIP registration ID
+         */
+        sipRegistrationId: number;
+        /**
+         * The user name from sip proxy
+         */
+        sipUsername: string;
+        /**
+         * The sip proxy
+         */
+        proxy: string;
+        /**
+         * The last time updated
+         */
+        lastUpdated: number;
+        /**
+         * The SIP authentications user
+         */
+        authUser?: string;
+        /**
+         * The outgoing proxy
+         */
+        outboundProxy?: string;
+        /**
+         * Whether the SIP registration is successful
+         */
+        successful?: boolean;
+        /**
+         * The status code from a SIP registration
+         */
+        statusCode?: number;
+        /**
+         * The error message from a SIP registration
+         */
+        errorMessage?: string;
+        /**
+         * Whether the subscription is deactivation. The SIP registration is frozen if true
+         */
+        deactivated: boolean;
+        /**
+         * The next subscription renewal date in format: YYYY-MM-DD
+         */
+        nextSubscriptionRenewal: Date;
+        /**
+         * The purchase date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        purchaseDate: Date;
+        /**
+         * The subscription monthly charge
+         */
+        subscriptionPrice: string;
+        /**
+         * Whether the SIP registration is persistent. Set false to activate it only on the user login
+         */
+        isPersistent: boolean;
+        /**
+         * The id of the bound user
+         */
+        userId?: number;
+        /**
+         * The name of the bound user
+         */
+        userName?: string;
+        /**
+         * The id of the bound application
+         */
+        applicationId?: number;
+        /**
+         * The name of the bound application
+         */
+        applicationName?: string;
+        /**
+         * The id of the bound rule
+         */
+        ruleId?: number;
+        /**
+         * The name of the bound rule
+         */
+        ruleName?: string;
+    }
+    interface AdminRole {
+        /**
+         * The admin role ID
+         */
+        adminRoleId: number;
+        /**
+         * The admin role name
+         */
+        adminRoleName: string;
+        /**
+         * Whether to ignore the allowed and denied entries
+         */
+        adminRoleActive: boolean;
+        /**
+         * Whether it is a system role
+         */
+        systemRole: boolean;
+        /**
+         * The admin role editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+        /**
+         * The allowed access entries (the API function names)
+         */
+        allowedEntries?: string[];
+        /**
+         * The denied access entries (the API function names)
+         */
+        deniedEntries?: string[];
+    }
+    interface AdminUser {
+        /**
+         * The admin user ID
+         */
+        adminUserId: number;
+        /**
+         * The admin user name
+         */
+        adminUserName: string;
+        /**
+         * The admin user display name
+         */
+        adminUserDisplayName: string;
+        /**
+         * Whether login is allowed
+         */
+        adminUserActive: boolean;
+        /**
+         * The admin user editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified: Date;
+        /**
+         * The allowed access entries (the API function names)
+         */
+        accessEntries?: string[];
+        /**
+         * The attached admin roles
+         */
+        adminRoles?: AdminRole[];
+    }
+    interface AuthorizedAccountIP {
+        /**
+         * The authorized IP4 or network
+         */
+        authorizedIp: string;
+        /**
+         * Whether the IP is allowed (true - whitelist, false - blacklist)
+         */
+        allowed: boolean;
+        /**
+         * The item creating UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created: Date;
+    }
+    interface PstnBlackListInfo {
+        /**
+         * The black list item ID
+         */
+        pstnBlacklistId: number;
+        /**
+         * The phone number
+         */
+        pstnBlacklistPhone: string;
+    }
+    interface RecordStorageInfo {
+        /**
+         * The record storage ID
+         */
+        recordStorageId?: number;
+        /**
+         * The record storage name
+         */
+        recordStorageName?: string;
+    }
+    interface SmsTransaction {
+        /**
+         * Message ID
+         */
+        messageId: number;
+        /**
+         * The SMS destination number
+         */
+        destinationNumber: string;
+    }
+    interface FailedSms {
+        /**
+         * The SMS destination number
+         */
+        destinationNumber: string;
+        /**
+         * The error description
+         */
+        errorDescription: string;
+        /**
+         * The error code
+         */
+        errorCode: number;
+    }
+    interface RoleGroupView {
+        /**
+         * The role group ID
+         */
+        id: number;
+        /**
+         * The role group name
+         */
+        name: string;
+    }
+    interface SmsHistory {
+        /**
+         * Message ID
+         */
+        messageId: number;
+        /**
+         * Number being called from
+         */
+        sourceNumber: number;
+        /**
+         * Number being called to
+         */
+        destinationNumber: number;
+        /**
+         * Incoming or outgoing message
+         */
+        direction: string;
+        /**
+         * Number of fragments the initial message is divided into
+         */
+        fragments: number;
+        /**
+         * Cost of the message
+         */
+        cost: number;
+        /**
+         * Status of the message. 1 - Success, 2 - Error
+         */
+        statusId: string;
+        /**
+         * Error message (if any)
+         */
+        errorMessage?: string;
+        /**
+         * Date of message processing. The format is yyyy-MM-dd HH:mm:ss
+         */
+        processedDate: Date;
+        /**
+         * Id of the transaction for this message
+         */
+        transactionId?: number;
+        /**
+         * Stored message text
+         */
+        text?: string;
+    }
+    interface A2PSmsHistory {
+        /**
+         * Message ID
+         */
+        messageId: number;
+        /**
+         * SMS source number
+         */
+        sourceNumber: number;
+        /**
+         * SMS destination number
+         */
+        destinationNumber: number;
+        /**
+         * Number of fragments the initial message is divided into
+         */
+        fragments: number;
+        /**
+         * The message cost
+         */
+        cost: number;
+        /**
+         * The message status. 1 - Success, 2 - Error
+         */
+        statusId: string;
+        /**
+         * Error message (if any)
+         */
+        errorMessage?: string;
+        /**
+         * Date of message processing. The format is yyyy-MM-dd HH:mm:ss
+         */
+        processingDate: Date;
+        /**
+         * The transaction ID for this message
+         */
+        transactionId: number;
+        /**
+         * Delivery status: QUEUED, DISPATCHED, ABORTED, REJECTED, DELIVERED, FAILED, EXPIRED, UNKNOWN
+         */
+        deliveryStatus: string;
+        /**
+         * Stored message text
+         */
+        text?: string;
+    }
+    interface GetSQQueuesResult {
+        /**
+         * ID of the SmartQueue
+         */
+        sqQueueId: number;
+        /**
+         * Name of the SmartQueue
+         */
+        sqQueueName: string;
+        /**
+         * Agent selection strategy
+         */
+        agentSelection: string;
+        /**
+         * Strategy of prioritizing requests for service
+         */
+        taskSelection: string;
+        /**
+         * Comment
+         */
+        description?: string;
+        /**
+         * UTC date of the queue creation in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created?: Date;
+        /**
+         * UTC date of the queue modification in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified?: Date;
+        /**
+         * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+         */
+        callMaxWaitingTime?: number;
+        /**
+         * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+         */
+        imMaxWaitingTime?: number;
+        /**
+         * Maximum size of the queue with CALL-type requests
+         */
+        callMaxQueueSize?: number;
+        /**
+         * Maximum size of the queue with IM-type requests
+         */
+        imMaxQueueSize?: number;
+        /**
+         * Number of agents bound to the queue
+         */
+        agentcount?: number;
+    }
+    interface GetSQSkillsResult {
+        /**
+         * ID of the skill
+         */
+        sqSkillId: number;
+        /**
+         * Name of the skill
+         */
+        sqSkillName: string;
+        /**
+         * Comment
+         */
+        description?: string;
+        /**
+         * UTC date of the queue creation in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        created?: Date;
+        /**
+         * UTC date of the queue modification in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        modified?: Date;
+    }
+    interface GetSQAgentsResult {
+        /**
+         * ID of the user
+         */
+        userId?: number;
+        /**
+         * Name of the user
+         */
+        userName?: string;
+        /**
+         * Display name of the user
+         */
+        userDisplayName?: string;
+        /**
+         * Maximum number of chats that the user processes simultaneously
+         */
+        maxSimultaneousConversations?: number;
+        /**
+         * Agent statuses info
+         */
+        sqStatuses?: SmartQueueStateAgentStatus[];
+        /**
+         * JSON array of the agent's queues
+         */
+        sqQueues?: any;
+        /**
+         * JSON array of the agent's skills
+         */
+        sqSkills?: any;
+    }
+    interface SmartQueueMetricsResult {
+        /**
+         * The report type(s). Possible values are calls_blocked_percentage, count_blocked_calls, average_abandonment_rate, count_abandonment_calls, service_level, occupancy_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_banned_time, min_time_in_queue,max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, sum_agents_custom_1_time ... sum_agents_custom_10_time
+         */
+        reportType: string;
+        /**
+         * Grouping by agent or queue
+         */
+        groups: SmartQueueMetricsGroups[];
+    }
+    interface SmartQueueMetricsGroups {
+        /**
+         * The SmartQueue ID
+         */
+        sqQueueId?: number;
+        /**
+         * The SmartQueue name
+         */
+        sqQueueName?: string;
+        /**
+         * The user ID
+         */
+        userId?: number;
+        /**
+         * The user name
+         */
+        userName?: string;
+        /**
+         * The user display name
+         */
+        userDisplayName?: string;
+        /**
+         * The group values
+         */
+        values: SmartQueueMetricsGroupsValues[];
+    }
+    interface SmartQueueMetricsGroupsValues {
+        /**
+         * The start of the period
+         */
+        fromDate: Date;
+        /**
+         * The end of the period
+         */
+        toDate: Date;
+        /**
+         * The report value
+         */
+        value: number;
+    }
+    interface SmartQueueState {
+        /**
+         * The SmartQueue ID
+         */
+        sqQueueId: number;
+        /**
+         * The SmartQueue name
+         */
+        sqQueueName: string;
+        /**
+         * The list of logged-in agents with their skills and statuses
+         */
+        sqAgents: SmartQueueStateAgent[];
+        /**
+         * The list of tasks
+         */
+        tasks: SmartQueueStateTask[];
+    }
+    interface SmartQueueStateTask {
+        /**
+         * The task type. Possible values are CALL, IM
+         */
+        taskType: string;
+        /**
+         * The task status. Possible values are IN_QUEUE, DISTRIBUTED, IN_PROCESSING
+         */
+        status: string;
+        /**
+         * Selected agent
+         */
+        userId?: number;
+        /**
+         * Task skills
+         */
+        sqSkills: SmartQueueTaskSkill[];
+        /**
+         * Waiting time in ms
+         */
+        waitingTime: number;
+        /**
+         * Processing time in ms
+         */
+        processingTime: number;
+        /**
+         * Custom data text string for the current task. You can set the custom data in the [enqueueTask](/docs/references/voxengine/voxengine/enqueuetask#enqueuetask) method
+         */
+        customData?: any;
+    }
+    interface SmartQueueStateAgent {
+        /**
+         * The user ID
+         */
+        userId: number;
+        /**
+         * The user name
+         */
+        userName: string;
+        /**
+         * The display user name
+         */
+        userDisplayName: string;
+        /**
+         * Agent skills
+         */
+        sqSkills: SmartQueueAgentSkill[];
+        /**
+         * Agent statuses info
+         */
+        sqStatuses: SmartQueueStateAgentStatus[];
+    }
+    interface SmartQueueAgentSkill {
+        /**
+         * The agent skill ID
+         */
+        sqSkillId: number;
+        /**
+         * The agent skill name
+         */
+        sqSkillName: string;
+        /**
+         * The agent skill level
+         */
+        sqSkillLevel: number;
+    }
+    interface SmartQueueTaskSkill {
+        /**
+         * The skill name
+         */
+        sqSkillName: string;
+        /**
+         * The skill level
+         */
+        sqSkillLevel: number;
+    }
+    interface SmartQueueStateAgentStatus {
+        /**
+         * The IM status info
+         */
+        IM: SmartQueueStateAgentStatus_;
+        /**
+         * The CALL status info
+         */
+        CALL: SmartQueueStateAgentStatus_;
+    }
+    interface SmartQueueStateAgentStatus_ {
+        /**
+         * The status name
+         */
+        sqStatusName: string;
+        /**
+         * Time in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromDate: Date;
+    }
+    interface KeyValueItems {
+        /**
+         * Key that matches the specified key or key pattern
+         */
+        key: string;
+        /**
+         * Value for the specified key
+         */
+        value: string;
+        /**
+         * Expiration date based on **ttl** (timestamp without milliseconds)
+         */
+        expiresAt: number;
+    }
+    interface KeyValueKeys {
+        /**
+         * Key that matches the pattern
+         */
+        key: string;
+        /**
+         * Expiration date based on **ttl** (timestamp without milliseconds)
+         */
+        expiresAt: number;
+    }
+    interface AccountInvoice {
+        /**
+         * Invoice period
+         */
+        period: InvoicePeriod;
+        /**
+         * Info on all money spent in the invoice
+         */
+        amount: InvoiceTotalDetails;
+        /**
+         * Invoice id
+         */
+        invoiceId: number;
+        /**
+         * Detailed info on each spending
+         */
+        rows: InvoiceSpendingDetails;
+        /**
+         * Unique invoice number
+         */
+        invoiceNumber: string;
+        /**
+         * Date when the invoice is created in format: YYYY-MM-DD
+         */
+        invoiceDate: Date;
+        /**
+         * Invoice status
+         */
+        status: string;
+    }
+    interface InvoicePeriod {
+        /**
+         * From date in format: YYYY-MM-DD
+         */
+        from: Date;
+        /**
+         * To date in format: YYYY-MM-DD
+         */
+        to: Date;
+    }
+    interface InvoiceTotalDetails {
+        /**
+         * Total amount of taxes
+         */
+        taxAmount: number;
+        /**
+         * Invoice total amount including taxes
+         */
+        totalAmount: number;
+        /**
+         * Discounted amount to pay
+         */
+        amountToPay: number;
+        /**
+         * Discount
+         */
+        discountAmount: number;
+        /**
+         * Invoice currency
+         */
+        currency: string;
+    }
+    interface InvoiceSpendingDetails {
+        /**
+         * Paid amount
+         */
+        amount: InvoiceTotalDetails;
+        /**
+         * Service name
+         */
+        serviceName: string;
+        /**
+         * Array of taxes
+         */
+        taxes: InvoiceTaxesDetails;
+    }
+    interface InvoiceTaxesDetails {
+        /**
+         * Taxable sum
+         */
+        taxableMeasure: number;
+        /**
+         * Paid amount
+         */
+        amount: number;
+        /**
+         * Tax type. Possible values: Federal, State, County, City, Unincorporated
+         */
+        level: string;
+        /**
+         * Tax rate
+         */
+        rate: number;
+        /**
+         * Tax name
+         */
+        name: string;
+        /**
+         * Tax currency
+         */
+        currency: string;
+        /**
+         * Tax category
+         */
+        category: string;
+    }
+    interface GetAccountInfoRequest {
+        /**
+         *Whether to get the account's live balance
+         */
+        returnLiveBalance?: boolean;
+    }
+    interface GetAccountInfoResponse {
+        /**
+         *Account's info as the [AccountInfoType] object instance
+         */
+        result: AccountInfo;
+        /**
+         *The preferred address for the Management API requests
+         */
+        apiAddress: string;
+    }
+    interface GetCurrencyRateRequest {
+        /**
+         *The currency code list separated by semicolons (;). Examples: RUR, KZT, EUR, USD
+         */
+        currency: string | string[];
+        /**
+         *The date, format: YYYY-MM-DD
+         */
+        date?: Date;
+    }
+    interface GetCurrencyRateResponse {
+        /**
+         *The exchange rates
+         */
+        result: ExchangeRates;
+    }
+    interface AccountsInterface {
+        /**
+         * Gets the account's info such as account_id, account_name, account_email etc.
+         */
+        getAccountInfo: (request: GetAccountInfoRequest) => Promise<GetAccountInfoResponse>;
+        /**
+         * Gets the exchange rate on selected date (per USD).
+         */
+        getCurrencyRate: (request: GetCurrencyRateRequest) => Promise<GetCurrencyRateResponse>;
+    }
+    interface AddApplicationRequest {
+        /**
+         *The short application name in format \[a-z\]\[a-z0-9-\]{1,64}
+         */
+        applicationName: string;
+        /**
+         *Whether to enable secure storage for all logs and records of the application
+         */
+        secureRecordStorage?: boolean;
+    }
+    interface AddApplicationResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The full application name
+         */
+        applicationName: string;
+        /**
+         *Whether a secure storage for logs and records is enabled or not
+         */
+        secureRecordStorage: boolean;
+    }
+    interface DelApplicationRequest {
+        /**
+         *The application ID list separated by semicolons (;). Use the 'all' value to select all applications
+         */
+        applicationId: 'any' | number | number[];
+        /**
+         *The application name list separated by semicolons (;). Can be used instead of <b>application_id</b>
+         */
+        applicationName: string | string[];
+    }
+    interface DelApplicationResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetApplicationInfoRequest {
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        requiredApplicationName: string;
+        /**
+         *The new short application name in format [a-z][a-z0-9-]{1,79}
+         */
+        applicationName?: string;
+        /**
+         *Whether to enable secure storage for all logs and records of the application
+         */
+        secureRecordStorage?: boolean;
+    }
+    interface SetApplicationInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The new full application name
+         */
+        applicationName: string;
+        /**
+         *Whether a secure storage for logs and records is enabled or not
+         */
+        secureRecordStorage: boolean;
+    }
+    interface GetApplicationsRequest {
+        /**
+         *The application ID to filter
+         */
+        applicationId?: number;
+        /**
+         *The application name part to filter
+         */
+        applicationName?: string;
+        /**
+         *Whether to get bound rules info
+         */
+        withRules?: boolean;
+        /**
+         *Whether to get bound rules and scenarios info
+         */
+        withScenarios?: boolean;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetApplicationsResponse {
+        result: ApplicationInfo[];
+        /**
+         *The total found application count
+         */
+        totalCount: number;
+        /**
+         *The returned application count
+         */
+        count: number;
+    }
+    interface ApplicationsInterface {
+        /**
+         * Adds a new account's application.
+         */
+        addApplication: (request: AddApplicationRequest) => Promise<AddApplicationResponse>;
+        /**
+         * Deletes the account's application.
+         */
+        delApplication: (request: DelApplicationRequest) => Promise<DelApplicationResponse>;
+        /**
+         * Edits the account's application.
+         */
+        setApplicationInfo: (request: SetApplicationInfoRequest) => Promise<SetApplicationInfoResponse>;
+        /**
+         * Gets the account's applications.
+         */
+        getApplications: (request: GetApplicationsRequest) => Promise<GetApplicationsResponse>;
+    }
+    interface AddUserRequest {
+        /**
+         *The user name in format [a-z0-9][a-z0-9_-]{2,49}
+         */
+        userName: string;
+        /**
+         *The user display name. The length must be less than 256
+         */
+        userDisplayName: string;
+        /**
+         *The user password. Must be at least 8 characters long and contain at least one uppercase and lowercase letter, one number, and one special character
+         */
+        userPassword: string;
+        /**
+         *The application ID which a new user is to be bound to. Can be used instead of the <b>application_name</b> parameter
+         */
+        applicationId: number;
+        /**
+         *The application name which a new user is to be bound to. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName: string;
+        /**
+         *Whether the user uses the parent account's money, 'false' if the user has a separate balance
+         */
+        parentAccounting?: boolean;
+        mobilePhone?: string;
+        /**
+         *Whether the user is active. Inactive users cannot log in to applications
+         */
+        userActive?: boolean;
+        /**
+         *Any string
+         */
+        userCustomData?: string;
+    }
+    interface AddUserResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The new user ID
+         */
+        userId: number;
+    }
+    interface DelUserRequest {
+        /**
+         *The user ID list separated by semicolons (;). Use the 'all' value to select all users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;) that can be used instead of <b>user_id</b>
+         */
+        userName: string | string[];
+        /**
+         *Delete the specified users bound to the application ID. It is required if the <b>user_name</b> is specified
+         */
+        applicationId?: number;
+        /**
+         *Delete the specified users bound to the application name. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName?: string;
+    }
+    interface DelUserResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetUserInfoRequest {
+        /**
+         *The user to edit
+         */
+        userId: number;
+        /**
+         *The user name that can be used instead of <b>user_id</b>
+         */
+        userName: string;
+        /**
+         *The application ID. It is required if the <b>user_name</b> is specified
+         */
+        applicationId?: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *The new user name in format [a-z0-9][a-z0-9_-]{2,49}
+         */
+        newUserName?: string;
+        /**
+         *The new user display name. The length must be less than 256
+         */
+        userDisplayName?: string;
+        /**
+         *The new user password. Must be at least 8 characters long and contain at least one uppercase and lowercase letter, one number, and one special character
+         */
+        userPassword?: string;
+        /**
+         *Whether to use the parent account's money, 'false' to use a separate user balance
+         */
+        parentAccounting?: boolean;
+        /**
+         *Whether the user is active. Inactive users cannot log in to applications
+         */
+        userActive?: boolean;
+        /**
+         *Any string
+         */
+        userCustomData?: string;
+        mobilePhone?: string;
+    }
+    interface SetUserInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetUsersRequest {
+        /**
+         *The application ID to filter
+         */
+        applicationId: number;
+        /**
+         *The application name part to filter
+         */
+        applicationName: string;
+        /**
+         *The skill ID to filter
+         */
+        skillId?: number;
+        /**
+         *The excluded skill ID to filter
+         */
+        excludedSkillId?: number;
+        /**
+         *The ACD queue ID to filter
+         */
+        acdQueueId?: number;
+        /**
+         *The excluded ACD queue ID to filter
+         */
+        excludedAcdQueueId?: number;
+        /**
+         *The user ID to filter
+         */
+        userId?: number;
+        /**
+         *The user name part to filter
+         */
+        userName?: string;
+        /**
+         *Whether the user is active to filter. Inactive users cannot log in to applications
+         */
+        userActive?: boolean;
+        /**
+         *The user display name part to filter
+         */
+        userDisplayName?: string;
+        /**
+         *Whether to get the bound skills
+         */
+        withSkills?: boolean;
+        /**
+         *Whether to get the bound queues
+         */
+        withQueues?: boolean;
+        /**
+         *The ACD status list separated by semicolons (;) to filter. The following values are possible: OFFLINE, ONLINE, READY, BANNED, IN_SERVICE, AFTER_SERVICE, TIMEOUT, DND
+         */
+        acdStatus?: string | string[];
+        /**
+         *The skill to show in the 'skills' field output
+         */
+        showingSkillId?: number;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *The following values are available: 'user_id', 'user_name' and 'user_display_name'
+         */
+        orderBy?: string;
+        /**
+         *Whether to get the user live balance
+         */
+        returnLiveBalance?: boolean;
+    }
+    interface GetUsersResponse {
+        /**
+         *The UserInfoType records
+         */
+        result: UserInfo[];
+        /**
+         *The total found user count
+         */
+        totalCount: number;
+        /**
+         *The returned user count
+         */
+        count: number;
+    }
+    interface TransferMoneyToUserRequest {
+        /**
+         *The user ID list separated by semicolons (;). Use the 'all' value to select all users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;) that can be used instead of <b>user_id</b>
+         */
+        userName: string | string[];
+        /**
+         *The money amount, $. The absolute amount value must be equal or greater than 0.01
+         */
+        amount: number;
+        /**
+         *The application ID. It is required if the <b>user_name</b> is specified
+         */
+        applicationId?: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *The amount currency. Examples: RUR, EUR, USD
+         */
+        currency?: string;
+        /**
+         *Whether to enable the strict mode. Returns error if strict_mode is true and a user or the account does not have enough money
+         */
+        strictMode?: boolean;
+        /**
+         *The user transaction description
+         */
+        userTransactionDescription?: string;
+        /**
+         *The account transaction description. The following macro available: ${user_id}, ${user_name}
+         */
+        accountTransactionDescription?: string;
+    }
+    interface TransferMoneyToUserResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The new account balance
+         */
+        balance: number;
+    }
+    interface UsersInterface {
+        /**
+         * Adds a new user.
+         */
+        addUser: (request: AddUserRequest) => Promise<AddUserResponse>;
+        /**
+         * Deletes the specified user(s).
+         */
+        delUser: (request: DelUserRequest) => Promise<DelUserResponse>;
+        /**
+         * Edits the user.
+         */
+        setUserInfo: (request: SetUserInfoRequest) => Promise<SetUserInfoResponse>;
+        /**
+         * Shows the users of the specified account.
+         */
+        getUsers: (request: GetUsersRequest) => Promise<GetUsersResponse>;
+        /**
+         * Transfer the account's money to the user or transfer the user's money to the account if the money amount is negative.
+         */
+        transferMoneyToUser: (request: TransferMoneyToUserRequest) => Promise<TransferMoneyToUserResponse>;
+    }
+    interface CreateCallListRequest {
+        /**
+         *The rule ID. It is specified in the <a href='//manage.voximplant.com/applications'>Applications</a> section of the Control Panel
+         */
+        ruleId: number;
+        /**
+         *Call list priority. The value is in the range of [0 ... 2^31] where zero is the highest priority
+         */
+        priority: number;
+        /**
+         *Number of simultaneously processed tasks
+         */
+        maxSimultaneous: number;
+        /**
+         *Number of attempts. Minimum is <b>1</b>, maximum is <b>5</b>
+         */
+        numAttempts: number;
+        /**
+         *File name, up to 255 characters and cannot contain the '/' and '\' symbols
+         */
+        name: string;
+        /**
+         *Send as "body" part of the HTTP request or as multiform. The sending "file_content" via URL is at its own risk because the network devices tend to drop HTTP requests with large headers
+         */
+        fileContent: Buffer;
+        /**
+         *Interval between call attempts in seconds. The default is 0
+         */
+        intervalSeconds?: number;
+        /**
+         *Encoding file. The default is UTF-8
+         */
+        encoding?: string;
+        /**
+         *Separator values. The default is ';'
+         */
+        delimiter?: string;
+        /**
+         *Escape character for parsing csv
+         */
+        escape?: string;
+        /**
+         *Specifies the IP from the geolocation of the call list subscribers. It allows selecting the nearest server for serving subscribers
+         */
+        referenceIp?: string;
+        /**
+         *Specifies the location of the server where the scenario needs to be executed. Has higher priority than `reference_ip`. Request [getServerLocations](https://api.voximplant.com/getServerLocations) for possible values
+         */
+        serverLocation?: string;
+    }
+    interface CreateCallListResponse {
+        /**
+         *true
+         */
+        result: boolean;
+        /**
+         *The number of stored records
+         */
+        count: number;
+        /**
+         *The list ID
+         */
+        listId: number;
+    }
+    interface GetCallListsRequest {
+        /**
+         *The list ID to filter. Can be a list separated by semicolons (;). Use the 'all' value to select all lists
+         */
+        listId?: 'any' | number | number[];
+        /**
+         *Find call lists by name
+         */
+        name?: string;
+        /**
+         *Whether to find only active call lists
+         */
+        isActive?: boolean;
+        /**
+         *The UTC 'from' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromDate?: Date;
+        /**
+         *The UTC 'to' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        toDate?: Date;
+        /**
+         *The type of the call list. The possible values are AUTOMATIC and MANUAL
+         */
+        typeList?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *The application ID to filter. Can be a list separated by semicolons (;). Use the 'all' value to select all applications
+         */
+        applicationId?: 'any' | number | number[];
+    }
+    interface GetCallListsResponse {
+        /**
+         *Array of lists
+         */
+        result: CallList[];
+        /**
+         *The returned call list count
+         */
+        count: number;
+        /**
+         *The total found call list count
+         */
+        totalCount: number;
+    }
+    interface CallListsInterface {
+        /**
+         * Adds a new CSV file for call list processing and starts the specified rule immediately. To send a file, use the request body. To set the call time constraints, use the following options in a CSV file: <ul><li>**__start_execution_time** – when the call list processing starts every day, UTC+0 24-h format: HH:mm:ss</li><li>**__end_execution_time** – when the call list processing stops every day,  UTC+0 24-h format: HH:mm:ss</li><li>**__start_at** – when the call list processing starts, UNIX timestamp. If not specified, the processing starts immediately after a method call</li></ul><br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br/><b>IMPORTANT:</b> the account's balance should be equal or greater than 1 USD. If the balance is lower than 1 USD, the call list processing does not start, or it stops immediately if it is active.
+         */
+        createCallList: (request: CreateCallListRequest) => Promise<CreateCallListResponse>;
+        /**
+         * Get all call lists for the specified user.
+         */
+        getCallLists: (request: GetCallListsRequest) => Promise<GetCallListsResponse>;
+    }
+    interface StartConferenceRequest {
+        /**
+         *The conference name. The name length must be less than 50 symbols
+         */
+        conferenceName: string;
+        /**
+         *The rule ID that needs to be launched. Please note, the necessary scenario needs to be attached to the rule
+         */
+        ruleId: number;
+        /**
+         *The user ID. Run the scripts from the user if set
+         */
+        userId?: number;
+        /**
+         *The user name that can be used instead of <b>user_id</b>. Run the scripts from the user if set
+         */
+        userName?: string;
+        /**
+         *The application ID
+         */
+        applicationId?: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *The script custom data, that can be accessed in the scenario via the <a href='/docs/references/voxengine/voxengine/customdata'>VoxEngine.customData()</a> method. Use the application/x-www-form-urlencoded content type with UTF-8 encoding.
+         */
+        scriptCustomData?: string;
+        /**
+         *Specifies the IP from the geolocation of predicted subscribers. It allows selecting the nearest server for serving subscribers
+         */
+        referenceIp?: string;
+        /**
+         *Specifies the location of the server where the scenario needs to be executed. Has higher priority than `reference_ip`. Request [getServerLocations](https://api.voximplant.com/getServerLocations) for possible values
+         */
+        serverLocation?: string;
+    }
+    interface StartConferenceResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The URL to control a created media session. It can be used for arbitrary tasks such as stopping scenario or passing additional data to it. Making HTTP request on this URL results in the [AppEvents.HttpRequest](/docs/references/voxengine/appevents#httprequest) VoxEngine event being triggered for a scenario, with an HTTP request data passed to it
+         */
+        mediaSessionAccessUrl: string;
+        /**
+         *The URL to control a created media session. It can be used for arbitrary tasks such as stopping scenario or passing additional data to it. Making HTTPS request on this URL results in the [AppEvents.HttpRequest](/docs/references/voxengine/appevents#httprequest) VoxEngine event being triggered for a scenario, with an HTTP request data passed to it
+         */
+        mediaSessionAccessSecureUrl: string;
+        /**
+         *The call session history ID. To search a call session result, paste the ID to the <a href='/docs/references/httpapi/history#getcallhistory'>GetCallHistory</a> method's <b>call_session_history_id</b> parameter
+         */
+        callSessionHistoryId: number;
+    }
+    interface ScenariosInterface {
+        /**
+         * Runs a session for video conferencing or joins the existing video conference session.<br/><br/>When you create a session by calling this method, a scenario runs on one of the servers dedicated to video conferencing. All further method calls with the same **conference_name** do not create a new video conference session but join the existing one.<br/><br/>Use the [StartScenarios] method for creating audio conferences.
+         */
+        startConference: (request: StartConferenceRequest) => Promise<StartConferenceResponse>;
+    }
+    interface GetCallHistoryRequest {
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromDate: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        toDate: Date;
+        timezone?: string;
+        /**
+         *To get the call history for the specific sessions, pass the session IDs to this parameter separated by a semicolon (;). You can find the session ID in the <a href='/docs/references/voxengine/appevents#started'>AppEvents.Started</a> event's <b>sessionID</b> property in a scenario, or retrieve it from the <b>call_session_history_id</b> value returned from the <a href='https://voximplant.com/docs/references/httpapi/scenarios#reorderscenarios'>StartScenarios</a> or <a href='https://voximplant.com/docs/references/httpapi/scenarios#startconference'>StartConference</a> methods
+         */
+        callSessionHistoryId?: 'any' | number | number[];
+        /**
+         *To receive the call history for a specific application, pass the application ID to this parameter
+         */
+        applicationId?: number;
+        /**
+         *The application name, can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *To receive the call history for a specific users, pass the user ID list separated by semicolons (;). If it is specified, the output contains the calls from the listed users only
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *To receive the call history for a specific routing rule, pass the rule name to this parameter. Applies only if you set application_id or application_name
+         */
+        ruleName?: string;
+        /**
+         *To receive a call history for a specific remote numbers, pass the number list separated by semicolons (;). A remote number is a number on the client side
+         */
+        remoteNumber?: string | string[];
+        /**
+         *To receive a call history for a specific local numbers, pass the number list separated by semicolons (;). A local number is a number on the platform side
+         */
+        localNumber?: string | string[];
+        /**
+         *To filter the call history by the custom_data passed to the call sessions, pass the custom data to this parameter
+         */
+        callSessionHistoryCustomData?: string;
+        /**
+         *Whether to receive a list of sessions with all calls within the sessions, including phone numbers, call cost and other information
+         */
+        withCalls?: boolean;
+        /**
+         *Whether to get the calls' records
+         */
+        withRecords?: boolean;
+        /**
+         *Whether to get other resources usage (see [ResourceUsageType])
+         */
+        withOtherResources?: boolean;
+        /**
+         *The child account ID list separated by semicolons (;)
+         */
+        childAccountId?: 'any' | number | number[];
+        /**
+         *Whether to get the children account calls only
+         */
+        childrenCallsOnly?: boolean;
+        /**
+         *Whether to get a CSV file with the column names if the output=csv
+         */
+        withHeader?: boolean;
+        /**
+         *Whether to get records in the descent order
+         */
+        descOrder?: boolean;
+        /**
+         *Whether to include the 'total_count' and increase performance
+         */
+        withTotalCount?: boolean;
+        /**
+         *The number of returning records. In the synchronous mode, the maximum value is 1000
+         */
+        count?: number;
+        /**
+         *The number of records to skip in the output with a maximum value of 10000
+         */
+        offset?: number;
+        /**
+         *The output format. The following values available: json, csv
+         */
+        output?: string;
+        /**
+         *Whether to get records in the asynchronous mode (for csv output only). <b>Use this mode to download large amounts of data</b>. See the [GetHistoryReports], [DownloadHistoryReport] functions for details
+         */
+        isAsync?: boolean;
+    }
+    interface GetCallHistoryResponse {
+        /**
+         *The CallSessionInfoType records in sync mode or 1 in async mode
+         */
+        result: CallSessionInfo[];
+        /**
+         *The total found call session count (sync mode)
+         */
+        totalCount: number;
+        /**
+         *The returned call session count (sync mode)
+         */
+        count: number;
+        /**
+         *The used timezone
+         */
+        timezone: string;
+        /**
+         *The history report ID (async mode)
+         */
+        historyReportId: number;
+    }
+    interface GetBriefCallHistoryRequest {
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromDate: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        toDate: Date;
+        /**
+         *The output format. The following values available: csv
+         */
+        output: string;
+        /**
+         *Whether to get records in the asynchronous mode. <b>Use this mode to download large amounts of data</b>. See the [GetHistoryReports], [DownloadHistoryReport] functions for details
+         */
+        isAsync: boolean;
+        timezone?: string;
+        /**
+         *To get the call history for the specific sessions, pass the session IDs to this parameter separated by a semicolon (;). You can find the session ID in the <a href='/docs/references/voxengine/appevents#started'>AppEvents.Started</a> event's <b>sessionID</b> property in a scenario, or retrieve it from the <b>call_session_history_id</b> value returned from the <a href='https://voximplant.com/docs/references/httpapi/scenarios#reorderscenarios'>StartScenarios</a> or <a href='https://voximplant.com/docs/references/httpapi/scenarios#startconference'>StartConference</a> methods
+         */
+        callSessionHistoryId?: 'any' | number | number[];
+        /**
+         *To receive the call history for a specific application, pass the application ID to this parameter
+         */
+        applicationId?: number;
+        /**
+         *The application name, can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *To receive the call history for a specific routing rule, pass the rule name to this parameter. Applies only if you set application_id or application_name
+         */
+        ruleName?: string;
+        /**
+         *To receive a call history for a specific remote numbers, pass the number list separated by semicolons (;). A remote number is a number on the client side
+         */
+        remoteNumber?: string | string[];
+        /**
+         *To receive a call history for a specific local numbers, pass the number list separated by semicolons (;). A local number is a number on the platform side
+         */
+        localNumber?: string | string[];
+        /**
+         *To filter the call history by the custom_data passed to the call sessions, pass the custom data to this parameter
+         */
+        callSessionHistoryCustomData?: string;
+        /**
+         *Whether to get a CSV file with the column names if the output=csv
+         */
+        withHeader?: boolean;
+        /**
+         *Whether to get records in the descent order
+         */
+        descOrder?: boolean;
+    }
+    interface GetBriefCallHistoryResponse {
+        /**
+         *In the async mode, the value is always 1
+         */
+        result: number;
+        /**
+         *The history report ID
+         */
+        historyReportId: number;
+    }
+    interface GetTransactionHistoryRequest {
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromDate: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        toDate: Date;
+        timezone?: string;
+        /**
+         *The transaction ID list separated by semicolons (;)
+         */
+        transactionId?: 'any' | number | number[];
+        paymentReference?: string;
+        /**
+         *The transaction type list separated by semicolons (;). The following values are possible: gift_revoke, resource_charge, money_distribution, subscription_charge, subscription_installation_charge, card_periodic_payment, card_overrun_payment, card_payment, rub_card_periodic_payment, rub_card_overrun_payment, rub_card_payment, robokassa_payment, gift, promo, adjustment, wire_transfer, us_wire_transfer, refund, discount, mgp_charge, mgp_startup, mgp_business, mgp_big_business, mgp_enterprise, mgp_large_enterprise, techsupport_charge, tax_charge, monthly_fee_charge, grace_credit_payment, grace_credit_provision, mau_charge, mau_overrun, im_charge, im_overrun, fmc_charge, sip_registration_charge, development_fee, money_transfer_to_child, money_transfer_to_parent, money_acceptance_from_child, money_acceptance_from_parent, phone_number_installation, phone_number_charge, toll_free_phone_number_installation, toll_free_phone_number_charge, services, user_money_transfer, paypal_payment, paypal_overrun_payment, paypal_periodic_payment
+         */
+        transactionType?: string | string[];
+        /**
+         *The user ID list separated by semicolons (;)
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *The child account ID list separated by semicolons (;). Use the 'all' value to select all child accounts
+         */
+        childAccountId?: 'any' | number | number[];
+        /**
+         *Whether to get the children account transactions only
+         */
+        childrenTransactionsOnly?: boolean;
+        /**
+         *Whether to get the users' transactions only
+         */
+        usersTransactionsOnly?: boolean;
+        /**
+         *Whether to get records in the descent order
+         */
+        descOrder?: boolean;
+        /**
+         *The number of returning records. In the synchronous mode, the maximum value is 1000
+         */
+        count?: number;
+        /**
+         *The number of records to skip in the output with a maximum value of 10000
+         */
+        offset?: number;
+        /**
+         *The output format. The following values available: json, csv
+         */
+        output?: string;
+        /**
+         *Whether to get records in the asynchronous mode (for csv output only). <b>Use this mode to download large amounts of data</b>. See the [GetHistoryReports], [DownloadHistoryReport] functions for details
+         */
+        isAsync?: boolean;
+        /**
+         *Whether to get transactions on hold (transactions for which money is reserved but not yet withdrawn from the account)
+         */
+        isUncommitted?: boolean;
+    }
+    interface GetTransactionHistoryResponse {
+        result: TransactionInfo[];
+        /**
+         *The total found transaction count
+         */
+        totalCount: number;
+        /**
+         *The used timezone. 'Etc/GMT' for example
+         */
+        timezone: string;
+        /**
+         *The returned transaction count
+         */
+        count: number;
+        /**
+         *The history report ID (async mode)
+         */
+        historyReportId: number;
+    }
+    interface HistoryInterface {
+        /**
+         * Gets the account's call history, including call duration, cost, logs and other call information. You can filter the call history by a certain date
+         */
+        getCallHistory: (request: GetCallHistoryRequest) => Promise<GetCallHistoryResponse>;
+        /**
+         * Gets the account's brief call history. Use the [GetHistoryReports], [DownloadHistoryReport] methods to download the report.
+         */
+        getBriefCallHistory: (request: GetBriefCallHistoryRequest) => Promise<GetBriefCallHistoryResponse>;
+        /**
+         * Gets the transaction history.
+         */
+        getTransactionHistory: (request: GetTransactionHistoryRequest) => Promise<GetTransactionHistoryResponse>;
+    }
+    interface AddPstnBlackListItemRequest {
+        /**
+         *The phone number in format e164 or regex pattern
+         */
+        pstnBlacklistPhone: string;
+    }
+    interface AddPstnBlackListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The PSTN black list item ID
+         */
+        pstnBlacklistId: number;
+    }
+    interface SetPstnBlackListItemRequest {
+        /**
+         *The PSTN black list item ID
+         */
+        pstnBlacklistId: number;
+        /**
+         *The new phone number in format e164
+         */
+        pstnBlacklistPhone: string;
+    }
+    interface SetPstnBlackListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface DelPstnBlackListItemRequest {
+        /**
+         *The PSTN black list item ID
+         */
+        pstnBlacklistId: number;
+    }
+    interface DelPstnBlackListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetPstnBlackListRequest {
+        /**
+         *The PSTN black list item ID for filter
+         */
+        pstnBlacklistId?: number;
+        /**
+         *The phone number in format e164 for filter
+         */
+        pstnBlacklistPhone?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetPstnBlackListResponse {
+        result: PstnBlackListInfo[];
+        /**
+         *The total found phone numbers count
+         */
+        totalCount: number;
+        /**
+         *The returned phone numbers count
+         */
+        count: number;
+    }
+    interface PSTNBlacklistInterface {
+        /**
+         * Add a new phone number to the PSTN blacklist. Use blacklist to block incoming calls from specified phone numbers to numbers purchased from Voximplant. Since we have no control over exact phone number format for calls from SIP integrations, blacklisting such numbers should be done via JavaScript scenarios.
+         */
+        addPstnBlackListItem: (request: AddPstnBlackListItemRequest) => Promise<AddPstnBlackListItemResponse>;
+        /**
+         * Update the PSTN blacklist item. BlackList works for numbers that are purchased from Voximplant only. Since we have no control over exact phone number format for calls from SIP integrations, blacklisting such numbers should be done via JavaScript scenarios.
+         */
+        setPstnBlackListItem: (request: SetPstnBlackListItemRequest) => Promise<SetPstnBlackListItemResponse>;
+        /**
+         * Remove phone number from the PSTN blacklist.
+         */
+        delPstnBlackListItem: (request: DelPstnBlackListItemRequest) => Promise<DelPstnBlackListItemResponse>;
+        /**
+         * Get the whole PSTN blacklist.
+         */
+        getPstnBlackList: (request: GetPstnBlackListRequest) => Promise<GetPstnBlackListResponse>;
+    }
+    interface AddSipWhiteListItemRequest {
+        /**
+         *The network address in format A.B.C.D/L or A.B.C.D/a.b.c.d (example 192.168.1.5/16)
+         */
+        sipWhitelistNetwork: string;
+        /**
+         *The network address description
+         */
+        description?: string;
+    }
+    interface AddSipWhiteListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The SIP white list item ID
+         */
+        sipWhitelistId: number;
+    }
+    interface DelSipWhiteListItemRequest {
+        /**
+         *The SIP white list item ID to delete
+         */
+        sipWhitelistId: number;
+    }
+    interface DelSipWhiteListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetSipWhiteListItemRequest {
+        /**
+         *The SIP white list item ID
+         */
+        sipWhitelistId: number;
+        /**
+         *The new network address in format A.B.C.D/L or A.B.C.D/a.b.c.d (example 192.168.1.5/16)
+         */
+        sipWhitelistNetwork: string;
+        /**
+         *The network address description
+         */
+        description?: string;
+    }
+    interface SetSipWhiteListItemResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetSipWhiteListRequest {
+        /**
+         *The SIP white list item ID to filter
+         */
+        sipWhitelistId?: number;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetSipWhiteListResponse {
+        result: SipWhiteListInfo[];
+        /**
+         *The total found networks count
+         */
+        totalCount: number;
+        /**
+         *The returned networks count
+         */
+        count: number;
+    }
+    interface SIPWhiteListInterface {
+        /**
+         * Adds a new network address to the SIP white list.
+         */
+        addSipWhiteListItem: (request: AddSipWhiteListItemRequest) => Promise<AddSipWhiteListItemResponse>;
+        /**
+         * Deletes the network address from the SIP white list.
+         */
+        delSipWhiteListItem: (request: DelSipWhiteListItemRequest) => Promise<DelSipWhiteListItemResponse>;
+        /**
+         * Edits the SIP white list.
+         */
+        setSipWhiteListItem: (request: SetSipWhiteListItemRequest) => Promise<SetSipWhiteListItemResponse>;
+        /**
+         * Gets the SIP white list.
+         */
+        getSipWhiteList: (request: GetSipWhiteListRequest) => Promise<GetSipWhiteListResponse>;
+    }
+    interface BindSipRegistrationRequest {
+        /**
+         *The registration ID
+         */
+        sipRegistrationId?: number;
+        /**
+         *The application ID which the SIP registration is to be bound to. Can be used instead of the <b>application_name</b> parameter
+         */
+        applicationId?: number;
+        /**
+         *The application name which the SIP registration is to be bound to. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName?: string;
+        /**
+         *The rule ID which the SIP registration is to be bound to. Can be used instead of the <b>rule_name</b> parameter
+         */
+        ruleId?: number;
+        /**
+         *The rule name which the SIP registration is to be bound to. Can be used instead of the <b>rule_id</b> parameter
+         */
+        ruleName?: string;
+        /**
+         *The user ID which the SIP registration is to be bound to. Can be used instead of the <b>user_name</b> parameter
+         */
+        userId?: number;
+        /**
+         *The user name which the SIP registration is to be bound to. Can be used instead of the <b>user_id</b> parameter
+         */
+        userName?: string;
+        /**
+         *Whether to bind or unbind (set true or false respectively)
+         */
+        bind?: boolean;
+    }
+    interface BindSipRegistrationResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetSipRegistrationsRequest {
+        /**
+         *The rule ID list separated by semicolons (;) to filter. Can be used instead of <b>rule_name</b>
+         */
+        ruleId: 'any' | number | number[];
+        /**
+         *The rule name list separated by semicolons (;) to filter. Can be used instead of <b>rule_id</b>
+         */
+        ruleName: string | string[];
+        /**
+         *The user ID list separated by semicolons (;) to filter. Can be used instead of <b>user_name</b>
+         */
+        userId: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;) to filter. Can be used instead of <b>user_id</b>
+         */
+        userName: string | string[];
+        /**
+         *The SIP registration ID
+         */
+        sipRegistrationId?: number;
+        /**
+         *The SIP user name to filter
+         */
+        sipUsername?: string;
+        /**
+         *Whether to show the frozen SIP registrations only
+         */
+        deactivated?: boolean;
+        /**
+         *Whether to show the successful SIP registrations only
+         */
+        successful?: boolean;
+        /**
+         *Whether the SIP registration is persistent to filter
+         */
+        isPersistent?: boolean;
+        /**
+         *The application ID list separated by semicolons (;) to filter. Can be used instead of <b>application_name</b>
+         */
+        applicationId?: 'any' | number | number[];
+        /**
+         *The application name list separated by semicolons (;) to filter. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string | string[];
+        /**
+         *Whether SIP registration bound to an application
+         */
+        isBoundToApplication?: boolean;
+        /**
+         *The list of proxy servers to use, divided by semicolon (;)
+         */
+        proxy?: string | string[];
+        /**
+         *Whether SIP registration is still in progress
+         */
+        inProgress?: boolean;
+        /**
+         *The list of SIP response codes. The __code1:code2__ means a range from __code1__ to __code2__ including; the __code1;code2__ meanse either __code1__ or __code2__. You can combine ranges, e.g., __code1;code2:code3__
+         */
+        statusCode?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetSipRegistrationsResponse {
+        /**
+         *Active SIP registrations
+         */
+        result: SIPRegistration[];
+        /**
+         *Count rows
+         */
+        count: number;
+    }
+    interface SIPRegistrationInterface {
+        /**
+         * Bind the SIP registration to the application/user or unbind the SIP registration from the application/user. You should specify the application_id or application_name if you specify the rule_name or user_id, or user_name. You should specify the sip_registration_id if you set bind=true. You can bind only one SIP registration to the user (the previous SIP registration is automatically unbound).
+         */
+        bindSipRegistration: (request: BindSipRegistrationRequest) => Promise<BindSipRegistrationResponse>;
+        /**
+         * Get active SIP registrations.
+         */
+        getSipRegistrations: (request: GetSipRegistrationsRequest) => Promise<GetSipRegistrationsResponse>;
+    }
+    interface GetPhoneNumbersRequest {
+        /**
+         *The particular phone ID to filter
+         */
+        phoneId?: 'any' | number | number[];
+        /**
+         *The phone number list separated by semicolons (;) that can be used instead of <b>phone_id</b>
+         */
+        phoneNumber?: string | string[];
+        /**
+         *The application ID
+         */
+        applicationId?: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Whether the phone number bound to an application
+         */
+        isBoundToApplication?: boolean;
+        /**
+         *The phone number start to filter
+         */
+        phoneTemplate?: string;
+        /**
+         *The country code list separated by semicolons (;)
+         */
+        countryCode?: string | string[];
+        /**
+         *The phone category name. See the [GetPhoneNumberCategories] method
+         */
+        phoneCategoryName?: string;
+        /**
+         *Whether the subscription is cancelled to filter
+         */
+        canceled?: boolean;
+        /**
+         *Whether the subscription is frozen to filter
+         */
+        deactivated?: boolean;
+        /**
+         *Whether the auto_charge flag is enabled
+         */
+        autoCharge?: boolean;
+        /**
+         *The UTC 'from' date filter in format: YYYY-MM-DD
+         */
+        fromPhoneNextRenewal?: Date;
+        /**
+         *The UTC 'to' date filter in format: YYYY-MM-DD
+         */
+        toPhoneNextRenewal?: Date;
+        /**
+         *The UTC 'from' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        fromPhonePurchaseDate?: Date;
+        /**
+         *The UTC 'to' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+         */
+        toPhonePurchaseDate?: Date;
+        /**
+         *The child account ID list separated by semicolons (;). Use the 'all' value to select all child accounts
+         */
+        childAccountId?: 'any' | number | number[];
+        /**
+         *Whether to get the children phones only
+         */
+        childrenPhonesOnly?: boolean;
+        /**
+         *The required account verification name to filter
+         */
+        verificationName?: string;
+        /**
+         *The account verification status list separated by semicolons (;). The following values are possible: REQUIRED, IN_PROGRESS, VERIFIED
+         */
+        verificationStatus?: string | string[];
+        /**
+         *Unverified phone hold until the date (from ...) in format: YYYY-MM-DD
+         */
+        fromUnverifiedHoldUntil?: Date;
+        /**
+         *Unverified phone hold until the date (... to) in format: YYYY-MM-DD
+         */
+        toUnverifiedHoldUntil?: Date;
+        /**
+         *Whether a not verified account can use the phone
+         */
+        canBeUsed?: boolean;
+        /**
+         *The following values are available: 'phone_number' (ascent order), 'phone_price' (ascent order), 'phone_country_code' (ascent order), 'deactivated' (deactivated first, active last), 'purchase_date' (descent order), 'phone_next_renewal' (ascent order), 'verification_status', 'unverified_hold_until' (ascent order), 'verification_name'
+         */
+        orderBy?: string;
+        /**
+         *Flag allows you to display only the numbers of the sandbox, real numbers, or all numbers. The following values are possible: 'all', 'true', 'false'
+         */
+        sandbox?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        smsSupported?: boolean;
+        /**
+         *The region names list separated by semicolons (;)
+         */
+        phoneRegionName?: string | string[];
+        /**
+         *The rule ID list separated by semicolons (;)
+         */
+        ruleId?: 'any' | number | number[];
+        /**
+         *The rule names list separated by semicolons (;). Can be used only if __application_id__ or __application_name__ is specified
+         */
+        ruleName?: string | string[];
+        /**
+         *Whether the phone number is bound to some rule
+         */
+        isBoundToRule?: boolean;
+    }
+    interface GetPhoneNumbersResponse {
+        /**
+         *Phone numbers info
+         */
+        result: AttachedPhoneInfo[];
+        /**
+         *The total found phone count
+         */
+        totalCount: number;
+        /**
+         *The returned phone count
+         */
+        count: number;
+    }
+    interface PhoneNumbersInterface {
+        /**
+         * Gets the account phone numbers.
+         */
+        getPhoneNumbers: (request: GetPhoneNumbersRequest) => Promise<GetPhoneNumbersResponse>;
+    }
+    interface AddCallerIDRequest {
+        /**
+         *The callerID number in E.164 format
+         */
+        calleridNumber: string;
+    }
+    interface AddCallerIDResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The id of the callerID object
+         */
+        calleridId: number;
+    }
+    interface ActivateCallerIDRequest {
+        /**
+         *The id of the callerID object
+         */
+        calleridId: number;
+        /**
+         *The callerID number that can be used instead of <b>callerid_id</b>
+         */
+        calleridNumber: string;
+        /**
+         *The verification code, see the VerifyCallerID function
+         */
+        verificationCode: string;
+    }
+    interface ActivateCallerIDResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface DelCallerIDRequest {
+        /**
+         *The id of the callerID object
+         */
+        calleridId: number;
+        /**
+         *The callerID number that can be used instead of <b>callerid_id</b>
+         */
+        calleridNumber: string;
+    }
+    interface DelCallerIDResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetCallerIDsRequest {
+        /**
+         *The id of the callerID object to filter
+         */
+        calleridId?: number;
+        /**
+         *The phone number to filter
+         */
+        calleridNumber?: string;
+        /**
+         *Whether the account is active to filter
+         */
+        active?: boolean;
+        /**
+         *The following values are available: 'caller_number' (ascent order), 'verified_until' (ascent order)
+         */
+        orderBy?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetCallerIDsResponse {
+        result: CallerIDInfo[];
+        /**
+         *The total found record count
+         */
+        totalCount: number;
+        /**
+         *The returned record count
+         */
+        count: number;
+    }
+    interface VerifyCallerIDRequest {
+        /**
+         *The id of the callerID object
+         */
+        calleridId: number;
+        /**
+         *The callerID number that can be used instead of <b>callerid_id</b>
+         */
+        calleridNumber: string;
+    }
+    interface VerifyCallerIDResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface CallerIDsInterface {
+        /**
+         * Adds a new caller ID. Caller ID is the phone that is displayed to the called user. This number can be used for call back.
+         */
+        addCallerID: (request: AddCallerIDRequest) => Promise<AddCallerIDResponse>;
+        /**
+         * Activates the CallerID by the verification code.
+         */
+        activateCallerID: (request: ActivateCallerIDRequest) => Promise<ActivateCallerIDResponse>;
+        /**
+         * Deletes the CallerID. Note: you cannot delete a CID permanently (the antispam defence).
+         */
+        delCallerID: (request: DelCallerIDRequest) => Promise<DelCallerIDResponse>;
+        /**
+         * Gets the account callerIDs.
+         */
+        getCallerIDs: (request: GetCallerIDsRequest) => Promise<GetCallerIDsResponse>;
+        /**
+         * Gets a verification code via phone call to the **callerid_number**.
+         */
+        verifyCallerID: (request: VerifyCallerIDRequest) => Promise<VerifyCallerIDResponse>;
+    }
+    interface AddOutboundTestPhoneNumberRequest {
+        /**
+         *The personal phone number in the E.164 format
+         */
+        phoneNumber: string;
+    }
+    interface AddOutboundTestPhoneNumberResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface VerifyOutboundTestPhoneNumberRequest {
+    }
+    interface VerifyOutboundTestPhoneNumberResponse {
+        /**
+         *The number of attempts left for the day. The number is reset every day at 00:00 UTC
+         */
+        dailyAttemptsLeft: number;
+    }
+    interface ActivateOutboundTestPhoneNumberRequest {
+        /**
+         *The verification code, see the [VerifyOutboundTestPhoneNumber] function
+         */
+        verificationCode: string;
+    }
+    interface ActivateOutboundTestPhoneNumberResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface DelOutboundTestPhoneNumberRequest {
+    }
+    interface DelOutboundTestPhoneNumberResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetOutboundTestPhoneNumbersRequest {
+    }
+    interface GetOutboundTestPhoneNumbersResponse {
+        result: OutboundTestPhonenumberInfo[];
+    }
+    interface OutboundTestNumbersInterface {
+        /**
+         * Adds a personal phone number to test outgoing calls. Only one personal phone number can be used. To replace it with another, delete the existing one first.
+         */
+        addOutboundTestPhoneNumber: (request: AddOutboundTestPhoneNumberRequest) => Promise<AddOutboundTestPhoneNumberResponse>;
+        /**
+         * Starts a call to the added phone number and pronounces a verification code. You have only 5 verification attempts per day and 100 in total. 1 minute should pass between 2 attempts.
+         */
+        verifyOutboundTestPhoneNumber: (request: VerifyOutboundTestPhoneNumberRequest) => Promise<VerifyOutboundTestPhoneNumberResponse>;
+        /**
+         * Activates the phone number by the verification code.
+         */
+        activateOutboundTestPhoneNumber: (request: ActivateOutboundTestPhoneNumberRequest) => Promise<ActivateOutboundTestPhoneNumberResponse>;
+        /**
+         * Deletes the existing phone number.
+         */
+        delOutboundTestPhoneNumber: (request: DelOutboundTestPhoneNumberRequest) => Promise<DelOutboundTestPhoneNumberResponse>;
+        /**
+         * Shows the phone number info.
+         */
+        getOutboundTestPhoneNumbers: (request: GetOutboundTestPhoneNumbersRequest) => Promise<GetOutboundTestPhoneNumbersResponse>;
+    }
+    interface AddQueueRequest {
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName: string;
+        /**
+         *The queue name. The length must be less than 100
+         */
+        acdQueueName: string;
+        /**
+         *The integer queue priority. The highest priority is 0
+         */
+        acdQueuePriority?: number;
+        /**
+         *Whether to enable the auto binding of operators to a queue by skills comparing
+         */
+        autoBinding?: boolean;
+        /**
+         *The value in the range of [0.5 ... 1.0]. The value 1.0 means the service probability 100% in challenge with a lower priority queue
+         */
+        serviceProbability?: number;
+        /**
+         *The max queue size
+         */
+        maxQueueSize?: number;
+        /**
+         *The max predicted waiting time in minutes. The client is rejected if the predicted waiting time is greater than the max predicted waiting time
+         */
+        maxWaitingTime?: number;
+        /**
+         *The average service time in seconds. Specify the parameter to correct or initialize the waiting time prediction
+         */
+        averageServiceTime?: number;
+    }
+    interface AddQueueResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The ACD queue ID
+         */
+        acdQueueId: number;
+    }
+    interface BindUserToQueueRequest {
+        /**
+         *Whether to bind or unbind users
+         */
+        bind: boolean;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName: string;
+        /**
+         *The user ID list separated by semicolons (;). Use the 'all' value to specify all users bound to the application
+         */
+        userId: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+         */
+        userName: string | string[];
+        /**
+         *The ACD queue ID list separated by semicolons (;). Use the 'all' value to specify all queues bound to the application
+         */
+        acdQueueId: 'any' | number | number[];
+        /**
+         *The queue name that can be used instead of <b>acd_queue_id</b>. The queue name list separated by semicolons (;)
+         */
+        acdQueueName: string | string[];
+    }
+    interface BindUserToQueueResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface DelQueueRequest {
+        /**
+         *The ACD queue ID list separated by semicolons (;)
+         */
+        acdQueueId: 'any' | number | number[];
+        /**
+         *The ACD queue name that can be used instead of <b>acd_queue_id</b>. The ACD queue name list separated by semicolons (;)
+         */
+        acdQueueName: string | string[];
+    }
+    interface DelQueueResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetQueueInfoRequest {
+        /**
+         *The ACD queue ID
+         */
+        acdQueueId: number;
+        /**
+         *The ACD queue name that can be used instead of <b>acd_queue_id</b>
+         */
+        acdQueueName: string;
+        /**
+         *The new queue name. The length must be less than 100
+         */
+        newAcdQueueName?: string;
+        /**
+         *The integer queue priority. The highest priority is 0
+         */
+        acdQueuePriority?: number;
+        /**
+         *Whether to enable the auto binding of operators to a queue by skills comparing
+         */
+        autoBinding?: boolean;
+        /**
+         *The value in the range of [0.5 ... 1.0]. The value 1.0 means the service probability 100% in challenge with a lower priority queue
+         */
+        serviceProbability?: number;
+        /**
+         *The max queue size
+         */
+        maxQueueSize?: number;
+        /**
+         *The max predicted waiting time in minutes. The client is rejected if the predicted waiting time is greater than the max predicted waiting time
+         */
+        maxWaitingTime?: number;
+        /**
+         *The average service time in seconds. Specify the parameter to correct or initialize the waiting time prediction
+         */
+        averageServiceTime?: number;
+        /**
+         *The new application ID
+         */
+        applicationId?: number;
+    }
+    interface SetQueueInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetQueuesRequest {
+        /**
+         *The ACD queue ID to filter
+         */
+        acdQueueId?: number;
+        /**
+         *The ACD queue name part to filter
+         */
+        acdQueueName?: string;
+        /**
+         *The application ID to filter
+         */
+        applicationId?: number;
+        /**
+         *The skill ID to filter
+         */
+        skillId?: number;
+        /**
+         *The excluded skill ID to filter
+         */
+        excludedSkillId?: number;
+        /**
+         *Whether to get the bound skills
+         */
+        withSkills?: boolean;
+        /**
+         *The skill to show in the 'skills' field output
+         */
+        showingSkillId?: number;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *Whether to include the number of agents bound to the queue
+         */
+        withOperatorcount?: boolean;
+    }
+    interface GetQueuesResponse {
+        result: QueueInfo[];
+        /**
+         *The total found queue count
+         */
+        totalCount: number;
+        /**
+         *The returned queue count
+         */
+        count: number;
+    }
+    interface GetACDStateRequest {
+        /**
+         *The ACD queue ID list separated by semicolons (;). Use the 'all' value to select all ACD queues
+         */
+        acdQueueId?: 'any' | number | number[];
+    }
+    interface GetACDStateResponse {
+        result: ACDState;
+    }
+    interface QueuesInterface {
+        /**
+         * Adds a new ACD queue.
+         */
+        addQueue: (request: AddQueueRequest) => Promise<AddQueueResponse>;
+        /**
+         * Bind/unbind users to/from the specified ACD queues. Note that users and queues should be already bound to the same application.
+         */
+        bindUserToQueue: (request: BindUserToQueueRequest) => Promise<BindUserToQueueResponse>;
+        /**
+         * Deletes the ACD queue.
+         */
+        delQueue: (request: DelQueueRequest) => Promise<DelQueueResponse>;
+        /**
+         * Edits the ACD queue.
+         */
+        setQueueInfo: (request: SetQueueInfoRequest) => Promise<SetQueueInfoResponse>;
+        /**
+         * Gets the ACD queues.
+         */
+        getQueues: (request: GetQueuesRequest) => Promise<GetQueuesResponse>;
+        /**
+         * Gets the current ACD queue state.
+         */
+        getACDState: (request: GetACDStateRequest) => Promise<GetACDStateResponse>;
+    }
+    interface GetSmartQueueRealtimeMetricsRequest {
+        /**
+         *The application ID to search by
+         */
+        applicationId: number;
+        /**
+         *The application name to search by. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName: string;
+        /**
+         *The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate
+         */
+        reportType: string | string[];
+        /**
+         *The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        sqQueueId?: 'any' | number | number[];
+        /**
+         *The SmartQueue name list separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time minus 30 minutes
+         */
+        fromDate?: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time
+         */
+        toDate?: Date;
+        /**
+         *The selected timezone or the 'auto' value (the account location)
+         */
+        timezone?: string;
+        /**
+         *Interval format: YYYY-MM-DD HH:mm:ss. Default is 30 minutes
+         */
+        interval?: string;
+        /**
+         *Group the result by **agent** or *queue*. The **agent** grouping is allowed for 1 queue and for the occupancy_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_banned_time, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types. The **queue** grouping allowed for the calls_blocked_percentage, count_blocked_calls, average_abandonment_rate, count_abandonment_calls, service_level, occupancy_rate, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types
+         */
+        groupBy?: string;
+        /**
+         *Maximum waiting time. Required for the **service_level** report type
+         */
+        maxWaitingSec?: number;
+    }
+    interface GetSmartQueueRealtimeMetricsResponse {
+        result: SmartQueueMetricsResult[];
+        /**
+         *The used timezone, e.g., 'Etc/GMT'
+         */
+        timezone: string;
+    }
+    interface GetSmartQueueDayHistoryRequest {
+        /**
+         *The application ID to search by
+         */
+        applicationId: number;
+        /**
+         *The application name to search by. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName: string;
+        /**
+         *The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        sqQueueId: 'any' | number | number[];
+        /**
+         *The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate
+         */
+        reportType: string | string[];
+        /**
+         *The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *The SmartQueue name list separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time minus 1 day
+         */
+        fromDate?: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time
+         */
+        toDate?: Date;
+        /**
+         *The selected timezone or the 'auto' value (the account location)
+         */
+        timezone?: string;
+        /**
+         *Interval format: YYYY-MM-DD HH:mm:ss. Default is 1 day
+         */
+        interval?: string;
+        /**
+         *Group the result by **agent** or *queue*. The **agent** grouping is allowed only for 1 queue and for the occupancy_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_banned_time, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types. The **queue** grouping allowed for the calls_blocked_percentage, count_blocked_calls, average_abandonment_rate, count_abandonment_calls, service_level, occupancy_rate, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types
+         */
+        groupBy?: string;
+        /**
+         *Maximum waiting time. Required for the **service_level** report type
+         */
+        maxWaitingSec?: number;
+    }
+    interface GetSmartQueueDayHistoryResponse {
+        result: SmartQueueMetricsResult[];
+        /**
+         *The used timezone, e.g., 'Etc/GMT'
+         */
+        timezone: string;
+    }
+    interface RequestSmartQueueHistoryRequest {
+        /**
+         *The application ID to search by
+         */
+        applicationId: number;
+        /**
+         *The application name to search by. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName: string;
+        /**
+         *The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        sqQueueId: 'any' | number | number[];
+        /**
+         *The from date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time minus 1 day
+         */
+        fromDate: Date;
+        /**
+         *The to date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss. Default is the current time
+         */
+        toDate: Date;
+        /**
+         *The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate
+         */
+        reportType: string | string[];
+        /**
+         *The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *The SmartQueue name list separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *The selected timezone or the 'auto' value (the account location)
+         */
+        timezone?: string;
+        /**
+         *Interval format: YYYY-MM-DD HH:mm:ss. Default is 1 day
+         */
+        interval?: string;
+        /**
+         *Group the result by **agent** or *queue*. The **agent** grouping is allowed only for 1 queue and for the occupancy_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_banned_time, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types. The **queue** grouping allowed for the calls_blocked_percentage, count_blocked_calls, average_abandonment_rate, count_abandonment_calls, service_level, occupancy_rate, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime report types
+         */
+        groupBy?: string;
+        /**
+         *Maximum waiting time. Required for the **service_level** report type
+         */
+        maxWaitingSec?: number;
+    }
+    interface RequestSmartQueueHistoryResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *History report ID
+         */
+        historyReportId: number;
+    }
+    interface GetSQStateRequest {
+        /**
+         *The application ID to search by
+         */
+        applicationId: number;
+        /**
+         *The SmartQueue ID list separated by semicolons (;). Use the 'all' value to select all SmartQueues
+         */
+        sqQueueId: 'any' | number | number[];
+        /**
+         *The application name to search by. Can be used instead of the <b>application_id</b> parameter
+         */
+        applicationName?: string;
+        /**
+         *The SmartQueue name list separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *The selected timezone or the 'auto' value (the account location)
+         */
+        timezone?: string;
+    }
+    interface GetSQStateResponse {
+        result: SmartQueueState[];
+    }
+    interface SQ_SetAgentCustomStatusMappingRequest {
+        /**
+         *Status name
+         */
+        sqStatusName: string;
+        /**
+         *Custom status name
+         */
+        customStatusName: string;
+        /**
+         *Application ID
+         */
+        applicationId: number;
+    }
+    interface SQ_SetAgentCustomStatusMappingResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_GetAgentCustomStatusMappingRequest {
+        /**
+         *Application ID
+         */
+        applicationId?: number;
+    }
+    interface SQ_GetAgentCustomStatusMappingResponse {
+        /**
+         *Status name
+         */
+        sqStatusName: string;
+        /**
+         *Custom status name
+         */
+        customStatusName: string;
+    }
+    interface SQ_DeleteAgentCustomStatusMappingRequest {
+        /**
+         *Application ID
+         */
+        applicationId: number;
+        /**
+         *Status name
+         */
+        sqStatusName?: string;
+    }
+    interface SQ_DeleteAgentCustomStatusMappingResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_AddQueueRequest {
+        /**
+         *ID of the application to bind to
+         */
+        applicationId: number;
+        /**
+         *Unique SmartQueue name within the application, up to 100 characters
+         */
+        sqQueueName: string;
+        /**
+         *Agent selection strategy for calls. Accepts one of the following values: "MOST_QUALIFIED", "LEAST_QUALIFIED", "MAX_WAITING_TIME"
+         */
+        callAgentSelection: string;
+        /**
+         *Call type requests prioritizing strategy. Accepts one of the [SQTaskSelectionStrategies] enum values
+         */
+        callTaskSelection: string;
+        /**
+         *Name of the application to bind to. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Agent selection strategy for messages. Accepts one of the following values: "MOST_QUALIFIED", "LEAST_QUALIFIED", "MAX_WAITING_TIME". The default value is **call_agent_selection**
+         */
+        imAgentSelection?: string;
+        /**
+         *IM type requests prioritizing strategy. Accepts one of the [SQTaskSelectionStrategies] enum values. The default value is **call_task_selection**
+         */
+        imTaskSelection?: string;
+        fallbackAgentSelection?: string;
+        /**
+         *Comment, up to 200 characters
+         */
+        description?: string;
+        /**
+         *Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+         */
+        callMaxWaitingTime?: number;
+        /**
+         *Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+         */
+        imMaxWaitingTime?: number;
+        /**
+         *Maximum size of the queue with CALL-type requests
+         */
+        callMaxQueueSize?: number;
+        /**
+         *Maximum size of the queue with IM-type requests
+         */
+        imMaxQueueSize?: number;
+        /**
+         *The queue's priority from 1 to 100
+         */
+        priority?: number;
+    }
+    interface SQ_AddQueueResponse {
+        /**
+         *ID of the added queue
+         */
+        sqQueueId: number;
+    }
+    interface SQ_SetQueueInfoRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *ID of the SmartQueue to search for
+         */
+        sqQueueId: number;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Name of the SmartQueue to search for. Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string;
+        /**
+         *New SmartQueue name within the application, up to 100 characters
+         */
+        newSqQueueName?: string;
+        /**
+         *Agent selection strategy for calls. Accepts one of the following values: "MOST_QUALIFIED", "LEAST_QUALIFIED", "MAX_WAITING_TIME"
+         */
+        callAgentSelection?: string;
+        /**
+         *Agent selection strategy for messages. Accepts one of the following values: "MOST_QUALIFIED", "LEAST_QUALIFIED", "MAX_WAITING_TIME". The default value is **call_agent_selection**
+         */
+        imAgentSelection?: string;
+        /**
+         *Strategy of prioritizing CALL-type requests for service. Accepts one of the following values: "MAX_PRIORITY", "MAX_WAITING_TIME"
+         */
+        callTaskSelection?: string;
+        /**
+         *Strategy of prioritizing IM-type requests for service. Accepts one of the following values: "MAX_PRIORITY", "MAX_WAITING_TIME". The default value is **call_task_selection**
+         */
+        imTaskSelection?: string;
+        fallbackAgentSelection?: string;
+        /**
+         *Comment, up to 200 characters
+         */
+        description?: string;
+        /**
+         *Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+         */
+        callMaxWaitingTime?: number;
+        /**
+         *Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+         */
+        imMaxWaitingTime?: number;
+        /**
+         *Maximum size of the queue with CALL-type requests
+         */
+        callMaxQueueSize?: number;
+        /**
+         *Maximum size of the queue with IM-type requests
+         */
+        imMaxQueueSize?: number;
+        /**
+         *The queue's priority from 1 to 100
+         */
+        priority?: number;
+    }
+    interface SQ_SetQueueInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_DelQueueRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of SmartQueue IDs separated by semicolons (;). Use 'all' to delete all the queues
+         */
+        sqQueueId: 'any' | number | number[];
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of SmartQueue names separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+    }
+    interface SQ_DelQueueResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_GetQueuesRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of SmartQueue IDs separated by semicolons (;)
+         */
+        sqQueueId?: 'any' | number | number[];
+        /**
+         *List of SmartQueue names separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *Substring of the SmartQueue name to filter
+         */
+        sqQueueNameTemplate?: string;
+        /**
+         *ID of the user that is bound to the queue
+         */
+        userId?: number;
+        /**
+         *Name of the user that is bound to the queue. Can be used instead of <b>user_id</b>
+         */
+        userName?: string;
+        /**
+         *ID of the user that is not bound to the queue
+         */
+        excludedUserId?: number;
+        /**
+         *Name of the user that is not bound to the queue. Can be used instead of <b>excluded_user_id</b>
+         */
+        excludedUserName?: string;
+        /**
+         *Number of items to show in the output
+         */
+        count?: number;
+        /**
+         *Number of items to skip in the output
+         */
+        offset?: number;
+        /**
+         *Whether to include the number of agents bound to the queue
+         */
+        withAgentcount?: boolean;
+    }
+    interface SQ_GetQueuesResponse {
+        /**
+         *The found queue(s)
+         */
+        result: GetSQQueuesResult;
+    }
+    interface SQ_AddSkillRequest {
+        /**
+         *ID of the application to bind to
+         */
+        applicationId: number;
+        /**
+         *Unique skill name within the application
+         */
+        sqSkillName: string;
+        /**
+         *Name of the application to bind to. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Comment, up to 200 characters
+         */
+        description?: string;
+    }
+    interface SQ_AddSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_DelSkillRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of skill IDs separated by semicolons (;). Use 'all' to delete all the skills
+         */
+        sqSkillId: 'any' | number | number[];
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of skill names separated by semicolons (;). Can be used instead of <b>sq_skill_id</b>
+         */
+        sqSkillName?: string | string[];
+    }
+    interface SQ_DelSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_SetSkillInfoRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *ID of the skill
+         */
+        sqSkillId: number;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Name of the skill. Can be used instead of <b>sq_skill_id</b>
+         */
+        sqSkillName?: string;
+        /**
+         *New unique skill name within the application
+         */
+        newSqSkillName?: string;
+        /**
+         *Comment, up to 200 characters
+         */
+        description?: string;
+    }
+    interface SQ_SetSkillInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_BindSkillRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of user IDs separated by semicolons (;). Use 'all' to select all the users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *Skills to be bound to agents in the json array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b> and <b>sq_skill_level</b> keys where skill levels range from 1 to 5
+         */
+        sqSkills: any;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *Binding mode. Accepts one of the [SQSkillBindingModes] enum values
+         */
+        bindMode?: string;
+    }
+    interface SQ_BindSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_UnbindSkillRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of user IDs separated by semicolons (;). Use 'all' to select all the users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *List of skill IDs separated by semicolons (;). Use 'all' to undbind all the skills
+         */
+        sqSkillId: 'any' | number | number[];
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *List of skill names separated by semicolons (;). Can be used instead of <b>sq_skill_id</b>
+         */
+        sqSkillName?: string | string[];
+    }
+    interface SQ_UnbindSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_GetSkillsRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of user IDs separated by semicolons (;)
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *List of skill IDs separated by semicolons (;)
+         */
+        sqSkillId?: 'any' | number | number[];
+        /**
+         *List of skill names separated by semicolons (;). Can be used instead of <b>sq_skill_id</b>
+         */
+        sqSkillName?: string | string[];
+        /**
+         *Substring of the skill name to filter, case-insensitive
+         */
+        sqSkillNameTemplate?: string;
+        /**
+         *ID of the user that is not bound to the skill
+         */
+        excludedUserId?: number;
+        /**
+         *Name of the user that is not bound to the skill. Can be used instead of <b>excluded_user_id</b>
+         */
+        excludedUserName?: string;
+        /**
+         *Number of items to show in the output
+         */
+        count?: number;
+        /**
+         *Number of items to skip in the output
+         */
+        offset?: number;
+    }
+    interface SQ_GetSkillsResponse {
+        /**
+         *The found skill(s).
+         */
+        result: GetSQSkillsResult;
+    }
+    interface SQ_BindAgentRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *ID of the SmartQueue. Pass a list of values divided by ; or the "all" keyword
+         */
+        sqQueueId: string;
+        /**
+         *List of user IDs separated by semicolons (;). Use 'all' to select all the users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Name of the SmartQueue. Pass a list of names divided by ; or the "all" keyword
+         */
+        sqQueueName?: string;
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *Binding mode. Accepts one of the [SQAgentBindingModes] enum values
+         */
+        bindMode?: string;
+    }
+    interface SQ_BindAgentResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_UnbindAgentRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of SmartQueue IDs separated by semicolons (;). Use 'all' to select all the queues
+         */
+        sqQueueId: 'any' | number | number[];
+        /**
+         *List of user IDs separated by semicolons (;). Use 'all' to select all the users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of SmartQueue names separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+    }
+    interface SQ_UnbindAgentResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SQ_GetAgentsRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *Whether the agent can handle calls. When set to false, the agent is excluded from the CALL-request distribution
+         */
+        handleCalls: boolean;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of SmartQueue IDs separated by semicolons (;). Use 'all' to select all the queues
+         */
+        sqQueueId?: 'any' | number | number[];
+        /**
+         *List of SmartQueue names separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
+         */
+        sqQueueName?: string | string[];
+        /**
+         *ID of the SmartQueue to exclude
+         */
+        excludedSqQueueId?: number;
+        /**
+         *Name of the SmartQueue to exclude. Can be used instead of <b>excluded_sq_queue_id</b>
+         */
+        excludedSqQueueName?: string;
+        /**
+         *Skills to filter in the json array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b>, <b>min_sq_skill_level</b>, and <b>max_sq_skill_level</b> keys where skill levels range from 1 to 5
+         */
+        sqSkills?: any;
+        /**
+         *List of user IDs separated by semicolons (;)
+         */
+        userId?: 'any' | number | number[];
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *Substring of the user name to filter
+         */
+        userNameTemplate?: string;
+        /**
+         *Filter statuses in the json array format. The array should contain objects with the <b>sq_status_type</b> and <b>sq_status_name</b> keys. Possible values for <b>sq_status_type</b> are 'CALL' and'IM'. Possible values for <b>sq_status_name</b> are 'OFFLINE', 'ONLINE', 'READY', 'IN_SERVICE', 'AFTER_SERVICE', 'DND'
+         */
+        sqStatuses?: any;
+        /**
+         *Whether to display agent skills
+         */
+        withSqSkills?: boolean;
+        /**
+         *Whether to display agent queues
+         */
+        withSqQueues?: boolean;
+        /**
+         *Whether to display agent current statuses
+         */
+        withSqStatuses?: boolean;
+        /**
+         *Number of items to show in the output
+         */
+        count?: number;
+        /**
+         *Number of items to skip in the output
+         */
+        offset?: number;
+    }
+    interface SQ_GetAgentsResponse {
+        /**
+         *The found agent(s)
+         */
+        result: GetSQAgentsResult;
+    }
+    interface SQ_SetAgentInfoRequest {
+        /**
+         *ID of the application to search by
+         */
+        applicationId: number;
+        /**
+         *List of user IDs separated by semicolons (;). Use 'all' to select all the users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *Whether the agent can handle calls. When set to false, the agent is excluded from the CALL-request distribution
+         */
+        handleCalls: boolean;
+        /**
+         *Name of the application to search by. Can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *List of user names separated by semicolons (;). Can be used instead of <b>user_id</b>
+         */
+        userName?: string | string[];
+        /**
+         *Maximum number of chats that the user processes simultaneously
+         */
+        maxSimultaneousConversations?: number;
+    }
+    interface SQ_SetAgentInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SmartQueueInterface {
+        /**
+         * Gets the metrics for the specified SmartQueue for the last 30 minutes. Refer to the <a href="/docs/guides/contact-center/reporting">SmartQueue reporting guide</a> to learn more.
+         */
+        getSmartQueueRealtimeMetrics: (request: GetSmartQueueRealtimeMetricsRequest) => Promise<GetSmartQueueRealtimeMetricsResponse>;
+        /**
+         * Gets the metrics for the specified SmartQueue for the last 2 days. Refer to the <a href="/docs/guides/contact-center/reporting">SmartQueue reporting guide</a> to learn more.
+         */
+        getSmartQueueDayHistory: (request: GetSmartQueueDayHistoryRequest) => Promise<GetSmartQueueDayHistoryResponse>;
+        /**
+         * Gets history for the specified SmartQueue. Refer to the <a href="/docs/guides/contact-center/reporting">SmartQueue reporting guide</a> to learn more.
+         */
+        requestSmartQueueHistory: (request: RequestSmartQueueHistoryRequest) => Promise<RequestSmartQueueHistoryResponse>;
+        /**
+         * Gets the current state of the specified SmartQueue.
+         */
+        getSQState: (request: GetSQStateRequest) => Promise<GetSQStateResponse>;
+        /**
+         * Adds a status if there is no match for the given internal status and renames it if there is a match. It means that if the passed **sq_status_name** parameter is not in the mapping table, a new entry is created in there; if it is, the **name** field in its mapping is replaced with **custom_status_name**.
+         */
+        sQ_SetAgentCustomStatusMapping: (request: SQ_SetAgentCustomStatusMappingRequest) => Promise<SQ_SetAgentCustomStatusMappingResponse>;
+        /**
+         * Returns the mapping list of SQ statuses and custom statuses. SQ statuses are returned whether or not they have mappings to custom statuses.
+         */
+        sQ_GetAgentCustomStatusMapping: (request: SQ_GetAgentCustomStatusMappingRequest) => Promise<SQ_GetAgentCustomStatusMappingResponse>;
+        /**
+         * Removes a mapping from the mapping table. If there is no such mapping, does nothing.
+         */
+        sQ_DeleteAgentCustomStatusMapping: (request: SQ_DeleteAgentCustomStatusMappingRequest) => Promise<SQ_DeleteAgentCustomStatusMappingResponse>;
+        /**
+         * Adds a new queue.
+         */
+        sQ_AddQueue: (request: SQ_AddQueueRequest) => Promise<SQ_AddQueueResponse>;
+        /**
+         * Edits an existing queue.
+         */
+        sQ_SetQueueInfo: (request: SQ_SetQueueInfoRequest) => Promise<SQ_SetQueueInfoResponse>;
+        /**
+         * Deletes a queue.
+         */
+        sQ_DelQueue: (request: SQ_DelQueueRequest) => Promise<SQ_DelQueueResponse>;
+        /**
+         * Gets the queue(s).
+         */
+        sQ_GetQueues: (request: SQ_GetQueuesRequest) => Promise<SQ_GetQueuesResponse>;
+        /**
+         * Adds a new skill to the app.
+         */
+        sQ_AddSkill: (request: SQ_AddSkillRequest) => Promise<SQ_AddSkillResponse>;
+        /**
+         * Deletes a skill and detaches it from agents.
+         */
+        sQ_DelSkill: (request: SQ_DelSkillRequest) => Promise<SQ_DelSkillResponse>;
+        /**
+         * Edits an existing skill.
+         */
+        sQ_SetSkillInfo: (request: SQ_SetSkillInfoRequest) => Promise<SQ_SetSkillInfoResponse>;
+        /**
+         * Binds skills to agents.
+         */
+        sQ_BindSkill: (request: SQ_BindSkillRequest) => Promise<SQ_BindSkillResponse>;
+        /**
+         * Unbinds skills from agents.
+         */
+        sQ_UnbindSkill: (request: SQ_UnbindSkillRequest) => Promise<SQ_UnbindSkillResponse>;
+        /**
+         * Gets the skill(s).
+         */
+        sQ_GetSkills: (request: SQ_GetSkillsRequest) => Promise<SQ_GetSkillsResponse>;
+        /**
+         * Binds agents to a queue.
+         */
+        sQ_BindAgent: (request: SQ_BindAgentRequest) => Promise<SQ_BindAgentResponse>;
+        /**
+         * Unbinds agents from queues.
+         */
+        sQ_UnbindAgent: (request: SQ_UnbindAgentRequest) => Promise<SQ_UnbindAgentResponse>;
+        /**
+         * Gets agents.
+         */
+        sQ_GetAgents: (request: SQ_GetAgentsRequest) => Promise<SQ_GetAgentsResponse>;
+        /**
+         * Edits the agent settings.
+         */
+        sQ_SetAgentInfo: (request: SQ_SetAgentInfoRequest) => Promise<SQ_SetAgentInfoResponse>;
+    }
+    interface AddSkillRequest {
+        /**
+         *The ACD operator skill name. The length must be less than 512
+         */
+        skillName: string;
+    }
+    interface AddSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The skill ID
+         */
+        skillId: number;
+    }
+    interface DelSkillRequest {
+        /**
+         *The skill ID
+         */
+        skillId: number;
+        /**
+         *The skill name that can be used instead of <b>skill_id</b>
+         */
+        skillName: string;
+    }
+    interface DelSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetSkillInfoRequest {
+        /**
+         *The skill ID
+         */
+        skillId: number;
+        /**
+         *The skill name that can be used instead of <b>skill_id</b>
+         */
+        skillName: string;
+        /**
+         *The new skill name. The length must be less than 512
+         */
+        newSkillName: string;
+    }
+    interface SetSkillInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetSkillsRequest {
+        /**
+         *The skill ID to filter
+         */
+        skillId?: number;
+        /**
+         *The skill name part to filter
+         */
+        skillName?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetSkillsResponse {
+        result: SkillInfo[];
+        /**
+         *The total found skill count
+         */
+        totalCount: number;
+        /**
+         *The returned skill count
+         */
+        count: number;
+    }
+    interface BindSkillRequest {
+        /**
+         *The skill ID list separated by semicolons (;). Use the 'all' value to select all skills
+         */
+        skillId: 'any' | number | number[];
+        /**
+         *The skill name list separated by semicolons (;). Can be used instead of <b>skill_id</b>
+         */
+        skillName: string | string[];
+        /**
+         *The user ID list separated by semicolons (;). Use the 'all' value to select all users
+         */
+        userId: 'any' | number | number[];
+        /**
+         *The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+         */
+        userName: string | string[];
+        /**
+         *The ACD queue ID list separated by semicolons (;). Use the 'all' value to select all ACD queues
+         */
+        acdQueueId: 'any' | number | number[];
+        /**
+         *The ACD queue name that can be used instead of <b>acd_queue_id</b>. The ACD queue name list separated by semicolons (;)
+         */
+        acdQueueName: string | string[];
+        /**
+         *The application ID. It is required if the <b>user_name</b> is specified
+         */
+        applicationId?: number;
+        /**
+         *The application name that can be used instead of <b>application_id</b>
+         */
+        applicationName?: string;
+        /**
+         *Whether to bind or unbind (set true or false respectively)
+         */
+        bind?: boolean;
+    }
+    interface BindSkillResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SkillsInterface {
+        /**
+         * Adds a new operator's skill. Works only for ACDv1. For SmartQueue/ACDv2, use <a href="#how-auth-works">this reference</a>.
+         */
+        addSkill: (request: AddSkillRequest) => Promise<AddSkillResponse>;
+        /**
+         * Deletes an operator's skill. Works only for ACDv1. For SmartQueue/ACDv2, use <a href="#how-auth-works">this reference</a>.
+         */
+        delSkill: (request: DelSkillRequest) => Promise<DelSkillResponse>;
+        /**
+         * Edits an operator's skill. Works only for ACDv1. For SmartQueue/ACDv2, use <a href="#how-auth-works">this reference</a>.
+         */
+        setSkillInfo: (request: SetSkillInfoRequest) => Promise<SetSkillInfoResponse>;
+        /**
+         * Gets the skills of an operator. Works only for ACDv1. For SmartQueue/ACDv2, use <a href="#how-auth-works">this reference</a>.
+         */
+        getSkills: (request: GetSkillsRequest) => Promise<GetSkillsResponse>;
+        /**
+         * Binds the specified skills to the users (ACD operators) and/or the ACD queues. Works only for ACDv1. For SmartQueue/ACDv2, use <a href="#how-auth-works">this reference</a>.
+         */
+        bindSkill: (request: BindSkillRequest) => Promise<BindSkillResponse>;
+    }
+    interface AddAdminUserRequest {
+        /**
+         *The admin user name. The length must be less than 50
+         */
+        newAdminUserName: string;
+        /**
+         *The admin user display name. The length must be less than 256
+         */
+        adminUserDisplayName: string;
+        /**
+         *The admin user password. The length must be at least 6 symbols
+         */
+        newAdminUserPassword: string;
+        /**
+         *Whether the admin user is active
+         */
+        adminUserActive?: boolean;
+        /**
+         *The role(s) ID created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attaching admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles
+         */
+        adminRoleId?: string;
+        /**
+         *The role(s) name(s) created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attaching admin role name that can be used instead of <b>admin_role_id</b>
+         */
+        adminRoleName?: string | string[];
+    }
+    interface AddAdminUserResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The new admin user ID
+         */
+        adminUserId: number;
+        /**
+         *The admin user API key
+         */
+        adminUserApiKey: string;
+    }
+    interface DelAdminUserRequest {
+        /**
+         *The admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
+         */
+        requiredAdminUserId: 'any' | number | number[];
+        /**
+         *The admin user name to delete, can be used instead of <b>required_admin_user_id</b>
+         */
+        requiredAdminUserName: string | string[];
+    }
+    interface DelAdminUserResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetAdminUserInfoRequest {
+        /**
+         *The admin user to edit
+         */
+        requiredAdminUserId: number;
+        /**
+         *The admin user to edit, can be used instead of <b>required_admin_user_id</b>
+         */
+        requiredAdminUserName: string;
+        /**
+         *The new admin user name. The length must be less than 50
+         */
+        newAdminUserName?: string;
+        /**
+         *The new admin user display name. The length must be less than 256
+         */
+        adminUserDisplayName?: string;
+        /**
+         *The new admin user password. The length must be at least 6 symbols
+         */
+        newAdminUserPassword?: string;
+        /**
+         *Whether the admin user is active
+         */
+        adminUserActive?: boolean;
+    }
+    interface SetAdminUserInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetAdminUsersRequest {
+        /**
+         *The admin user ID to filter
+         */
+        requiredAdminUserId?: number;
+        /**
+         *The admin user name part to filter
+         */
+        requiredAdminUserName?: string;
+        /**
+         *The admin user display name part to filter
+         */
+        adminUserDisplayName?: string;
+        /**
+         *Whether the admin user is active to filter
+         */
+        adminUserActive?: boolean;
+        /**
+         *Whether to get the attached admin roles
+         */
+        withRoles?: boolean;
+        /**
+         *Whether to get the admin user permissions
+         */
+        withAccessEntries?: boolean;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetAdminUsersResponse {
+        result: AdminUser[];
+        /**
+         *The total found admin user count
+         */
+        totalCount: number;
+        /**
+         *The returned admin user count
+         */
+        count: number;
+    }
+    interface AttachAdminRoleRequest {
+        /**
+         *The admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
+         */
+        requiredAdminUserId: 'any' | number | number[];
+        /**
+         *The admin user name to bind, can be used instead of <b>required_admin_user_id</b>
+         */
+        requiredAdminUserName: string | string[];
+        /**
+         *The role(s) ID created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attached admin role ID list separated by semicolons (;). Use the 'all' value to select alladmin roles
+         */
+        adminRoleId: 'any' | number | number[];
+        /**
+         *The role(s) name(s) created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The admin role name to attach, can be used instead of <b>admin_role_id</b>
+         */
+        adminRoleName: string | string[];
+        /**
+         *The merge mode. The following values are possible: add, del, set
+         */
+        mode?: string;
+    }
+    interface AttachAdminRoleResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface AdminUsersInterface {
+        /**
+         * Adds a new admin user into the specified parent or child account.
+         */
+        addAdminUser: (request: AddAdminUserRequest) => Promise<AddAdminUserResponse>;
+        /**
+         * Deletes the specified admin user.
+         */
+        delAdminUser: (request: DelAdminUserRequest) => Promise<DelAdminUserResponse>;
+        /**
+         * Edits the specified admin user.
+         */
+        setAdminUserInfo: (request: SetAdminUserInfoRequest) => Promise<SetAdminUserInfoResponse>;
+        /**
+         * Gets the admin users of the specified account. Note that both account types - parent and child - can have its own admins.
+         */
+        getAdminUsers: (request: GetAdminUsersRequest) => Promise<GetAdminUsersResponse>;
+        /**
+         * Attaches the admin role(s) to the already existing admin(s).
+         */
+        attachAdminRole: (request: AttachAdminRoleRequest) => Promise<AttachAdminRoleResponse>;
+    }
+    interface AddAdminRoleRequest {
+        /**
+         *The admin role name. The length must be less than 50
+         */
+        adminRoleName: string;
+        /**
+         *Whether the admin role is enabled. If false the allowed and denied entries have no affect
+         */
+        adminRoleActive?: boolean;
+        /**
+         *The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles. The list specifies the roles from which the new role automatically copies all permissions (allowed_entries and denied_entries)
+         */
+        likeAdminRoleId?: 'any' | number | number[];
+        /**
+         *The admin role name that can be used instead of <b>like_admin_role_id</b>. The name specifies a role from which the new role automatically copies all permissions (allowed_entries and denied_entries)
+         */
+        likeAdminRoleName?: string | string[];
+        /**
+         *The list of allowed access entries separated by semicolons (;) (the API function names)
+         */
+        allowedEntries?: string | string[];
+        /**
+         *The list of denied access entries separated by semicolons (;) (the API function names)
+         */
+        deniedEntries?: string | string[];
+    }
+    interface AddAdminRoleResponse {
+        /**
+         *1
+         */
+        result: number;
+        /**
+         *The new admin role ID
+         */
+        adminRoleId: number;
+    }
+    interface DelAdminRoleRequest {
+        /**
+         *The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles
+         */
+        adminRoleId: 'any' | number | number[];
+        /**
+         *The admin role name to delete, can be used instead of <b>admin_role_id</b>
+         */
+        adminRoleName: string | string[];
+    }
+    interface DelAdminRoleResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface SetAdminRoleInfoRequest {
+        /**
+         *The admin role to edit
+         */
+        adminRoleId: number;
+        /**
+         *The admin role to edit, can be used instead of <b>admin_role_id</b>
+         */
+        adminRoleName: string;
+        /**
+         *The new admin role name. The length must be less than 50
+         */
+        newAdminRoleName?: string;
+        /**
+         *Whether the admin role is enabled. If false the allowed and denied entries have no affect
+         */
+        adminRoleActive?: boolean;
+        /**
+         *The modification mode of the permission lists (allowed_entries and denied_entries). The following values are possible: add, del, set
+         */
+        entryModificationMode?: string;
+        /**
+         *The list of allowed access entry changes separated by semicolons (;) (the API function names)
+         */
+        allowedEntries?: string | string[];
+        /**
+         *The list of denied access entry changes separated by semicolons (;) (the API function names)
+         */
+        deniedEntries?: string | string[];
+        /**
+         *The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles. The list specifies the roles from which the allowed_entries and denied_entries are merged
+         */
+        likeAdminRoleId?: 'any' | number | number[];
+        /**
+         *The admin role name, can be used instead of <b>like_admin_role_id</b>. The name specifies a role from which the allowed_entries and denied_entries are merged
+         */
+        likeAdminRoleName?: string | string[];
+    }
+    interface SetAdminRoleInfoResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface GetAdminRolesRequest {
+        /**
+         *The admin role ID to filter
+         */
+        adminRoleId?: number;
+        /**
+         *The admin role name part to filter
+         */
+        adminRoleName?: string;
+        /**
+         *Whether the admin role is enabled to filter
+         */
+        adminRoleActive?: boolean;
+        /**
+         *Whether to get the permissions
+         */
+        withEntries?: boolean;
+        /**
+         *Whether to include the account roles
+         */
+        withAccountRoles?: boolean;
+        /**
+         *Whether to include the parent roles
+         */
+        withParentRoles?: boolean;
+        withSystemRoles?: boolean;
+        /**
+         *The attached admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
+         */
+        includedAdminUserId?: 'any' | number | number[];
+        /**
+         *Not attached admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
+         */
+        excludedAdminUserId?: 'any' | number | number[];
+        /**
+         *Set false to get roles with partial admin user list matching
+         */
+        fullAdminUsersMatching?: string;
+        /**
+         *The admin user to show in the 'admin_users' field output
+         */
+        showingAdminUserId?: number;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+    }
+    interface GetAdminRolesResponse {
+        result: AdminRole[];
+        /**
+         *The total found admin role count
+         */
+        totalCount: number;
+        /**
+         *The returned admin role count
+         */
+        count: number;
+    }
+    interface GetAvailableAdminRoleEntriesRequest {
+    }
+    interface GetAvailableAdminRoleEntriesResponse {
+        /**
+         *Array of the admin role entries
+         */
+        result: string[];
+    }
+    interface AdminRolesInterface {
+        /**
+         * Adds a new admin role.
+         */
+        addAdminRole: (request: AddAdminRoleRequest) => Promise<AddAdminRoleResponse>;
+        /**
+         * Deletes the specified admin role.
+         */
+        delAdminRole: (request: DelAdminRoleRequest) => Promise<DelAdminRoleResponse>;
+        /**
+         * Edits the specified admin role.
+         */
+        setAdminRoleInfo: (request: SetAdminRoleInfoRequest) => Promise<SetAdminRoleInfoResponse>;
+        /**
+         * Gets the admin roles.
+         */
+        getAdminRoles: (request: GetAdminRolesRequest) => Promise<GetAdminRolesResponse>;
+        /**
+         * Gets the all available admin role entries.
+         */
+        getAvailableAdminRoleEntries: (request: GetAvailableAdminRoleEntriesRequest) => Promise<GetAvailableAdminRoleEntriesResponse>;
+    }
+    interface AddAuthorizedAccountIPRequest {
+        /**
+         *The authorized IP4 or network
+         */
+        authorizedIp: string;
+        /**
+         *Whether to remove the IP from the blacklist
+         */
+        allowed?: boolean;
+        /**
+         *The IP address description
+         */
+        description?: string;
+    }
+    interface AddAuthorizedAccountIPResponse {
+        /**
+         *1
+         */
+        result: number;
+    }
+    interface DelAuthorizedAccountIPRequest {
+        /**
+         *The authorized IP4 or network to remove. Set to 'all' to remove all items
+         */
+        authorizedIp: string;
+        /**
+         *Specify the parameter to remove the networks that contains the particular IP4. Can be used instead of <b>autharized_ip</b>
+         */
+        containsIp: string;
+        /**
+         *Whether to remove the network from the white list. Set false to remove the network from the black list. Omit the parameter to remove the network from all lists
+         */
+        allowed?: boolean;
+    }
+    interface DelAuthorizedAccountIPResponse {
+        /**
+         *The removed network count
+         */
+        result: number;
+    }
+    interface GetAuthorizedAccountIPsRequest {
+        /**
+         *The authorized IP4 or network to filter
+         */
+        authorizedIp?: string;
+        /**
+         *Whether the IP is allowed
+         */
+        allowed?: boolean;
+        /**
+         *Specify the parameter to filter the networks that contains the particular IP4
+         */
+        containsIp?: string;
+        /**
+         *The max returning record count
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *The IP address description
+         */
+        description?: string;
+    }
+    interface GetAuthorizedAccountIPsResponse {
+        result: AuthorizedAccountIP[];
+        /**
+         *The total found network count
+         */
+        totalCount: number;
+        /**
+         *The returned network count
+         */
+        count: number;
+    }
+    interface CheckAuthorizedAccountIPRequest {
+        /**
+         *The IP4 to test
+         */
+        authorizedIp: string;
+    }
+    interface CheckAuthorizedAccountIPResponse {
+        /**
+         *Whether the IP is allowed
+         */
+        result: boolean;
+        /**
+         *The matched authorized IP or network (if found)
+         */
+        authorizedIp?: string;
+    }
+    interface AuthorizedIPsInterface {
+        /**
+         * Adds a new authorized IP4 or network to the white/black list.
+         */
+        addAuthorizedAccountIP: (request: AddAuthorizedAccountIPRequest) => Promise<AddAuthorizedAccountIPResponse>;
+        /**
+         * Removes the authorized IP4 or network from the white/black list.
+         */
+        delAuthorizedAccountIP: (request: DelAuthorizedAccountIPRequest) => Promise<DelAuthorizedAccountIPResponse>;
+        /**
+         * Gets the authorized IP4 or network.
+         */
+        getAuthorizedAccountIPs: (request: GetAuthorizedAccountIPsRequest) => Promise<GetAuthorizedAccountIPsResponse>;
+        /**
+         * Tests whether the IP4 is banned or allowed.
+         */
+        checkAuthorizedAccountIP: (request: CheckAuthorizedAccountIPRequest) => Promise<CheckAuthorizedAccountIPResponse>;
+    }
+    interface SetDialogflowKeyRequest {
+        /**
+         *The Dialogflow key's ID
+         */
+        dialogflowKeyId: number;
+        /**
+         *The Dialogflow keys's description. To clear previously set description leave the parameter blank or put whitespaces only
+         */
+        description: string;
+    }
+    interface SetDialogflowKeyResponse {
+        result: number;
+    }
+    interface DialogflowCredentialsInterface {
+        /**
+         * Edits a Dialogflow key.
+         */
+        setDialogflowKey: (request: SetDialogflowKeyRequest) => Promise<SetDialogflowKeyResponse>;
+    }
+    interface SendSmsMessageRequest {
+        /**
+         *The source phone number
+         */
+        source: string;
+        /**
+         *The destination phone number
+         */
+        destination: string;
+        /**
+         *The message text, up to 765 characters. We split long messages greater than 160 GSM-7 characters or 70 UTF-16 characters into multiple segments. Each segment is charged as one message
+         */
+        smsBody: string;
+        /**
+         *Whether to store outgoing message texts. Default value is false
+         */
+        storeBody?: boolean;
+    }
+    interface SendSmsMessageResponse {
+        result: number;
+        /**
+         *Message ID
+         */
+        messageId: number;
+        /**
+         *The number of fragments the message is divided into
+         */
+        fragmentsCount: number;
+    }
+    interface A2PSendSmsRequest {
+        /**
+         *The SenderID for outgoing SMS. Please contact support for installing a SenderID
+         */
+        srcNumber: string;
+        /**
+         *The destination phone numbers separated by semicolons (;). The maximum number of these phone numbers is 100
+         */
+        dstNumbers: string | string[];
+        /**
+         *The message text, up to 1600 characters. We split long messages greater than 160 GSM-7 characters or 70 UTF-16 characters into multiple segments. Each segment is charged as one message
+         */
+        text: string;
+        /**
+         *Whether to store outgoing message texts. Default value is false
+         */
+        storeBody?: boolean;
+    }
+    interface A2PSendSmsResponse {
+        result: SmsTransaction[];
+        failed: FailedSms[];
+        /**
+         *The number of fragments the message is divided into
+         */
+        fragmentsCount: number;
+    }
+    interface ControlSmsRequest {
+        /**
+         *The phone number
+         */
+        phoneNumber: string;
+        /**
+         *The SMS control command. The following values are possible: enable, disable
+         */
+        command: string;
+    }
+    interface ControlSmsResponse {
+        result: number;
+    }
+    interface GetSmsHistoryRequest {
+        /**
+         *The source phone number
+         */
+        sourceNumber?: string;
+        /**
+         *The destination phone number
+         */
+        destinationNumber?: string;
+        /**
+         *Sent or received SMS. Possible values: 'IN', 'OUT', 'in, 'out'. Leave blank to get both incoming and outgoing messages
+         */
+        direction?: string;
+        /**
+         *Maximum number of resulting rows fetched. Must be not bigger than 1000. If left blank, then the default value of 1000 is used
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *Date from which to perform search. Format is 'yyyy-MM-dd HH:mm:ss', time zone is UTC
+         */
+        fromDate?: Date;
+        /**
+         *Date until which to perform search. Format is 'yyyy-MM-dd HH:mm:ss', time zone is UTC
+         */
+        toDate?: Date;
+        /**
+         *The output format. The following values available: json, csv
+         */
+        output?: string;
+    }
+    interface GetSmsHistoryResponse {
+        result: SmsHistory[];
+        /**
+         *Total number of messages matching the query parameters
+         */
+        totalCount: number;
+    }
+    interface A2PGetSmsHistoryRequest {
+        /**
+         *The source phone number
+         */
+        sourceNumber?: string;
+        /**
+         *The destination phone number
+         */
+        destinationNumber?: string;
+        /**
+         *Maximum number of resulting rows fetched. Must be not bigger than 1000. If left blank, then the default value of 1000 is used
+         */
+        count?: number;
+        /**
+         *The first <b>N</b> records are skipped in the output
+         */
+        offset?: number;
+        /**
+         *Date from which the search is to start. Format is 'yyyy-MM-dd HH:mm:ss', time zone is UTC
+         */
+        fromDate?: Date;
+        /**
+         *Date from which the search is to end. Format is 'yyyy-MM-dd HH:mm:ss', time zone is UTC
+         */
+        toDate?: Date;
+        /**
+         *The output format. The possible values are json, csv
+         */
+        output?: string;
+        /**
+         *The delivery status ID: QUEUED - 1, DISPATCHED - 2, ABORTED - 3, REJECTED - 4, DELIVERED - 5, FAILED - 6, EXPIRED - 7, UNKNOWN - 8
+         */
+        deliveryStatus?: number;
+    }
+    interface A2PGetSmsHistoryResponse {
+        result: A2PSmsHistory[];
+        /**
+         *Total number of messages matching the query parameters
+         */
+        totalCount: number;
+    }
+    interface SMSInterface {
+        /**
+         * Sends an SMS message between two phone numbers. The source phone number should be purchased from Voximplant and support SMS (which is indicated by the <b>is_sms_supported</b> property in the objects returned by the [GetPhoneNumbers] Management API) and SMS should be enabled for it via the [ControlSms] Management API. SMS messages can be received via HTTP callbacks, see <a href='/docs/guides/managementapi/callbacks'>this article</a> for details.
+         */
+        sendSmsMessage: (request: SendSmsMessageRequest) => Promise<SendSmsMessageResponse>;
+        /**
+         * Sends an SMS message from the application to customers. The source phone number should be purchased from Voximplant and support SMS (which is indicated by the <b>is_sms_supported</b> property in the objects returned by the <a href='/docs/references/httpapi/managing_phone_numbers#getphonenumbers'>/GetPhoneNumbers</a> Management API) and SMS should be enabled for it via the <a href='/docs/references/httpapi/managing_sms#controlsms'>/ControlSms</a> Management API.
+         */
+        a2PSendSms: (request: A2PSendSmsRequest) => Promise<A2PSendSmsResponse>;
+        /**
+         * Enables or disables sending and receiving SMS for the phone number. Can be used only for phone numbers with SMS support, which is indicated by the <b>is_sms_supported</b> property in the objects returned by the [GetPhoneNumbers] Management API. Each incoming SMS message is charged according to the <a href='//voximplant.com/pricing'>pricing</a>. If enabled, SMS can be sent from this phone number via the [SendSmsMessage] Management API and received via the [InboundSmsCallback] property of the HTTP callback. See <a href='/docs/guides/managementapi/callbacks'>this article</a> for HTTP callback details.
+         */
+        controlSms: (request: ControlSmsRequest) => Promise<ControlSmsResponse>;
+        /**
+         * Gets the history of sent and/or received SMS.
+         */
+        getSmsHistory: (request: GetSmsHistoryRequest) => Promise<GetSmsHistoryResponse>;
+        /**
+         * Gets the history of sent/or received A2P SMS.
+         */
+        a2PGetSmsHistory: (request: A2PGetSmsHistoryRequest) => Promise<A2PGetSmsHistoryResponse>;
+    }
+    interface GetRecordStoragesRequest {
+        /**
+         *The record storage ID list separated by semicolons (;)
+         */
+        recordStorageId?: 'any' | number | number[];
+        /**
+         *The record storage name list separated by semicolons (;)
+         */
+        recordStorageName?: string | string[];
+        withPrivate?: boolean;
+    }
+    interface GetRecordStoragesResponse {
+        result: RecordStorageInfo;
+    }
+    interface RecordStoragesInterface {
+        /**
+         * Gets the record storages.
+         */
+        getRecordStorages: (request: GetRecordStoragesRequest) => Promise<GetRecordStoragesResponse>;
+    }
+    interface GetRoleGroupsRequest {
+    }
+    interface GetRoleGroupsResponse {
+        result: RoleGroupView[];
+    }
+    interface RoleSystemInterface {
+        /**
+         * Gets role groups.
+         */
+        getRoleGroups: (request: GetRoleGroupsRequest) => Promise<GetRoleGroupsResponse>;
+    }
+    interface SetKeyValueItemRequest {
+        /**
+         *Key, up to 200 characters. A key can contain a namespace that is written before the ':' symbol, for example, test:1234. Thus, namespace 'test' can be used as a pattern in the [GetKeyValueItems](/docs/references/httpapi/keyvaluestorage#getkeyvalueitems) and [GetKeyValueKeys](/docs/references/httpapi/keyvaluestorage#getkeyvaluekeys) methods to find the keys with the same namespace
+         */
+        key: string;
+        /**
+         *Value for the specified key, up to 2000 characters
+         */
+        value: string;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name
+         */
+        applicationName?: string;
+        /**
+         *Key expiry time in seconds. The value is in range of 0..7,776,000 (90 days), the default value is 30 days (2,592,000 seconds). The TTL is converted to an **expires_at** Unix timestamp field as part of the storage object. Note that one of the two parameters (ttl or expires_at) must be set
+         */
+        ttl?: number;
+        /**
+         *Expiration date based on **ttl** (timestamp without milliseconds). Note that one of the two parameters (ttl or expires_at) must be set
+         */
+        expiresAt?: number;
+    }
+    interface SetKeyValueItemResponse {
+        /**
+         *The key-value item
+         */
+        result: KeyValueItems;
+    }
+    interface DelKeyValueItemRequest {
+        /**
+         *Key, up to 200 characters
+         */
+        key: string;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name
+         */
+        applicationName?: string;
+    }
+    interface DelKeyValueItemResponse {
+        result: number;
+    }
+    interface GetKeyValueItemRequest {
+        /**
+         *Key, up to 200 characters
+         */
+        key: string;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *The application name
+         */
+        applicationName?: string;
+    }
+    interface GetKeyValueItemResponse {
+        /**
+         *The key-value item
+         */
+        result: KeyValueItems;
+    }
+    interface GetKeyValueItemsRequest {
+        /**
+         *Namespace that keys should contain, up to 200 characters
+         */
+        key: string;
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *Number of items to show per page with a maximum value of 50. Default value is 10
+         */
+        count?: number;
+        /**
+         *Number of items to skip (e.g. if you set count = 20 and offset = 0 the first time, the next time, offset has to be equal to 20 to skip the items shown earlier). Default value is 0
+         */
+        offset?: number;
+        /**
+         *The application name
+         */
+        applicationName?: string;
+    }
+    interface GetKeyValueItemsResponse {
+        /**
+         *The key-value pairs
+         */
+        result: KeyValueItems;
+    }
+    interface GetKeyValueKeysRequest {
+        /**
+         *The application ID
+         */
+        applicationId: number;
+        /**
+         *Namespace that keys should contain, up to 200 characters
+         */
+        key?: string;
+        /**
+         *Number of items to show per page with a maximum value of 50. Default value is 10
+         */
+        count?: number;
+        /**
+         *Number of items to skip (e.g. if you set count = 20 and offset = 0 the first time, the next time, offset has to be equal to 20 to skip the items shown earlier). Default value is 0
+         */
+        offset?: number;
+        /**
+         *The application name
+         */
+        applicationName?: string;
+    }
+    interface GetKeyValueKeysResponse {
+        /**
+         *The key-value keys
+         */
+        result: KeyValueKeys;
+    }
+    interface KeyValueStorageInterface {
+        /**
+         * Creates or updates a key-value pair. If an existing key is passed, the method returns the existing item and changes the value if needed. The keys should be unique within a Voximplant application.
+         */
+        setKeyValueItem: (request: SetKeyValueItemRequest) => Promise<SetKeyValueItemResponse>;
+        /**
+         * Deletes the specified key-value pair from the storage.
+         */
+        delKeyValueItem: (request: DelKeyValueItemRequest) => Promise<DelKeyValueItemResponse>;
+        /**
+         * Gets the specified key-value pair from the storage.
+         */
+        getKeyValueItem: (request: GetKeyValueItemRequest) => Promise<GetKeyValueItemResponse>;
+        /**
+         * Gets all the key-value pairs in which the keys begin with a pattern.
+         */
+        getKeyValueItems: (request: GetKeyValueItemsRequest) => Promise<GetKeyValueItemsResponse>;
+        /**
+         * Gets all the keys of key-value pairs.
+         */
+        getKeyValueKeys: (request: GetKeyValueKeysRequest) => Promise<GetKeyValueKeysResponse>;
+    }
+    interface GetAccountInvoicesRequest {
+        status?: string;
+        /**
+         *Number of invoices to show per page. Default value is 20
+         */
+        count?: number;
+        /**
+         *Number of invoices to skip (e.g. if you set count = 20 and offset = 0 the first time, the next time, offset has to be equal to 20 to skip the items shown earlier). Default value is 0
+         */
+        offset?: number;
+    }
+    interface GetAccountInvoicesResponse {
+        /**
+         *Array of the account invoices
+         */
+        result: AccountInvoice;
+        /**
+         *Total number of invoices matching the query parameters
+         */
+        totalCount: number;
+        /**
+         *Number of returned invoices matching the query parameters
+         */
+        count: number;
+    }
+    interface InvoicesInterface {
+        /**
+         * Gets all invoices of the specified USD or EUR account.
+         */
+        getAccountInvoices: (request: GetAccountInvoicesRequest) => Promise<GetAccountInvoicesResponse>;
+    }
+    class Client {
+
+        Accounts: AccountsInterface;
+        Applications: ApplicationsInterface;
+        Users: UsersInterface;
+        CallLists: CallListsInterface;
+        Scenarios: ScenariosInterface;
+        History: HistoryInterface;
+        PSTNBlacklist: PSTNBlacklistInterface;
+        SIPWhiteList: SIPWhiteListInterface;
+        SIPRegistration: SIPRegistrationInterface;
+        PhoneNumbers: PhoneNumbersInterface;
+        CallerIDs: CallerIDsInterface;
+        OutboundTestNumbers: OutboundTestNumbersInterface;
+        Queues: QueuesInterface;
+        SmartQueue: SmartQueueInterface;
+        Skills: SkillsInterface;
+        AdminUsers: AdminUsersInterface;
+        AdminRoles: AdminRolesInterface;
+        AuthorizedIPs: AuthorizedIPsInterface;
+        DialogflowCredentials: DialogflowCredentialsInterface;
+        SMS: SMSInterface;
+        RecordStorages: RecordStoragesInterface;
+        RoleSystem: RoleSystemInterface;
+        KeyValueStorage: KeyValueStorageInterface;
+        Invoices: InvoicesInterface;
+    }
+
+}
 
 declare namespace VoximplantAvatar {
   /**
@@ -14069,7 +20215,7 @@ declare namespace VoximplantAvatar {
      */
     utterance?: string;
     /**
-     * Next avatar state. Optional
+     * Optional. Next avatar state
      */
     nextState?: string;
     /**
@@ -14093,7 +20239,7 @@ declare namespace VoximplantAvatar {
      */
     isFinal?: boolean;
     /**
-     * Optional number value that specifies how long an avatar listens to the user after saying its utterance (or during it, if interruptions are enabled)
+     * Optional. Number value that specifies how long an avatar listens to the user after saying its utterance (or during it, if interruptions are enabled)
      */
     listenTimeout?: number;
     /**
@@ -14131,7 +20277,7 @@ declare namespace VoximplantAvatar {
      */
     asrParameters: ASRParameters;
     /**
-     * Optional [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
+     * Optional. [Player](/docs/references/voxengine/player) parameters: language, progressivePlayback, volume, rate, etc.
      */
     ttsPlayerParameters: TTSPlayerParameters;
     /**
@@ -14207,7 +20353,14 @@ declare namespace VoximplantAvatar {
  */
 declare namespace VoximplantAvatar {}
 
-declare type VoxMediaUnit = Call | Player | Conference | Recorder | WebSocket | StreamingAgent;
+declare type VoxMediaUnit =
+  | Call
+  | Player
+  | ASR
+  | Conference
+  | Recorder
+  | WebSocket
+  | StreamingAgent;
 
 /**
  * Available audio encoding formats to pass to 'encoding'. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is 'PCM8'.
@@ -15103,7 +21256,6 @@ declare interface ASRParameters {
   ];
 
   /**
-   * TODO: fix description
    * Maximum number of recognition hypotheses to be returned.
    * <br>
    * <br>
@@ -15113,7 +21265,6 @@ declare interface ASRParameters {
   maxAlternatives: number;
 
   /**
-   * TODO: fix description
    * Speech adaptation configuration.
    * <br>
    * <br>
@@ -15123,8 +21274,7 @@ declare interface ASRParameters {
   adaptation: Object;
 
   /**
-   * TODO: fix description
-   * The spoken punctuation behavior for the call.
+   * Whether to enable the spoken punctuation behavior for the call.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -15133,8 +21283,7 @@ declare interface ASRParameters {
   enableSpokenPunctuation: boolean;
 
   /**
-   * TODO: fix description
-   * The spoken emoji behavior for the call.
+   * Whether to enable the spoken emoji behavior for the call.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -15143,8 +21292,7 @@ declare interface ASRParameters {
   enableSpokenEmojis: boolean;
 
   /**
-   * TODO: fix description
-   * The spoken emoji behavior for the call.
+   * Whether to use the enhanced models for speech recognition.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -15153,7 +21301,6 @@ declare interface ASRParameters {
   useEnhanced: boolean;
 
   /**
-   * TODO: fix description
    * Transcription normalization configuration. Use transcription normalization to automatically replace parts of the transcript with phrases of your choosing.
    * <br>
    * <br>
@@ -17487,11 +23634,11 @@ declare module Net {
      */
     postData?: string | number[];
     /**
-     * Optional request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
+     * Optional. Request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
      */
     headers?: { [key: string]: string };
     /**
-     * Optional request parameters. They can be specified in the URL itself as well
+     * Optional. Request parameters. They can be specified in the URL itself as well
      */
     params?: {
       [key: string]: string;
@@ -17501,9 +23648,13 @@ declare module Net {
      */
     rawOutput?: boolean;
     /**
-     * If set, overrides default HTTP request timeout, in seconds, the default value is 90 seconds. Timeout can only be decreased
+     * Optional. Timeout for getting a response to the request in seconds. The default value is 90. The value can be only decreased
      */
     timeout?: number;
+    /**
+     * Optional. Timeout for the TCP connection to the address in seconds. The default value is 6. The value can be only decreased
+     */
+    connectionTimeout?: number;
     /**
      * Whether to enable logging the POST request body. The default value is false
      */
@@ -17837,7 +23988,7 @@ declare interface TTSPlaybackParameters {
    */
   allowPlaybackInterruption: true;
   /**
-   * Optional [Player](/docs/references/voxengine/player) parameters.
+   * Optional. [Player](/docs/references/voxengine/player) parameters.
    * <br>
    * NOTE: the default value is inherited from the [VoiceAvatarConfig.ttsPlayerOptions](/docs/references/voxengine/voximplantavatar/voiceavatarconfig) parameter.
    */
@@ -17845,7 +23996,7 @@ declare interface TTSPlaybackParameters {
 }
 
 /**
- * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
+ * Optional. [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
  */
 declare interface TTSPlayerParameters {
   /**
@@ -17857,7 +24008,7 @@ declare interface TTSPlayerParameters {
    */
   progressivePlayback?: boolean;
   /**
-   * Optional parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   ttsOptions?: TTSOptions;
   /**
@@ -17865,7 +24016,7 @@ declare interface TTSPlayerParameters {
    */
   onPause?: boolean;
   /**
-   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/voice-list#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
    */
   request?: Object;
 }
@@ -17877,7 +24028,7 @@ declare interface TTSPlayerParameters {
  */
 declare interface URLPlaybackParameters {
   /**
-   * Url of an audio file. Supported formats are: mp3, ogg & flac (mp3, speex, vorbis and flac codecs respectively). Maximum file size is 10 Mb.
+   * Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
    */
   url: string;
   /**
@@ -17887,7 +24038,7 @@ declare interface URLPlaybackParameters {
    */
   allowPlaybackInterruption: true;
   /**
-   * Optional [Player](/docs/references/voxengine/player) parameters.
+   * Optional. [Player](/docs/references/voxengine/player) parameters.
    * <br>
    * Same as [URLPlayerParameters](/docs/references/voxengine/urlplayerparameters).
    */
@@ -17895,7 +24046,7 @@ declare interface URLPlaybackParameters {
 }
 
 /**
- * Optional [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
+ * Optional. [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
  */
 declare interface URLPlayerParameters {
   /**
@@ -17913,6 +24064,71 @@ declare interface URLPlayerParameters {
 }
 
 /**
+ * @private
+ */
+declare type URLPlayerRequestBodyKeys = 'text' | 'binary';
+
+/**
+ * The type of the URL player request body.
+ */
+declare type URLPlayerRequestBody = {
+  /**
+   * Can be 'text' or 'binary'. 'text' is a stringify object of the **'{"key":"value"}')** type, the 'binary' is a Base64 string
+   */
+  [key in URLPlayerRequestBodyKeys]: string;
+};
+
+/**
+ * The URL player's request header object.
+ */
+declare type URLPlayerRequestHeader = {
+  /**
+   * HTTP request header name
+   */
+  name: string;
+  /**
+   * HTTP request header value
+   */
+  value: string;
+};
+
+/**
+ * The URL player request type enumeration.
+ */
+declare enum URLPlayerRequestMethod {
+  /**
+   * The **GET** HTTP method
+   */
+  GET = 'GET',
+  /**
+   * The **POST** HTTP method
+   */
+  POST = 'POST',
+}
+
+/**
+ * The URL player request's parameters
+ */
+declare interface URLPlayerRequest {
+  /**
+   * Optional. HTTP request method. The default value is **GET**
+   */
+  method?: URLPlayerRequestMethod;
+  /**
+   * HTTP request url
+   */
+  url: string;
+  /**
+   * Optional. HTTP request headers
+   */
+  headers?: URLPlayerRequestHeader[];
+  /**
+   * Optional. HTTP request body
+   */
+  body?: URLPlayerRequestBody;
+}
+
+/**
  * Generates unique identifier and returns it is string representation
  */
 declare function uuidgen(): string;
@@ -17922,7 +24138,7 @@ declare function uuidgen(): string;
  */
 declare interface VoiceChannelParameters {
   /**
-   * Optional [ASR](/docs/references/voxengine/asr) parameters.
+   * Optional. [ASR](/docs/references/voxengine/asr) parameters.
    * <br>
    * NOTE: the default value is inherited from the [VoiceAvatarConfig.asrParameters](/docs/references/voxengine/voximplantavatar/voiceavatarconfig#asrparameters) parameter.
    */

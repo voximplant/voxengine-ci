@@ -18,7 +18,7 @@ declare interface ACDEnqueueParameters {
    * Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which switches to another agent if current one does not answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60).
    * The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
-  headers: { [header: string]: string };
+  headers?: { [header: string]: string };
   /**
    * Whether the call has video support. Please note that prices for audio only and video calls are different.
    */
@@ -203,17 +203,17 @@ declare class ACDRequest {
    */
   public addEventListener<T extends keyof _ACDEvents>(
     event: ACDEvents | T,
-    callback: (ev: _ACDEvents[T]) => any
+    callback: (event: _ACDEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [ACDEvents] event
    * @param event Event class (i.e., [ACDEvents.Offline])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   public removeEventListener<T extends keyof _ACDEvents>(
     event: ACDEvents | T,
-    callback?: (ev: _ACDEvents[T]) => any
+    callback?: (event: _ACDEvents[T]) => any
   ): void;
 
   /**
@@ -234,13 +234,13 @@ declare namespace AI {}
 
 declare namespace AI {
   /**
-   * Creates and returns a new Dialogflow instance which provides resources for exchanging data with the Dialogflow API, handling events etc.
+   * Creates a new [AI.Dialogflow] instance which provides resources for exchanging data with the Dialogflow API, handling events, etc. You can attach media streams later via the [AI.DialogflowInstance.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.AI);
    * ```
-   * @param parameters
+   * @param parameters Dialogflow parameters
    */
   function createDialogflow(parameters: DialogflowSettings): DialogflowInstance;
 }
@@ -322,9 +322,9 @@ declare namespace AI {
   class DialogflowInstance {
     /**
      * @param id
-     * @param parameters
+     * @param parameters Dialogflow parameters
      */
-    constructor(id: string, parameters: any);
+    constructor(id: string, parameters: Object);
 
     /**
      * Set parameters for the intents.
@@ -334,7 +334,7 @@ declare namespace AI {
 
     /**
      * Set a collection of phrase hints for the intents.
-     * @param phraseHints The collection of phrase hints to boost the speech recognition accuracy.
+     * @param phraseHints The collection of phrase hints to boost the speech recognition accuracy
      */
     public setPhraseHints(phraseHints: { [id: string]: string }): void;
 
@@ -351,13 +351,13 @@ declare namespace AI {
 
     /**
      * Send a query to the DialogFlow instance. You can send either a text string up to 256 characters or an event object with the event name and additional data.
-     * @param dialogflowQuery Text string (up to 256 characters) or an event object.
+     * @param dialogflowQuery Text string (up to 256 characters) or an event object
      */
     public sendQuery(dialogflowQuery: DialogflowQueryInput): void;
 
     /**
      * Add a Dialogflow speech synthesis playback marker. The [AI.Events.DialogflowPlaybackMarkerReached](/docs/references/voxengine/ai/events#dialogflowplaybackmarkerreached) event is triggered when the marker is reached.
-     * @param offset Positive/negative offset (ms) from the start/end of media.
+     * @param offset Positive/negative offset (ms) from the start/end of media
      */
     public addMarker(offset: number): void;
 
@@ -373,22 +373,22 @@ declare namespace AI {
 
     /**
      * Adds a handler for the specified [AI.Events]. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called
-     * @param event Event class (i.e., AI.Events.DialogflowResponse)
+     * @param event Event class (i.e., [AI.Events.DialogflowResponse])
      * @param callback Handler function. A single parameter is passed: object with event information
      */
     public addEventListener<T extends keyof AI._Events>(
       event: AI.Events | T,
-      callback: (ev: AI._Events[T]) => any
+      callback: (event: AI._Events[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [AI.Events] event
-     * @param event Event class (i.e., AI.Events.DialogflowResponse)
-     * @param callback Handler function. If not specified, all event listeners are removed
+     * @param event Event class (i.e., [AI.Events.DialogflowResponse])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     public removeEventListener<T extends keyof AI._Events>(
       event: AI.Events | T,
-      callback?: (ev: AI._Events[T]) => any
+      callback?: (event: AI._Events[T]) => any
     ): void;
   }
 }
@@ -935,7 +935,8 @@ declare namespace AMD {
 }
 
 /**
- * The AMD provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
+ * The Answering Machine Detection module provides methods that allow developers to recognize voicemail prompts with the help of artifitial intelligence.
+ * Read more about the topic in the [Voicemail detection](https://voximplant.com/docs/guides/calls/voicemail-detection) article.
  */
 declare namespace AMD {}
 
@@ -955,29 +956,29 @@ declare namespace AMD {
 
     /**
      * Adds a handler for the specified [AMD.Events]. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called
-     * @param event Event class (e.g., AMD.Events.DetectionComplete)
+     * @param event Event class (e.g., [AMD.Events.DetectionComplete])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
     public addEventListener<T extends keyof AMD._Events>(
       event: AMD.Events | T,
-      callback: (ev: AMD._Events[T]) => any
+      callback: (event: AMD._Events[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [AMD.Events] event
-     * @param event Event class (i.e., AMD.Events.DetectionComplete)
-     * @param callback Handler function. If not specified, all event listeners are removed
+     * @param event Event class (i.e., [AMD.Events.DetectionComplete])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     public removeEventListener<T extends keyof AMD._Events>(
       event: AMD.Events | T,
-      callback?: (ev: AMD._Events[T]) => any
+      callback?: (event: AMD._Events[T]) => any
     ): void;
   }
 }
 
 declare namespace AMD {
   /**
-   * Creates answering machine or voicemail detector.
+   * Creates a new [AMD.AnsweringMachineDetector](answering machine or voicemail detector) instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    */
   function create(parameters: AMD.AMDParameters): AMD.AnsweringMachineDetector;
 }
@@ -1097,9 +1098,21 @@ declare namespace AMD {
    * Answering machine result class, such as human, voicemail, timeout or call termination.
    */
   enum ResultClass {
+    /**
+     * AMD detected a voicemail prompt.
+     */
     VOICEMAIL = 'VOICEMAIL',
+    /**
+     * AMD detected a human answering.
+     */
     HUMAN = 'HUMAN',
+    /**
+     * AMD reached the recognition timeout.
+     */
     TIMEOUT = 'TIMEOUT',
+    /**
+     * AMD detected a call hangup.
+     */
     CALL_ENDED = 'CALL_ENDED',
   }
 }
@@ -1348,13 +1361,13 @@ declare class ApplicationStorage {
 
   /**
    * Deletes the specified key. Note that the returned **StorageKey** always has zero **ttl**.
-   * @param key Key to delete.
+   * @param key Key to delete
    */
   static delete(key: string): Promise<StorageKey>;
 
   /**
    * Retrieves all the keys assigned to a Voximplant application.
-   * @param pattern Namespace that keys should contain
+   * @param pattern Optional. Namespace that keys should contain
    */
   static keys(pattern?: string): Promise<StoragePage>;
 }
@@ -1544,15 +1557,15 @@ declare interface _ASRResultEvent extends _ASREvent {
    */
   confidence: number;
   /**
-   * Time offset of the end of this result relative to the beginning of the audio.
+   * Optional. Time offset of the end of this result relative to the beginning of the audio.
    */
   resultEndTime?: string | number;
   /**
-   * For multichannel audio, this is the channel number corresponding to the recognized result for the audio from that channel.
+   * Optional. For multichannel audio, this is the channel number corresponding to the recognized result for the audio from that channel.
    */
   channelTag?: number;
   /**
-   * Output only. The BCP-47 language tag of the language in this result. This language code is detected to have the most likelihood of being spoken in the audio.
+   * Optional. Output only. The BCP-47 language tag of the language in this result. This language code is detected to have the most likelihood of being spoken in the audio.
    */
   languageCode?: string;
 }
@@ -2255,17 +2268,17 @@ declare class ASR {
    */
   public addEventListener<T extends keyof _ASREvents>(
     event: ASREvents | T,
-    callback: (ev: _ASREvents[T]) => any
+    callback: (event: _ASREvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [ASREvents] event
    * @param event Event class (i.e., [ASREvents.Stopped])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   public removeEventListener<T extends keyof _ASREvents>(
     event: ASREvents | T,
-    callback?: (ev: _ASREvents[T]) => any
+    callback?: (event: _ASREvents[T]) => any
   ): void;
 
   /**
@@ -2279,35 +2292,35 @@ declare class ASR {
  */
 declare interface BaseRecorderParameters {
   /**
-   * Whether to restrict access to the record without management API authorization (available only in [VoxEngine.createRecorder]).
+   * Optional. Whether to restrict access to the record without management API authorization (available only in [VoxEngine.createRecorder]).
    */
   secure?: boolean;
   /**
-   * Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details [in the article](/docs/guides/speech/asr).
+   * Optional. Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details [in the article](/docs/guides/speech/asr).
    */
   transcribe?: boolean;
   /**
-   * Transcription language. The parameter uses [ASRLanguage] from the ASR Module as possible values. Note that it is necessary to include the ASR module in the scenario to use the language constants. The parameter is not available for the Recorder module.
+   * Optional. Transcription language. The parameter uses [ASRLanguage] from the ASR Module as possible values. Note that it is necessary to include the ASR module in the scenario to use the language constants. The parameter is not available for the Recorder module.
    */
   language?: ASRLanguage;
   /**
-   * Whether to use the HD audio. If set to false (default), 8 KHz / 32 kbps mp3 file is generated. Otherwise, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The property is not compatible with lossless: true property.
+   * Optional. Whether to use the HD audio. If set to false (default), 8 KHz / 32 kbps mp3 file is generated. Otherwise, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The property is not compatible with lossless: true property.
    */
   hd_audio?: boolean;
   /**
-   * Storage time for recorded files. The default value is 3 months; see possible values in the [RecordExpireTime] list.
+   * Optional. Storage time for recorded files. The default value is 3 months; see possible values in the [RecordExpireTime] list.
    */
   expire?: RecordExpireTime;
   /**
-   * Whether to save the record in flac format. The default value is false. The property is not compatible with hd_audio: true property.
+   * Optional. Whether to save the record in flac format. The default value is false. The property is not compatible with hd_audio: true property.
    */
   lossless?: boolean;
   /**
-   * Whether to record video. The default value is false. For video recording use the [Call.record] method call ({video: true}). The parameter is not available for the Recorder module because it could only record an audio.
+   * Optional. Whether to record video. The default value is false. For video recording use the [Call.record] method call ({video: true}). The parameter is not available for the Recorder module because it could only record an audio.
    */
   video?: boolean;
   /**
-   * The prefix to add to the record names when storing to your S3 storage. Works only for custom S3-compatible storages.
+   * Optional. The prefix to add to the record names when storing to your S3 storage. Works only for custom S3-compatible storages.
    */
   recordNamePrefix?: string;
 }
@@ -2944,35 +2957,35 @@ declare interface _RtpResumedEvent extends _CallEvent {}
  */
 declare interface CallParameters {
   /**
-   * Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name
+   * Optional. Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name
    */
   displayName?: string;
   /**
-   * Internal information about codecs from the [AppEvents.CallAlerting] event
+   * Optional. Internal information about codecs from the [AppEvents.CallAlerting] event
    */
   scheme?: { [id: string]: any };
   /**
-   * Sets the maximum possible video bitrate for the customer device in kbps
+   * Optional. Sets the maximum possible video bitrate for the customer device in kbps
    */
   maxVideoBitrate?: number;
   /**
-   * Whether to disable the RTP header extension for transmission offset if provided
+   * Optional. Whether to disable the RTP header extension for transmission offset if provided
    */
   disableExtVideoOffset?: boolean;
   /**
-   * Whether to disable the RTP header extension for video orientation, `3gpp:video-orientation`, if provided. Browsers that do not support that extension display the video correctly, however, the battery consumption is higher
+   * Optional. Whether to disable the RTP header extension for video orientation, `3gpp:video-orientation`, if provided. Browsers that do not support that extension display the video correctly, however, the battery consumption is higher
    */
   disableExtVideoOrientation?: boolean;
   /**
-   * Whether to disable the RTP header extension to control playout delay if provided
+   * Optional. Whether to disable the RTP header extension to control playout delay if provided
    */
   disableExtPlayoutDelay?: boolean;
   /**
-   * Whether to disable the RTP header extension for video timing if provided
+   * Optional. Whether to disable the RTP header extension for video timing if provided
    */
   disableExtVideoTiming?: boolean;
   /**
-   * Whether the call is coming from a conference. The default value is false
+   * Optional. Whether the call is coming from a conference. The default value is false
    */
   conferenceCall?: boolean;
 }
@@ -2982,7 +2995,7 @@ declare interface CallParameters {
  */
 declare interface CallPSTNParameters {
   /**
-   * Answering machine or voicemail detector.
+   * Optional. Answering machine or voicemail detector.
    */
   amd?: AMD.AnsweringMachineDetector;
 }
@@ -2992,29 +3005,29 @@ declare interface CallPSTNParameters {
  */
 declare interface CallRecordParameters extends BaseRecorderParameters {
   /**
-   * Whether the sound is stereo. The default value is false. The parameter does not change anything for the Recorder module: it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
+   * Optional. Whether the sound is stereo. The default value is false. The parameter does not change anything for the Recorder module: it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
    */
   stereo?: boolean;
   /**
-   * Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the Recorder module because the transcription is not available for it.
+   * Optional. Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the Recorder module because the transcription is not available for it.
    */
   dict?: ASRDictionary | string[];
   /**
-   * An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the 'transcribe: true' parameter. The parameter is not available for the Recorder module.
+   * Optional. An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the 'transcribe: true' parameter. The parameter is not available for the Recorder module.
    */
   labels?: string[];
   /**
-   * Transcription provider.
+   * Optional. Transcription provider.
    */
   provider?: TranscriptionProvider;
   /**
-   * Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
+   * Optional. Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
    */
   format?: string;
   /**
    * Video parameters.
    */
-  videoParameters: RecorderVideoParameters;
+  videoParameters?: RecorderVideoParameters;
 }
 
 /**
@@ -3022,11 +3035,11 @@ declare interface CallRecordParameters extends BaseRecorderParameters {
  */
 declare interface CallSayParameters {
   /**
-   * Language and voice for TTS. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex], and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Language and voice for TTS. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex], and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   language?: Voice;
   /**
-   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   progressivePlayback?: boolean;
   /**
@@ -3034,7 +3047,7 @@ declare interface CallSayParameters {
    */
   ttsOptions?: TTSOptions;
   /**
-   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider">documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   * Optional. Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider">documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
    */
   request?: Object;
 }
@@ -3064,7 +3077,7 @@ declare interface CallSIPParameters {
    * Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK
    * (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
-  headers: object;
+  headers?: Object;
   /**
    * Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
@@ -3078,7 +3091,7 @@ declare interface CallSIPParameters {
    */
   regId: number;
   /**
-   * Answering machine or voicemail detector.
+   * Optional. Answering machine or voicemail detector.
    */
   amd?: AMD.AnsweringMachineDetector;
 }
@@ -3130,19 +3143,19 @@ declare interface CallUserParameters extends CallParameters {
    */
   video?: boolean;
   /**
-   * Whether to send an RTP extension header to communicate video orientation information (`a=extmap:12 urn:3gpp:video-orientation`). If false, browsers that do not support that extension are correctly displaying video; however, the battery consumption is higher. The default value is true.
+   * Optional. Whether to send an RTP extension header to communicate video orientation information (`a=extmap:12 urn:3gpp:video-orientation`). If false, browsers that do not support that extension are correctly displaying video; however, the battery consumption is higher. The default value is true.
    */
   videoOrientationExtension?: boolean;
   /**
-   * Sends custom tags along with the push notification of an incoming call.
+   * Optional. Sends custom tags along with the push notification of an incoming call.
    */
   analyticsLabel?: string;
   /**
-   * Answering machine or voicemail detector.
+   * Optional. Answering machine or voicemail detector.
    */
   amd?: AMD.AnsweringMachineDetector;
   /**
-   * Push notification timeout in milliseconds.
+   * Optional. Push notification timeout in milliseconds.
    */
   pushNotificationTimeout?: number;
 }
@@ -3163,7 +3176,7 @@ declare class Call {
    * SDKs can pass customData in two ways:<br>
    * 1) when SDK calls the Voximplant cloud</br>
    * 2) when SDK answers the call from the Voximplant cloud. See the syntax and details in the corresponding references: [WEB SDK call()](/docs/references/websdk/voximplant/client#call) / [WEB SDK answer()](/docs/references/websdk/voximplant/call#answer) / [iOS call:settings:](/docs/references/iossdk/client/viclient#callsettings) / [iOS answerWithSettings](/docs/references/iossdk/call/vicall#answerwithsettings:) / [Android call()](/docs/references/androidsdk/client/iclient#call) / [Android answer()](/docs/references/androidsdk/call/icall#answer)
-   * @param customData Custom call data to set. Maximum size is 200 bytes.
+   * @param customData Optional. Custom call data to set. Maximum size is 200 bytes
    */
   customData(customData?: string): string;
 
@@ -3204,17 +3217,17 @@ declare class Call {
    */
   addEventListener<T extends keyof _CallEvents>(
     event: CallEvents | T,
-    callback: (ev: _CallEvents[T]) => any
+    callback: (event: _CallEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [CallEvents] event
    * @param event Event class (i.e., [CallEvents.Connected])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _CallEvents>(
     event: CallEvents | T,
-    callback?: (ev: _CallEvents[T]) => any
+    callback?: (event: _CallEvents[T]) => any
   ): void;
 
   /**
@@ -3227,7 +3240,7 @@ declare class Call {
    * 1. [CallEvents.Disconnected] if the call is active before hangup.
    * 2. [CallEvents.Failed] if it is an outgoing call that is not connected previously.
    * <br>
-   * If there are no other active calls and/or SmartQueue requests in the call session, the AppEvents.Terminating and AppEvents.Terminated events are triggered in 60 seconds (see the [session limits](/docs/guides/voxengine/limits) for details).
+   * If there are no other active calls and/or SmartQueue requests in the call session, the [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered in 60 seconds (see the [session limits](/docs/guides/voxengine/limits) for details).
    * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the hangup request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   hangup(extraHeaders?: { [header: string]: string }): void;
@@ -3235,7 +3248,7 @@ declare class Call {
   /**
    * Answers the incoming call. Use it only for non-P2P call legs connection. Remember that you can use the [Call.startEarlyMedia] method before answering a call.
    * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [Connected](/docs/references/websdk/voximplant/callevents#connected) event). Example: {'X-header':'value'}
-   * @param parameters Custom parameters for answering calls.
+   * @param parameters Optional. Answering call parameters
    */
   answer(extraHeaders?: { [header: string]: string }, parameters?: CallAnswerParameters): void;
 
@@ -3243,7 +3256,7 @@ declare class Call {
    * Answer the incoming call in the peer-to-peer mode. Use it only for P2P call legs connection.
    * @param peerCall The other P2P call leg.
    * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the  Connected (/docs/references/websdk/enums/callevents.html#connected) event). Example: {'X-header':'value'}
-   * @param parameters Custom parameters for answering calls.
+   * @param parameters Optional. Answering call parameters
    */
   answerDirect(
     peerCall: Call,
@@ -3289,11 +3302,11 @@ declare class Call {
   ): void;
 
   /**
-   * Starts to play an audio file to the answered call. You can stop playback manually via the [Call.stopPlayback] method. Media streams can later be attached via the [Call.sendMediaTo] method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param url HTTP/HTTPS url to the audio file. The file is cached after the first playing. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
-   * @param parameters Playback parameters: progressivePlayback, loop, etc.
+   * Starts to play an audio file to the answered call. You can stop playback manually via the [Call.stopPlayback] method. You can attach media streams later via the [Call.sendMediaTo] method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
+   * @param url HTTP/HTTPS url to the audio file. The file is cached after the first playing. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb
+   * @param parameters Optional. Playback parameters
    */
-  startPlayback(url: string, parameters: StartPlaybackParameters): void;
+  startPlayback(url: string, parameters?: StartPlaybackParameters): void;
 
   /**
    * Say some text to the [CallEvents.Connected] call.
@@ -3302,11 +3315,11 @@ declare class Call {
    * IMPORTANT: each call object can send media to any number
    * of other calls (media units), but can receive only one audio
    * stream. A new incoming stream always replaces the previous one.
-   * @param text Message that is played to the call. To put an accent to the specified syllable, use the <say-as stress='1'></say-as> tag.
-   * @param parameters Parameters for TTS: language, progressivePlayback, volume, rate, etc.
+   * @param text Message that is played to the call. To put an accent to the specified syllable, use the <say-as stress='1'></say-as> tag
+   * @param parameters Optional. TTS parameters
    * @warning This method internally operates with the [Player] class and its events. Use the [VoxEngine.createTTSPlayer] to get more flexibility
    */
-  say(text: string, parameters: CallSayParameters): void;
+  say(text: string, parameters?: CallSayParameters): void;
 
   /**
    * Starts recording the incoming and outgoing audio for this call.
@@ -3323,31 +3336,31 @@ declare class Call {
 
   /**
    * Provides country-specific dial tones. The method sends a command to the Voximplant cloud to start playing dial tones in the call. The dial tones fully depend on the Voximplant cloud. Note that in order to work properly in a call that is not connected yet, you need to call the [Call.startEarlyMedia] method before using this function. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param country 2-letter country code. Currently supported values are US, RU.
+   * @param country 2-letter country code. Currently supported values are US, RU
    */
   playProgressTone(country: string): void;
 
   /**
    * Sends a text message to the call.
-   * @param text Message text. Maximum size is 8192 bytes according to the limits.
+   * @param text Message text. Maximum size is 8192 bytes according to the limits
    */
   sendMessage(text: string): void;
 
   /**
    * Starts sending media (voice and video) from this call to media unit specified in targetMediaUnit. The target call has to be [CallEvents.Connected] earlier. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param targetMediaUnit Media unit that receives media.
-   * @param parameters Optional. Custom parameters for WebSocket interaction only.
+   * @param targetMediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
   sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media (voice and video) from this call to media unit specified in targetMediaUnit.
-   * @param targetMediaUnit Media unit that does not need to receive media from this call anymore.
+   * @param targetMediaUnit Media unit that does not need to receive media from this call anymore
    */
   stopMediaTo(targetMediaUnit: VoxMediaUnit): void;
 
   /**
-   * Changes DTMF processing mode (in-band DTMF, RFC 2833 DTMF and DTMF over SIP INFO) telephony signals. If true, each received DTMF signal triggers the CallEvents.ToneReceived and removes from audio stream.
+   * Changes DTMF processing mode (in-band DTMF, RFC 2833 DTMF and DTMF over SIP INFO) telephony signals. If true, each received DTMF signal triggers the [CallEvents.ToneReceived] and removes from audio stream.
    * @param doHandle Whether to enable DTMF analysis. The default values is true
    * @param supportedDtmfTypes The DTMF type to process. The default value is ALL
    */
@@ -3357,25 +3370,25 @@ declare class Call {
    * Sends info (SIP INFO) message to the call
    * @param mimeType MIME type of the message
    * @param body Message content. Maximum size is 8192 bytes according to the limits
-   * @param headers Optional. Headers to be passed with the message. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}.
+   * @param headers Optional. Headers to be passed with the message. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   sendInfo(mimeType: string, body: string, headers?: { [header: string]: string }): void;
 
   /**
    * Sends DTMF digits to the remote peer.
-   * @param digits Any combination of 0-9, *, #, p (pause) symbols.
+   * @param digits Any combination of 0-9, *, #, p (pause) symbols
    */
   sendDigits(digits: string): void;
 
   /**
    * Whether to enable detection of microphone status in the call. If detection is enabled, the [CallEvents.MicStatusChange] event is triggered at each status' change.
-   * @param handle Enable/disable microphone status analysis. The default value is false.
+   * @param handle Enable/disable microphone status analysis. The default value is false
    */
   handleMicStatus(handle: boolean): void;
 
   /**
    * Whether to enable blind transfers. When enabled, the [CallEvents.BlindTransferRequested] event is triggered to request for the third call leg within an existing session and notify the transfer initiator of the result.
-   * @param handle Enable/disable blind transfers.
+   * @param handle Enable/disable blind transfers
    */
   handleBlindTransfer(handle: boolean): void;
 
@@ -3386,8 +3399,8 @@ declare class Call {
 
   /**
    * Sends a notification about a failed call transfer with an error code and reason.
-   * @param code Error code.
-   * @param reason Reason why the blind transfer is failed.
+   * @param code Error code
+   * @param reason Reason why the blind transfer is failed
    */
   notifyBlindTransferFailed(code: number, reason: string): void;
 }
@@ -3419,7 +3432,7 @@ declare namespace CallList {
    * successful and does not make any more attempts to call this task.
    * 
    * @param error Error string or JSON
-   * @param callback Callback to execute when a result is processed
+   * @param callback Optional. Callback to execute when a result is processed
    */
   function reportError(
     error: string | Object,
@@ -3439,7 +3452,7 @@ declare namespace CallList {
   /**
    * Report progress to the CallList module
    * @param progress Progress description string or JSON
-   * @param callback Callback to execute when a result is processed
+   * @param callback Optional. Callback to execute when a result is processed
    */
   function reportProgress(
     progress: string | Object,
@@ -3461,7 +3474,7 @@ declare namespace CallList {
    * Reports successful result to the CallList module, saves the report to result_data field in the sheet, 
    * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
-   * @param callback Callback to execute when a result is processed
+   * @param callback Optional. Callback to execute when a result is processed
    */
   function reportResult(
     result: string | Object,
@@ -3503,7 +3516,7 @@ declare namespace CallList {
    * 
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
-   * @param callback Callback function to execute after the request is done
+   * @param callback Optional. Callback function to execute after the request is done
    */
   function requestNextAttempt(
     data: Object,
@@ -3525,22 +3538,22 @@ declare module CCAI {
 
     /**
      * Adds a handler for the specified [CCAI.Events.Agent] event. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called
-     * @param event Event class (i.e., CCAI.Events.Agent.Started)
-     * @param callback Callback function to execute
+     * @param event Event class (i.e., [CCAI.Events.Agent.Started])
+     * @param callback Handler function. A single parameter is passed - object with event information
      */
     public addEventListener<T extends keyof CCAI.Events._AgentEvents>(
       event: CCAI.Events.Agent | T,
-      callback: (ev: CCAI.Events._AgentEvents[T]) => any
+      callback: (event: CCAI.Events._AgentEvents[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [CCAI.Events.Agent] event
-     * @param event Event class (i.e., CCAI.Events.Agent.Started)
-     * @param callback Callback function to execute. If not specified, all event listeners are removed
+     * @param event Event class (i.e., [CCAI.Events.Agent.Started])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     public removeEventListener<T extends keyof CCAI.Events._AgentEvents>(
       event: CCAI.Events.Agent | T,
-      callback?: (ev: CCAI.Events._AgentEvents[T]) => any
+      callback?: (event: CCAI.Events._AgentEvents[T]) => any
     ): void;
   }
 }
@@ -3600,22 +3613,22 @@ declare module CCAI {
 
     /**
      * Adds a handler for the specified [CCAI.Events.Conversation] event. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called
-     * @param event Event class (i.e., CCAI.Events.Conversation.Created)
+     * @param event Event class (i.e., [CCAI.Events.Conversation.Created])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
     public addEventListener<T extends keyof CCAI.Events._ConversationEvents>(
       event: CCAI.Events.Conversation | T,
-      callback: (ev: CCAI.Events._ConversationEvents[T]) => any
+      callback: (event: CCAI.Events._ConversationEvents[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [CCAI.Events.Conversation] event
-     * @param event Event class (i.e., CCAI.Events.Conversation.Created)
-     * @param callback Handler function. If not specified, all event listeners are removed
+     * @param event Event class (i.e., [CCAI.Events.Conversation.Created])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     public removeEventListener<T extends keyof CCAI.Events._ConversationEvents>(
       event: CCAI.Events.Conversation | T,
-      callback?: (ev: CCAI.Events._ConversationEvents[T]) => any
+      callback?: (event: CCAI.Events._ConversationEvents[T]) => any
     ): void;
   }
 }
@@ -3890,22 +3903,22 @@ declare module CCAI {
 
     /**
      * Adds a handler for the specified [CCAI.Events.Participant] event. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called.
-     * @param event Event class (i.e., CCAI.Events.Participant.Created)
+     * @param event Event class (i.e., [CCAI.Events.Participant.Created])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
     public addEventListener<T extends keyof CCAI.Events._ParticipantEvents>(
       event: CCAI.Events.Participant | T,
-      callback: (ev: CCAI.Events._ParticipantEvents[T]) => any
+      callback: (event: CCAI.Events._ParticipantEvents[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [CCAI.Events.Participant] event
-     * @param event Event class (i.e., CCAI.Events.Participant.Created)
-     * @param callback Handler function. If not specified, all event listeners are removed
+     * @param event Event class (i.e., [CCAI.Events.Participant.Created])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     public removeEventListener<T extends keyof CCAI.Events._ParticipantEvents>(
       event: CCAI.Events.Participant | T,
-      callback?: (ev: CCAI.Events._ParticipantEvents[T]) => any
+      callback?: (event: CCAI.Events._ParticipantEvents[T]) => any
     ): void;
 
     /**
@@ -4042,12 +4055,12 @@ declare enum ConferenceEvents {
    */
   ConferenceError = 'Conference.Error',
   /**
-   * Triggered when the conference has started. I.e., the call of VoxEngine.createConference triggers the event.
+   * Triggered when the conference has started. I.e., the call of [VoxEngine.createConference] triggers the event.
    * @typedef _ConferenceEvent
    */
   Started = 'Conference.Started',
   /**
-   * Triggered when the conference is stopped. I.e., the call of Conference.stop triggers the event.
+   * Triggered when the conference is stopped. I.e., the call of [Conference.stop] triggers the event.
    * @typedef _ConferenceStoppedEvent
    */
   Stopped = 'Conference.Stopped',
@@ -4154,7 +4167,7 @@ declare interface _ConferenceErrorEvent extends _ConferenceEvent {
    */
   code: number;
   /**
-   * The id of the endpoint that caused the error
+   * Optional. The id of the endpoint that caused the error
    */
   endpointId?: string;
 }
@@ -4181,7 +4194,7 @@ declare enum ConferenceMode {
  */
 declare interface ConferenceParameters {
   /**
-   * Whether the audio is high definition. If set to false (default), audio stream has the frequency of 8 KHz. Otherwise, audio stream has the frequency of 48 KHz. Please note that default audio mode costs nothing while the high definition audio is billed additionally - for more details see the pricing page
+   * Whether the audio is high definition. If set to false (default), audio stream has the frequency of 8kHz/32kbps. Otherwise, audio stream has the frequency of 48kHz/192kbps. Please note that default audio mode costs nothing while the high definition audio is billed additionally - for more details see the pricing page
    */
   hd_audio: boolean;
 }
@@ -4247,21 +4260,21 @@ declare class Conference {
    */
   addEventListener<T extends keyof _ConferenceEvents>(
     event: ConferenceEvents | T,
-    callback: (ev: _ConferenceEvents[T]) => any
+    callback: (event: _ConferenceEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [ConferenceEvents] event
    * @param event Event class (i.e., [ConferenceEvents.Started])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _ConferenceEvents>(
     event: ConferenceEvents | T,
-    callback?: (ev: _ConferenceEvents[T]) => any
+    callback?: (event: _ConferenceEvents[T]) => any
   ): void;
 
   /**
-   * Stops the conference. Triggers the ConferenceEvents.Stopped event.
+   * Stops the conference. Triggers the [ConferenceEvents.Stopped] event.
    */
   stop(): void;
 
@@ -4272,27 +4285,27 @@ declare class Conference {
 
   /**
    * Gets the endpoint by the id.
-   * @param id endpoint's id
+   * @param id Endpoint's id
    */
   get(id: string): Endpoint;
 
   /**
-   * Creates a new endpoint and adds it to the specified conference. Important! You can only use this function for a conference with the “video conference” option checked in the routing rule.
-   * Otherwise, you receive the ConferenceEvents.ConferenceError event with code 102. The maximum number of endpoints is 100.
-   * @param parameters
+   * Creates a new [Endpoint] instance and adds it to the specified conference. IMPORTANT! You can only use this function for a conference with the “video conference” option checked in the routing rule.
+   * Otherwise, you receive the [ConferenceEvents.ConferenceError] event with code 102. The maximum number of endpoints is 100.
+   * @param parameters Endpoint parameters
    */
-  add(options: EndpointParameters): Endpoint;
+  add(parameters: EndpointParameters): Endpoint;
 
   /**
    * Starts sending media (voice and video) from this conference to media unit specified in targetCall.
-   * @param mediaUnit media unit that receives media
-   * @param parameters custom parameters for WebSocket interaction only
+   * @param mediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
   sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media (voice and video) from this conference to media unit specified in targetMediaUnit.
-   * @param mediaUnit media unit that does not need to receive media from this conference anymore.
+   * @param mediaUnit Media unit that does not need to receive media from this conference anymore
    */
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
@@ -4921,19 +4934,19 @@ declare enum DialogflowSsmlVoiceGender {
  */
 declare enum DTMFType {
   /**
-   * All types of DTMF tones trigger the CallEvents.ToneReceived event: in-band , RFC 2833 and SIP INFO. Receiving a RFC 2833 tone disables processing of in-band tones to avoid duplicating
+   * All types of DTMF tones trigger the [CallEvents.ToneReceived] event: in-band , RFC 2833 and SIP INFO. Receiving an RFC 2833 tone disables processing of in-band tones to avoid duplicating
    */
   ALL,
   /**
-   * Only RFC 2833 DTMF tones trigger the CallEvents.ToneReceived event
+   * Only RFC 2833 DTMF tones trigger the [CallEvents.ToneReceived] event
    */
   TELEPHONE_EVENT,
   /**
-   * Only in-band DTMF tones trigger the CallEvents.ToneReceived event
+   * Only in-band DTMF tones trigger the [CallEvents.ToneReceived] event
    */
   IN_BAND,
   /**
-   * Only SIP INFO DTMF tones trigger the CallEvents.ToneReceived event
+   * Only SIP INFO DTMF tones trigger the [CallEvents.ToneReceived] event
    */
   SIP_INFO,
 }
@@ -4968,7 +4981,7 @@ declare interface EndpointParameters {
    */
   displayName: string;
   /**
-   * Endpoints and their streams (audio and/or video) to receive. These settings apply to the target endpoint right after adding it to a conference.
+   * Optional. Endpoints and their streams (audio and/or video) to receive. These settings apply to the target endpoint right after adding it to a conference.
    * @beta
    */
   receiveParameters?: ReceiveParameters;
@@ -5010,7 +5023,7 @@ declare class Endpoint {
 
   /**
    * Enables/disables receiving media streams from other conference participants.
-   * @param parameters
+   * @param parameters Media stream receive parameters
    * @beta
    */
   manageEndpoint(parameters: ReceiveParameters): Promise<void>;
@@ -5080,15 +5093,15 @@ declare interface IVRSettings {
    */
   prompt: IVRPrompt;
   /**
-   * Menu type. Possible values: select, inputfixed, inputunknown, noinput
+   * Menu type. Possible values: **select**, **inputfixed**, **inputunknown**, **noinput**
    */
   type: string;
   /**
-   * For inputunknown states - whether input is complete (input is passed as string)
+   * For **inputunknown** states - whether input is complete (input is passed as string)
    */
   inputValidator: (input: string) => boolean;
   /**
-   * For inputfixed - length of desired input
+   * For **inputfixed** - length of desired input
    */
   inputLength: number;
   /**
@@ -5096,15 +5109,15 @@ declare interface IVRSettings {
    */
   timeout: number;
   /**
-   * For select type, map of IVR states to go to according to user input. If there is no next state for specific input, onInutComplete is invoked
+   * For **select** type, map of IVR states to go to according to user input. If there is no next state for specific input, **onInputComplete** is invoked
    */
   nextStates: { [name: string]: IVRState };
   /**
-   * When this digit is entered in inputunknown mode, input is considered to be complete
+   * When this digit is entered in **inputunknown** mode, input is considered to be complete
    */
   terminateOn: string;
   /**
-   * Next state to go - for noinput state type
+   * Next state to go - for **noinput** state type
    */
   nextState: IVRState | null;
 }
@@ -5646,7 +5659,7 @@ declare module PhoneNumber {
      */
     location: string;
     /**
-     * Whether the number is possible in specified country (just by analyzing length infomation)
+     * Whether the number is possible in specified country (just by analyzing length information)
      */
     isPossibleNumber: boolean;
     /**
@@ -5779,7 +5792,7 @@ declare interface _PlayerStoppedEvent extends _PlayerEvent {}
  */
 declare interface _PlayerPlaybackFinishedEvent extends _PlayerEvent {
   /**
-   * Error message
+   * Optional. Error message
    */
   error?: string;
 }
@@ -5820,17 +5833,17 @@ declare class Player {
    */
   addEventListener<T extends keyof _PlayerEvents>(
     event: PlayerEvents | T,
-    callback: (ev: _PlayerEvents[T]) => any
+    callback: (event: _PlayerEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [PlayerEvents] event
    * @param event Event class (i.e., [PlayerEvents.PlaybackFinished])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _PlayerEvents>(
     event: PlayerEvents | T,
-    callback?: (ev: _PlayerEvents[T]) => any
+    callback?: (event: _PlayerEvents[T]) => any
   ): void;
 
   /**
@@ -5855,20 +5868,20 @@ declare class Player {
 
   /**
    * Add a playback marker. The [PlayerEvents.PlaybackMarkerReached] event is triggered when the marker is reached.
-   * @param offset Positive/negative offset (ms) from the start/end of media.
+   * @param offset Positive/negative offset (ms) from the start/end of media
    */
   addMarker(offset: number): void;
 
   /**
    * Starts sending media (voice and video) from this call to the media unit specified in targetMediaUnit. Each call can send media to any number of other calls, but can receive from just one. So if targetCall is already receiving media from another call, that link would break.
-   * @param mediaUnit Media unit that receives media.
-   * @param parameters Custom parameters for WebSocket interaction only.
+   * @param mediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
   sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stop sending media (voice and video) from this call to media unit specified in targetMediaUnit.
-   * @param mediaUnit Media unit that does not need to receive media from this conference anymore.
+   * @param mediaUnit Media unit that does not need to receive media from this conference anymore
    */
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
@@ -6033,7 +6046,7 @@ declare interface RecorderGridDefinition {
    */
   fromCount: number;
   /**
-   * Maximum video frames for the grid.
+   * Optional. Maximum video frames for the grid.
    */
   toCount?: number;
   /**
@@ -6275,42 +6288,42 @@ declare enum RecorderLabelTextAlign {
  */
 declare interface RecorderLabels {
   /**
-   * Participant's label font.
+   * Optional. Participant's label font.
    * The default value is [RecorderLabelFont.ROBOTO_REGULAR]
    */
   font?: RecorderLabelFont;
   /**
-   * Participant's label text horizontal and vertical alignment.
+   * Optional. Participant's label text horizontal and vertical alignment.
    * The default value is [RecorderLabelTextAlign.MIDDLE_LEFT]
    */
   textAlign?: RecorderLabelTextAlign;
   /**
-   * Margin space outside the label in pixels.
+   * Optional. Margin space outside the label in pixels.
    * The default value is 8
    */
   margin?: number;
   /**
-   * Participant's label position.
+   * Optional. Participant's label position.
    * The default value is [RecorderLabelPosition.BOTTOM_RIGHT]
    */
   position?: RecorderLabelPosition;
   /**
-   * Participant's label background color in HEX format.
+   * Optional. Participant's label background color in HEX format.
    * The default value is #c7c7cc
    */
   background?: string;
   /**
-   * Participant's label color in HEX format.
+   * Optional. Participant's label color in HEX format.
    * The default value is #000000
    */
   color?: string;
   /**
-   * Participant's label width in pixels.
+   * Optional. Participant's label width in pixels.
    * The default value is 104
    */
   width?: number;
   /**
-   * Participant's label height in pixels.
+   * Optional. Participant's label height in pixels.
    * The default value is 24
    */
   height?: number;
@@ -6321,11 +6334,11 @@ declare interface RecorderLabels {
  */
 declare interface RecorderParameters extends ConferenceRecorderParameters {
   /**
-   * Name of the recorder for the call history.
+   * Optional. Name of the recorder for the call history.
    */
   name?: string;
   /**
-   * Speech recognition provider.
+   * Optional. Speech recognition provider.
    */
   provider?:
     | ASRProfileList.Amazon
@@ -6365,12 +6378,12 @@ declare enum RecorderProfile {
  */
 declare interface RecorderVad {
   /**
-   * Highlighting frame thickness in pixels.
+   * Optional. Highlighting frame thickness in pixels.
    * For width > 1280 the default value is 3, for width < 1280 the default value is 1
    */
   thickness?: number;
   /**
-   * Highlighting frame color in HEX format.
+   * Optional. Highlighting frame color in HEX format.
    * The default value is #009933
    */
   color?: string;
@@ -6427,17 +6440,17 @@ declare class Recorder {
    */
   addEventListener<T extends keyof _RecorderEvents>(
     event: RecorderEvents | T,
-    callback: (ev: _RecorderEvents[T]) => any
+    callback: (event: _RecorderEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [RecorderEvents] event
    * @param event Event class (i.e., [RecorderEvents.Stopped])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _RecorderEvents>(
     event: RecorderEvents | T,
-    callback?: (ev: _RecorderEvents[T]) => any
+    callback?: (event: _RecorderEvents[T]) => any
   ): void;
 
   /**
@@ -6452,7 +6465,7 @@ declare class Recorder {
   mute(doMute: boolean): void;
 
   /**
-   * Stops recording and triggers the RecorderEvents.Stopped event.
+   * Stops recording and triggers the [RecorderEvents.Stopped] event.
    */
   stop(): void;
 }
@@ -6608,17 +6621,17 @@ declare class SequencePlayer {
    */
   addEventListener<T extends keyof _SequencePlayerEvents>(
     event: SequencePlayerEvents | T,
-    callback: (ev: _SequencePlayerEvents[T]) => any
+    callback: (event: _SequencePlayerEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [SequencePlayerEvents] event
    * @param event Event class (i.e., [SequencePlayerEvents.PlaybackFinished])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _SequencePlayerEvents>(
     event: SequencePlayerEvents | T,
-    callback?: (ev: _SequencePlayerEvents[T]) => any
+    callback?: (event: _SequencePlayerEvents[T]) => any
   ): void;
 
   /**
@@ -6643,21 +6656,21 @@ declare class SequencePlayer {
 
   /**
    * Adds a playback marker to the specified segment. The [SequencePlayerEvents.PlaybackMarkerReached] event is triggered when the marker is reached.
-   * @param offset Positive/negative offset (ms) from the start/end of media.
-   * @param segment The segment to add the marker.
+   * @param offset Positive/negative offset (ms) from the start/end of media
+   * @param segment The segment to add the marker
    */
   addMarker(offset: number, segment: PlaybackParameters): void;
 
   /**
    * Starts sending media (voice and video) from this call to the media unit specified in targetMediaUnit. Each call can send media to any number of other calls, but can receive from just one. So if targetCall is already receiving media from another call, that link would break.
-   * @param mediaUnit Media unit that receives media.
-   * @param parameters Custom parameters for WebSocket interaction only.
+   * @param mediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
   sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stop sending media (voice and video) from this call to media unit specified in targetMediaUnit.
-   * @param mediaUnit Media unit that does not need to receive media from this conference anymore.
+   * @param mediaUnit Media unit that does not need to receive media from this conference anymore
    */
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
@@ -7008,17 +7021,17 @@ declare class SmartQueueTask {
    */
   addEventListener<T extends keyof _SmartQueueEvents>(
     event: SmartQueueEvents | T,
-    callback: (ev: _SmartQueueEvents[T]) => any
+    callback: (event: _SmartQueueEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [SmartQueueEvents] event
    * @param event Event class (i.e., [SmartQueueEvents.OperatorReached])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _SmartQueueEvents>(
     event: SmartQueueEvents | T,
-    callback?: (ev: _SmartQueueEvents[T]) => any
+    callback?: (event: _SmartQueueEvents[T]) => any
   ): void;
 }
 
@@ -7303,21 +7316,21 @@ declare class StreamingAgent {
   /**
    * Adds a handler for the specified [StreamingAgentEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
    * @param event Event class (i.e., [StreamingAgentEvents.Connected])
-   * @param callback Handler function that can take one parameter – the object with event information
+   * @param callback Handler function. A single parameter is passed - object with event information
    */
   addEventListener<T extends keyof _StreamingAgentEvents>(
     event: StreamingAgentEvents | T,
-    callback: (ev: _StreamingAgentEvents[T]) => any
+    callback: (event: _StreamingAgentEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [StreamingAgentEvents] event
    * @param event Event class (i.e., [StreamingAgentEvents.Connected])
-   * @param callback Handler function that can take one parameter – the object with event information
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _StreamingAgentEvents>(
     event: StreamingAgentEvents | T,
-    callback?: (ev: _StreamingAgentEvents[T]) => any
+    callback?: (event: _StreamingAgentEvents[T]) => any
   ): void;
 
   /**
@@ -7350,7 +7363,7 @@ declare class StreamingAgent {
    * If an active video track is set, it is not replaced by the new one unlike in the default mode.
    * Default mode: The active video track is the one that started sending data last. The active audio track is always the first one.
    * To return to the default mode, set the track IDs equal to -1.
-   * @param tracks Audio and video track to set as active.
+   * @param tracks Audio and video track to set as active
    */
   setActiveTrack(tracks: { audioTrack?: number; videoTrack?: number }): void;
 }
@@ -7428,11 +7441,11 @@ declare enum TerminationStatus {
  */
 declare interface ToneScriptPlayerParameters {
   /**
-   * Whether to loop playback.
+   * Optional. Whether to loop playback.
    */
   loop?: boolean;
   /**
-   * Whether to use progressive playback. If true, the generated tone is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   * Optional. Whether to use progressive playback. If true, the generated tone is delivered in chunks which reduces delay before a method call and playback. The default value is false.
    */
   progressivePlayback?: boolean;
 }
@@ -14102,7 +14115,7 @@ declare namespace VoxEngine {
    */
   function addEventListener<T extends keyof _AppEvents>(
     event: AppEvents | T,
-    callback: (ev: _AppEvents[T]) => any
+    callback: (event: _AppEvents[T]) => any
   ): void;
 }
 
@@ -14121,7 +14134,7 @@ declare namespace VoxEngine {
    * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. Normally it is some phone number that can be used for callback. IMPORTANT: you cannot use test numbers rented from Voximplant as CallerID, use only real numbers.
    * @param displayName Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name.
    * @param headers Optional. SIP headers to be passed with a call to conference. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-   * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event.
+   * @param scheme Optional. Internal information about codecs from the [AppEvents.CallAlerting] event.
    */
   function callConference(
     conferenceId: string,
@@ -14135,13 +14148,13 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Starts an outgoing call to the specified phone number. Calls that are more expensive than 20 cents per minute and calls to Africa are blocked by default for security reasons.
-   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
+   * The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param number phone number to start a call to in the international format (E.164)
    * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. A valid phone number that can be used to call back is required. Following phone numbers can be used:
    * * A real phone number that is [rented](https://manage.voximplant.com/numbers/my_numbers) from Voximplant. **IMPORTANT**: test numbers cannot be used.
    * * Any phone number that is [verified](https://manage.voximplant.com/settings/caller_ids) via an automated call from Voximplant and confirmation code.
    * * A phone number from an incoming call to the rented number. It can be retrieved as [Caller ID](/docs/references/voxengine/call#callerid).
-   * @param parameters Object with callPSTN parameters.
+   * @param parameters Optional. Call parameters
    */
   function callPSTN(number: string, callerid: string, parameters?: CallPSTNParameters): Call;
 }
@@ -14150,10 +14163,10 @@ declare namespace VoxEngine {
   /**
    * Starts an outgoing call to the external SIP system or to another user of the same application. Supported codecs are: [G.722](https://www.itu.int/rec/T-REC-G.722), [G.711 (u-law and a-law)](https://www.itu.int/rec/T-REC-G.711), [Opus](https://opus-codec.org/), [ILBC](https://webrtc.org/license/ilbc-freeware/), [H.264](https://www.itu.int/rec/T-REC-H.264), [VP8](https://tools.ietf.org/html/rfc6386). The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
    * @param to SIP URI to make a call to. Example of an external call: **sip:alice@example.org**. Examples with TLS usage: **sips:alice@example.org:5061** ; **alice@example.org:5061;transport=tls**. The format for calls to another user of the same Voximplant application: user-of-the-application@application.account.voximplant.com
-   * @param parameters Object with callSIP parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively.
-   * @param scheme Internal information about codecs from the AppEvents.CallAlerting event.
+   * @param parameters Call parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively
+   * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event
    */
-  function callSIP(to: string, parameters: CallSIPParameters): Call;
+  function callSIP(to: string, parameters: CallSIPParameters, scheme: Object): Call;
 }
 
 declare namespace VoxEngine {
@@ -14161,11 +14174,11 @@ declare namespace VoxEngine {
    * Start an outgoing call to the specified Voximplant user in peer-to-peer mode.
    * The JavaScript scenario with this method and the destination user should be both within the same Voximplant application.
    * Audio playback and recording does not work. P2P mode is available only for calls between SDKs.
-   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. **IMPORTANT**: calling this method makes impossible to use the non-P2P mode for a new call and specified incomingCall.
+   * The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details. **IMPORTANT**: calling this method makes impossible to use the non-P2P mode for a new call and specified incomingCall.
    * So the following methods cannot be used: [Call.say], [Call.sendDigits], [Call.sendMediaTo], [Call.stopMediaTo].
    * @param incomingCall incoming call that needs to be forwarded
    * @param username Name of the Voximplant user to call
-   * @param parameters Object with callUserDirect parameters ("callerid", "displayName", "analyticsLabel" and "extraHeaders")
+   * @param parameters Call parameters
    */
   function callUserDirect(
     incomingCall: Call,
@@ -14177,41 +14190,41 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Starts an outgoing call to the specified Voximplant user. The JavaScript scenario that uses this method and user being called should be both associated with the same Voximplant application.
-   * The method can trigger the CallEvents.Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
-   * @param parameters Object with callUser parameters.
+   * The method can trigger the [CallEvents.Failed] event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
+   * @param parameters Call parameters
    */
   function callUser(parameters: CallUserParameters): Call;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [ASR] (speech recognizer) object and starts recognition. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [ASR](speech recognizer) instance and starts recognition. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.ASR);
    * ```
-   * @param parameters ASR parameters. IMPORTANT: the **profile** parameter is required, the other parameters are optional.
+   * @param parameters ASR parameters. IMPORTANT: the **profile** parameter is required, the other parameters are optional
    */
   function createASR(parameters: ASRParameters): ASR;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new conference.
+   * Creates a new [Conference] instance. You can attach media streams later via the [Conference.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.Conference);
    * ```
-   * @param parameters
+   * @param parameters Conference parameters
    */
   function createConference(parameters: ConferenceParameters): Conference;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Recorder] (audio recorder) or [ConferenceRecorder] (conference recorder) object. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [Recorder](audio recorder) or [ConferenceRecorder](conference recorder) object. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -14219,52 +14232,52 @@ declare namespace VoxEngine {
    * ```
    * @param parameters Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to 'false'.
    */
-  function createRecorder(parameters?: RecorderParameters): Recorder | ConferenceRecorder;
+  function createRecorder(parameters: RecorderParameters): Recorder | ConferenceRecorder;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new sequence player instance.
-   * @param parameters [SequencePlayer] parameters: segments,etc.
+   * Creates a new [SequencePlayer] instance. You can attach media streams later via the [SequencePlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * @param parameters Sequence player parameters
    **/
   function createSequencePlayer(parameters: SequencePlayerParameters): SequencePlayer;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [StreamingAgent] object. Sources can later be attached via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [StreamingAgent](streaming) instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
    * require(Modules.StreamingAgent);
    * ```
-   * @param parameters Object with streaming parameters.
+   * @param parameters Streaming agent parameters
    */
   function createStreamingAgent(parameters: StreamingAgentParameters): StreamingAgent;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] (audio player) object with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player](audio player) instance with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param script ToneScript string
-   * @param parameters Parameters for ToneScript: loop, progressivePlayback, etc.
+   * @param parameters Optional. Tone script player parameters
    **/
-  function createToneScriptPlayer(script: string, parameters: ToneScriptPlayerParameters): Player;
+  function createToneScriptPlayer(script: string, parameters?: ToneScriptPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] (audio player) object with specified text; TTS is used to play this text. Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player](audio player) instance with specified text (TTS is used to play the text). You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * If the text length exceeds 1500 characters, the [PlayerEvents.PlaybackFinished] event is triggered with error description. After the very first playing, a phrase is cached; each createTTSPlayer instance stores the cache data up to 2 weeks. Note that cache addresses only the URL, without additional headers. The cached phrase is available for all applications and further sessions.
    * @param text Text to synthesize
-   * @param parameters Optional. [Player] parameters: language, progressivePlayback, volume, rate, etc.
+   * @param parameters Optional. TTS player parameters
    **/
-  function createTTSPlayer(text: string, parameters: TTSPlayerParameters): Player;
+  function createTTSPlayer(text: string, parameters?: TTSPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] (aydio player) object with specified audio file URL.
+   * Creates a new [Player](audio player) instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
@@ -14273,17 +14286,17 @@ declare namespace VoxEngine {
    * <br>
    * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.
    * <br>
-   * Media streams can later be attached via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param url Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
-   * @param parameters Optional. [Player] parameters: progressivePlayback, loop, onPause, etc.
+   * @param url Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb
+   * @param parameters Optional. URL player parameters
    **/
   function createURLPlayer(url: URLPlayerRequest, parameters?: URLPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [WebSocket] object. Media streams can later be attached via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [WebSocket] object. You can attach media streams later via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param url URL to which to connect (wss:// + domain + path).
    * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'.
    */
@@ -14295,7 +14308,7 @@ declare namespace VoxEngine {
    * Set or get custom string associated with current JavaScript session.
    * There are two kinds of the customData values: one is for JavaScript session (i.e., VoxEngine object), another is for the particular call (i.e., Call.customData and web SDK parameter of the method).
    * It is possible to use them at the same time because they are independent entities. Remember that if you receive some value from web SDK, it does not overwrite the VoxEngine's value. Any of customData's type values can be later obtained from call history via management API or control panel.
-   * @param customData Custom session data to set. Maximum size is 200 bytes.
+   * @param customData Optional. Custom session data to set. Maximum size is 200 bytes
    */
   function customData(customData?: string): string;
 }
@@ -14338,8 +14351,8 @@ declare namespace VoxEngine {
    * require(Modules.ACD);
    * ```
    * @param queueName The name of the queue, to where the call is directed. Queue name must be specified exactly as in the control panel
-   * @param callerid ID of the caller which is put to the queue. After request is dispatched to the agent, it is possible to get this ID by assigning a handler to the ACDEvents.OperatorReached event. The call is stored in the operatorCall property, so you can use the Call.callerid() method. IMPORTANT: virtual numbers rented from Voximplant cannot be used as CallerID, use only real numbers.
-   * @param parameters Object with extra parameters.
+   * @param callerid ID of the caller which is put to the queue. After request is dispatched to the agent, it is possible to get this ID by assigning a handler to the [ACDEvents.OperatorReached] event. The call is stored in the operatorCall property, so you can use the Call.callerid() method. IMPORTANT: virtual numbers rented from Voximplant cannot be used as CallerID, use only real numbers
+   * @param parameters Optional. ACD request parameters
    */
   function enqueueACDRequest(
     queueName: string,
@@ -14418,11 +14431,11 @@ declare namespace VoxEngine {
   /**
    * Removes a handler for the specified [AppEvents] event
    * @param event Event class (i.e., [AppEvents.Started])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   function removeEventListener<T extends keyof _AppEvents>(
     event: AppEvents | T,
-    callback?: (ev: _AppEvents[T]) => any
+    callback?: (event: _AppEvents[T]) => any
   ): void;
 }
 
@@ -20026,17 +20039,17 @@ declare namespace VoximplantAvatar {
      */
     addEventListener<T extends keyof VoximplantAvatar._Events>(
       event: VoximplantAvatar.Events | T,
-      callback: (ev: VoximplantAvatar._Events[T]) => any
+      callback: (event: VoximplantAvatar._Events[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [VoximplantAvatar.Events] event.
      * @param event Event class (i.e., [VoximplantAvatar.Events.Loaded](/docs/references/voxengine/voximplantavatar/events#loaded))
-     * @param callback Handler function
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     removeEventListener<T extends keyof VoximplantAvatar._Events>(
       event: VoximplantAvatar.Events | T,
-      callback?: (ev: VoximplantAvatar._Events[T]) => any
+      callback?: (event: VoximplantAvatar._Events[T]) => any
     ): void;
 
     /**
@@ -20328,17 +20341,17 @@ declare namespace VoximplantAvatar {
      */
     addEventListener<T extends keyof VoximplantAvatar._VoiceAvatarEvents>(
       event: VoximplantAvatar.Events | ASREvents | PlayerEvents | SequencePlayerEvents | T,
-      callback: (ev: VoximplantAvatar._VoiceAvatarEvents[T]) => any
+      callback: (event: VoximplantAvatar._VoiceAvatarEvents[T]) => any
     ): void;
 
     /**
      * Removes a handler for the specified [VoximplantAvatar.Events], [ASREvents] or [PlayerEvents] event.
      * @param event Event class (i.e., [VoximplantAvatar.Events.Loaded](/docs/references/voxengine/voximplantavatar/events#loaded), [ASREvents.Stopped], [PlayerEvents.PlaybackFinished])
-     * @param callback Handler function
+     * @param callback
      */
     removeEventListener<T extends keyof VoximplantAvatar._VoiceAvatarEvents>(
       event: VoximplantAvatar.Events | ASREvents | PlayerEvents | SequencePlayerEvents | T,
-      callback: (ev: VoximplantAvatar._VoiceAvatarEvents[T]) => any
+      callback: (event: VoximplantAvatar._VoiceAvatarEvents[T]) => any
     ): void;
   }
 }
@@ -20606,8 +20619,8 @@ declare enum WebSocketReadyState {
 
 /**
  * Represents a WebSocket object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
- * @param url URL to connect (wss:// + domain + path).
- * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'.
+ * @param url URL to connect (wss:// + domain + path)
+ * @param protocols Either a single protocol string or an array of protocol strings. The default value is 'chat'
  */
 declare class WebSocket {
   constructor(url: string, protocols?: string | string[]);
@@ -20654,14 +20667,14 @@ declare class WebSocket {
 
   /**
    * Closes the WebSocket connection or connection attempt.
-   * @param code WebSocket close code.
-   * @param reason Reason why the connection is closed.
+   * @param code WebSocket close code
+   * @param reason Reason why the connection is closed
    */
   close(code?: WebsocketCloseCode, reason?: string): void;
 
   /**
    * Enqueues the specified data to be transmitted over the WebSocket connection.
-   * @param data Data to send through a WebSocket.
+   * @param data Data to send through a [WebSocket]
    */
   send(data: string): void;
 
@@ -20672,29 +20685,29 @@ declare class WebSocket {
    */
   addEventListener<T extends keyof _WebSocketEvents>(
     event: WebSocketEvents | T,
-    callback: (ev: _WebSocketEvents[T]) => any
+    callback: (event: _WebSocketEvents[T]) => any
   ): void;
 
   /**
    * Removes a handler for the specified [WebSocketEvents] event
    * @param event Event class (i.e., [WebSocketEvents.OPEN])
-   * @param callback Handler function. If not specified, all event listeners are removed
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _WebSocketEvents>(
     event: WebSocketEvents | T,
-    callback?: (ev: _WebSocketEvents[T]) => any
+    callback?: (event: _WebSocketEvents[T]) => any
   ): void;
 
   /**
    * Starts sending media with the specified parameters to the target unit. WebSocket works in real time and the recommended duration of one audio chunk is 20ms.
-   * @param targetMediaUnit Media unit that receives media.
-   * @param parameters Custom parameters for WebSocket interaction only.
+   * @param targetMediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
   sendMediaTo(targetMediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
 
   /**
    * Stops sending media with the specified parameters to the target unit.
-   * @param targetMediaUnit Media unit that stops receiving media.
+   * @param targetMediaUnit Media unit that stops receiving media
    */
   stopMediaTo(targetMediaUnit: VoxMediaUnit): void;
 }
@@ -21087,7 +21100,7 @@ declare interface ASRParameters {
     | ASRModelList.YandexV3;
 
   /**
-   * Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
+   * Optional. Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
    * <br>
    * <br>
    * *Available for providers: Amazon, Deepgram, Google, SaluteSpeech, Tinkoff, Yandex.*
@@ -21095,7 +21108,7 @@ declare interface ASRParameters {
   interimResults?: boolean;
 
   /**
-   * Whether to enable single utterance. The default value is **false**, so:
+   * Optional. Whether to enable single utterance. The default value is **false**, so:
    * <br>
    * 1) if the speech is shorter than 60 sec, [ASREvents.Result] is triggered in unpredictable time. You could mute the mic when the speech is over - this increases the probability of [ASREvents.Result] catching;
    * <br>
@@ -21111,7 +21124,7 @@ declare interface ASRParameters {
   singleUtterance?: boolean;
 
   /**
-   * Preferable words to recognize. Note that **phraseHints** do not limit the recognition to the specific list. Instead, words in the specified list has a higher chance to be selected.
+   * Optional. Preferable words to recognize. Note that **phraseHints** do not limit the recognition to the specific list. Instead, words in the specified list has a higher chance to be selected.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -21119,7 +21132,7 @@ declare interface ASRParameters {
   phraseHints?: string[];
 
   /**
-   * Whether to enable profanity filter. The default value is **false**.
+   * Optional. Whether to enable profanity filter. The default value is **false**.
    * <br>
    * If set to **true**, the server attempts to filter out profanities, replacing all but the initial character in each filtered word with asterisks, e.g. "f***". If set to **false** or omitted, profanities are not filtered out.
    * <br>
@@ -21129,7 +21142,7 @@ declare interface ASRParameters {
   profanityFilter?: boolean;
 
   /**
-   * Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
+   * Optional. Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -21140,7 +21153,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * The recognition result contains a [_ASRResultEvent.channelTag] field to state which channel that result belongs to. If set to **false** or omitted, only the first channel is recognized.
+   * Optional. The recognition result contains a [_ASRResultEvent.channelTag] field to state which channel that result belongs to. If set to **false** or omitted, only the first channel is recognized.
    * <br>
    * Requires the **beta** parameter set to **true**.
    * <br>
@@ -21153,7 +21166,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * A list of up to 3 additional BCP-47 language tags, listing possible alternative languages of the supplied audio. See [Language Support](https://cloud.google.com/speech-to-text/docs/languages) for a list of the currently supported language codes.
+   * Optional. A list of up to 3 additional BCP-47 language tags, listing possible alternative languages of the supplied audio. See [Language Support](https://cloud.google.com/speech-to-text/docs/languages) for a list of the currently supported language codes.
    * <br>
    * Requires the **beta** parameter set to **true**.
    * <br>
@@ -21166,7 +21179,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * If set to **true**, the top result includes a list of words and the start and end time offsets (timestamps) for those words. If set to **false** or omitted, no word-level time offset information is returned. The default value is **false**.
+   * Optional. If set to **true**, the top result includes a list of words and the start and end time offsets (timestamps) for those words. If set to **false** or omitted, no word-level time offset information is returned. The default value is **false**.
    * <br>
    * Requires the **beta** parameter set to **true**.
    * <br>
@@ -21179,7 +21192,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * If set to **true**, the top result includes a list of words and the confidence for those words. If set to **false** or omitted, no word-level confidence information is returned. The default value is **false**.
+   * Optional. If set to **true**, the top result includes a list of words and the confidence for those words. If set to **false** or omitted, no word-level confidence information is returned. The default value is **false**.
    * <br>
    * Requires the **beta** parameter set to **true**.
    * <br>
@@ -21192,7 +21205,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * If set to **true**, adds punctuation to recognition result hypotheses. This feature is only available in select languages. Setting this for requests in other languages has no effect at all. The **false** value does not add punctuation to result hypotheses. The default value is **false**.
+   * Optional. If set to **true**, adds punctuation to recognition result hypotheses. This feature is only available in select languages. Setting this for requests in other languages has no effect at all. The **false** value does not add punctuation to result hypotheses. The default value is **false**.
    * Requires the **beta** parameter set to **true**.
    * <br>
    * <br>
@@ -21204,7 +21217,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * Config to enable speaker diarization and set additional parameters to make diarization better suited for your application.
+   * Optional. Config to enable speaker diarization and set additional parameters to make diarization better suited for your application.
    * <br>
    * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#SpeakerDiarizationConfig).
    * <br>
@@ -21224,7 +21237,7 @@ declare interface ASRParameters {
   /**
    * v1p1beta1 Speech API feature.
    * <br>
-   * Metadata regarding this request.
+   * Optional. Metadata regarding this request.
    * <br>
    * See the full list of available fields [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/RecognitionConfig#RecognitionMetadata).
    * <br>
@@ -21242,7 +21255,7 @@ declare interface ASRParameters {
   };
 
   /**
-   * Increase the recognition model bias by assigning more weight to some phrases than others. **Phrases** is the word array, **boost** is the weight in the range of 1..20.
+   * Optional. Increase the recognition model bias by assigning more weight to some phrases than others. **Phrases** is the word array, **boost** is the weight in the range of 1..20.
    * <br>
    * <br>
    * *Available for providers: Google.*
@@ -21256,58 +21269,58 @@ declare interface ASRParameters {
   ];
 
   /**
-   * Maximum number of recognition hypotheses to be returned.
+   * Optional. Maximum number of recognition hypotheses to be returned.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  maxAlternatives: number;
+  maxAlternatives?: number;
 
   /**
-   * Speech adaptation configuration.
+   * Optional. Speech adaptation configuration.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  adaptation: Object;
+  adaptation?: Object;
 
   /**
-   * Whether to enable the spoken punctuation behavior for the call.
+   * Optional. Whether to enable the spoken punctuation behavior for the call.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  enableSpokenPunctuation: boolean;
+  enableSpokenPunctuation?: boolean;
 
   /**
-   * Whether to enable the spoken emoji behavior for the call.
+   * Optional. Whether to enable the spoken emoji behavior for the call.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  enableSpokenEmojis: boolean;
+  enableSpokenEmojis?: boolean;
 
   /**
-   * Whether to use the enhanced models for speech recognition.
+   * Optional. Whether to use the enhanced models for speech recognition.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  useEnhanced: boolean;
+  useEnhanced?: boolean;
 
   /**
-   * Transcription normalization configuration. Use transcription normalization to automatically replace parts of the transcript with phrases of your choosing.
+   * Optional. Transcription normalization configuration. Use transcription normalization to automatically replace parts of the transcript with phrases of your choosing.
    * <br>
    * <br>
    * *Available for providers: Google.*
    * @beta
    */
-  transcriptNormalization: {
+  transcriptNormalization?: {
     entries: [
       {
         search: string;
@@ -21318,7 +21331,7 @@ declare interface ASRParameters {
   };
 
   /**
-   * Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
+   * Optional. Provide the ASR parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/stt#passing-parameters-directly-to-the-provider"> documentation</a>.
    * <br>
    * <br>
    * *Available for providers: Deepgram, Google, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
@@ -23569,11 +23582,11 @@ declare function bytes2str(data: number[], encoding: string): string;
  */
 declare interface ChannelParameters {
   /**
-   * Avatar voice channel parameters
+   * Optional. Avatar voice channel parameters
    */
   voice?: VoiceChannelParameters;
   /**
-   * Avatar text channel parameters
+   * Optional. Avatar text channel parameters
    */
   text?: TextChannelParameters;
 }
@@ -23941,30 +23954,33 @@ declare enum TTSEffectsProfile {
 
 /**
  * Text-to-speech options. Can be passed via the [CallSayParameters.ttsOptions] and [TTSPlayerParameters.ttsOptions] parameter. See the details in the <a href="//www.w3.org/TR/speech-synthesis/#S3.2.4">official specs</a>.
+ * <br>
+ * Alternatively, you can pass the speech synthesis parameters to your TTS provider directly in the [request](https://voximplant.com/docs/references/voxengine/ttsplayerparameters#request) parameter in the JSON format.
+ * Read more about passing the parameters directly in the [Speech synthesis](https://voximplant.com/docs/guides/speech/tts#passing-parameters-directly-to-the-provider) guide.
  */
 declare interface TTSOptions {
   /**
-   * Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
+   * Optional. Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
    */
   emotion?: string;
   /**
-   * Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
+   * Optional. Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
    */
   pitch?: string;
   /**
-   * Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
+   * Optional. Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
    */
   rate?: string;
   /**
-   * Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
+   * Optional. Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
    */
   volume?: string;
   /**
-   * An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
+   * Optional. An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
    */
   effectsProfileId?: TTSEffectsProfile[];
   /**
-   * If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
+   * Optional. If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
    */
   yandexCustomModelName?: string;
 }
@@ -24073,7 +24089,7 @@ declare type URLPlayerRequestBodyKeys = 'text' | 'binary';
  */
 declare type URLPlayerRequestBody = {
   /**
-   * Can be 'text' or 'binary'. 'text' is a stringify object of the **'{"key":"value"}')** type, the 'binary' is a Base64 string
+   * Can be 'text' or 'binary'. 'text' is a stringify object of the **'{"key":"value"}'** type, the 'binary' is a Base64 string
    */
   [key in URLPlayerRequestBodyKeys]: string;
 };

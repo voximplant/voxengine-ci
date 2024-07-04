@@ -15,7 +15,7 @@ declare interface ACDEnqueueParameters {
   priority: number;
   /**
    * Optional. Extra headers to be passed with the call to the agent.
-   * Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which switches to another agent if current one does not answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60).
+   * Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which switches to another agent if current one does not answer after the timeout (in seconds, the default value is **60**, must not be less than **10** or greater than **400**).
    * The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   headers?: { [header: string]: string };
@@ -225,7 +225,7 @@ declare class ACDRequest {
 /**
  * The AI module provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in a more productive way.
  * <br>
- * Add the following line to your scenario code to use the module:
+ * Add the following line to your scenario code to use the namespace:
  * ```
  * require(Modules.AI);
  * ```
@@ -257,11 +257,11 @@ declare namespace AI {
    **/
   interface DetectVoicemailParameters {
     /**
-     * Recognition model. The possible values are 'ru', 'colombia'. The default value is 'ru'.
+     * Optional. Recognition model. The possible values are **ru**, **colombia**. The default value is **ru**.
      */
-    model: string;
+    model?: string;
     /**
-     * Detection threshold in the 0.0 - 1.0 (ms) range. Durations shorter than this value are considered human speech, and durations longer than this value are considered voicemail. The default value is 0.8. Available only with the latam model.
+     * Optional. Detection threshold in the **0.0** - **1.0** (ms) range. Durations shorter than this value are considered human speech, and durations longer than this value are considered voicemail. The default value is **0.8**. Available only with the **latam** model.
      */
     threshold?: number;
   }
@@ -920,22 +920,22 @@ declare namespace AMD {
    */
   interface AMDParameters {
     /**
-     * Recognition model - [AMD.Model]
+     * Recognition model - [AMD.Model].
      */
     model: AMD.Model;
     /**
-     * Detection timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Connected] event. The default value is 6500. Must not be less than 0 or greater than 20000
+     * Optional. Detection timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Connected] event. The default value is **6500**. Must not be less than **0** or greater than **20000**.
      */
     timeout?: number;
     /**
-     * Detection threshold in the range 0.0 - 1.0
+     * Optional. Detection threshold in the range **0.0** - **1.0**.
      */
     thresholds?: AMD.Thresholds;
   }
 }
 
 /**
- * The Answering Machine Detection module provides methods that allow developers to recognize voicemail prompts with the help of artifitial intelligence.
+ * The Answering Machine Detection module provides methods that allow developers to recognize voicemail prompts with the help of artificial intelligence.
  * Read more about the topic in the [Voicemail detection](https://voximplant.com/docs/guides/calls/voicemail-detection) article.
  */
 declare namespace AMD {}
@@ -955,7 +955,7 @@ declare namespace AMD {
     public detect(): Promise<AMD.Events>;
 
     /**
-     * Adds a handler for the specified [AMD.Events]. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called
+     * Adds a handler for the specified [AMD.Events]. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called.
      * @param event Event class (e.g., [AMD.Events.DetectionComplete])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
@@ -965,7 +965,7 @@ declare namespace AMD {
     ): void;
 
     /**
-     * Removes a handler for the specified [AMD.Events] event
+     * Removes a handler for the specified [AMD.Events] event.
      * @param event Event class (i.e., [AMD.Events.DetectionComplete])
      * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
@@ -1129,7 +1129,7 @@ declare namespace AMD {
 
 declare namespace AMD {
   /**
-   * Detection threshold in the range 0.0 - 1.0
+   * Detection threshold in the range **0.0** - **1.0**
    */
   interface Thresholds {
     human?: number;
@@ -3109,15 +3109,15 @@ declare interface CallUserDirectParameters {
    */
   displayName: string;
   /**
-   * Send custom tags along with the push notification of an incoming call.
+   * Optional. Send custom tags along with the push notification of an incoming call.
    */
-  analyticsLabel: string;
+  analyticsLabel?: string;
   /**
    * Optional. Custom parameters (SIP headers) to be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   extraHeaders?: { [header: string]: string };
   /**
-   * Push notification timeout in milliseconds.
+   * Optional. Push notification timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Failed] event with *480 User Offline*. The default value is **20000**. Must not be less than **10000** or greater than **60000**.
    */
   pushNotificationTimeout?: number;
 }
@@ -3127,7 +3127,7 @@ declare interface CallUserDirectParameters {
  */
 declare interface CallUserParameters extends CallParameters {
   /**
-   * Name of the Voximplant user to call
+   * Name of the Voximplant user to call.
    */
   username: string;
   /**
@@ -3135,7 +3135,7 @@ declare interface CallUserParameters extends CallParameters {
    */
   callerid: string;
   /**
-   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, minimum value: 10, maximum value: 400, default value: 60). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
+   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, the default value is **60**, must not be less than **10** or greater than **400**). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}.
    */
   extraHeaders?: { [header: string]: string };
   /**
@@ -3155,7 +3155,7 @@ declare interface CallUserParameters extends CallParameters {
    */
   amd?: AMD.AnsweringMachineDetector;
   /**
-   * Optional. Push notification timeout in milliseconds.
+   * Optional. Push notification timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Failed] event with *480 User Offline*. The default value is **20000**. Must not be less than **10000** or greater than **60000**.
    */
   pushNotificationTimeout?: number;
 }
@@ -3527,6 +3527,11 @@ declare namespace CallList {
 declare module CCAI {
   /**
    * Represents a CCAI Agent instance.
+   * <br>
+   * Add the following line to your scenario code to use the function:
+   * ```
+   * require(Modules.AI);
+   * ```
    */
   class Agent {
     constructor(agentId: string, region?: string);
@@ -3537,13 +3542,30 @@ declare module CCAI {
     destroy(): void;
 
     /**
+     * Gets the list of a Dialogflow conversation profiles.
+     */
+    getProfilesList(): Promise<GetProfilesListResult>;
+
+    /**
+     * Gets the Dialogflow conversation profile.
+     * @param request Dialogflow get conversation profile [request data](https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2beta1#getconversationprofilerequest).
+     */
+    getConversationProfile(request: Object): Promise<GetConversationProfileResult>;
+
+    /**
+     * Updates the Dialogflow conversation profile.
+     * @param request Dialogflow update conversation profile [request data](https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2beta1#updateconversationprofilerequest).
+     */
+    updateConversationProfile(request: Object): Promise<UpdateConversationProfileResult>;
+
+    /**
      * Adds a handler for the specified [CCAI.Events.Agent] event. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called
      * @param event Event class (i.e., [CCAI.Events.Agent.Started])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
-    public addEventListener<T extends keyof CCAI.Events._AgentEvents>(
+    addEventListener<T extends keyof CCAI.Events._AgentEvents>(
       event: CCAI.Events.Agent | T,
-      callback: (event: CCAI.Events._AgentEvents[T]) => any
+      callback: (event: CCAI.Events._AgentEvents[T]) => any,
     ): void;
 
     /**
@@ -3551,42 +3573,35 @@ declare module CCAI {
      * @param event Event class (i.e., [CCAI.Events.Agent.Started])
      * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
-    public removeEventListener<T extends keyof CCAI.Events._AgentEvents>(
+    removeEventListener<T extends keyof CCAI.Events._AgentEvents>(
       event: CCAI.Events.Agent | T,
-      callback?: (event: CCAI.Events._AgentEvents[T]) => any
+      callback?: (event: CCAI.Events._AgentEvents[T]) => any,
     ): void;
   }
 }
 
+/**
+ * Add the following line to your scenario code to use the namespace:
+ * ```
+ * require(Modules.AI);
+ * ```
+ */
 declare module CCAI {}
-
-declare module CCAI {
-  module Vendor {
-    /**
-     * Defines the services to connect to the incoming Dialogflow conversations.
-     */
-    interface ConversationProfile {
-      /**
-       * The unique identifier of this conversation profile. Format: projects/<Project ID>/conversationProfiles/<Conversation Profile ID>.
-       */
-      name: string;
-      /**
-       * Required. A human-readable name for this profile. Max length is 1024 bytes.
-       */
-      display_name: string;
-    }
-  }
-}
 
 declare module CCAI {
   /**
    * Conversation settings.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
+   * ```
+   * require(Modules.AI);
+   * ```
    */
   interface ConversationSettings {
     /**
      * CCAI agent to use in the Dialogflow conversation.
      */
-    agent: Agent;
+    agent: CCAI.Agent;
     /**
      * Service to connect to the incoming Dialogflow conversation.
      */
@@ -3597,6 +3612,11 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Represents a CCAI conversation instance.
+   * <br>
+   * Add the following line to your scenario code to use the class:
+   * ```
+   * require(Modules.AI);
+   * ```
    */
   class Conversation {
     constructor(settings: CCAI.ConversationSettings);
@@ -3634,40 +3654,14 @@ declare module CCAI {
 }
 
 declare module CCAI {
-  module Vendor {
-    /**
-     * Events allow matching intents by event name instead of the natural language input. For instance, the <event: { name: "welcome_event", parameters: { name: "Sam" } }> input can trigger a personalized welcome response. The parameter `name` may be used by the agent in the response: `"Hello #welcome_event.name! What can I do for you today?"`.
-     */
-    interface EventInput {
-      /**
-       * Required. The unique identifier of the event.
-       */
-      name: string;
-      /**
-       * The collection of parameters associated with the event.
-       * Depending on your protocol or client library language, this is a map, associative array, symbol table, dictionary, or JSON object composed of a collection of (MapKey, MapValue) pairs:
-       * * MapKey type: string
-       * * MapKey value: parameter name
-       * * MapValue type:
-       * * If parameter's entity type is a composite entity: map
-       * * Else: string or number, depending on the parameter value type
-       * * MapValue value:
-       * * If parameter's entity type is a composite entity: map from composite entity property names to property values
-       * * Else: parameter value
-       */
-      parameters: { [key: string]: any };
-      /**
-       * Required. The language of this query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
-       */
-      language_code: string;
-    }
-  }
-}
-
-declare module CCAI {
   module Events {
     /**
      * Events related to CCAI agents.
+     * <br>
+     * Add the following line to your scenario code to use the enum:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Agent {
@@ -3694,12 +3688,14 @@ declare module CCAI {
     /**
      * @private
      */
-    interface _AgentStartedEvent {}
+    interface _AgentStartedEvent {
+    }
 
     /**
      * @private
      */
-    interface _AgentStoppedEvent {}
+    interface _AgentStoppedEvent {
+    }
   }
 }
 
@@ -3707,6 +3703,11 @@ declare module CCAI {
   module Events {
     /**
      * Events related to CCAI conversations.
+     * <br>
+     * Add the following line to your scenario code to use the enum:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Conversation {
@@ -3770,13 +3771,25 @@ declare module CCAI {
 }
 
 declare module CCAI {
-  module Events {}
+  /**
+   * Add the following line to your scenario code to use the namespace:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
+  module Events {
+  }
 }
 
 declare module CCAI {
   module Events {
     /**
      * Events related to CCAI participants.
+     * <br>
+     * Add the following line to your scenario code to use the enum:
+     * ```
+     * require(Modules.AI);
+     * ```
      * @event
      */
     enum Participant {
@@ -3827,38 +3840,99 @@ declare module CCAI {
     /**
      * @private
      */
-    interface _ParticipantCreatedEvent {}
+    interface _ParticipantCreatedEvent {
+    }
 
     /**
      * @private
      */
-    interface _ParticipantResponseEvent {}
+    interface _ParticipantResponseEvent {
+    }
 
     /**
      * @private
      */
-    interface _ParticipantPlaybackFinishedEvent {}
+    interface _ParticipantPlaybackFinishedEvent {
+    }
 
     /**
      * @private
      */
-    interface _ParticipantPlaybackStartedEvent {}
+    interface _ParticipantPlaybackStartedEvent {
+    }
 
     /**
      * @private
      */
-    interface _ParticipantPlaybackReadyEvent {}
+    interface _ParticipantPlaybackReadyEvent {
+    }
 
     /**
      * @private
      */
-    interface _ParticipantMarkerReachedEvent {}
+    interface _ParticipantMarkerReachedEvent {
+    }
+  }
+}
+
+declare module CCAI {
+  /**
+   * [CCAI.Agent.getConversationProfile] method result.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
+  interface GetConversationProfileResult {
+    /**
+     * Event ID.
+     */
+    id: string;
+    /**
+     * Event name — 'AI.Events.CcaiGetConversationProfileResponse'.
+     */
+    name: string;
+    /**
+     * Dialogflow [response data](https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2beta1#conversationprofile).
+     */
+    response: Object;
+  }
+}
+
+declare module CCAI {
+  /**
+   * [CCAI.Agent.getProfilesList] method result.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
+  interface GetProfilesListResult {
+    /**
+     * Event ID.
+     */
+    id: string;
+    /**
+     * Event name — 'AI.Events.CcaiListConversationProfilesResponse'.
+     */
+    name: string;
+    /**
+     * Dialogflow [response data](https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2beta1#listconversationsresponse).
+     */
+    response: Object;
   }
 }
 
 declare module CCAI {
   /**
    * Participant settings.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
+   * ```
+   * require(Modules.AI);
+   * ```
    */
   interface ParticipantSettings {
     /**
@@ -3879,6 +3953,11 @@ declare module CCAI {
 declare module CCAI {
   /**
    * Represents a CCAI participant instance.
+   * <br>
+   * Add the following line to your scenario code to use the class:
+   * ```
+   * require(Modules.AI);
+   * ```
    */
   class Participant {
     /**
@@ -3908,7 +3987,7 @@ declare module CCAI {
      */
     public addEventListener<T extends keyof CCAI.Events._ParticipantEvents>(
       event: CCAI.Events.Participant | T,
-      callback: (event: CCAI.Events._ParticipantEvents[T]) => any
+      callback: (event: CCAI.Events._ParticipantEvents[T]) => any,
     ): void;
 
     /**
@@ -3918,7 +3997,7 @@ declare module CCAI {
      */
     public removeEventListener<T extends keyof CCAI.Events._ParticipantEvents>(
       event: CCAI.Events.Participant | T,
-      callback?: (event: CCAI.Events._ParticipantEvents[T]) => any
+      callback?: (event: CCAI.Events._ParticipantEvents[T]) => any,
     ): void;
 
     /**
@@ -3934,9 +4013,98 @@ declare module CCAI {
 }
 
 declare module CCAI {
+  /**
+   * [CCAI.Agent.updateConversationProfile] method result.
+   * <br>
+   * Add the following line to your scenario code to use the interface:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
+  interface UpdateConversationProfileResult {
+    /**
+     * Event ID.
+     */
+    id: string;
+    /**
+     * Event name — 'AI.Events.CcaiUpdateConversationProfileResponse'.
+     */
+    name: string;
+    /**
+     * Dialogflow [response data](https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2beta1#conversationprofile).
+     */
+    response: Object;
+  }
+}
+
+declare module CCAI {
+  module Vendor {
+    /**
+     * Defines the services to connect to the incoming Dialogflow conversations.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
+     */
+    interface ConversationProfile {
+      /**
+       * The unique identifier of this conversation profile. Format: projects/<Project ID>/conversationProfiles/<Conversation Profile ID>.
+       */
+      name: string;
+      /**
+       * Required. A human-readable name for this profile. Max length is 1024 bytes.
+       */
+      display_name: string;
+    }
+  }
+}
+
+declare module CCAI {
+  module Vendor {
+    /**
+     * Events allow matching intents by event name instead of the natural language input. For instance, the <event: { name: "welcome_event", parameters: { name: "Sam" } }> input can trigger a personalized welcome response. The parameter `name` may be used by the agent in the response: `"Hello #welcome_event.name! What can I do for you today?"`.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
+     */
+    interface EventInput {
+      /**
+       * Required. The unique identifier of the event.
+       */
+      name: string;
+      /**
+       * The collection of parameters associated with the event.
+       * Depending on your protocol or client library language, this is a map, associative array, symbol table, dictionary, or JSON object composed of a collection of (MapKey, MapValue) pairs:
+       * * MapKey type: string
+       * * MapKey value: parameter name
+       * * MapValue type:
+       * * If parameter's entity type is a composite entity: map
+       * * Else: string or number, depending on the parameter value type
+       * * MapValue value:
+       * * If parameter's entity type is a composite entity: map from composite entity property names to property values
+       * * Else: parameter value
+       */
+      parameters: { [key: string]: any };
+      /**
+       * Required. The language of this query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
+       */
+      language_code: string;
+    }
+  }
+}
+
+declare module CCAI {
   module Vendor {
     /**
      * Represents a single side of the conversation.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface Participant {
       /**
@@ -3976,6 +4144,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Enumeration of the roles a participant can play in a conversation.
+     * <br>
+     * Add the following line to your scenario code to use the enum:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     enum Role {
       /**
@@ -3998,6 +4171,11 @@ declare module CCAI {
   module Vendor {
     /**
      * Represents the natural language text to be processed.
+     * <br>
+     * Add the following line to your scenario code to use the interface:
+     * ```
+     * require(Modules.AI);
+     * ```
      */
     interface TextInput {
       /**
@@ -4017,7 +4195,14 @@ declare module CCAI {
 }
 
 declare module CCAI {
-  module Vendor {}
+  /**
+   * Add the following line to your scenario code to use the namespace:
+   * ```
+   * require(Modules.AI);
+   * ```
+   */
+  module Vendor {
+  }
 }
 
 /**
@@ -4028,15 +4213,15 @@ declare module CCAI {
  */
 declare enum ConferenceDirection {
   /**
-   * provides only sending stream from endpoint to conference
+   * provides only outgoing stream from endpoint to conference
    */
   SEND,
   /**
-   * provides only receiving stream from conference to endpoint
+   * provides only incoming stream from conference to endpoint
    */
   RECEIVE,
   /**
-   * provides only sending stream from endpoint to conference
+   * provides only outgoing stream from endpoint to conference
    */
   BOTH,
 }
@@ -4112,7 +4297,7 @@ declare interface _ConferenceEndpointEvent extends _ConferenceEvent {
    */
   mode: 'MIX' | 'FORWARD';
   /**
-   * Possible values are SEND | RECEIVE | BOTH. SEND provides only sending stream from endpoint to conference; RECEIVE provides only receiving stream from conference to endpoint; BOTH allows both sending and receiving.
+   * Possible values are SEND | RECEIVE | BOTH. SEND provides only outgoing stream from endpoint to conference; RECEIVE provides only incoming stream from conference to endpoint; BOTH allows both incoming and outgoing streams.
    */
   direction: 'SEND' | 'RECEIVE' | 'BOTH';
   /**
@@ -4961,19 +5146,19 @@ declare enum DTMFType {
  */
 declare interface EndpointParameters {
   /**
-   * Call to be connected to the conference.
+   * [Call] to be connected to the conference.
    */
   call: Call;
   /**
-   * Possible values are MIX | FORWARD. MIX mode combines all streams in one, FORWARD mode sends only one stream.
+   * **MIX** mode combines all streams into one, **FORWARD** mode sends only one stream.
    */
   mode: 'MIX' | 'FORWARD';
   /**
-   * Possible values are SEND | RECEIVE | BOTH. SEND provides only sending stream from endpoint to conference; RECEIVE provides only receiving stream from conference to endpoint; BOTH allows both sending and receiving.
+   * **SEND** provides only outgoing stream from endpoint to conference, **RECEIVE** provides only incoming stream from conference to endpoint, **BOTH** allows both incoming and outgoing streams.
    */
   direction: 'SEND' | 'RECEIVE' | 'BOTH';
   /**
-   * Required. Internal information about codecs.
+   * Internal information about codecs.
    */
   scheme: any;
   /**
@@ -4992,7 +5177,7 @@ declare interface EndpointParameters {
 }
 
 /**
- * Represents any remote media unit in a session. An endpoint can be represented as ASR, Recorder, Player or another Call.
+ * Represents any remote media unit in a session. An endpoint can be represented as [ASR], [Recorder], [Player] or another [Call].
  * <br>
  * Add the following line to your scenario code to use the class:
  * ```
@@ -5006,17 +5191,17 @@ declare class Endpoint {
   id(): string;
 
   /**
-   * Returns the endpoint's direction. Possible values are SEND | RECEIVE | BOTH. SEND provides only sending stream from endpoint to conference; RECEIVE provides only receiving stream from conference to endpoint; BOTH allows both sending and receiving.
+   * Returns the endpoint's direction. **SEND** provides only outgoing stream from endpoint to conference, **RECEIVE** provides only incoming stream from conference to endpoint, **BOTH** allows both incoming and outgoing streams.
    */
   getDirection(): 'SEND' | 'RECEIVE' | 'BOTH';
 
   /**
-   * Returns the endpoint's mode. Possible values are MIX | FORWARD. MIX mode combines all streams in one, FORWARD mode sends only one stream.
+   * Returns the endpoint's mode. **MIX** mode combines all streams in one, **FORWARD** mode sends only one stream.
    */
   getMode(): 'MIX' | 'FORWARD';
 
   /**
-   * Sets the display name for the specified endpoint. When the display name is set, all SDK clients receive EndpointEvents.InfoUpdated event.
+   * Sets the display name for the specified endpoint. When the display name is set, all SDK clients receive 'EndpointEvents.InfoUpdated' event.
    * @param displayName
    */
   setDisplayName(displayName: string): void;
@@ -5029,7 +5214,7 @@ declare class Endpoint {
   manageEndpoint(parameters: ReceiveParameters): Promise<void>;
 
   /**
-   * Returns the endpoint's Call object if the endpoint is not a player or recorder instance.
+   * Returns the endpoint's [Call] object if the endpoint is not a player or recorder instance.
    */
   getCall(): Call;
 }
@@ -5037,7 +5222,7 @@ declare class Endpoint {
 /**
  * Global IVR control module.
  * <br>
- * Add the following line to your scenario code to use the ref folder:
+ * Add the following line to your scenario code to use the namespace:
  * ```
  * require(Modules.IVR);
  * ```
@@ -5620,7 +5805,7 @@ declare module Net {
 }
 
 /**
- * Which media streams to receive from the endpoint. Can be passed via the [ReceiveParameters] parameter. Consists of optional video and audio keys.
+ * Which media streams to receive from the endpoint. Can be passed as a [ReceiveParameters] parameter. Consists of optional video and audio keys.
  * <br>
  * For each key, specify the <b>["default"]</b> value to receive all media streams, specify the empty array <b>[]</b> value to receive no media streams, or specify the media stream IDs (for example, <b>["v1", "v10"]</b>) to receive specific media streams.
  */
@@ -5887,7 +6072,7 @@ declare class Player {
 }
 
 /**
- * An object that specifies what media streams to receive from each endpoint. Can be passed via the [EndpointParameters.receiveParameters] parameter or an argument to the [Endpoint.manageEndpoint] method.
+ * An object that specifies what media streams to receive from each [Endpoint]. Can be passed via the [EndpointParameters.receiveParameters] parameter or an argument to the [Endpoint.manageEndpoint] method.
  * <br>
  * The object can accept the following keys:
  * <ul>
@@ -5915,7 +6100,17 @@ declare enum RecordExpireTime {
 }
 
 /**
- * An object specifying video frame parameters. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
+ * An object that specifies video frame's direction. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the type:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare type RecorderDirection = 'ltr' | 'rtl';
+
+/**
+ * An object that specifies video frame parameters. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -5958,17 +6153,17 @@ declare interface RecorderDrawArea {
  */
 declare enum RecorderEvents {
   /**
-   * Triggers in case of errors during the recording process
+   * Triggers in case of errors during the recording process.
    * @typedef _RecorderErrorEvent
    */
   RecorderError = 'Recorder.Error',
   /**
-   * Triggers after the recording's start
+   * Triggers after the recording's start.
    * @typedef _RecorderURLEvent
    */
   Started = 'Recorder.Started',
   /**
-   * Triggers after the recording's stop
+   * Triggers after the recording's stop.
    * @typedef _RecorderStoppedEvent
    */
   Stopped = 'Recorder.Stopped',
@@ -5979,7 +6174,7 @@ declare enum RecorderEvents {
  */
 declare interface _RecorderEvent {
   /**
-   * Recorder that generated the event
+   * Recorder that generated the event.
    */
   recorder: Recorder;
 }
@@ -5989,7 +6184,7 @@ declare interface _RecorderEvent {
  */
 declare interface _RecorderURLEvent extends _RecorderEvent {
   /**
-   * The link to the record
+   * The link to the record.
    */
   url: string;
 }
@@ -5999,7 +6194,7 @@ declare interface _RecorderURLEvent extends _RecorderEvent {
  */
 declare interface _RecorderErrorEvent extends _RecorderEvent {
   /**
-   * Error message
+   * Error message.
    */
   error: string;
 }
@@ -6007,18 +6202,19 @@ declare interface _RecorderErrorEvent extends _RecorderEvent {
 /**
  * @private
  */
-declare interface _RecorderStartedEvent extends _RecorderURLEvent {}
+declare interface _RecorderStartedEvent extends _RecorderURLEvent {
+}
 
 /**
  * @private
  */
 declare interface _RecorderStoppedEvent extends _RecorderEvent {
   /**
-   * Record cost (in the account's currency: USD, EUR or RUB)
+   * Record cost (in the account's currency: USD, EUR or RUB).
    */
   cost: string;
   /**
-   * Record duration (sec)
+   * Record duration in seconds.
    */
   duration: number;
 }
@@ -6033,7 +6229,7 @@ declare interface _RecorderEvents {
 }
 
 /**
- * An object specifying grid parameters. Can be passed via the [RecorderDrawArea.grid] parameter.
+ * An object that specifies grid parameters. Can be passed via the [RecorderDrawArea.grid] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -6279,7 +6475,7 @@ declare enum RecorderLabelTextAlign {
 }
 
 /**
- * An object specifying video frame with the participants' name settings. Can be passed via the [RecorderVideoParameters.labels] or [UpdateRecorderVideoParameters.labels] parameter.
+ * An object that specifies video frame with the participants' name settings. Can be passed via the [RecorderVideoParameters.labels] or [UpdateRecorderVideoParameters.labels] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -6299,7 +6495,7 @@ declare interface RecorderLabels {
   textAlign?: RecorderLabelTextAlign;
   /**
    * Optional. Margin space outside the label in pixels.
-   * The default value is 8
+   * The default value is **8**
    */
   margin?: number;
   /**
@@ -6309,25 +6505,55 @@ declare interface RecorderLabels {
   position?: RecorderLabelPosition;
   /**
    * Optional. Participant's label background color in HEX format.
-   * The default value is #c7c7cc
+   * The default value is **#c7c7cc**
    */
   background?: string;
   /**
    * Optional. Participant's label color in HEX format.
-   * The default value is #000000
+   * The default value is **#000000**
    */
   color?: string;
   /**
    * Optional. Participant's label width in pixels.
-   * The default value is 104
+   * The default value is **104**
    */
   width?: number;
   /**
    * Optional. Participant's label height in pixels.
-   * The default value is 24
+   * The default value is **24**
    */
   height?: number;
 }
+
+/**
+ * An object that specifies video frame layout priority. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the type:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare type RecorderLayoutPriority = 'vad' | string[];
+
+/**
+ * An object that specifies video layout settings. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the type:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare type RecorderLayout = 'grid' | 'tribune' | 'custom';
+
+/**
+ * An object that specifies how to fill a participant's video source to the conference frame. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
+ * <br>
+ * Add the following line to your scenario code to use the type:
+ * ```
+ * require(Modules.Recorder);
+ * ```
+ */
+declare type RecorderObjectFit = 'fill' | 'contain' | 'cover' | 'none';
 
 /**
  * [Recorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
@@ -6369,7 +6595,7 @@ declare enum RecorderProfile {
 }
 
 /**
- * An object specifying speaking participant highlight video frame parameters. Can be passed via the [RecorderVideoParameters.vad] or [UpdateRecorderVideoParameters.vad] parameter.
+ * An object that specifies speaking participant highlight video frame parameters. Can be passed via the [RecorderVideoParameters.vad] or [UpdateRecorderVideoParameters.vad] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -6379,18 +6605,18 @@ declare enum RecorderProfile {
 declare interface RecorderVad {
   /**
    * Optional. Highlighting frame thickness in pixels.
-   * For width > 1280 the default value is 3, for width < 1280 the default value is 1
+   * For **width > 1280** the default value is **3**, for **width < 1280** the default value is **1**
    */
   thickness?: number;
   /**
    * Optional. Highlighting frame color in HEX format.
-   * The default value is #009933
+   * The default value is **#009933**
    */
   color?: string;
 }
 
 /**
- * An object specifying recorder video parameters. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
+ * An object that specifies recorder video parameters. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -6403,23 +6629,23 @@ declare interface RecorderVideoParameters extends UpdateRecorderVideoParameters 
    */
   mixing: boolean;
   /**
-   * Video quality profile.
+   * Optional. Video quality profile.
    */
   profile?: RecorderProfile;
   /**
-   * Video width in pixels.
+   * Optional. Video width in pixels.
    */
   width?: number;
   /**
-   * Video height in pixels.
+   * Optional. Video height in pixels.
    */
   height?: number;
   /**
-   * Video bitrate in kbps.
+   * Optional. Video bitrate in kbps.
    */
   bitrate?: number;
   /**
-   * Video frames per second.
+   * Optional. Video frames per second.
    */
   fps?: number;
 }
@@ -6434,23 +6660,23 @@ declare interface RecorderVideoParameters extends UpdateRecorderVideoParameters 
  */
 declare class Recorder {
   /**
-   * Adds a handler for the specified [RecorderEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called
+   * Adds a handler for the specified [RecorderEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
    * @param event Event class (i.e., [RecorderEvents.Stopped])
    * @param callback Handler function. A single parameter is passed - object with event information
    */
   addEventListener<T extends keyof _RecorderEvents>(
     event: RecorderEvents | T,
-    callback: (event: _RecorderEvents[T]) => any
+    callback: (event: _RecorderEvents[T]) => any,
   ): void;
 
   /**
-   * Removes a handler for the specified [RecorderEvents] event
+   * Removes a handler for the specified [RecorderEvents] event.
    * @param event Event class (i.e., [RecorderEvents.Stopped])
    * @param callback Optional. Handler function. If not specified, all handler functions are removed
    */
   removeEventListener<T extends keyof _RecorderEvents>(
     event: RecorderEvents | T,
-    callback?: (event: _RecorderEvents[T]) => any
+    callback?: (event: _RecorderEvents[T]) => any,
   ): void;
 
   /**
@@ -6459,7 +6685,7 @@ declare class Recorder {
   id(): string;
 
   /**
-   * Whether to mute whole record without detaching media sources from it
+   * Whether to mute whole record without detaching media sources from it.
    * @param doMute Mute/unmute switch
    */
   mute(doMute: boolean): void;
@@ -6473,7 +6699,7 @@ declare class Recorder {
 declare function require(module: Modules): void;
 
 /**
- * Custom parameters for WebSocket interaction. Can be passed as arguments to the [VoxMediaUnit] **sendMediaTo** method.
+ * Custom parameters for [WebSocket] interaction. Can be passed as arguments to the [VoxMediaUnit] **sendMediaTo** method.
  */
 declare interface SendMediaParameters {
   tag: string;
@@ -7478,7 +7704,7 @@ declare enum TranscriptionProvider {
     TINKOFF = 'tsc',
 }
 /**
- * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
+ * TTS [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
  * <br>
  * Same as the [VoxEngine.createTTSPlayer] method arguments. Has a similar interface to [TTSPlaybackParameters](/docs/references/avatarengine/ttsplaybackparameters).
  */
@@ -7495,7 +7721,7 @@ declare interface TTSPlayerSegment {
 
 /**
  * Updates the current video recorder options. Can be passed as arguments to the [ConferenceRecorder.update] method.
- *
+ * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
  * require(Modules.Recorder);
@@ -7503,45 +7729,45 @@ declare interface TTSPlayerSegment {
  */
 declare interface UpdateRecorderVideoParameters {
   /**
-   * Video layout settings. If set to 'grid', all the video frames are the same size. If set to 'tribune', one active video frame is bigger than the others. If set to 'custom', you need to provide a layoutSettings option with an object specifying custom layout settings.
+   * Optional. Video layout settings. If set to **grid**, all the video frames are the same size. If set to **tribune**, one active video frame is bigger than the others. If set to **custom**, you need to provide a 'layout' option with an object that specifies custom layout settings.
    */
-  layout?: 'grid' | 'tribune' | 'custom';
+  layout?: RecorderLayout;
   /**
-   * If layout is set to custom, specifies custom video layout settings.
+   * Optional. If 'layout' option is set to **custom**, specifies custom video layout settings.
    */
   layoutSettings?: RecorderDrawArea[];
   /**
-   * If layout is set to tribune, specifies which frame is bigger than the others. Set to 'vad' if you want the bigger frame to change to the speaking participant, or specify the participant's ID to show one person constantly.
+   * Optional. If 'layout' option is set to **tribune**, specifies which frame is bigger than the others. Set to **vad** if you want the bigger frame to change to the speaking participant, or specify the participant's ID to show one person constantly.
    */
-  layoutPriority?: 'vad' | string[];
+  layoutPriority?: RecorderLayoutPriority;
   /**
-   * Whether to show the participants' names on their video frames.
+   * Optional. Whether to show the participants' names on their video frames.
    */
   labels?: RecorderLabels;
   /**
-   * Whether to highlight video frame of the speaking participant.
+   * Optional. Whether to highlight video frame of the speaking participant.
    */
   vad?: RecorderVad;
   /**
-   * HTML color code for the video file background.
+   * Optional. HTML color code for the video file background.
    */
   background?: string;
   /**
-   * Video frames' direction, left to right or right to left.
+   * Optional. Video frame's direction, left to right or right to left.
    */
-  direction?: 'ltr' | 'rtl';
+  direction?: RecorderDirection;
   /**
-   * How to fill a participant's video source to the conference frame.
+   * Optional. How to fill a participant's video source to the conference frame.
    */
-  objectFit?: 'fill' | 'contain' | 'cover' | 'none';
+  objectFit?: RecorderObjectFit;
   /**
-   * A container to store custom data for the current recorder.
+   * Optional. A container to store custom data for the current recorder.
    */
   customData?: Object;
 }
 
 /**
- * [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
+ * URL [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
  * <br>
  * Same as the [VoxEngine.createURLPlayer] method arguments. Has a similar interface to [URLPlaybackParameters](/docs/references/avatarengine/urlplaybackparameters).
  */
@@ -7551,7 +7777,7 @@ declare interface URLPlayerSegment {
    */
   url: string;
   /**
-   * Optional. [Player](/docs/references/voxengine/player) parameters.
+   * Optional. URL [Player](/docs/references/voxengine/player) parameters.
    */
   parameters?: URLPlayerParameters;
 }
@@ -14224,7 +14450,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Recorder](audio recorder) or [ConferenceRecorder](conference recorder) object. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [Recorder] (audio recorder) or [ConferenceRecorder] (conference recorder) object. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -14267,7 +14493,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player](audio player) instance with specified text (TTS is used to play the text). You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player] (audio player) instance with specified text (TTS is used to play the text). You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * If the text length exceeds 1500 characters, the [PlayerEvents.PlaybackFinished] event is triggered with error description. After the very first playing, a phrase is cached; each createTTSPlayer instance stores the cache data up to 2 weeks. Note that cache addresses only the URL, without additional headers. The cached phrase is available for all applications and further sessions.
    * @param text Text to synthesize
    * @param parameters Optional. TTS player parameters
@@ -14277,7 +14503,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player](audio player) instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player] (audio player) instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
@@ -14288,10 +14514,10 @@ declare namespace VoxEngine {
    * <br>
    * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
-   * @param url Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb
+   * @param request URL player request
    * @param parameters Optional. URL player parameters
    **/
-  function createURLPlayer(url: URLPlayerRequest, parameters?: URLPlayerParameters): Player;
+  function createURLPlayer(request: URLPlayerRequest, parameters?: URLPlayerParameters): Player;
 }
 
 declare namespace VoxEngine {
@@ -14475,7 +14701,6 @@ declare namespace VoxEngine {
 }
 
 declare namespace VoxEngine {}
-
 
 declare namespace VoximplantApi {
     interface AccountInfo {
@@ -16785,7 +17010,7 @@ declare namespace VoximplantApi {
     }
     interface CallListsInterface {
         /**
-         * Adds a new CSV file for call list processing and starts the specified rule immediately. To send a file, use the request body. To set the call time constraints, use the following options in a CSV file: <ul><li>**__start_execution_time** – when the call list processing starts every day, UTC+0 24-h format: HH:mm:ss</li><li>**__end_execution_time** – when the call list processing stops every day,  UTC+0 24-h format: HH:mm:ss</li><li>**__start_at** – when the call list processing starts, UNIX timestamp. If not specified, the processing starts immediately after a method call</li></ul><br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br/><b>IMPORTANT:</b> the account's balance should be equal or greater than 1 USD. If the balance is lower than 1 USD, the call list processing does not start, or it stops immediately if it is active.
+         * Adds a new CSV file for call list processing and starts the specified rule immediately. To send a file, use the request body. To set the call time constraints, use the following options in a CSV file: <ul><li>**__start_execution_time** – when the call list processing starts every day, UTC+0 24-h format: HH:mm:ss</li><li>**__end_execution_time** – when the call list processing stops every day,  UTC+0 24-h format: HH:mm:ss</li><li>**__start_at** – when the call list processing starts, UNIX timestamp. If not specified, the processing starts immediately after a method call</li><li>**__task_uuid** – call list UUID. A string up to 40 characters, can contain latin letters, digits, hyphens (-) and colons (:). Unique within the call list</li></ul><br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br/><b>IMPORTANT:</b> the account's balance should be equal or greater than 1 USD. If the balance is lower than 1 USD, the call list processing does not start, or it stops immediately if it is active.
          */
         createCallList: (request: CreateCallListRequest) => Promise<CreateCallListResponse>;
         /**
@@ -19976,7 +20201,7 @@ declare namespace VoximplantApi {
         getAccountInvoices: (request: GetAccountInvoicesRequest) => Promise<GetAccountInvoicesResponse>;
     }
     class Client {
-
+        
         Accounts: AccountsInterface;
         Applications: ApplicationsInterface;
         Users: UsersInterface;
@@ -20002,7 +20227,7 @@ declare namespace VoximplantApi {
         KeyValueStorage: KeyValueStorageInterface;
         Invoices: InvoicesInterface;
     }
-
+    
 }
 
 declare namespace VoximplantAvatar {
@@ -20359,7 +20584,7 @@ declare namespace VoximplantAvatar {
 /**
  * Represents an ML-powered bot engine that allows your system to handle natural conversations with users.
  * <br>
- * Add the following line to your scenario code to use the ref folder:
+ * Add the following line to your scenario code to use the namespace:
  * ```
  * require(Modules.Avatar);
  * ```
@@ -20733,7 +20958,7 @@ declare module ASRModelList {
 /**
  * List of available ASR models.
  * <br>
- * Add the following line to your scenario code to use the ref folder:
+ * Add the following line to your scenario code to use the namespace:
  * ```
  * require(Modules.ASR);
  * ```
@@ -21084,7 +21309,7 @@ declare interface ASRParameters {
     | ASRProfileList.YandexV3;
 
   /**
-   * Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
+   * Optional. Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
    * <br>
    * <br>
    * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
@@ -21140,6 +21365,14 @@ declare interface ASRParameters {
    * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
    */
   profanityFilter?: boolean;
+
+  /**
+   * Optional. Request headers: {'x-data-logging-enabled': true}.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
+   */
+  headers?: { [key: string]: any };
 
   /**
    * Optional. Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
@@ -21380,7 +21613,7 @@ declare module ASRProfileList {
 /**
  * List of available ASR profiles.
  * <br>
- * Add the following line to your scenario code to use the ref folder:
+ * Add the following line to your scenario code to use the namespace:
  * ```
  * require(Modules.ASR);
  * ```
@@ -23573,7 +23806,7 @@ declare function bytes2hex(data: number[], toUpperCase: boolean): string;
 /**
  * Creates a string from an array of numbers with specified encoding
  * @param data Array of integers from 0 to 255 to create a string from
- * @param encoding Encoding to use for string creation, the default value is "utf-8".
+ * @param encoding Encoding to use for string creation, the default value is **utf-8**.
  */
 declare function bytes2str(data: number[], encoding: string): string;
 
@@ -23639,37 +23872,37 @@ declare module Net {
    */
   interface HttpRequestOptions {
     /**
-     * HTTP request type as a string: 'GET', 'POST' etc. The default value is 'GET'
+     * HTTP request type as a string: **GET**, **POST** etc. The default value is **GET**.
      */
     method?: string;
     /**
-     * Optional. Raw UTF-8 encoded data string or an array of bytes in any encoding generated by [str2bytes](/docs/references/voxengine/str2bytes) to send as the HTTP request body when 'method' is set to 'POST', 'PUT', or 'PATCH'
+     * Optional. Raw UTF-8 encoded data string or an array of bytes in any encoding generated by [str2bytes](/docs/references/voxengine/str2bytes) to send as the HTTP request body when 'method' is set to **POST**, **PUT**, or **PATCH**.
      */
     postData?: string | number[];
     /**
-     * Optional. Request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is 'VoxEngine/1.0'
+     * Optional. Request headers: {'Content-Type': 'text/html; charset=utf-8', 'User-Agent': 'YourCustomUserAgent/1.0'}. Note that the default value for the 'User-Agent' header is **VoxEngine/1.0**.
      */
     headers?: { [key: string]: string };
     /**
-     * Optional. Request parameters. They can be specified in the URL itself as well
+     * Optional. Request parameters. They can be specified in the URL itself as well.
      */
     params?: {
       [key: string]: string;
     };
     /**
-     * Whether [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) should contain a list of 1-byte numbers corresponding to the HTTP response data. If set to false, [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) is undefined
+     * Optional. Whether [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) should contain a list of 1-byte numbers corresponding to the HTTP response data. If set to **false**, [HttpRequestResult.data](/docs/references/voxengine/net/httprequestresult#data) is undefined.
      */
     rawOutput?: boolean;
     /**
-     * Optional. Timeout for getting a response to the request in seconds. The default value is 90. The value can be only decreased
+     * Optional. Timeout for getting a response to the request in seconds. The default value is **90**. The value can be only decreased.
      */
     timeout?: number;
     /**
-     * Optional. Timeout for the TCP connection to the address in seconds. The default value is 6. The value can be only decreased
+     * Optional. Timeout for the TCP connection to the address in seconds. The default value is **6**. The value can be only decreased.
      */
     connectionTimeout?: number;
     /**
-     * Whether to enable logging the POST request body. The default value is false
+     * Optional. Whether to enable logging the POST request body. The default value is **false**.
      */
     enableSystemLog?: boolean;
   }
@@ -23900,7 +24133,7 @@ declare function setTimeout(callback: () => any, timeout?: number): number;
 /**
  * Creates an array of numbers from parsing string in specified codepage
  * @param data String to parse
- * @param encoding String encoding, the default value is "utf-8".
+ * @param encoding String encoding, the default value is **utf-8**.
  */
 declare function str2bytes(data: string, encoding: string): number[];
 
@@ -23960,27 +24193,45 @@ declare enum TTSEffectsProfile {
  */
 declare interface TTSOptions {
   /**
-   * Optional. Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.<br><br>*Available for providers: Yandex.*
+   * Optional. Voice sentiment. For Yandex voices, works only for <a href="/docs/references/voxengine/voicelist/yandex/neural">ru_RU voices</a>.
+   * <br>
+   * <br>
+   * *Available for providers: Yandex.*
    */
   emotion?: string;
   /**
-   * Optional. Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default<br><br>*Available for providers: Google.*
+   * Optional. Voice pitch. Acceptable ranges: 1) the numbers followed by "Hz" from 0.5Hz to 2Hz  2) x-low, low, medium, high, x-high, default.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
    */
   pitch?: string;
   /**
-   * Optional. Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.<br><br>*Available for providers: Google, Yandex.*
+   * Optional. Speech speed. Possible values are x-slow, slow, medium, fast, x-fast, default.
+   * <br>
+   * <br>
+   * *Available for providers: Google, Yandex.*
    */
   rate?: string;
   /**
-   * Optional. Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.<br><br>*Available for providers: Google.*
+   * Optional. Speech volume. Possible values are silent, x-soft, soft, medium, loud, x-loud, default.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
    */
   volume?: string;
   /**
-   * Optional. An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.<br><br>*Available for providers: Google.*
+   * Optional. An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.
+   * <br>
+   * <br>
+   * *Available for providers: Google.*
    */
   effectsProfileId?: TTSEffectsProfile[];
   /**
-   * Optional. If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.<br><br>*Available for providers: Yandex.*
+   * Optional. If you have a custom Yandex engine voice, specify it in this field. Please contact support to activate this feature for your account.
+   * <br>
+   * <br>
+   * *Available for providers: Yandex.*
    */
   yandexCustomModelName?: string;
 }
@@ -24004,7 +24255,7 @@ declare interface TTSPlaybackParameters {
    */
   allowPlaybackInterruption: true;
   /**
-   * Optional. [Player](/docs/references/voxengine/player) parameters.
+   * Optional. TTS [Player](/docs/references/voxengine/player) parameters.
    * <br>
    * NOTE: the default value is inherited from the [VoiceAvatarConfig.ttsPlayerOptions](/docs/references/voxengine/voximplantavatar/voiceavatarconfig) parameter.
    */
@@ -24012,27 +24263,42 @@ declare interface TTSPlaybackParameters {
 }
 
 /**
- * Optional. [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
+ * TTS [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
  */
 declare interface TTSPlayerParameters {
   /**
-   * Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Language and voice. Lists of all supported languages: [VoiceList.Amazon], [VoiceList.Google], [VoiceList.IBM], [VoiceList.Microsoft], [VoiceList.SaluteSpeech], [VoiceList.Tinkoff], [VoiceList.Yandex] and [VoiceList.Default]. The default value is **VoiceList.Amazon.en_US_Joanna**.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   language?: Voice;
   /**
-   * Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is false.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Whether to use progressive playback. If **true**, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   progressivePlayback?: boolean;
   /**
-   * Optional. Parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
+   * Optional. Parameters for TTS. Note that support of the [TTSOptions.pitch] parameter depends on the language and dictionary used. For unsupported combinations the [CallEvents.PlaybackFinished] event is triggered with error 400.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex.*
    */
   ttsOptions?: TTSOptions;
   /**
-   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   * Optional. Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is **false**.
+   * <br>
+   * <br>
+   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, Tinkoff, Yandex, YandexV3.*
    */
   onPause?: boolean;
   /**
-   * Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/voice-list#passing-parameters-directly-to-the-provider"> documentation</a>.<br><br>*Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
+   * Optional. Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/voice-list#passing-parameters-directly-to-the-provider"> documentation</a>.
+   * <br>
+   * <br>
+   * *Available for providers: Google, SaluteSpeech, Tinkoff, YandexV3.*
    */
   request?: Object;
 }
@@ -24044,17 +24310,17 @@ declare interface TTSPlayerParameters {
  */
 declare interface URLPlaybackParameters {
   /**
-   * Url of an audio file. Supported formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
+   * Url of an audio file. Supported formats are: **mp3**, **ogg**, **flac**, and **wav** (**mp3**, **speex**, **vorbis**, **flac**, and **wav** codecs respectively). Maximum file size is **10 Mb**.
    */
   url: string;
   /**
-   * Whether to enable the playback interruption.
+   * Optional. Whether to enable the playback interruption. The default value is **false**.
    * <br>
    * NOTE: the segment with 'allowPlaybackInterruption' parameter should be always followed by another segment eligible for playback interruption or should be the last segment.
    */
-  allowPlaybackInterruption: true;
+  allowPlaybackInterruption: boolean;
   /**
-   * Optional. [Player](/docs/references/voxengine/player) parameters.
+   * Optional. URL [Player](/docs/references/voxengine/player) parameters.
    * <br>
    * Same as [URLPlayerParameters](/docs/references/voxengine/urlplayerparameters).
    */
@@ -24062,21 +24328,29 @@ declare interface URLPlaybackParameters {
 }
 
 /**
- * Optional. [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
+ * URL [Player] parameters. Can be passed as arguments to the [VoxEngine.createURLPlayer] method.
  */
 declare interface URLPlayerParameters {
   /**
-   * Whether to loop playback.
+   * Optional. Whether to loop playback.
    */
   loop?: boolean;
   /**
-   * Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is false.
+   * Optional. Whether the player is on pause after creation. To continue the playback, use the [Player.resume] method. The default value is **false**.
    */
   onPause?: boolean;
   /**
-   * Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is false.
+   * Optional. Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.
    */
   progressivePlayback?: boolean;
+  /**
+   * Optional. Whether to hide the HTTP request headers from the session logs. The default value is **false**.
+   */
+  hideHeaders?: boolean;
+  /**
+   * Optional. Whether to hide the HTTP request body from the session logs. The default value is **false**.
+   */
+  hideBody?: boolean;
 }
 
 /**
@@ -24085,17 +24359,17 @@ declare interface URLPlayerParameters {
 declare type URLPlayerRequestBodyKeys = 'text' | 'binary';
 
 /**
- * The type of the URL player request body.
+ * The URL player request body.
  */
 declare type URLPlayerRequestBody = {
   /**
-   * Can be 'text' or 'binary'. 'text' is a stringify object of the **'{"key":"value"}'** type, the 'binary' is a Base64 string
+   * Can be 'text' or 'binary'. 'text' is a stringify object of the **'{"key":"value"}'** type, the 'binary' is a Base64 string.
    */
   [key in URLPlayerRequestBodyKeys]: string;
 };
 
 /**
- * The URL player's request header object.
+ * The URL player request header.
  */
 declare type URLPlayerRequestHeader = {
   /**
@@ -24109,7 +24383,7 @@ declare type URLPlayerRequestHeader = {
 };
 
 /**
- * The URL player request type enumeration.
+ * The URL player request method.
  */
 declare enum URLPlayerRequestMethod {
   /**
@@ -24123,29 +24397,29 @@ declare enum URLPlayerRequestMethod {
 }
 
 /**
- * The URL player request's parameters
+ * The URL player request.
  */
 declare interface URLPlayerRequest {
   /**
-   * Optional. HTTP request method. The default value is **GET**
-   */
-  method?: URLPlayerRequestMethod;
-  /**
-   * HTTP request url
+   * HTTP request url of an audio file. Supported formats are: **mp3**, **ogg**, **flac**, and **wav** (**mp3**, **speex**, **vorbis**, **flac**, and **wav** codecs respectively). Maximum file size is **10 Mb**.
    */
   url: string;
   /**
-   * Optional. HTTP request headers
+   * Optional. HTTP request method. The default value is **GET**.
+   */
+  method?: URLPlayerRequestMethod;
+  /**
+   * Optional. HTTP request headers.
    */
   headers?: URLPlayerRequestHeader[];
   /**
-   * Optional. HTTP request body
+   * Optional. HTTP request body.
    */
   body?: URLPlayerRequestBody;
 }
 
 /**
- * Generates unique identifier and returns it is string representation
+ * Generates unique identifier and returns it is string representation.
  */
 declare function uuidgen(): string;
 

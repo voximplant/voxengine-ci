@@ -187,7 +187,7 @@ declare interface _ACDQueueFullEvent extends _ACDBaseEvent {}
  */
 declare class ACDRequest {
   /**
-   * Returns request id. It can be used as the <b>acd\_request\_id</b> parameter in the [GetACDHistory](/docs/references/httpapi/managing_history#getacdhistory) method to search in ACD history.
+   * Returns the request's id. It can be used as the <b>acd\_request\_id</b> parameter in the [GetACDHistory](/docs/references/httpapi/managing_history#getacdhistory) method to search in ACD history.
    */
   id(): string;
 
@@ -276,12 +276,12 @@ declare namespace AI {
    * require(Modules.AI);
    * ```
    * @param call
-   * @param detectVoicemailParameters
+   * @param parameters
    * @deprecated Use [AMD] instead
    */
   function detectVoicemail(
       call: Call,
-      detectVoicemailParameters: DetectVoicemailParameters
+      parameters: DetectVoicemailParameters
   ): Promise<AI.Events>;
 }
 
@@ -947,9 +947,15 @@ declare namespace AMD {
    * Answering machine or voicemail detector class.
    */
   class AnsweringMachineDetector {
+    readonly call?: Call;
+
     readonly model: AMD.Model;
-    readonly call: Call;
     readonly timeout?: number;
+
+    /**
+     * Returns the Answering machine detector's id.
+     */
+    id(): string;
 
     /**
      * Starts answering machine or voicemail recognition session.
@@ -1013,7 +1019,17 @@ declare namespace AMD {
   /**
    * @private
    */
-  interface _DetectionCompleteEvent {
+  interface _AMDEvent {
+    /**
+     * AMD istance that generated the event
+     */
+    amd: AMD.AnsweringMachineDetector;
+  }
+
+  /**
+   * @private
+   */
+  interface _DetectionCompleteEvent extends _AMDEvent{
     /**
      * Call that triggers the event.
      */
@@ -1039,7 +1055,7 @@ declare namespace AMD {
   /**
    * @private
    */
-  interface _DetectionErrorEvent {
+  interface _DetectionErrorEvent extends _AMDEvent{
     /**
      * The id of the Call.
      */
@@ -1472,27 +1488,27 @@ declare enum ASRDictionary {
  */
 declare enum ASREvents {
   /**
-   * Triggers in case of errors during the recognition process
+   * Triggers in case of errors during the recognition process.
    * @typedef _ASRErrorEvent
    */
   ASRError = 'ASR.Error',
   /**
-   * Triggers after ASR instance is created
+   * Triggers after ASR instance is created.
    * @typedef _ASRStartedEvent
    */
   Started = 'ASR.Started',
   /**
-   * Triggers after ASR detected voice input and started collecting audio data for ASR
+   * Triggers after ASR detected voice input and started collecting audio data for ASR.
    * @typedef _ASRCaptureStartedEvent
    */
   CaptureStarted = 'ASR.CaptureStarted',
   /**
-   * Triggers after ASR captured audio data, before recognition process
+   * Triggers after ASR captured audio data, before recognition process.
    * @typedef _ASRSpeechCapturedEvent
    */
   SpeechCaptured = 'ASR.SpeechCaptured',
   /**
-   * Triggered when recognition result received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.
+   * Triggered when recognition result received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time..
    * @typedef _ASRResultEvent
    */
   Result = 'ASR.Result',
@@ -1502,7 +1518,7 @@ declare enum ASREvents {
    */
   InterimResult = 'ASR.InterimResult',
   /**
-   * Triggers as a result of the [ASR.stop] method call
+   * Triggers as a result of the [ASR.stop] method call.
    * @typedef _ASRStoppedEvent
    */
   Stopped = 'ASR.Stopped',
@@ -2321,6 +2337,16 @@ declare enum CallEvents {
    */
   AudioIdentificationResult = 'Call.AudioIdentificationResult',
   /**
+   * Triggers when [voicemail detection](/docs/guides/calls/voicemail-detection) stops detecting voicemail.
+   * @typedef _AudioIdentificationStoppedEvent
+   * */
+  AudioIdentificationStopped = 'Call.AudioIdentificationStopped',
+  /**
+   * Triggers when [voicemail detection](/docs/guides/calls/voicemail-detection) occurs an error.
+   * @typedef _AudioIdentificationErrorEvent
+   */
+  AudioIdentificationError = 'Call.AudioIdentificationError',
+  /**
    * Triggered when blind transfers are enabled by [Call.handleBlindTransfer].
    * @typedef _BlindTransferRequestedEvent
    */
@@ -2331,7 +2357,6 @@ declare enum CallEvents {
    */
   Connected = 'Call.Connected',
   /**
-   * TODO: add description
    * Triggers on an incoming/outgoing call forwarding.
    * @typedef _ForwardingEvent
    */
@@ -2531,6 +2556,8 @@ declare interface _CallEvents {
   [CallEvents.AudioStarted]: _AudioStartedEvent;
   [CallEvents.AudioIdentificationStarted]: _AudioIdentificationStartedEvent;
   [CallEvents.AudioIdentificationResult]: _AudioIdentificationResultEvent;
+  [CallEvents.AudioIdentificationStopped]: _AudioIdentificationStoppedEvent;
+  [CallEvents.AudioIdentificationError]: _AudioIdentificationErrorEvent;
   [CallEvents.BlindTransferRequested]: _BlindTransferRequestedEvent;
   [CallEvents.Connected]: _ConnectedEvent;
   [CallEvents.Forwarding]: _ForwardingEvent;
@@ -2613,6 +2640,18 @@ declare interface _AudioIdentificationResultEvent extends _CallEvent {
   audioType: AMD.ResultClass;
   audioSubType: AMD.ResultSubtype;
   confidence: number;
+}
+
+/**
+ * @private
+ */
+declare interface _AudioIdentificationStoppedEvent extends _CallEvent {
+}
+
+/**
+ * @private
+ */
+declare interface _AudioIdentificationErrorEvent extends _CallEvent {
 }
 
 /**
@@ -2997,6 +3036,10 @@ declare interface CallPSTNParameters {
    * Optional. Answering machine or voicemail detector.
    */
   amd?: AMD.AnsweringMachineDetector;
+  /**
+   * Optional. Whether to use the inbound caller ID for the outbound call from the scenario. The default value is false.
+   */
+  followDiversion?: boolean;
 }
 
 /**
@@ -3056,21 +3099,25 @@ declare interface CallSayParameters {
  */
 declare interface CallSIPParameters {
   /**
-   * CallerID of the caller that is displayed to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback.
+   * Identifier of Voximplant SIP registration that is used for outgoing call.
    */
-  callerid: string;
+  regId: number;
   /**
-   * Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
+   * Optional. CallerID of the caller that is displayed to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback.
    */
-  displayName: string;
+  callerid?: string;
   /**
-   * Password for SIP authentication.
+   * Optional. Name of the caller that is displayed to the callee. Normally it is a human-readable version of CallerID, e.g. a person's name.
    */
-  password: string;
+  displayName?: string;
   /**
-   * Username for SIP authentication. If not specified, callerid is used as the username for authentication.
+   * Optional. Password for SIP authentication.
    */
-  authUser: string;
+  password?: string;
+  /**
+   * Optional. Username for SIP authentication. If not specified, callerid is used as the username for authentication.
+   */
+  authUser?: string;
   /**
    * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message.
    * Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK
@@ -3078,17 +3125,13 @@ declare interface CallSIPParameters {
    */
   headers?: Object;
   /**
-   * Whether the call has video support. Please note that the price for audio-only and video calls is different!
+   * Optional. Whether the call has video support. Please note that the price for audio-only and video calls is different!
    */
-  video: boolean;
+  video?: boolean;
   /**
-   * outgoing proxy, e.g. outProxy: "69.167.178.6"
+   * Optional. Outgoing proxy, e.g. "69.167.178.6"
    */
-  outProxy: string;
-  /**
-   * Identifier of Voximplant SIP registration that is used for outgoing call.
-   */
-  regId: number;
+  outProxy?: string;
   /**
    * Optional. Answering machine or voicemail detector.
    */
@@ -3485,7 +3528,7 @@ declare namespace CallList {
    * Changes parameters for the current task and request another calling attempt with updated data asynchronously.
    * 
    * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
-   * `start_execution_time`, and `end_execution_time`. The new values work for all remaining attempts.
+   * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
    * 
    * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
@@ -3504,7 +3547,7 @@ declare namespace CallList {
    * Changes parameters for the current task and request another calling attempt with updated data.
    * 
    * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
-   * `start_execution_time`, and `end_execution_time`. The new values work for all remaining attempts.
+   * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
    * 
    * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
@@ -6004,6 +6047,7 @@ declare enum RecordExpireTime {
   ONEYEAR = '-1y',
   TWOYEARS = '-2y',
   THREEYEARS = '-3y',
+  FIVEYEARS = '-5y',
 }
 
 /**
@@ -7880,7 +7924,7 @@ declare namespace VoxEngine {
    * @param url URL to which to connect (wss:// + domain + path).
    * @param protocols Either a single protocol string or an array of protocol strings. The default value is **chat**.
    */
-  function createWebSocket(url: string, protocols: string | string[]): WebSocket;
+  function createWebSocket(url: string, protocols: WebSocketParameters): WebSocket;
 }
 
 declare namespace VoxEngine {
@@ -13956,32 +14000,32 @@ declare type VoxMediaUnit =
   | StreamingAgent;
 
 /**
- * Available audio encoding formats to pass to **encoding**. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is **PCM8**.
+ * Available audio encoding formats. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is **PCM8**.
  */
 declare enum WebSocketAudioEncoding {
   /**
    * Pulse-code modulation, 8kHz.
    */
-  PCM8,
+  PCM8 = 'PCM8',
   /**
    * Pulse-code modulation, 16kHz.
    */
-  PCM16,
+  PCM16 = 'PCM16',
   /**
    * A-law algorithm, 8kHz.
    */
-  ALAW,
+  ALAW = 'ALAW',
   /**
    * μ-law algorithm, 8kHz.
    */
-  ULAW,
+  ULAW = 'ULAW',
   /**
    * Codec for **audio/ogg** and **audio/opus** MIME types, 48kHz.
    */
-  OPUS,
+  OPUS = 'OPUS',
 }
 
-declare enum WebsocketCloseCode {
+declare enum WebSocketCloseCode {
   /**
    * Normal connection closure.
    */
@@ -14049,45 +14093,45 @@ declare enum WebsocketCloseCode {
  */
 declare enum WebSocketEvents {
   /**
+   * Triggered when the WebSocket connection is opened. [WebSocket.onopen] is called right before any other handlers.
+   * @typedef _WebSocketOpenEvent
+   */
+  OPEN = 'WebSocket.Open',
+  /**
    * Triggered when the WebSocket connection is closed. [WebSocket.onclose] is called right before any other handlers.
    * @typedef _WebSocketCloseEvent
    */
   CLOSE = 'WebSocket.Close',
-  /**
-   * Triggered when an error occurs during the WebSocket connection. [WebSocket.onerror] is called right before any other handlers.
-   * @typedef _WebSocketErrorEvent
-   */
-  ERROR = 'WebSocket.Error',
   /**
    * Triggered when a message is received by a target object. [WebSocket.onmessage] is called right before any other handlers.
    * @typedef _WebSocketMessageEvent
    */
   MESSAGE = 'WebSocket.Message',
   /**
-   * Triggered when the WebSocket connection is opened. [WebSocket.onopen] is called right before any other handlers.
-   * @typedef _WebSocketOpenEvent
+   * Triggers when an error occurs during the WebSocket connection. [WebSocket.onerror] is called right before any other handlers.
+   * @typedef _WebSocketErrorEvent
    */
-  OPEN = 'WebSocket.Open',
+  ERROR = 'WebSocket.Error',
   /**
    * Triggered when the audio stream sent by a third party through a WebSocket is started playing.
    * @typedef _WebSocketMediaStartedEvent
    */
-  MEDIA_STARTED = 'WebSocket.MEDIA_STARTED',
+  MEDIA_STARTED = 'WebSocket.MediaEventStarted',
   /**
-   * Triggers after the end of the audio stream sent by a third party through a WebSocket (1 second of silence).
+   * Triggers after the end of the audio stream sent by a third party through a WebSocket (**1 second of silence**).
    * @typedef _WebSocketMediaEndedEvent
    */
-  MEDIA_ENDED = 'WebSocket.MEDIA_ENDED',
+  MEDIA_ENDED = 'WebSocket.MediaEventEnded',
 }
 
 /**
  * @private
  */
 declare interface _WebSocketEvents {
-  [WebSocketEvents.CLOSE]: _WebSocketCloseEvent;
-  [WebSocketEvents.ERROR]: _WebSocketErrorEvent;
-  [WebSocketEvents.MESSAGE]: _WebSocketMessageEvent;
   [WebSocketEvents.OPEN]: _WebSocketOpenEvent;
+  [WebSocketEvents.CLOSE]: _WebSocketCloseEvent;
+  [WebSocketEvents.MESSAGE]: _WebSocketMessageEvent;
+  [WebSocketEvents.ERROR]: _WebSocketErrorEvent;
   [WebSocketEvents.MEDIA_STARTED]: _WebSocketMediaStartedEvent;
   [WebSocketEvents.MEDIA_ENDED]: _WebSocketMediaEndedEvent;
 }
@@ -14105,11 +14149,17 @@ declare interface _WebSocketEvent {
 /**
  * @private
  */
+declare interface _WebSocketOpenEvent extends _WebSocketEvent {
+}
+
+/**
+ * @private
+ */
 declare interface _WebSocketCloseEvent extends _WebSocketEvent {
   /**
    * WebSocket close code.
    */
-  readonly code: WebsocketCloseCode;
+  readonly code: WebSocketCloseCode;
   /**
    * Reason why the connection is closed.
    */
@@ -14123,22 +14173,22 @@ declare interface _WebSocketCloseEvent extends _WebSocketEvent {
 /**
  * @private
  */
-declare interface _WebSocketErrorEvent extends _WebSocketEvent {}
-
-/**
- * @private
- */
 declare interface _WebSocketMessageEvent extends _WebSocketEvent {
   /**
    * The data sent by the message emitter.
    */
   readonly data: string;
+  /**
+   * TODO: need to check is there really a 'data' or a 'text' properties?
+   */
+  readonly text?: string;
 }
 
 /**
  * @private
  */
-declare interface _WebSocketOpenEvent extends _WebSocketEvent {}
+declare interface _WebSocketErrorEvent extends _WebSocketEvent {
+}
 
 /**
  * @private
@@ -14163,7 +14213,7 @@ declare interface _WebSocketMediaEndedEvent extends _WebSocketEvent {
    */
   tag: string;
   /**
-   * Information about the audio stream that can be obtained after the stream stops or pauses (1-sec silence).
+   * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
    */
   mediaInfo: WebSocketMediaInfo;
 }
@@ -14178,23 +14228,37 @@ declare interface WebSocketMediaInfo {
   duration: number;
 }
 
+/**
+ * [WebSocket] parameters. Can be passed as arguments to the [VoxEngine.createWebSocket] method.
+ */
+declare interface WebSocketParameters {
+  /**
+   * Either a single protocol string or an array of protocol strings. The default value is **chat**.
+   */
+  protocols: string | string[];
+  /**
+   * List of dictionaries with key and value fields representing headers.
+   */
+  headers: { name: string; value: string }[];
+}
+
 declare enum WebSocketReadyState {
   /**
    * Connection is closed or cannot be opened.
    */
-  CLOSED,
+  CLOSED = 'closed',
   /**
    * Connection is closing.
    */
-  CLOSING,
+  CLOSING = 'closing',
   /**
    * Connection is in the process.
    */
-  CONNECTING,
+  CONNECTING = 'connecting',
   /**
    * Connection is open and ready to communicate.
    */
-  OPEN,
+  OPEN = 'open',
 }
 
 /**
@@ -14203,7 +14267,7 @@ declare enum WebSocketReadyState {
  * @param protocols Either a single protocol string or an array of protocol strings. The default value is **chat**
  */
 declare class WebSocket {
-  constructor(url: string, protocols?: string | string[]);
+  constructor(url: string, parameters?: WebSocketParameters);
 
   /**
    * Event handler to call when the connection is closed.
@@ -14228,12 +14292,12 @@ declare class WebSocket {
   /**
    * Event handler to call when the audio stream is started playing.
    */
-  onmediastarted: (ev: _WebSocketMediaStartedEvent) => any | null;
+  onmediastarted: ((ev: _WebSocketMediaStartedEvent) => any) | null;
 
   /**
    * Event handler to call after the end of the audio stream.
    */
-  onmediaended: (ev: _WebSocketMediaEndedEvent) => any | null;
+  onmediaended: ((ev: _WebSocketMediaEndedEvent) => any) | null;
 
   /**
    * Returns the current state of the WebSocket connection.
@@ -14250,7 +14314,7 @@ declare class WebSocket {
    * @param code WebSocket close code
    * @param reason Reason why the connection is closed
    */
-  close(code?: WebsocketCloseCode, reason?: string): void;
+  close(code?: WebSocketCloseCode, reason?: string): void;
 
   /**
    * Enqueues the specified data to be transmitted over the WebSocket connection.
@@ -15125,7 +15189,7 @@ declare module ASRProfileList {
      * Spanish (Latin America)
      * @const
      */
-    'es-419',
+    es_419,
     /**
      * Swedish (Sweden)
      * @const
@@ -17146,7 +17210,7 @@ declare module ASRProfileList {
 }
 
 /**
- * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Language or dictionary should be passed to the [VoxEngine.createASR] function.
+ * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Parameters **language** or **dictionary** should be passed to the [VoxEngine.createASR] function.
  * <br>
  * Add the following line to your scenario code to use the class:
  * ```
@@ -17156,10 +17220,25 @@ declare module ASRProfileList {
 declare class ASR {
   /**
    * @param id
-   * @param lang
-   * @param dict
+   * @param language
+   * @param dictionary
    */
-  constructor(id: string, lang: string, dict: string);
+  constructor(id: string, language: string, dictionary: string);
+
+  /**
+   * Returns the asr's id.
+   */
+  id(): string;
+
+  /**
+   * Returns the asr's language.
+   */
+  language(): string;
+
+  /**
+   * Returns the asr's dictionary.
+   */
+  dictionary(): string[];
 
   /**
    * Adds a handler for the specified [ASREvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
@@ -17649,13 +17728,13 @@ declare interface TTSPlaybackParameters {
   /**
    * Text to synthesize.
    * <br>
-   * NOTE: this parameter is required for the [AvatarState] (not for the [AvatarFormState]), so if you want to use the value from the [VoximplantAvatar.Events.Reply](/docs/references/voxengine/voximplantavatar/events#reply) event's "utterance" parameter, specify it into the "text" parameter.
+   * NOTE: this parameter is required for the [AvatarState] (not for the [AvatarFormState]), so if you want to use the value from the [VoximplantAvatar.Events.Reply](/docs/references/voxengine/voximplantavatar/events#reply) event's **utterance** parameter, specify it into the **text** parameter.
    */
   text: string;
   /**
    * Whether to enable the playback interruption.
    * <br>
-   * NOTE: the segment with 'allowPlaybackInterruption' parameter should be always followed by another segment eligible for playback interruption or should be the last segment.
+   * NOTE: the segment with **allowPlaybackInterruption** parameter should be always followed by another segment eligible for playback interruption or should be the last segment.
    */
   allowPlaybackInterruption: true;
   /**
@@ -17699,7 +17778,7 @@ declare interface TTSPlayerParameters {
    */
   onPause?: boolean;
   /**
-   * Optional. Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/voice-list#passing-parameters-directly-to-the-provider"> documentation</a>.
+   * Optional. Provide the TTS parameters directly to the provider in this parameter. Find more information in the <a href="/docs/guides/speech/tts#passing-parameters-directly-to-the-provider"> documentation</a>.
    * <br>
    * <br>
    * *Available for providers: Google, SaluteSpeech, T-Bank,YandexV3.*

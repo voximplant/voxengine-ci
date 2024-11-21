@@ -327,6 +327,11 @@ declare namespace AI {
     constructor(id: string, parameters: Object);
 
     /**
+     * Returns the dialogflow instance's id.
+     */
+    id(): string;
+
+    /**
      * Set parameters for the intents.
      * @param queryParameters Query parameters
      */
@@ -1508,7 +1513,10 @@ declare enum ASREvents {
    */
   SpeechCaptured = 'ASR.SpeechCaptured',
   /**
-   * Triggered when recognition result received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time..
+   * Triggered when a speech recognition result has been received from ASR.
+   * 
+   * We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.  
+   * Note: We recommend to take a decision about continuing speech recognition in this event's handler. Otherwise, speech recognition continues automatically.
    * @typedef _ASRResultEvent
    */
   Result = 'ASR.Result',
@@ -2398,11 +2406,6 @@ declare enum CallEvents {
    */
   Failed = 'Call.Failed',
   /**
-   * Triggered when the first video packet is received.
-   * @typedef _VideoFirstPacketEvent
-   */
-  FirstVideoPacket = 'Call.Video.FirstPacket',
-  /**
    * Triggered when an INFO message is received.
    * @typedef _InfoReceivedEvent
    */
@@ -2563,7 +2566,6 @@ declare interface _CallEvents {
   [CallEvents.Forwarding]: _ForwardingEvent;
   [CallEvents.Disconnected]: _DisconnectedEvent;
   [CallEvents.Failed]: _FailedEvent;
-  [CallEvents.FirstVideoPacket]: _VideoFirstPacketEvent;
   [CallEvents.InfoReceived]: _InfoReceivedEvent;
   [CallEvents.MessageReceived]: _MessageReceivedEvent;
   [CallEvents.MicStatusChange]: _MicStatusChangeEvent;
@@ -2732,12 +2734,6 @@ declare interface _CallRecordEvent extends _CallEvent {
    * Record URL
    */
   url: string;
-}
-
-/**
- * @private
- */
-declare interface _VideoFirstPacketEvent extends _CallRecordEvent {
 }
 
 /**
@@ -5071,19 +5067,19 @@ declare enum DTMFType {
   /**
    * All types of DTMF tones trigger the [CallEvents.ToneReceived] event: in-band , RFC 2833 and SIP INFO. Receiving an RFC 2833 tone disables processing of in-band tones to avoid duplicating
    */
-  ALL,
+  ALL = 0,
   /**
    * Only RFC 2833 DTMF tones trigger the [CallEvents.ToneReceived] event
    */
-  TELEPHONE_EVENT,
+  TELEPHONE_EVENT = 1,
   /**
    * Only in-band DTMF tones trigger the [CallEvents.ToneReceived] event
    */
-  IN_BAND,
+  IN_BAND = 2,
   /**
    * Only SIP INFO DTMF tones trigger the [CallEvents.ToneReceived] event
    */
-  SIP_INFO,
+  SIP_INFO = 3,
 }
 
 /**
@@ -18681,6 +18677,139 @@ declare namespace VoiceList {
   }
 }
 
+declare namespace VoiceList {
+    /**
+     * List of ElevenLabs TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+     */
+    namespace ElevenLabs {
+    /**
+     * ElevenLabs voice, female, middle-aged, British, confident, news.
+     * @const
+     */
+    const Alice: Voice;
+
+    /**
+     * ElevenLabs voice, female, middle-aged, American, expressive, social media.
+     * @const
+     */
+    const Aria: Voice;
+
+    /**
+     * ElevenLabs voice, male, old, American, trustworthy, narration.
+     * @const
+     */
+    const Bill: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, American, deep, narration.
+     * @const
+     */
+    const Brian: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, Transatlantic, intense, characters.
+     * @const
+     */
+    const Callum: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, Australian, natural, conversational.
+     * @const
+     */
+    const Charlie: Voice;
+
+    /**
+     * ElevenLabs voice, female, young, Swedish, seductive, characters.
+     * @const
+     */
+    const Charlotte: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, American, casual, conversational.
+     * @const
+     */
+    const Chris: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, British, authoritative, news.
+     * @const
+     */
+    const Daniel: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, American, friendly, conversational.
+     * @const
+     */
+    const Eric: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, British, warm, narration.
+     * @const
+     */
+    const George: Voice;
+
+    /**
+     * ElevenLabs voice, female, young, American, expressive, conversational.
+     * @const
+     */
+    const Jessica: Voice;
+
+    /**
+     * ElevenLabs voice, female, young, American, upbeat, social media.
+     * @const
+     */
+    const Laura: Voice;
+
+    /**
+     * ElevenLabs voice, male, young, American, articulate, narration.
+     * @const
+     */
+    const Liam: Voice;
+
+    /**
+     * ElevenLabs voice, female, middle-aged, British, warm, narration.
+     * @const
+     */
+    const Lily: Voice;
+
+    /**
+     * ElevenLabs voice, female, middle-aged, American, friendly, narration.
+     * @const
+     */
+    const Matilda: Voice;
+
+    /**
+     * ElevenLabs voice, non-binary, middle-aged, American, confident, social media.
+     * @const
+     */
+    const River: Voice;
+
+    /**
+     * ElevenLabs voice, male, middle-aged, American, confident, social media.
+     * @const
+     */
+    const Roger: Voice;
+
+    /**
+     * ElevenLabs voice, female, young, American, soft, news.
+     * @const
+     */
+    const Sarah: Voice;
+
+    /**
+     * ElevenLabs voice, male, young, American, friendly, social media.
+     * @const
+     */
+    const Will: Voice;
+
+    /**
+     * Creates a brand voice with ElevenLabs. To use this method, please contact support.
+     * @param name The name of the voice
+     */
+    function createBrandVoice(name: string): Voice;
+    }
+  }
+  
 declare namespace VoiceList {
   /**
    * List of Google TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.

@@ -5591,6 +5591,10 @@ declare enum Modules {
    */
   MeasurementProtocol,
   /**
+   * Provides the OpenAI functionality.
+   */
+  OpenAI,
+  /**
    * Provides the push notification functionality for [iOS](/docs/guides/sdk/iospush) and [Android](/docs/guides/sdk/androidpush) devices.
    * <br>
    * Add the following line to your scenario code to use the module:
@@ -5750,6 +5754,303 @@ declare module Net {
   ): void;
 }
 
+declare namespace OpenAI {
+  /**
+   * The Realtime API (Beta) enables you to build low-latency, multi-modal conversational experiences.
+   */
+  namespace Beta {
+  }
+}
+declare namespace OpenAI {
+  namespace Beta {
+    /**
+     * Creates a RealtimeAPIClient instance.
+     * @param apiKey The API key for the OpenAI Realtime API
+     * @param onWebSocketClose A callback function that is called when the WebSocket connection is closed
+     */
+    function createRealtimeAPIClient(apiKey: string, onWebSocketClose: (event: WebSocketEvents.CLOSE) => void): Promise<RealtimeAPIClient>
+  }
+}
+declare namespace OpenAI {
+  namespace Beta {
+    class RealtimeAPIClient {
+      /**
+       * Returns the RealtimeAPIClient id.
+       */
+      id(): string;
+
+      /**
+       * Returns the RealtimeAPIClient WebSocket id.
+       */
+      webSocketId(): string;
+
+      /**
+       * Closes the RealtimeAPIClient connection (over WebSocket) or connection attempt.
+       */
+      close(): void;
+
+      /**
+       * Starts sending media from the RealtimeAPIClient (via WebSocket) to the media unit. RealtimeAPIClient works in real time.
+       * @param mediaUnit Media unit that receives media
+       * @param parameters Optional interaction parameters
+       */
+      sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+      /**
+       * Stops sending media from the RealtimeAPIClient (via WebSocket) to the media unit.
+       * @param mediaUnit Media unit that stops receiving media
+       */
+      stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+      /**
+       * Adds a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+       * @param event Event class (i.e., [OpenAI.Beta.RealtimeAPIEvents.Error])
+       * @param callback Handler function. A single parameter is passed - object with event information
+       */
+      addEventListener<T extends keyof OpenAI.Beta._RealtimeAPIEvent>(
+        event: OpenAI.Beta.RealtimeAPIEvents | T,
+        callback: (event: OpenAI.Beta._RealtimeAPIEvent[T]) => any,
+      ): void;
+
+      /**
+       * Removes a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] event.
+       * @param event Event class (i.e., [OpenAI.Beta.RealtimeAPIEvents.Error])
+       * @param callback Optional. Handler function. If not specified, all handler functions are removed
+       */
+      removeEventListener<T extends keyof OpenAI.Beta._RealtimeAPIEvent>(
+        event: OpenAI.Beta.RealtimeAPIEvents | T,
+        callback?: (event: OpenAI.Beta._RealtimeAPIEvent[T]) => any,
+      ): void;
+
+      /**
+       * Updates the session’s default configuration (https://platform.openai.com/docs/api-reference/realtime-client-events/session/update).
+       * @param session Realtime session object configuration (https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session). NOTE: the 'inputt_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event
+       */
+      sessionUpdate(session: Object, eventId?: string): void
+
+      /**
+       * Instructs the server to create a Response, which means triggering model inference (https://platform.openai.com/docs/api-reference/realtime-client-events/response/create).
+       * @param response The response resource (https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response). NOTE: the 'inputt_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event
+       */
+      responseCreate(response: Object, eventId?: string): void
+
+      /**
+       * Cancels an in-progress response (https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel).
+       * @param eventId Optional. Client-generated ID used to identify this event
+       */
+      responseCancel(eventId?: string): void
+    }
+  }
+}
+declare namespace OpenAI {
+  namespace Beta {
+    /**
+     * @event
+     */
+    enum RealtimeAPIEvents {
+      /**
+       * The unknown event.
+       * @typedef _RealtimeAPIEvent
+       */
+      Unknown = 'OpenAI.Beta.RealtimeAPI.Unknown',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/error](https://platform.openai.com/docs/api-reference/realtime-server-events/error)
+       * @typedef _RealtimeAPIEvent
+       */
+      Error = 'OpenAI.Beta.RealtimeAPI.Error',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/session/created](https://platform.openai.com/docs/api-reference/realtime-server-events/session/created)
+       * @typedef _RealtimeAPIEvent
+       */
+      SessionCreated = 'OpenAI.Beta.RealtimeAPI.SessionCreated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated)
+       * @typedef _RealtimeAPIEvent
+       */
+      SessionUpdated = 'OpenAI.Beta.RealtimeAPI.SessionUpdated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/created](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/created)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationCreated = 'OpenAI.Beta.RealtimeAPI.ConversationCreated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/created](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/created)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemCreated = 'OpenAI.Beta.RealtimeAPI.ConversationItemCreated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemInputAudioTranscriptionCompleted = 'OpenAI.Beta.RealtimeAPI.conversationItemInputAudioTranscriptionCompleted',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemInputAudioTranscriptionFailed = 'OpenAI.Beta.RealtimeAPI.conversationItemInputAudioTranscriptionFailed',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemTruncated = 'OpenAI.Beta.RealtimeAPI.ConversationItemTruncated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemDeleted = 'OpenAI.Beta.RealtimeAPI.ConversationItemDeleted',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed)
+       * @typedef _RealtimeAPIEvent
+       */
+      InputAudioBufferCommitted = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferCommitted',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared)
+       * @typedef _RealtimeAPIEvent
+       */
+      InputAudioBufferCleared = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferCleared',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started)
+       * @typedef _RealtimeAPIEvent
+       */
+      InputAudioBufferSpeechStarted = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferSpeechStarted',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped)
+       * @typedef _RealtimeAPIEvent
+       */
+      InputAudioBufferSpeechStopped = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferSpeechStopped',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/created](https://platform.openai.com/docs/api-reference/realtime-server-events/response/created)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseCreated = 'OpenAI.Beta.RealtimeAPI.ResponseCreated',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseDone = 'OpenAI.Beta.RealtimeAPI.ResponseDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseOutputItemAdded = 'OpenAI.Beta.RealtimeAPI.ResponseOutputItemAdded',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseOutputItemDone = 'OpenAI.Beta.RealtimeAPI.ResponseOutputItemDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseContentPartAdded = 'OpenAI.Beta.RealtimeAPI.ResponseContentPartAdded',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseContentPartDone = 'OpenAI.Beta.RealtimeAPI.ResponseContentPartDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/delta)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseTextDelta = 'OpenAI.Beta.RealtimeAPI.ResponseTextDelta',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseTextDone = 'OpenAI.Beta.RealtimeAPI.ResponseTextDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/delta)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseAudioTranscriptDelta = 'OpenAI.Beta.RealtimeAPI.ResponseAudioTranscriptDelta',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseAudioTranscriptDone = 'OpenAI.Beta.RealtimeAPI.ResponseAudioTranscriptDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/delta)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseAudioDelta = 'OpenAI.Beta.RealtimeAPI.ResponseAudioDelta',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseAudioDone = 'OpenAI.Beta.RealtimeAPI.ResponseAudioDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseFunctionCallArgumentsDelta = 'OpenAI.Beta.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done)
+       * @typedef _RealtimeAPIEvent
+       */
+      ResponseFunctionCallArgumentsDone = 'OpenAI.Beta.RealtimeAPI.ResponseFunctionCallArgumentsDone',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated)
+       * @typedef _RealtimeAPIEvent
+       */
+      RateLimitsUpdated = 'OpenAI.Beta.RealtimeAPI.RateLimitsUpdated',
+    }
+
+    /**
+     * @private
+     */
+    interface _RealtimeAPIEvents {
+      [RealtimeAPIEvents.Unknown]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.Error]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.SessionCreated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.SessionUpdated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationCreated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemCreated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionFailed]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemTruncated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemDeleted]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.InputAudioBufferCommitted]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.InputAudioBufferCleared]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.InputAudioBufferSpeechStarted]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.InputAudioBufferSpeechStopped]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseCreated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseOutputItemAdded]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseOutputItemDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseContentPartAdded]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseContentPartDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseTextDelta]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseTextDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseAudioTranscriptDelta]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseAudioTranscriptDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseAudioDelta]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseAudioDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.RateLimitsUpdated]: _RealtimeAPIEvent;
+    }
+
+    /**
+     * @private
+     */
+    interface _RealtimeAPIEvent {
+      /**
+       * The [OpenAI.Beta.RealtimeAPIClient] instance.
+       */
+      client: RealtimeAPIClient;
+      /**
+       * The event's data.
+       */
+      data?: Object;
+    }
+  }
+}
+
+
+declare namespace OpenAI {
+}
 /**
  * Which media streams to receive from the endpoint. Can be passed as a [ReceiveParameters] parameter. Consists of optional video and audio keys.
  * <br>
@@ -14174,10 +14475,6 @@ declare interface _WebSocketMessageEvent extends _WebSocketEvent {
    * The data sent by the message emitter.
    */
   readonly data: string;
-  /**
-   * TODO: need to check is there really a 'data' or a 'text' properties?
-   */
-  readonly text?: string;
 }
 
 /**
@@ -14307,10 +14604,8 @@ declare class WebSocket {
 
   /**
    * Closes the WebSocket connection or connection attempt.
-   * @param code WebSocket close code
-   * @param reason Reason why the connection is closed
    */
-  close(code?: WebSocketCloseCode, reason?: string): void;
+  close(): void;
 
   /**
    * Enqueues the specified data to be transmitted over the WebSocket connection.

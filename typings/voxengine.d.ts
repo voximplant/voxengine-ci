@@ -5524,7 +5524,7 @@ declare enum Modules {
    * require(Modules.ACD);
    * ```
    */
-  ACD,
+  ACD = 'acd',
   /**
    * Provides additional methods that use Artificial Intelligence. These methods allow solving business tasks in more productive way.
    * <br>
@@ -5533,7 +5533,7 @@ declare enum Modules {
    * require(Modules.AI);
    * ```
    */
-  AI,
+  AI = 'ai',
   /**
    * Provides the [key-value storage](/docs/guides/voxengine/kvs) functionality.
    * <br>
@@ -5542,7 +5542,7 @@ declare enum Modules {
    * require(Modules.ApplicationStorage);
    * ```
    */
-  ApplicationStorage,
+  ApplicationStorage = 'applicationstorage',
   /**
    * Provides the [speech recognition](/docs/guides/speech/stt) functionality.
    * <br>
@@ -5551,7 +5551,7 @@ declare enum Modules {
    * require(Modules.ASR);
    * ```
    */
-  ASR,
+  ASR = 'asr',
   /**
    * Provides the [Voximplant Avatar](/docs/guides/ai/avatar) (virtual assistant based on AI and NLP) functionality.
    * <br>
@@ -5560,7 +5560,7 @@ declare enum Modules {
    * require(Modules.Avatar);
    * ```
    */
-  Avatar,
+  Avatar = 'avatar',
   /**
    * Provides the [audio and video conferencing](/docs/guides/conferences) functionality.
    * <br>
@@ -5569,7 +5569,7 @@ declare enum Modules {
    * require(Modules.Conference);
    * ```
    */
-  Conference,
+  Conference = 'conference',
   /**
    * Provides the [interactive voice menus](/docs/guides/speech/ivr) functionality.
    * <br>
@@ -5580,7 +5580,7 @@ declare enum Modules {
    * require(Modules.IVR);
    * ```
    */
-  IVR,
+  IVR = 'ivr',
   /**
    * Provides the [Google Analytics Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/v1) functionality.
    * <br>
@@ -5589,11 +5589,11 @@ declare enum Modules {
    * require(Modules.MeasurementProtocol);
    * ```
    */
-  MeasurementProtocol,
+  MeasurementProtocol = 'measurementprotocol',
   /**
    * Provides the OpenAI functionality.
    */
-  OpenAI,
+  OpenAI = 'openai',
   /**
    * Provides the push notification functionality for [iOS](/docs/guides/sdk/iospush) and [Android](/docs/guides/sdk/androidpush) devices.
    * <br>
@@ -5602,7 +5602,7 @@ declare enum Modules {
    * require(Modules.PushService);
    * ```
    */
-  PushService,
+  PushService = 'pushservice',
   /**
    * Provides the [call recording](/docs/guides/calls/record) and [conference recording](/docs/guides/conferences/record) functionality.
    * <br>
@@ -5611,7 +5611,7 @@ declare enum Modules {
    * require(Modules.Recorder);
    * ```
    */
-  Recorder,
+  Recorder = 'recorder',
   /**
    * Provides the SmartQueue (ACD v2) functionality for implementing a [contact center](/docs/guides/smartqueue).
    * <br>
@@ -5620,7 +5620,7 @@ declare enum Modules {
    * require(Modules.SmartQueue);
    * ```
    */
-  SmartQueue,
+  SmartQueue = 'smartqueue',
   /**
    * Provides the [streaming](/docs/guides/calls/stream) functionality.
    * <br>
@@ -5629,7 +5629,7 @@ declare enum Modules {
    * require(Modules.StreamingAgent);
    * ```
    */
-  StreamingAgent,
+  StreamingAgent = 'streamingagent',
   /**
    * Provides the [Voximplant HTTP API](https://voximplant.com/docs/references/httpapi) functionality.
    * <br>
@@ -5638,7 +5638,7 @@ declare enum Modules {
    * require(Modules.VoximplantApi);
    * ```
    */
-  VoximplantApi,
+  VoximplantApi = 'voximplantapi',
 }
 
 declare module Net {
@@ -5823,22 +5823,47 @@ declare namespace OpenAI {
       ): void;
 
       /**
-       * Updates the session’s default configuration (https://platform.openai.com/docs/api-reference/realtime-client-events/session/update).
-       * @param session Realtime session object configuration (https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session). NOTE: the 'inputt_audio_format' parameter will be ignored
-       * @param eventId Optional. Client-generated ID used to identify this event
+       * Add a new Item to the Conversation's context, including messages, function calls, and function call responses. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create).
+       * @param previousItemId The ID of the preceding item after which the new item will be inserted. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-previous_item_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-previous_item_id)
+       * @param item The item to add to the conversation. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-item](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-item)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-event_id)
+       */
+      conversationItemCreate(previousItemId: string, item: Object, eventId?: string): void
+
+      /**
+       * Send this event to truncate a previous assistant message’s audio. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate).
+       * @param itemId The ID of the assistant message item to truncate. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-item_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-item_id)
+       * @param contentIndex The index of the content part to truncate. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-content_index](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-content_index)
+       * @param audioEndMs Inclusive duration up to which audio is truncated, in milliseconds. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-audio_end_ms](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-audio_end_ms)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-event_id)
+       */
+      conversationItemTruncate(itemId: string, contentIndex: number, audioEndMs: number, eventId?: string): void
+
+
+      /**
+       * Send this event when you want to remove any item from the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete).
+       * @param itemId The ID of the item to delete. (https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-item_id)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-event_id)
+       */
+      conversationItemDelete(itemId: string, eventId?: string): void
+
+      /**
+       * Updates the session’s default configuration. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update).
+       * @param session Realtime session object configuration.[https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-event_id)
        */
       sessionUpdate(session: Object, eventId?: string): void
 
       /**
-       * Instructs the server to create a Response, which means triggering model inference (https://platform.openai.com/docs/api-reference/realtime-client-events/response/create).
-       * @param response The response resource (https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response). NOTE: the 'inputt_audio_format' parameter will be ignored
-       * @param eventId Optional. Client-generated ID used to identify this event
+       * Instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create).
+       * @param response The response resource. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-event_id)
        */
       responseCreate(response: Object, eventId?: string): void
 
       /**
-       * Cancels an in-progress response (https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel).
-       * @param eventId Optional. Client-generated ID used to identify this event
+       * Cancels an in-progress response. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel).
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel#realtime-client-events/response/cancel-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel#realtime-client-events/response/cancel-event_id)
        */
       responseCancel(eventId?: string): void
     }
@@ -14305,9 +14330,17 @@ declare enum WebSocketAudioEncoding {
    */
   PCM8 = 'PCM8',
   /**
+   * Pulse-code modulation, 8kHz.
+   */
+  PCM16_8KHZ = 'PCM8',
+  /**
    * Pulse-code modulation, 16kHz.
    */
   PCM16 = 'PCM16',
+  /**
+   * Pulse-code modulation, 16kHz.
+   */
+  PCM16_16KHZ = 'PCM16',
   /**
    * A-law algorithm, 8kHz.
    */
@@ -17995,6 +18028,13 @@ declare interface TTSOptions {
    */
   volume?: string;
   /**
+   * Optional. Speech speed. Possible values are from "0.1" to "3.0".
+   * <br>
+   * <br>
+   * *Available for providers: Yandex.*
+   */
+  speed?: string;
+  /**
    * Optional. An identifier which selects 'audio effects' profiles that are applied on (post synthesized) text to speech. Effects are applied additionally to each other in the order they are provided.
    * <br>
    * <br>
@@ -18217,7 +18257,7 @@ declare interface VoiceChannelParameters {
 
 declare namespace VoiceList {
   /**
-   * List of Amazon TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available Amazon TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace Amazon {
     /**
@@ -18526,7 +18566,7 @@ declare namespace VoiceList {
 declare namespace VoiceList {
   namespace Amazon {
     /**
-     * Premium voices that sound more natural due to advanced synthesis technology.
+     * List of available premium Amazon TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods that sound more natural due to advanced synthesis technology.
      * @namespace
      */
     namespace Neural {
@@ -18831,7 +18871,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of freemium TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available freemium TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace Default {
     /**
@@ -18973,10 +19013,10 @@ declare namespace VoiceList {
 }
 
 declare namespace VoiceList {
-    /**
-     * List of ElevenLabs TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
-     */
-    namespace ElevenLabs {
+  /**
+   * List of available ElevenLabs TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   */
+  namespace ElevenLabs {
     /**
      * ElevenLabs voice, female, middle-aged, British, confident, news.
      * @const
@@ -19107,7 +19147,7 @@ declare namespace VoiceList {
   
 declare namespace VoiceList {
   /**
-   * List of Google TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available Google TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace Google {
     /**
@@ -21520,7 +21560,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of IBM TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available IBM TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace IBM {
   }
@@ -21529,7 +21569,7 @@ declare namespace VoiceList {
 declare namespace VoiceList {
   namespace IBM {
     /**
-     * Premium voices that sound more natural due to advanced synthesis technology.
+     * List of available premium IBM TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods that sound more natural due to advanced synthesis technology.
      * @namespace
      */
     namespace Neural {
@@ -21730,7 +21770,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of Microsoft TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available Microsoft TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace Microsoft {}
 }
@@ -21738,7 +21778,7 @@ declare namespace VoiceList {
 declare namespace VoiceList {
   namespace Microsoft {
     /**
-     * Premium voices that sound more natural due to advanced synthesis technology.
+     * List of available premium Microsoft TTS voices that sound more natural due to advanced synthesis technology.
      * @namespace
      */
     namespace Neural {
@@ -24143,7 +24183,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of SaluteSpeech TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of availabl SaluteSpeech TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace SaluteSpeech {
     /**
@@ -24186,7 +24226,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of T-Bank TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available T-Bank TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace TBank {
     /**
@@ -24238,7 +24278,7 @@ declare namespace VoiceList {
 }
 
 /**
- * List of available TTS languages for the [Call.say] and [VoxEngine.createTTSPlayer] methods.
+ * List of available TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods.
  */
 declare namespace VoiceList {
 }
@@ -24246,7 +24286,7 @@ declare namespace VoiceList {
 declare namespace VoiceList {
   namespace Yandex {
     /**
-     * Premium voices that sound more natural due to advanced synthesis technology.
+     * List of available premium Yandex TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods that sound more natural due to advanced synthesis technology.
      * @namespace
      */
     namespace Neural {
@@ -24316,7 +24356,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of Yandex TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available Yandex TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace Yandex {
   }
@@ -24324,7 +24364,7 @@ declare namespace VoiceList {
 
 declare namespace VoiceList {
   /**
-   * List of YandexV3 TTS languages. Depending on the language, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
+   * List of available YandexV3 TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace YandexV3 {
     /**

@@ -1,11 +1,11 @@
-import { existsSync } from 'fs';
-import { extname, join, resolve } from 'path';
-import { mkdir, readdir, readFile, rm, writeFile } from 'fs/promises';
+import { existsSync } from 'node:fs';
+import { extname, join, resolve } from 'node:path';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 
 import { parse as parseYAML } from 'yaml';
 import { parse as parseTOML } from '@iarna/toml';
 
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export class FileSystemContext {
   private readonly rootDirectoryPath: string;
@@ -14,7 +14,8 @@ export class FileSystemContext {
   private readonly availableExtensions: string[];
   private readonly availableMetadataExtensions: string[];
 
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(rootDirectoryName: string, rootMetadataDirectoryName: string) {
     this.rootDirectoryPath = resolve(rootDirectoryName);

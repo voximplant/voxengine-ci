@@ -2,14 +2,15 @@ import {
   VoxApplication,
   VoxApplicationMetadata,
 } from '../entities/vox-application.entity';
+import { FullVoxApplicationInfo } from '../types/vox-application.type';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
+import { ApplicationByRuleBuildAndUploadJobSettings } from '../types/job-settings.type';
 import { VoxApplicationPersistentRepository } from '../repositories/vox-application.persistent.repository';
 import { VoxApplicationPlatformRepository } from '../repositories/vox-application.platform.repository';
-import { FullVoxApplicationInfo } from '../types/vox-application.type';
-import { ApplicationByRuleBuildAndUploadJobSettings } from '../types/job-settings.type';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
 
 export class VoxApplicationService {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(
     private platformRepository: VoxApplicationPlatformRepository,
@@ -79,23 +80,18 @@ export class VoxApplicationService {
     settings: Partial<ApplicationByRuleBuildAndUploadJobSettings>,
   ): Promise<Partial<ApplicationByRuleBuildAndUploadJobSettings>> => {
     const { applicationId } = settings;
-
     const applicationName = await this.getApplicationFullName(
       settings.applicationName,
     );
     const applications = await this.platformRepository.downloadApplications();
     for (const application of applications) {
-      if (applicationId && application.applicationId === applicationId) {
+      if (application?.applicationId === applicationId) {
         return {
           applicationName: application.applicationName,
           applicationId,
         };
       }
-      if (
-        !applicationId &&
-        applicationName &&
-        application.applicationName === applicationName
-      ) {
+      if (!applicationId && application?.applicationName === applicationName) {
         return {
           applicationName,
           applicationId: application.applicationId,
@@ -103,6 +99,7 @@ export class VoxApplicationService {
       }
     }
     if (applicationId) {
+      // NOTE: the case when the 'applicationId' is specified but not found on the platform
       throw new Error(
         this.lmg.generate(
           'ERR__APP_BY_ID_DOES_NOT_EXIST',
@@ -116,9 +113,7 @@ export class VoxApplicationService {
   getApplicationFullName = async (applicationName: string): Promise<string> => {
     if (!applicationName) return;
     const isFullApplicationName = applicationName.split('.').length > 1;
-    if (isFullApplicationName) {
-      return applicationName;
-    }
+    if (isFullApplicationName) return applicationName;
     const accountName = await this.platformRepository.getAccountName();
     if (!accountName) {
       throw new Error(

@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "16.0.0",
+  "version": "17.0.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "Apache-2.0",
   "keywords": [
@@ -29,22 +29,22 @@
     "lint:fix": "eslint {lib,bin} --ext .ts --cache --fix",
     "semantic-release": "semantic-release",
     "commitlint": "commitlint",
-    "test": "mocha --timeout 15000 -r ts-node/register __tests__/**/*.spec.ts",
-    "test:unit": "mocha --timeout 15000 -r ts-node/register __tests__/unit/**/*.spec.ts",
-    "test:integration": "mocha --timeout 15000 -r ts-node/register __tests__/integration/**/*.spec.ts",
+    "test": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/**/*.spec.ts",
+    "test:unit": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/unit/**/*.spec.ts",
+    "test:integration": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/integration/**/*.spec.ts",
     "spellcheck": "cspell \"{lib,bin,docs,tools}/**\" && cspell README.md",
-    "prepare": "husky install"
+    "prepare": "git config core.hooksPath .githooks || echo 'Git hooks configuration error!'"
   },
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 20.0.0"
   },
   "dependencies": {
     "@iarna/toml": "2.2.5",
-    "@voximplant/apiclient-nodejs": "2.0.5",
+    "@voximplant/apiclient-nodejs": "3.0.0",
     "chalk": "4.1.2",
     "commander": "9.0.0",
     "dotenv": "10.0.0",
-    "typescript": "4.3.5",
+    "typescript": "5.5.4",
     "yaml": "1.10.2"
   },
   "devDependencies": {
@@ -56,8 +56,7 @@
     "@types/chai": "4.3.0",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "9.1.0",
-    "@types/node": "16.11.0",
-    "@types/rewire": "2.5.28",
+    "@types/node": "20.16.5",
     "@types/sinon": "9.0.10",
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",
@@ -68,12 +67,10 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.0",
     "eslint-plugin-prettier": "3.4.0",
-    "husky": "7.0.1",
     "lint-staged": "11.1.2",
-    "mocha": "9.2.1",
+    "mocha": "10.1.0",
     "prettier": "2.3.2",
     "prettier-eslint": "8.2.2",
-    "rewire": "5.0.0",
     "semantic-release": "18.0.0",
     "sinon": "11.1.1",
     "ts-node": "10.2.0"

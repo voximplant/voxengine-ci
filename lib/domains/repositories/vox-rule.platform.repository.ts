@@ -1,17 +1,18 @@
 import { APIErrorCode } from '@voximplant/apiclient-nodejs/dist/Enums';
 import { RuleInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
 
-import { VoximplantContext } from '../contexts/voximplant.context';
-import { isApiErrorResponse } from '../types/api-error-response.type';
 import {
   AddRuleRequest,
   AddRuleResponse,
   SetRuleInfoResponse,
 } from '@voximplant/apiclient-nodejs/dist/Interfaces';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+import { VoximplantContext } from '../contexts/voximplant.context';
+import { isApiErrorResponse } from '../types/api-error-response.type';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export class VoxRulePlatformRepository {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(public context: VoximplantContext) {}
 

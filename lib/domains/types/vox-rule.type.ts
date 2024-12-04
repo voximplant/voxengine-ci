@@ -1,4 +1,5 @@
 import { RuleInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+
 import { VoxRule, VoxRuleMetadata } from '../entities/vox-rule.entity';
 
 export type FullVoxRuleInfo = RuleInfo;

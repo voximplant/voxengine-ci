@@ -28,7 +28,7 @@ Create a `.env` file in the root directory of your project and add environment-s
 - VOX_CI_CREDENTIALS - path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
 - VOX_CI_ROOT_PATH - path to the directory where the `vox` files will be located (`voxfiles` by default)
 
-Creating a .env file is not necessary if you move the file with credentials to your project folder, and it has a default name – `vox_ci_credentials.json`. 
+Creating a .env file is not necessary if you move the file with credentials to your project folder, and it has a default name – `vox_ci_credentials.json`.
 The folder with the files created after initialization will be placed in your project folder as well and will be named `voxfiles` unless you decide to create a .env variable and specify something different there.
 
 ---
@@ -86,7 +86,7 @@ If you modify an existing application or existing rule, you can specify `--appli
   npx voxengine-ci upload --application-id your-application-id --rule-id your-rule-id
 ```
 
-When you change the name of an application, scenario, or rule using Voxengine CI, a new app, scenario, and rule with the same content is created on the platform. The old one is not deleted or changed due to the Voxengine CI inner logic. 
+When you change the name of an application, scenario, or rule using Voxengine CI, a new app, scenario, and rule with the same content is created on the platform. The old one is not deleted or changed due to the Voxengine CI inner logic.
 
 You can modify these old apps, scenarios, and rules only from the platform without sharing the changes with Voxengine CI (NOT RECOMMENDED) unless you run `npx voxengine-ci init --force` to make your local and remote versions consistent.
 
@@ -227,7 +227,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
           check-latest: true
       - name: Install voxengine-ci
         run: npm ci

@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+
 config();
 
 import { ApplicationConfig } from '../types/application-config.type';

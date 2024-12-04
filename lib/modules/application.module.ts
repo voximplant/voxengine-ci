@@ -1,40 +1,42 @@
-import { exit } from 'process';
+import { exit } from 'node:process';
 
-import { ApplicationConfigService } from '../domains/services/application-config.service';
-import { ApplicationConfig } from '../domains/types/application-config.type';
-import { VoxApplicationService } from '../domains/services/vox-application.service';
-import { VoxRuleService } from '../domains/services/vox-rule.service';
-import { VoxScenarioService } from '../domains/services/vox-scenario.service';
-import { FileSystemContext } from '../domains/contexts/filesystem.context';
-import { VoxScenarioPersistentRepository } from '../domains/repositories/vox-scenario.persistent.repository';
-import { VoxRulePersistentRepository } from '../domains/repositories/vox-rule.persistent.repository';
-import { VoxApplicationPersistentRepository } from '../domains/repositories/vox-application.persistent.repository';
-import { VoxApplicationPlatformRepository } from '../domains/repositories/vox-application.platform.repository';
-import { VoximplantContext } from '../domains/contexts/voximplant.context';
-import { VoxRulePlatformRepository } from '../domains/repositories/vox-rule.platform.repository';
-import { VoxScenarioPlatformRepository } from '../domains/repositories/vox-scenario.platform.repository';
-import { FullVoxApplicationInfo } from '../domains/types/vox-application.type';
-import { FullVoxScenarioInfo } from '../domains/types/vox-scenario.type';
+import { ScenarioInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+
+import {
+  FullVoxRuleInfo,
+  VoxRulesList,
+  VoxRulesMetadataList,
+} from '../domains/types/vox-rule.type';
 import {
   ApplicationBuildAndUploadJobSettings,
   ApplicationBuildJobSettings,
   ApplicationByRuleBuildAndUploadJobSettings,
   ApplicationByRuleBuildJobSettings,
 } from '../domains/types/job-settings.type';
-import {
-  FullVoxRuleInfo,
-  VoxRulesList,
-  VoxRulesMetadataList,
-} from '../domains/types/vox-rule.type';
 import { VoxRule } from '../domains/entities/vox-rule.entity';
-import { LogMessageGeneratorFactory } from '../utils/logMessageGenerator';
-import { ScenarioInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { VoxRuleService } from '../domains/services/vox-rule.service';
+import { FullVoxScenarioInfo } from '../domains/types/vox-scenario.type';
+import { VoximplantContext } from '../domains/contexts/voximplant.context';
+import { LogMessageGeneratorFactory } from '../utils/log-message-generator';
+import { FileSystemContext } from '../domains/contexts/file-system.context';
+import { ApplicationConfig } from '../domains/types/application-config.type';
+import { VoxScenarioService } from '../domains/services/vox-scenario.service';
+import { FullVoxApplicationInfo } from '../domains/types/vox-application.type';
+import { VoxApplicationService } from '../domains/services/vox-application.service';
+import { ApplicationConfigService } from '../domains/services/application-config.service';
+import { VoxRulePlatformRepository } from '../domains/repositories/vox-rule.platform.repository';
+import { VoxRulePersistentRepository } from '../domains/repositories/vox-rule.persistent.repository';
+import { VoxScenarioPlatformRepository } from '../domains/repositories/vox-scenario.platform.repository';
+import { VoxScenarioPersistentRepository } from '../domains/repositories/vox-scenario.persistent.repository';
+import { VoxApplicationPlatformRepository } from '../domains/repositories/vox-application.platform.repository';
+import { VoxApplicationPersistentRepository } from '../domains/repositories/vox-application.persistent.repository';
 
 export class ApplicationModule {
   private voxApplicationService: VoxApplicationService;
   private voxRuleService: VoxRuleService;
   private voxScenarioService: VoxScenarioService;
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   init = async (): Promise<void> => {
     try {
@@ -61,11 +63,11 @@ export class ApplicationModule {
       /**
        * FileSystemContext
        */
-      const filesystemContext = new FileSystemContext(
+      const fileSystemContext = new FileSystemContext(
         rootDirectoryName,
         metadataDirectoryName,
       );
-      await filesystemContext.init();
+      await fileSystemContext.init();
 
       /**
        * VoxApplicationPlatformRepository
@@ -94,14 +96,14 @@ export class ApplicationModule {
        * VoxApplicationPersistentRepository
        */
       const voxApplicationPersistentRepository =
-        new VoxApplicationPersistentRepository(filesystemContext);
+        new VoxApplicationPersistentRepository(fileSystemContext);
       await voxApplicationPersistentRepository.init();
 
       /**
        * VoxRulePersistentRepository
        */
       const voxRulePersistentRepository = new VoxRulePersistentRepository(
-        filesystemContext,
+        fileSystemContext,
       );
       await voxRulePersistentRepository.init();
 
@@ -109,7 +111,7 @@ export class ApplicationModule {
        * VoxScenarioPersistentRepository
        */
       const voxScenarioPersistentRepository =
-        new VoxScenarioPersistentRepository(filesystemContext);
+        new VoxScenarioPersistentRepository(fileSystemContext);
       await voxScenarioPersistentRepository.init();
 
       /**
@@ -169,12 +171,10 @@ export class ApplicationModule {
       }
       const rawScenarios: FullVoxScenarioInfo[] =
         await this.voxScenarioService.downloadScenarios();
-
       this.voxScenarioService.checkScenariosNames(rawScenarios);
-
-      for (const rawScenario of rawScenarios) {
+      for (const { scenarioId } of rawScenarios) {
         const rawFullScenario: FullVoxScenarioInfo =
-          await this.voxScenarioService.downloadScenarioWithScript(rawScenario);
+          await this.voxScenarioService.downloadScenario(scenarioId);
         await this.voxScenarioService.saveScenario(rawFullScenario);
         await this.voxScenarioService.saveScenarioMetadata(rawFullScenario);
       }
@@ -206,7 +206,7 @@ export class ApplicationModule {
     applicationName: string,
   ): Promise<VoxRulesList | []> => {
     return (
-      (await this.voxRuleService.readApplicationRulesByName(applicationName)) ||
+      (await this.voxRuleService.readApplicationRulesByName(applicationName)) ??
       []
     );
   };
@@ -363,19 +363,18 @@ export class ApplicationModule {
     settings: ApplicationBuildAndUploadJobSettings,
   ) => {
     try {
-      const { applicationName, applicationId } =
+      const getApplicationNameAndIdResult =
         await this.voxApplicationService.getApplicationNameAndId(settings);
-
-      const newApplicationId =
-        !applicationId &&
+      const { applicationName } = getApplicationNameAndIdResult;
+      const applicationId =
+        getApplicationNameAndIdResult.applicationId ??
         (await this.addApplicationToPlatform(applicationName));
-
       const voxRulesList: VoxRulesList = await this.getRulesByApplicationName(
         applicationName,
       );
       const rawApplication: FullVoxApplicationInfo = {
         applicationName,
-        applicationId: applicationId || newApplicationId,
+        applicationId,
         modified: new Date(),
         secureRecordStorage: false,
       };
@@ -394,7 +393,7 @@ export class ApplicationModule {
         );
         if (!existingRule) {
           await this.voxRuleService.uploadApplicationRule(
-            applicationId || newApplicationId,
+            applicationId,
             ruleName,
             uploadedScenariosInfo.map(({ scenarioId }) => scenarioId),
             rulePattern,
@@ -418,7 +417,7 @@ export class ApplicationModule {
           await this.bindScenarios(
             existingRule,
             uploadedScenariosInfo,
-            applicationId || newApplicationId,
+            applicationId,
             applicationName,
           );
         }
@@ -463,7 +462,7 @@ export class ApplicationModule {
           fullApplicationName,
           applicationId,
           settings.ruleId,
-        )) ||
+        )) ??
         (await this.getScenariosByRuleName(
           fullApplicationName,
           applicationId,

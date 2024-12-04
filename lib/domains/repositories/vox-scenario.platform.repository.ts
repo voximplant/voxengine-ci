@@ -1,13 +1,14 @@
 import { APIErrorCode } from '@voximplant/apiclient-nodejs/dist/Enums';
 import { ScenarioInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { BindScenarioRequest } from '@voximplant/apiclient-nodejs/dist/Interfaces';
 
 import { VoximplantContext } from '../contexts/voximplant.context';
 import { isApiErrorResponse } from '../types/api-error-response.type';
-import { BindScenarioRequest } from '@voximplant/apiclient-nodejs/dist/Interfaces';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export class VoxScenarioPlatformRepository {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(public context: VoximplantContext) {}
 
@@ -18,7 +19,9 @@ export class VoxScenarioPlatformRepository {
   };
 
   downloadScenarios = async (): Promise<ScenarioInfo[]> => {
-    const response = await this.context.client.Scenarios.getScenarios({});
+    const response = await this.context.client.Scenarios.getScenarios({
+      count: 1,
+    });
     if (isApiErrorResponse(response)) {
       throw new Error(
         this.lmg.generate(
@@ -27,7 +30,7 @@ export class VoxScenarioPlatformRepository {
         ),
       );
     }
-    if (response.totalCount === 0) return [];
+    if (!response.totalCount) return [];
     const { result } = await this.context.client.Scenarios.getScenarios({
       count: response.totalCount,
     });
@@ -82,26 +85,24 @@ export class VoxScenarioPlatformRepository {
         ),
       );
     }
-    const scenarioId: number = response.result[0]?.scenarioId;
-    if (!scenarioId) {
+    const scenarioInfo = response.result?.find(
+      (s) => s?.scenarioName === scenarioName,
+    );
+    if (!scenarioInfo || !scenarioInfo.scenarioId) {
       console.error(
         this.lmg.generate(
           'ERR__CANNOT_DOWNLOAD_SCENARIO_BY_NAME',
           scenarioName,
         ),
       );
-      return;
     }
-    const scenarioInfo: ScenarioInfo = await this.downloadScenarioById(
-      scenarioId,
-    );
     console.info(
       this.lmg.generate('INFO__SCENARIO_BY_NAME_DOWNLOADED', scenarioName),
     );
     return scenarioInfo;
   };
 
-  // TODO: Reorder scenarios feature need be implemented
+  // TODO: The 'reordering scenarios' feature need to be implemented
   // await this.context.client.Scenarios.reorderScenarios({...});
 
   addScenario = async (
@@ -109,20 +110,20 @@ export class VoxScenarioPlatformRepository {
     scenarioScript: string,
   ): Promise<number> => {
     try {
-      const getScenarioResponse =
-        await this.context.client.Scenarios.getScenarios({
-          scenarioName,
-        });
-      if (isApiErrorResponse(getScenarioResponse)) {
+      const response = await this.context.client.Scenarios.getScenarios({
+        scenarioName,
+      });
+      if (isApiErrorResponse(response)) {
         throw new Error(
           this.lmg.generate(
             'ERR__VOXIMPLANT_API_ERROR',
-            APIErrorCode[getScenarioResponse.error.code],
+            APIErrorCode[response.error.code],
           ),
         );
       }
-      const scenariosInfo: ScenarioInfo[] = getScenarioResponse.result;
-      const scenarioInfo = scenariosInfo[0];
+      const scenarioInfo = response.result?.find(
+        (s) => s?.scenarioName === scenarioName,
+      );
       if (scenarioInfo) {
         throw new Error(
           this.lmg.generate('ERR__SCENARIO_ALREADY_EXISTS', scenarioName),

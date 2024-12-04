@@ -1,5 +1,5 @@
 .voxengine-ci:
-  image: node:16
+  image: node:20
   variables:
     VOX_CI_CREDENTIALS: 'vox_ci_credentials.json'
   before_script:

@@ -1,7 +1,7 @@
-import { join } from 'path';
+import { join } from 'node:path';
 
-import { FileSystemContext } from '../contexts/filesystem.context';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+import { FileSystemContext } from '../contexts/file-system.context';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export abstract class AbstractPersistentRepository {
   relativeStoragePath: string;

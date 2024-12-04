@@ -1,22 +1,24 @@
-import { promisify } from 'util';
-import { createHash } from 'crypto';
-import { exec } from 'child_process';
+import { promisify } from 'node:util';
+import { createHash } from 'node:crypto';
+import { exec } from 'node:child_process';
+
+import { ScenarioInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { BindScenarioRequest } from '@voximplant/apiclient-nodejs/dist/Interfaces';
 
 import {
   VoxScenario,
   VoxScenarioMetadata,
 } from '../entities/vox-scenario.entity';
-import { VoxScenarioPersistentRepository } from '../repositories/vox-scenario.persistent.repository';
-import { VoxScenarioPlatformRepository } from '../repositories/vox-scenario.platform.repository';
 import { FullVoxScenarioInfo } from '../types/vox-scenario.type';
-import { BindScenarioRequest } from '@voximplant/apiclient-nodejs/dist/Interfaces';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
-import { ScenarioInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
+import { VoxScenarioPlatformRepository } from '../repositories/vox-scenario.platform.repository';
+import { VoxScenarioPersistentRepository } from '../repositories/vox-scenario.persistent.repository';
 
 const asyncExec = promisify(exec);
 
 export class VoxScenarioService {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(
     private platformRepository: VoxScenarioPlatformRepository,
@@ -72,11 +74,9 @@ export class VoxScenarioService {
       (acc: Record<string, string[]>, scenario) => {
         const { scenarioName } = scenario;
         const scenarioNameLowCase = scenarioName.toLowerCase();
-        if (acc && acc[scenarioNameLowCase]) {
-          acc[scenarioNameLowCase].push(scenarioName);
-        } else {
-          acc[scenarioNameLowCase] = [scenarioName];
-        }
+        acc?.[scenarioNameLowCase]
+          ? acc[scenarioNameLowCase]?.push(scenarioName)
+          : (acc[scenarioNameLowCase] = [scenarioName]);
         return acc;
       },
       {},
@@ -95,11 +95,10 @@ export class VoxScenarioService {
     return await this.platformRepository.downloadScenarios();
   };
 
-  downloadScenarioWithScript = async (
-    rawScenario: FullVoxScenarioInfo,
+  downloadScenario = async (
+    scenarioId: number,
   ): Promise<FullVoxScenarioInfo> => {
     try {
-      const { scenarioId } = rawScenario;
       const scenario: FullVoxScenarioInfo =
         await this.platformRepository.downloadScenarioById(scenarioId);
       if (!scenario) {
@@ -114,31 +113,7 @@ export class VoxScenarioService {
     } catch (error) {
       console.error(
         this.lmg.generate(
-          'ERR__DOWNLOAD_SCENARIO_WITH_SCRIPT_FAILED',
-          this.constructor.name,
-        ),
-      );
-      console.error(error);
-    }
-  };
-
-  downloadScenarioWithoutScript = async (
-    rawScenario: FullVoxScenarioInfo,
-  ): Promise<FullVoxScenarioInfo> => {
-    try {
-      const { scenarioName } = rawScenario;
-      const scenario: FullVoxScenarioInfo =
-        await this.platformRepository.downloadScenarioByName(scenarioName);
-      if (!scenario) {
-        throw new Error(
-          this.lmg.generate('ERR__SCENARIO_BY_NAME_IS_NOT_FOUND', scenarioName),
-        );
-      }
-      return scenario;
-    } catch (error) {
-      console.error(
-        this.lmg.generate(
-          'ERR__DOWNLOAD_SCENARIO_WITHOUT_SCRIPT_FAILED',
+          'ERR__DOWNLOAD_SCENARIO_FAILED',
           this.constructor.name,
         ),
       );
@@ -195,12 +170,11 @@ export class VoxScenarioService {
     scenarioNames: string[],
   ): Promise<ScenarioInfo[]> => {
     const allScenarios = await this.platformRepository.downloadScenarios();
-    const scenarios = scenarioNames
+    return scenarioNames
       .map((scenarioName) =>
         allScenarios.find((scenario) => scenario.scenarioName === scenarioName),
       )
       .filter((scenario) => scenario);
-    return scenarios;
   };
 
   getScenariosMetadata = async (
@@ -232,14 +206,14 @@ export class VoxScenarioService {
   };
 
   /**
-   * TODO: The `build` method need to return something
+   * TODO: The `build` method must to return something
    */
   build = async (scenarios: string[] = []): Promise<void> => {
     try {
       await this.persistentRepository.createOrUpdateTsConfig(scenarios);
       const tsConfigPath = this.persistentRepository.getTsConfigPath();
       try {
-        await asyncExec(`tsc -p ${tsConfigPath}`);
+        await asyncExec(`npx tsc -p ${tsConfigPath}`);
       } catch (compileError) {
         console.error(
           this.lmg.generate(
@@ -282,7 +256,7 @@ export class VoxScenarioService {
         const platformScenarioInfo: FullVoxScenarioInfo =
           await this.platformRepository.downloadScenarioByName(scenarioName);
 
-        // Brand new scenario
+        // Brand-new scenario
         if (!stringDistScenarioMetadata && !platformScenarioInfo) {
           const addScenarioResult: number =
             await this.platformRepository.addScenario(

@@ -1,6 +1,6 @@
-import { join } from 'path';
+import { join } from 'node:path';
 
-import { FileSystemContext } from '../contexts/filesystem.context';
+import { FileSystemContext } from '../contexts/file-system.context';
 import { VoxRulesList, VoxRulesMetadataList } from '../types/vox-rule.type';
 import { AbstractPersistentRepository } from './abstract.persistent.repository';
 
@@ -105,7 +105,7 @@ export class VoxRulePersistentRepository extends AbstractPersistentRepository {
       );
       const rawData = await this.context.client.readFile(joinedPath);
       if (!rawData) return;
-      // TODO: Need to refactor this mess
+      // TODO: Need to refactor this part
       try {
         return <VoxRulesList>JSON.parse(rawData);
       } catch (error) {
@@ -139,7 +139,7 @@ export class VoxRulePersistentRepository extends AbstractPersistentRepository {
           this.lmg.generate('ERR__APP_BY_NAME_DOES_NOT_EXIST', applicationName),
         );
       }
-      // TODO: Need to refactor this mess
+      // TODO: Need to refactor this part
       try {
         return <VoxRulesMetadataList>JSON.parse(rawData);
       } catch (error) {

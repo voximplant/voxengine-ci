@@ -1,12 +1,12 @@
-import { join } from 'path';
+import { join } from 'node:path';
 
-import { AbstractPersistentRepository } from './abstract.persistent.repository';
 import {
   VoxScenario,
   VoxScenarioBuilderTsConfig,
   VoxScenarioMetadata,
 } from '../entities/vox-scenario.entity';
-import { FileSystemContext } from '../contexts/filesystem.context';
+import { FileSystemContext } from '../contexts/file-system.context';
+import { AbstractPersistentRepository } from './abstract.persistent.repository';
 
 export class VoxScenarioPersistentRepository extends AbstractPersistentRepository {
   relativeStoragePath = 'scenarios';
@@ -28,39 +28,22 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
   private nameSuffix = 'voxengine';
   private metadataNameSuffix = 'metadata.config';
 
-  private typingsVoxengineName = 'voxengine.d.ts';
-  private typingsLibsName = 'libs.d.ts';
+  private voxEngineTypingsName = 'voxengine.d.ts';
 
   private relativeTypingsPath = 'typings';
 
-  private relativeTypingsVoxenginePath = join(
+  private relativeVoxEngineTypingsPath = join(
     '..',
     this.relativeTypingsPath,
-    this.typingsVoxengineName,
+    this.voxEngineTypingsName,
   );
-  // TODO: Need to think about it...
-  private relativeNodeModulesTypingsVoxenginePath = join(
+  private relativeNodeModulesVoxEngineTypingsPath = join(
     '..',
     'node_modules',
     '@voximplant',
     'voxengine-ci',
     this.relativeTypingsPath,
-    this.typingsVoxengineName,
-  );
-
-  private relativeTypingsLibsPath = join(
-    '..',
-    this.relativeTypingsPath,
-    this.typingsLibsName,
-  );
-  // TODO: Need to think about it...
-  private relativeNodeModulesTypingsLibsPath = join(
-    '..',
-    'node_modules',
-    '@voximplant',
-    'voxengine-ci',
-    this.relativeTypingsPath,
-    this.typingsLibsName,
+    this.voxEngineTypingsName,
   );
 
   private tsConfigBasename = 'tsconfig.voxengine.temp';
@@ -162,25 +145,15 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
         this.relativeDistStoragePath,
       );
 
-      const resolvedTypingsVoxenginePath = this.context.client.resolvePath(
-        this.relativeTypingsVoxenginePath,
-      );
-      const resolvedNodeModulesTypingsVoxenginePath =
+      const resolvedVoxEngineTypingsPath: string =
+        this.context.client.resolvePath(this.relativeVoxEngineTypingsPath);
+      const resolvedNodeModulesVoxEngineTypingsPath: string =
         this.context.client.resolvePath(
-          this.relativeNodeModulesTypingsVoxenginePath,
-        );
-      const resolvedTypingsLibsPath = this.context.client.resolvePath(
-        this.relativeTypingsLibsPath,
-      );
-      const resolvedNodeModulesTypingsLibsPath =
-        this.context.client.resolvePath(
-          this.relativeNodeModulesTypingsLibsPath,
+          this.relativeNodeModulesVoxEngineTypingsPath,
         );
       const include = [
-        resolvedTypingsVoxenginePath,
-        resolvedNodeModulesTypingsVoxenginePath,
-        resolvedTypingsLibsPath,
-        resolvedNodeModulesTypingsLibsPath,
+        resolvedVoxEngineTypingsPath,
+        resolvedNodeModulesVoxEngineTypingsPath,
       ];
 
       const exclude = ['node_modules', '**/*.spec.ts'];

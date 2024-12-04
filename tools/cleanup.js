@@ -1,15 +1,15 @@
-const { resolve, join } = require('path');
-const { existsSync } = require('fs');
-const { rm, readdir, lstat } = require('fs/promises');
+const { existsSync } = require('node:fs');
+const { resolve, join } = require('node:path');
+const { rm, readdir, lstat } = require('node:fs/promises');
 
 const binPath = resolve(__dirname, '..', 'bin');
 const libPath = resolve(__dirname, '..', 'lib');
 
 const fn = async (path) => {
   if (existsSync(path)) {
-    const dirents = await readdir(path);
-    for (const dirent of dirents) {
-      const direntPath = join(path, dirent);
+    const dd = await readdir(path);
+    for (const d of dd) {
+      const direntPath = join(path, d);
       const stat = await lstat(direntPath);
       if (stat.isDirectory()) {
         await fn(direntPath);

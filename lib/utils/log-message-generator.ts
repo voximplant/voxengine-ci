@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export const messages: Record<string, string> = {
+const messages: Record<string, string> = {
   /**
    * APPLICATION ERRORS
    */
@@ -10,7 +10,7 @@ export const messages: Record<string, string> = {
   ERR__APP_BY_ID_DOES_NOT_EXIST: `Application with --application-id "{1}" does not exist`,
 
   ERR__APP_BY_NAME_ON_CREATE_DOES_NOT_EXIST: `${chalk.yellow(
-    `Application with --application-name "{1}" does not exist; if you want to create a new application, add application.config.json and rules.config.json in directory /voxfiles/applications/{1}`,
+    `Application with --application-name "{1}" does not exist; if you would like to create a new application, add the 'application.config.json' and 'rules.config.json' files to the 'voxfiles/applications/{1}' directory `,
   )}`,
 
   ERR__APP_NAME_IN_APP_CONFIG_IS_DIFFERENT: `${chalk.red(
@@ -95,12 +95,8 @@ export const messages: Record<string, string> = {
     '"{1}.checkScenarioAlreadyExists" has failed',
   )}`,
 
-  ERR__DOWNLOAD_SCENARIO_WITH_SCRIPT_FAILED: `${chalk.red(
-    '"{1}.downloadScenarioWithScript" has failed',
-  )}`,
-
-  ERR__DOWNLOAD_SCENARIO_WITHOUT_SCRIPT_FAILED: `${chalk.red(
-    '"{1}.downloadScenarioWithoutScript" has failed',
+  ERR__DOWNLOAD_SCENARIO_FAILED: `${chalk.red(
+    '"{1}.downloadScenario" has failed',
   )}`,
 
   ERR__SAVE_SCENARIO_FAILED: `${chalk.red('"{1}.saveScenario" has failed')}`,
@@ -375,7 +371,7 @@ export const messages: Record<string, string> = {
   )} The scenario with the ${chalk.blue('{1}')} "scenarioId" and ${chalk.blue(
     '{2}',
   )} "scenarioName" was changed from the platform, ${chalk.red(
-    'BUT the operation has NOT be aborted',
+    'BUT the operation has NOT been aborted',
   )} because of the ${chalk.yellow('"--force"')} flag`,
 
   INFO__SAME_SCENARIOS: `${chalk.red(
@@ -451,7 +447,7 @@ export const messages: Record<string, string> = {
   )}`,
 };
 
-export class LogMessageGeneratorFactory {
+class LogMessageGeneratorFactory {
   private static instance: LogMessageGeneratorFactory;
   list: Record<string, string>;
 
@@ -481,3 +477,5 @@ export class LogMessageGeneratorFactory {
     return message;
   }
 }
+
+export { messages, LogMessageGeneratorFactory };

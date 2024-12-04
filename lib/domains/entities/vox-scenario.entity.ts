@@ -28,7 +28,6 @@ export class VoxScenarioBuilderTsConfig {
     target: 'ES2020';
     noEmitOnError: true;
     skipLibCheck: true;
-    noLib: true;
     outDir: string;
   };
   include: string[];
@@ -40,7 +39,6 @@ export class VoxScenarioBuilderTsConfig {
       target: 'ES2020',
       noEmitOnError: true,
       skipLibCheck: true,
-      noLib: true,
       outDir: outDir,
     };
     this.include = include;

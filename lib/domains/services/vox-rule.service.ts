@@ -1,17 +1,19 @@
-import { VoxRule, VoxRuleMetadata } from '../entities/vox-rule.entity';
-import { VoxRulePlatformRepository } from '../repositories/vox-rule.platform.repository';
-import { VoxRulePersistentRepository } from '../repositories/vox-rule.persistent.repository';
-import { FullVoxApplicationInfo } from '../types/vox-application.type';
+import { RuleInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+
 import {
   FullVoxRuleInfo,
   VoxRulesList,
   VoxRulesMetadataList,
 } from '../types/vox-rule.type';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
-import { RuleInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { FullVoxApplicationInfo } from '../types/vox-application.type';
+import { VoxRule, VoxRuleMetadata } from '../entities/vox-rule.entity';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
+import { VoxRulePlatformRepository } from '../repositories/vox-rule.platform.repository';
+import { VoxRulePersistentRepository } from '../repositories/vox-rule.persistent.repository';
 
 export class VoxRuleService {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(
     private platformRepository: VoxRulePlatformRepository,

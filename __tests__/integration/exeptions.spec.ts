@@ -1,14 +1,31 @@
-import { after, before, describe, it } from 'mocha';
-import VoximplantApiClient from '@voximplant/apiclient-nodejs';
-import { ApplicationModule } from '../../lib/modules/application.module';
+import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+
 import { expect, use } from 'chai';
-import { existsSync, rmSync, writeFileSync } from 'fs';
-import { mkdir, rmdir } from 'fs/promises';
+import { before, describe, it } from 'mocha';
+import chaiAsPromised from 'chai-as-promised';
+import VoximplantApiClient from '@voximplant/apiclient-nodejs';
 
-const chaiAsPromised = require('chai-as-promised');
-const path = require('path');
+import {
+  VOX_CI_CREDENTIALS_FILE_NAME,
+  APPLICATION_NAME,
+  FIRST_RULE_NAME,
+  SECOND_RULE_NAME,
+  FIRST_RULE_PATTERN,
+  SECOND_RULE_PATTERN,
+  FIRST_SCENARIO_NAME,
+  SECOND_SCENARIO_NAME,
+  FIRST_SCENARIO_CODE,
+  SECOND_SCENARIO_CODE,
+  SCENARIO_SRC_PATCH,
+  APPLICATION_CONFIG_DIRECTORY_RAW_PATH,
+} from './lib/consts';
+import { cleanupPlatform, cleanupFileSystem } from './lib/cleanup';
+import { ApplicationModule } from '../../lib/modules/application.module';
 
-describe('throw error if app or rule does not exist', async () => {
+import { join, resolve } from 'path';
+
+describe('throw error if app or rule does not exist', () => {
   let client: VoximplantApiClient;
   let application: ApplicationModule;
   let applicationId: number;
@@ -16,95 +33,51 @@ describe('throw error if app or rule does not exist', async () => {
 
   before(async () => {
     use(chaiAsPromised);
-    client = new VoximplantApiClient('vox_ci_credentials.json');
-    await new Promise((resolve) => {
-      client.onReady = () => {
-        resolve(1);
-      };
-    });
+    // Await for client
+    client = new VoximplantApiClient(VOX_CI_CREDENTIALS_FILE_NAME);
+    await new Promise((resolve) => (client.onReady = () => resolve(1)));
+    // Cleanup
+    await cleanupPlatform(client);
+    await cleanupFileSystem();
+    // Prepare
     application = new ApplicationModule();
     await application.init();
     await application.projectCleanup();
     await application.projectInit();
-    // create scenarios
-    const scenariosSrcPath = 'voxfiles/scenarios/src';
-    const firstTestScenario = 'const first = 1;';
-    const secondTestScenario = 'const second = 2;';
-    writeFileSync(
-      path.join(scenariosSrcPath, 'first-voxengine-ci-scenario.voxengine.js'),
-      firstTestScenario,
+    await writeFile(
+      join(SCENARIO_SRC_PATCH, `${FIRST_SCENARIO_NAME}.voxengine.js`),
+      FIRST_SCENARIO_CODE,
     );
-    writeFileSync(
-      path.join(scenariosSrcPath, 'second-voxengine-ci-scenario.voxengine.js'),
-      secondTestScenario,
+    await writeFile(
+      join(SCENARIO_SRC_PATCH, `${SECOND_SCENARIO_NAME}.voxengine.js`),
+      SECOND_SCENARIO_CODE,
     );
-    // create application and rules
-    const appConfigDirPath = path.resolve(
-      'voxfiles/applications/voxengine-ci.voxengine.voximplant.com',
-    );
+    const appConfigDirPath = resolve(APPLICATION_CONFIG_DIRECTORY_RAW_PATH);
     if (!existsSync(appConfigDirPath)) await mkdir(appConfigDirPath);
-    const appConfig =
-      '{"applicationName":"voxengine-ci.voxengine.voximplant.com"}';
-    writeFileSync(
-      path.join(appConfigDirPath, 'application.config.json'),
+    const appConfig = `{"applicationName":"${APPLICATION_NAME}.voxengine.voximplant.com"}`;
+    await writeFile(
+      join(appConfigDirPath, 'application.config.json'),
       appConfig,
     );
-    const rulesConfig =
-      '[{"ruleName":"first-voxengine-ci-rule","scenarios":["second-voxengine-ci-scenario","first-voxengine-ci-scenario"],"rulePattern":"RULE_ONE_.*"},{"ruleName":"second-voxengine-ci-rule","scenarios":["first-voxengine-ci-scenario"],"rulePattern":"RULE_TWO_.*"}]';
-    writeFileSync(
-      path.join(appConfigDirPath, 'rules.config.json'),
-      rulesConfig,
-    );
+    const rulesConfig = `[{"ruleName":"${FIRST_RULE_NAME}","scenarios":["${SECOND_SCENARIO_NAME}","${FIRST_SCENARIO_NAME}"],"rulePattern":"${FIRST_RULE_PATTERN}"},{"ruleName":"${SECOND_RULE_NAME}","scenarios":["${FIRST_SCENARIO_NAME}"],"rulePattern":"${SECOND_RULE_PATTERN}"}]`;
+    await writeFile(join(appConfigDirPath, 'rules.config.json'), rulesConfig);
     await application.applicationBuildAndUpload({
-      applicationName: 'voxengine-ci',
+      applicationName: APPLICATION_NAME,
       applicationId: undefined,
       isForce: false,
     });
     applicationId = (
       await client.Applications.getApplications({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
       })
     ).result[0].applicationId;
     firstTestRuleId = (
       await client.Rules.getRules({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
         applicationId,
-        ruleName: 'first-voxengine-ci-rule',
+        ruleName: FIRST_RULE_NAME,
       })
     ).result[0]?.ruleId;
-  });
-
-  after(async () => {
-    await client.Applications.delApplication({
-      applicationId,
-      applicationName: 'voxengine-ci',
-    });
-    const firstTestScenarioId = (
-      await client.Scenarios.getScenarios({
-        scenarioName: 'first-voxengine-ci-scenario',
-      })
-    ).result[0]?.scenarioId;
-    await client.Scenarios.delScenario({
-      scenarioId: firstTestScenarioId,
-      scenarioName: 'first-voxengine-ci-scenario',
-    });
-    const secondTestScenarioId = (
-      await client.Scenarios.getScenarios({
-        scenarioName: 'second-voxengine-ci-scenario',
-      })
-    ).result[0]?.scenarioId;
-    await client.Scenarios.delScenario({
-      scenarioId: secondTestScenarioId,
-      scenarioName: 'second-voxengine-ci-scenario',
-    });
-    const pathToAppMetadataFile = path.resolve(
-      'voxfiles/.voxengine-ci/applications/voxengine-ci.voxengine.voximplant.com',
-    );
-    rmSync(
-      path.join(pathToAppMetadataFile, 'application.metadata.config.json'),
-    );
-    rmSync(path.join(pathToAppMetadataFile, 'rules.metadata.config.json'));
-    await rmdir(pathToAppMetadataFile);
   });
 
   /**
@@ -130,17 +103,23 @@ describe('throw error if app or rule does not exist', async () => {
         applicationId: undefined,
       });
     };
-    await expect(f()).to.be.ok;
+    await expect(f()).to.be.become(undefined);
+    // TODO: Looks like a bug?
+    // await expect(f()).to.be.rejectedWith(
+    //   'Application with --application-name "dd" does not exist',
+    // );
   });
 
   it('yarn voxengine-ci upload --application-name voxengine-ci --application-id 11 --dry-run', async () => {
     const f = () => {
       return application.applicationBuild({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
         applicationId: 11,
       });
     };
-    await expect(f()).to.be.ok;
+    await expect(f()).to.be.rejectedWith(
+      'Application with --application-id "11" does not exist',
+    );
   });
 
   it('yarn voxengine-ci upload --application-name ww --application-id applicationId --dry-run', async () => {
@@ -150,7 +129,9 @@ describe('throw error if app or rule does not exist', async () => {
         applicationId: 11,
       });
     };
-    await expect(f()).to.be.ok;
+    await expect(f()).to.be.rejectedWith(
+      'Application with --application-id "11" does not exist',
+    );
   });
 
   it('yarn voxengine-ci upload --application-id 11', async () => {
@@ -182,7 +163,7 @@ describe('throw error if app or rule does not exist', async () => {
   it('yarn voxengine-ci upload --application-name voxengine-ci --application-id 11', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
         applicationId: 11,
         isForce: false,
       });
@@ -196,11 +177,11 @@ describe('throw error if app or rule does not exist', async () => {
     const f = () => {
       return application.applicationBuildAndUpload({
         applicationName: 'ww',
-        applicationId: applicationId,
+        applicationId,
         isForce: false,
       });
     };
-    await expect(f()).to.be.ok;
+    await expect(f()).to.be.become(undefined);
   });
 
   /**
@@ -210,7 +191,7 @@ describe('throw error if app or rule does not exist', async () => {
   it('yarn voxengine-ci:dev upload --application-name voxengine-ci --rule-id 11 --dry-run', async () => {
     const f = () => {
       return application.applicationByRuleBuild({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
         applicationId: undefined,
         ruleName: undefined,
         ruleId: 11,
@@ -238,7 +219,7 @@ describe('throw error if app or rule does not exist', async () => {
   it('yarn voxengine-ci:dev upload --application-name voxengine-ci --rule-id 11', async () => {
     const f = () => {
       return application.applicationByRuleBuildAndUpload({
-        applicationName: 'voxengine-ci',
+        applicationName: APPLICATION_NAME,
         applicationId: undefined,
         ruleName: undefined,
         ruleId: 11,

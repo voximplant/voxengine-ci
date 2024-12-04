@@ -1,13 +1,14 @@
 import { APIErrorCode } from '@voximplant/apiclient-nodejs/dist/Enums';
 import { ApplicationInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
+import { AddApplicationResponse } from '@voximplant/apiclient-nodejs/dist/Interfaces';
 
 import { VoximplantContext } from '../contexts/voximplant.context';
 import { isApiErrorResponse } from '../types/api-error-response.type';
-import { AddApplicationResponse } from '@voximplant/apiclient-nodejs/dist/Interfaces';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export class VoxApplicationPlatformRepository {
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(public context: VoximplantContext) {}
 

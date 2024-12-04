@@ -1,10 +1,12 @@
 import VoximplantApiClient from '@voximplant/apiclient-nodejs';
-import { LogMessageGeneratorFactory } from '../../utils/logMessageGenerator';
+
+import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 
 export class VoximplantContext {
   client: VoximplantApiClient;
 
-  private lmg = LogMessageGeneratorFactory.getInstance();
+  private lmg: LogMessageGeneratorFactory =
+    LogMessageGeneratorFactory.getInstance();
 
   constructor(private credentials: string) {}
 
@@ -16,7 +18,7 @@ export class VoximplantContext {
      *  Outside information - https://cloudreports.net/v8-zero-cost-async-stack-traces/
      */
     await new Promise((resolve, reject) => {
-      const uncaughtExceptionListener = (error: Error) => {
+      const uncaughtExceptionListener = (error: Error): void => {
         // @ts-expect-error 'error specific fields'
         if (error.code === 'ENOENT') {
           console.error(
@@ -40,7 +42,7 @@ export class VoximplantContext {
 
       this.client = new VoximplantApiClient(this.credentials);
 
-      this.client.onReady = () => {
+      this.client.onReady = (): void => {
         console.info(
           this.lmg.generate('INFO__INIT_SUCCESS', this.constructor.name),
         );

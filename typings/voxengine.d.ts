@@ -2286,33 +2286,37 @@ declare enum ASRModel {
  */
 declare interface BaseRecorderParameters {
   /**
-   * Optional. Whether to restrict access to the record without management API authorization (available only in [VoxEngine.createRecorder]).
+   * Optional. Whether to restrict access to the record without management API authorization (available only in the [VoxEngine.createRecorder] method).
    */
   secure?: boolean;
   /**
-   * Optional. Whether to create the call record transcription. Note that transcription is not available for the Recorder module. See the details [in the article](/docs/guides/speech/asr).
+   * Optional. Whether to create the call record transcription. Note that transcription is not available for the [Recorder module](/docs/references/voxengine/modules#recorder). See the details [in the article](/docs/guides/speech/asr).
    */
   transcribe?: boolean;
   /**
-   * Optional. Transcription language. The parameter uses [ASRLanguage] from the ASR Module as possible values. Note that it is necessary to include the ASR module in the scenario to use the language constants. The parameter is not available for the Recorder module.
+   * Optional. Transcription language. The parameter uses [ASRLanguage] from the [ASR module](/docs/references/voxengine/modules#asr) as possible values. Note that it is necessary to include the [ASR module](/docs/references/voxengine/modules#asr) in the scenario to use the language constants. The parameter is not available for the [Recorder module](/docs/references/voxengine/modules#recorder).
    */
   language?: ASRLanguage;
   /**
-   * Optional. Whether to use the HD audio. If set to **false** (default), 8 KHz / 32 kbps mp3 file is generated. Otherwise, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The property is not compatible with lossless: true property.
+   * Optional. Whether to use the HD audio. The default value is **false**. If set to **false**, 8 KHz / 32 kbps mp3 file is generated. If set to **true**, "wideband audio" 48 KHz / 192 kbps mp3 file is generated. Note that transcription's quality does not depend on this parameter. The parameter is not compatible with **lossless: true** parameter.
    */
   hd_audio?: boolean;
   /**
-   * Optional. Storage time for recorded files. The default value is **[RecordExpireTime.THREEMONTHS]** (3 months); see possible values in the [RecordExpireTime] enum.
+   * Optional. Storage time for recorded files. The default value is **[RecordExpireTime.THREEMONTHS]**.
    */
   expire?: RecordExpireTime;
   /**
-   * Optional. Whether to save the record in flac format. The default value is **false**. The property is not compatible with hd_audio: true property.
+   * Optional. Whether to save the record in flac format. The default value is **false**. The parameter is not compatible with **hd_audio: true** parameter.
    */
   lossless?: boolean;
   /**
-   * Optional. Whether to record video. The default value is **false**. For video recording use the [Call.record] method call ({video: true}). The parameter is not available for the Recorder module because it could only record an audio.
+   * Optional. Whether to record video. The default value is **false**.
    */
   video?: boolean;
+  /**
+   * Optional. Recorder video parameters.
+   */
+  videoParameters?: RecorderVideoParameters;
   /**
    * Optional. The prefix to add to the record names when storing to your S3 storage. Works only for custom S3-compatible storages.
    */
@@ -2997,7 +3001,7 @@ declare interface CallParameters {
   /**
    * Optional. Internal information about codecs from the [AppEvents.CallAlerting] event.
    */
-  scheme?: { [id: string]: any };
+  scheme?: { [id: string]: { audio: any, video: any } };
   /**
    * Optional. Sets the maximum possible video bitrate for the customer device in kbps.
    */
@@ -3043,15 +3047,15 @@ declare interface CallPSTNParameters {
  */
 declare interface CallRecordParameters extends BaseRecorderParameters {
   /**
-   * Optional. Whether the sound is stereo. The default value is **false**. The parameter does not change anything for the Recorder module: it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
+   * Optional. Whether the sound is stereo. The default value is **false**. The parameter does not change anything for the [Recorder module](/docs/references/voxengine/modules#recorder): it records stereo with mixed streams in both channels. For the [Call.record] method it works in another way:  1) if it is False, it records stereo with mixed streams in both channels  2) If it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into right channel. Audio stream from voximplant cloud to a call endpoint is recorded into left channel.
    */
   stereo?: boolean;
   /**
-   * Optional. Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the Recorder module because the transcription is not available for it.
+   * Optional. Transcription dictionary. Array of words that are possible values. Note that dict does not limit the transcription to the specific list. Instead, words in the specified list have a higher chance to be selected. Note that the parameter does not affect the [Recorder module](/docs/references/voxengine/modules#recorder) because the transcription is not available for it.
    */
   dict?: ASRDictionary | string[];
   /**
-   * Optional. An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the 'transcribe: true' parameter. The parameter is not available for the Recorder module.
+   * Optional. An array of two strings. Each string names the label in resulting transcription: the first string names a call/stream that initiated recording, the second string names the other call. If there is only one string in the array or the parameter is not specified at all, the recording's initiate call has the "Left" name and the second stream has the "Right" name. The parameter requires the **transcribe: true** parameter. The parameter is not available for the [Recorder module](/docs/references/voxengine/modules#recorder).
    */
   labels?: string[];
   /**
@@ -3059,13 +3063,9 @@ declare interface CallRecordParameters extends BaseRecorderParameters {
    */
   provider?: TranscriptionProvider;
   /**
-   * Optional. Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the Recorder module.
+   * Optional. Transcription format. Could be specified as "json". In that case the transcription result is saved in JSON format. The parameter is not available for the [Recorder module](/docs/references/voxengine/modules#recorder).
    */
   format?: string;
-  /**
-   * Optional. Video parameters.
-   */
-  videoParameters?: RecorderVideoParameters;
 }
 
 /**
@@ -3622,7 +3622,7 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * Conversation settings.
+   * [Conversation] settings.
    */
   interface ConversationSettings {
     /**
@@ -3634,9 +3634,9 @@ declare module CCAI {
      */
     profile: CCAI.Vendor.ConversationProfile;
     /**
-     * TODO: add description and change any to something else (need to know the real type)
+     * Name of the Dialogflow conversation.
      */
-    project: any;
+    project: string;
   }
 }
 
@@ -3969,7 +3969,7 @@ declare module CCAI {
 
 declare module CCAI {
   /**
-   * Participant settings.
+   * [Participant] settings.
    */
   interface ParticipantSettings {
     /**
@@ -4081,9 +4081,9 @@ declare module CCAI {
        */
       name: string;
       /**
-       * Required. A human-readable name for this profile. Max length is **1024 bytes**.
+       * Optional. A human-readable name for this profile. Max length is **1024 bytes**.
        */
-      display_name: string;
+      display_name?: string;
     }
   }
 }
@@ -4095,7 +4095,7 @@ declare module CCAI {
      */
     interface EventInput {
       /**
-       * Required. The unique identifier of the event.
+       * The unique identifier of the event.
        */
       name: string;
       /**
@@ -4110,9 +4110,9 @@ declare module CCAI {
        * * If parameter's entity type is a composite entity: map from composite entity property names to property values
        * * Else: parameter value
        */
-      parameters: { [key: string]: any };
+      parameters?: { [key: string]: any };
       /**
-       * Required. The language of this query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
+       * The language of this query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
        */
       language_code: string;
     }
@@ -4187,11 +4187,11 @@ declare module CCAI {
      */
     interface TextInput {
       /**
-       * Required. The UTF-8 encoded natural language text to be processed. Text length must not exceed **256 characters**.
+       * The UTF-8 encoded natural language text to be processed. Text length must not exceed **256 characters**.
        */
       text: string;
       /**
-       * Required. The language of this conversational query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
+       * The language of this conversational query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to have the same language.
        */
       language_codes: string;
       /**
@@ -4379,21 +4379,6 @@ declare interface ConferenceParameters {
    * Whether the audio is high definition. If set to **false** (default), audio stream has the frequency of 8kHz/32kbps. Otherwise, audio stream has the frequency of 48kHz/192kbps. Please note that default audio mode costs nothing while the high definition audio is billed additionally - for more details see the pricing page.
    */
   hd_audio: boolean;
-}
-
-/**
- * [ConferenceRecorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
- * <br>
- * Add the following line to your scenario code to use the interface:
- * ```
- * require(Modules.Recorder);
- * ```
- */
-declare interface ConferenceRecorderParameters extends BaseRecorderParameters {
-  /**
-   * Video parameters for the [ConferenceRecorder] parameters.
-   */
-  videoParameters: RecorderVideoParameters;
 }
 
 /**
@@ -5638,15 +5623,6 @@ declare enum Modules {
    */
   IVR = 'ivr',
   /**
-   * Provides the [Google Analytics Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/v1) functionality.
-   * <br>
-   * Add the following line to your scenario code to use the module:
-   * ```
-   * require(Modules.MeasurementProtocol);
-   * ```
-   */
-  MeasurementProtocol = 'measurementprotocol',
-  /**
    * Provides the OpenAI functionality.
    */
   OpenAI = 'openai',
@@ -6417,10 +6393,10 @@ interface ReceiveParameters {
 }
 
 /**
- * List of available values for [RecorderParameters.expire] and [ConferenceRecorderParameters.expire] parameters.
+ * List of available values for the [RecorderParameters.expire] parameter.
  */
 declare enum RecordExpireTime {
-  DEFAULT = '',
+  THREEMONTHS = '',
   SIXMONTHS = '-6m',
   ONEYEAR = '-1y',
   TWOYEARS = '-2y',
@@ -6855,7 +6831,7 @@ declare interface RecorderLabels {
 }
 
 /**
- * An object that specifies video frame layout priority. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
+ * An object that specifies video frame layout priority. Can be passed via the [CallRecordParameters.videoParameters] and [RecorderParameters.videoParameters] parameter.
  * <br>
  * Add the following line to your scenario code to use the type:
  * ```
@@ -6885,9 +6861,9 @@ declare type RecorderLayout = 'grid' | 'tribune' | 'custom';
 declare type RecorderObjectFit = 'fill' | 'contain' | 'cover' | 'none';
 
 /**
- * [Recorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
+ * [Recorder] and [ConferenceRecorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
  */
-declare interface RecorderParameters extends ConferenceRecorderParameters {
+declare interface RecorderParameters extends BaseRecorderParameters{
   /**
    * Optional. Name of the recorder for the call history.
    */
@@ -6943,7 +6919,7 @@ declare interface RecorderVad {
 }
 
 /**
- * An object that specifies recorder video parameters. Can be passed via the [CallRecordParameters.videoParameters] and [ConferenceRecorderParameters.videoParameters] parameter.
+ * An object that specifies recorder video parameters. Can be passed via the [CallRecordParameters.videoParameters] and [RecorderParameters.videoParameters] parameter.
  * <br>
  * Add the following line to your scenario code to use the interface:
  * ```
@@ -12144,10 +12120,6 @@ declare namespace VoximplantAPI {
          * The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
          */
         userName?: string | string[];
-        /**
-         * The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
-         */
-        sqQueueId?: 'any' | number | number[];
         /**
          * The SmartQueue name list separated by semicolons (;). Can be used instead of <b>sq_queue_id</b>
          */

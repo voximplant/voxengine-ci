@@ -3095,9 +3095,9 @@ declare interface CallSayParameters {
  */
 declare interface CallSIPParameters {
   /**
-   * Identifier of Voximplant SIP registration that is used for outgoing call.
+   * Optional. Identifier of Voximplant SIP registration that is used for outgoing call.
    */
-  regId: number;
+  regId?: number;
   /**
    * Optional. CallerID of the caller that is displayed to the callee. Usage of whitespaces is not allowed. Normally it is a phone number that can be used for callback.
    */
@@ -5796,13 +5796,116 @@ declare namespace OpenAI {
 declare namespace OpenAI {
   namespace Beta {
     /**
-     * Creates a RealtimeAPIClient instance.
-     * @param apiKey The API key for the OpenAI Realtime API
-     * @param onWebSocketClose A callback function that is called when the WebSocket connection is closed
+     * Creates an [OpenAI.Beta.RealtimeAPIClient] instance.
+     * @param parameters The [OpenAI.Beta.RealtimeAPIClient] parameters
      */
-    function createRealtimeAPIClient(apiKey: string, onWebSocketClose: (event: WebSocketEvents.CLOSE) => void): Promise<RealtimeAPIClient>
+    function createRealtimeAPIClient(parameters: RealtimeAPIClientParameters): Promise<RealtimeAPIClient>
   }
 }
+declare namespace OpenAI {
+  namespace Beta {
+    /**
+     * @event
+     */
+    enum Events {
+      /**
+       * Triggered when the audio stream sent by a third party through an OpenAI WebSocket is started playing.
+       * @typedef _WebSocketMediaStartedEvent
+       */
+      WebSocketMediaStarted = 'OpenAI.Beta.Events.WebSocketMediaStarted',
+      /**
+       * Triggers after the end of the audio stream sent by a third party through an OpenAI WebSocket (**1 second of silence**).
+       * @typedef _WebSocketMediaEndedEvent
+       */
+      WebSocketMediaEnded = 'OpenAI.Beta.Events.WebSocketMediaEnded',
+    }
+
+    /**
+     * @private
+     */
+    interface _Events {
+      [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
+      [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
+    }
+
+    /**
+     * @private
+     */
+    interface _Event {
+      /**
+       * The [OpenAI.Beta.RealtimeAPIClient] instance.
+       */
+      client: RealtimeAPIClient;
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaEvent extends _Event {
+      /**
+       * Special tag to name audio streams sent over one OpenAI WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
+       */
+      tag?: string;
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
+      /**
+       * Audio encoding formats.
+       */
+      encoding?: string;
+      /**
+       * Custom parameters.
+       */
+      customParameters?: { [key: string]: string };
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
+      /**
+       * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
+       */
+      mediaInfo?: WebSocketMediaInfo;
+    }
+  }
+}
+
+
+declare namespace OpenAI {
+  namespace Beta {
+    /**
+     * @private
+     */
+    interface _RealtimeAPIClientEvents extends _Events, _RealtimeAPIEvents {
+    }
+  }
+}
+declare namespace OpenAI {
+  namespace Beta {
+    /**
+     * [OpenAI.Beta.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.Beta.createRealtimeAPIClient] method.
+     */
+    interface RealtimeAPIClientParameters {
+      /**
+       * The API key for the OpenAI Realtime API.
+       */
+      apiKey: string;
+      /**
+       * Optional. The model to use for OpenAI Realtime API processing. The default value is **gpt-4o-realtime-preview-2024-10-01**.
+       */
+      model?: string;
+      /**
+       * Optional. A callback function that is called when the [WebSocket] connection is closed.
+       */
+      onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
+    }
+  }
+}
+
 declare namespace OpenAI {
   namespace Beta {
     class RealtimeAPIClient {
@@ -5835,23 +5938,23 @@ declare namespace OpenAI {
       stopMediaTo(mediaUnit: VoxMediaUnit): void;
 
       /**
-       * Adds a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+       * Adds a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] or [OpenAI.Beta.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
        * @param event Event class (i.e., [OpenAI.Beta.RealtimeAPIEvents.Error])
        * @param callback Handler function. A single parameter is passed - object with event information
        */
-      addEventListener<T extends keyof OpenAI.Beta._RealtimeAPIEvent>(
-        event: OpenAI.Beta.RealtimeAPIEvents | T,
-        callback: (event: OpenAI.Beta._RealtimeAPIEvent[T]) => any,
+      addEventListener<T extends keyof OpenAI.Beta._RealtimeAPIClientEvents>(
+        event: OpenAI.Beta.Events | OpenAI.Beta.RealtimeAPIEvents | T,
+        callback: (event: OpenAI.Beta._RealtimeAPIClientEvents[T]) => any,
       ): void;
 
       /**
-       * Removes a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] event.
+       * Removes a handler for the specified [OpenAI.Beta.RealtimeAPIEvents] or [OpenAI.Beta.Events] event.
        * @param event Event class (i.e., [OpenAI.Beta.RealtimeAPIEvents.Error])
        * @param callback Optional. Handler function. If not specified, all handler functions are removed
        */
-      removeEventListener<T extends keyof OpenAI.Beta._RealtimeAPIEvent>(
-        event: OpenAI.Beta.RealtimeAPIEvents | T,
-        callback?: (event: OpenAI.Beta._RealtimeAPIEvent[T]) => any,
+      removeEventListener<T extends keyof OpenAI.Beta._RealtimeAPIClientEvents>(
+        event: OpenAI.Beta.Events | OpenAI.Beta.RealtimeAPIEvents | T,
+        callback?: (event: OpenAI.Beta._RealtimeAPIClientEvents[T]) => any,
       ): void;
 
       /**
@@ -7328,7 +7431,8 @@ declare interface _SmartQueueOperatorReachedEvent extends _SmartQueueEvent {
 /**
  * @private
  */
-declare interface _SmartQueueEnqueueSuccessEvent extends _SmartQueueEvent {}
+declare interface _SmartQueueEnqueueSuccessEvent extends _SmartQueueEvent {
+}
 
 /**
  * @private
@@ -7351,7 +7455,7 @@ declare interface _SmartQueueClientDisconnectedEvent extends _SmartQueueEvent {
   /**
    * Cancels the pending request and removes it from the queue
    */
-  cancel(): void;
+  cancel: Function;
 }
 
 /**
@@ -8194,7 +8298,7 @@ declare namespace VoxEngine {
    * @param parameters Call parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively
    * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event
    */
-  function callSIP(to: string, parameters: CallSIPParameters, scheme: Object): Call;
+  function callSIP(to: string, parameters?: CallSIPParameters, scheme?: Object): Call;
 }
 
 declare namespace VoxEngine {
@@ -8260,7 +8364,7 @@ declare namespace VoxEngine {
    * ```
    * @param parameters Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to 'false'.
    */
-  function createRecorder(parameters: RecorderParameters): Recorder | ConferenceRecorder;
+  function createRecorder(parameters?: RecorderParameters): Recorder | ConferenceRecorder;
 }
 
 declare namespace VoxEngine {
@@ -14698,7 +14802,7 @@ declare interface _WebSocketMessageEvent extends _WebSocketEvent {
   /**
    * The data sent by the message emitter.
    */
-  readonly data: string;
+  readonly text: string;
 }
 
 /**
@@ -14710,29 +14814,35 @@ declare interface _WebSocketErrorEvent extends _WebSocketEvent {
 /**
  * @private
  */
-declare interface _WebSocketMediaStartedEvent extends _WebSocketEvent {
+declare interface _WebSocketMediaEvent extends _WebSocketEvent {
   /**
-   * Special tag to name audio streams sent over one WebSocket connection. With it, one can send 2 audios to 2 different calls at the same time.
+   * Special tag to name audio streams sent over one WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
    */
-  tag: string;
-  /**
-   * Custom data.
-   */
-  customParameters: { [key: string]: string };
+  tag?: string;
 }
 
 /**
  * @private
  */
-declare interface _WebSocketMediaEndedEvent extends _WebSocketEvent {
+declare interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
   /**
-   * Special tag to name audio streams sent over one WebSocket connection. With it, one can send 2 audios to 2 different calls at the same time.
+   * Audio encoding formats.
    */
-  tag: string;
+  encoding?: string;
+  /**
+   * Custom parameters.
+   */
+  customParameters?: { [key: string]: string };
+}
+
+/**
+ * @private
+ */
+declare interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
   /**
    * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
    */
-  mediaInfo: WebSocketMediaInfo;
+  mediaInfo?: WebSocketMediaInfo;
 }
 
 /**

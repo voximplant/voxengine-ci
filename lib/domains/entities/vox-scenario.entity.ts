@@ -24,10 +24,11 @@ export class VoxScenarioMetadata {
 
 export class VoxScenarioBuilderTsConfig {
   compilerOptions: {
-    allowJs: true;
-    target: 'ES2020';
-    noEmitOnError: true;
-    skipLibCheck: true;
+    allowJs: boolean;
+    target: string;
+    lib: string[];
+    skipLibCheck: boolean;
+    noEmitOnError: boolean;
     outDir: string;
   };
   include: string[];
@@ -37,8 +38,9 @@ export class VoxScenarioBuilderTsConfig {
     this.compilerOptions = {
       allowJs: true,
       target: 'ES2020',
-      noEmitOnError: true,
+      lib: ['ES2020'],
       skipLibCheck: true,
+      noEmitOnError: true,
       outDir: outDir,
     };
     this.include = include;

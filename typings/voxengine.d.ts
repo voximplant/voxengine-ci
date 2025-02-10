@@ -3295,7 +3295,7 @@ declare class Call {
 
   /**
    * Answer the incoming call in the peer-to-peer mode. Use it only for P2P call legs connection.
-   * @param peerCall The other P2P call leg.
+   * @param peerCall The other P2P call leg
    * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the answer request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the  Connected (/docs/references/websdk/enums/callevents.html#connected) event). Example: {'X-header':'value'}
    * @param parameters Optional. Answering call parameters
    */
@@ -3315,7 +3315,7 @@ declare class Call {
 
   /**
    * Rejects the incoming call. First it triggers the [CallEvents.Disconnected] event immediately. The [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered in 60 seconds.
-   * @param code SIP status code with the rejection reason. You can pass any [standard SIP code](https://en.wikipedia.org/wiki/List_of_SIP_response_codes) starting with 3xx, 4xx, 5xx and 6xx as a reject reason.
+   * @param code SIP status code with the rejection reason. You can pass any [standard SIP code](https://en.wikipedia.org/wiki/List_of_SIP_response_codes) starting with 3xx, 4xx, 5xx and 6xx as a reject reason
    * @param extraHeaders Optional. Custom parameters (SIP headers) that should be passed with the reject request. Custom header names have to begin with the 'X-' prefix. The "X-" headers could be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
   reject(code: number, extraHeaders?: { [header: string]: string }): void;
@@ -4205,6 +4205,13 @@ declare module CCAI {
 declare module CCAI {
   module Vendor {
   }
+}
+
+/**
+ * Custom parameters for [WebSocket] media buffer clearing. Can be passed as arguments to the [WebSocket.clearMediaBuffer] method.
+ */
+declare interface ClearMediaBufferParameters {
+  tag?: string;
 }
 
 /**
@@ -6515,7 +6522,10 @@ declare enum RecordExpireTime {
  * require(Modules.Recorder);
  * ```
  */
-declare type RecorderDirection = 'ltr' | 'rtl';
+declare enum RecorderDirection {
+  ltr = 'ltr',
+  rtl = 'rtl',
+}
 
 /**
  * An object that specifies video frame parameters. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
@@ -6951,8 +6961,11 @@ declare type RecorderLayoutPriority = 'vad' | string[];
  * require(Modules.Recorder);
  * ```
  */
-declare type RecorderLayout = 'grid' | 'tribune' | 'custom';
-
+declare enum RecorderLayout {
+  grid = 'grid',
+  tribune = 'tribune',
+  custom = 'custom',
+}
 /**
  * An object that specifies how to fill a participant's video source to the conference frame. Can be passed via the [RecorderVideoParameters.layoutSettings] and [UpdateRecorderVideoParameters.layoutSettings] parameter.
  * <br>
@@ -6961,7 +6974,12 @@ declare type RecorderLayout = 'grid' | 'tribune' | 'custom';
  * require(Modules.Recorder);
  * ```
  */
-declare type RecorderObjectFit = 'fill' | 'contain' | 'cover' | 'none';
+declare enum RecorderObjectFit {
+  fill = 'fill',
+  contain = 'contain',
+  cover = 'cover',
+  none = 'none',
+}
 
 /**
  * [Recorder] and [ConferenceRecorder] parameters. Can be passed as arguments to the [VoxEngine.createRecorder] method.
@@ -7583,29 +7601,29 @@ declare interface SmartQueueTaskParameters {
 }
 
 /*
- * A [SmartQueue] task's status enumeration value.
+ * A [SmartQueueTask] status enumeration value.
  */
-declare enum SmartQueueTaskStatus {
+declare interface SmartQueueTaskStatus {
   /**
    * Smartqueue is distributing the task to a suitable agent.
    */
-  DISTRIBUTING,
+  DISTRIBUTING: 'DISTRIBUTING',
   /**
    * Smartqueue is connecting the task to an agent.
    */
-  CONNECTING,
+  CONNECTING: 'CONNECTING',
   /**
    * The agent connected to the task.
    */
-  CONNECTED,
+  CONNECTED: 'CONNECTED',
   /**
    * The agent has ended the task.
    */
-  ENDED,
+  ENDED: 'ENDED',
   /**
    * An error occurred.
    */
-  FAILED,
+  FAILED: 'FAILED',
 }
 
 /**
@@ -7959,7 +7977,7 @@ declare interface StreamingAgentParameters {
    */
   streamName?: string;
   /**
-   * How often a keyframe in a stream is created (seconds). Default value is 2. Any value less than "2" yields "2".
+   * How often a keyframe in a stream is created (seconds). The default value is **2**. Any value less than "2" yields "2".
    */
   keyframeInterval?: number;
   /**
@@ -8262,11 +8280,11 @@ declare namespace VoxEngine {
   /**
    * Makes a call to a conference via Conference module. If there is no such conference, it is created in the first method's call. The method is designed to be called in a simple incoming scenario, then it can trigger another special scenario which contains logic of the conference.
    * The method can trigger the Failed event in 60 sec, see the [session limits](/docs/guides/voxengine/limits) for details.
-   * @param conferenceId ID of the conference. The parameter has to be the same as the pattern in the rule so the method triggers appropriate rule with conference logic.
-   * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. Normally it is some phone number that can be used for callback. IMPORTANT: you cannot use test numbers rented from Voximplant as CallerID, use only real numbers.
-   * @param displayName Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name.
+   * @param conferenceId ID of the conference. The parameter has to be the same as the pattern in the rule so the method triggers appropriate rule with conference logic
+   * @param callerid CallerID of the caller that is displayed to the user. Spaces usage is not allowed. Normally it is some phone number that can be used for callback. IMPORTANT: you cannot use test numbers rented from Voximplant as CallerID, use only real numbers
+   * @param displayName Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name
    * @param headers Optional. SIP headers to be passed with a call to conference. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
-   * @param scheme Optional. Internal information about codecs from the [AppEvents.CallAlerting] event.
+   * @param scheme Optional. Internal information about codecs from the [AppEvents.CallAlerting] event
    */
   function callConference(
     conferenceId: string,
@@ -8362,7 +8380,7 @@ declare namespace VoxEngine {
    * ```
    * require(Modules.Recorder);
    * ```
-   * @param parameters Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to 'false'.
+   * @param parameters Recorder parameters. Note that if the first parameter is not an object, it is treated as 'name', with second optional parameter as 'secure' boolean flag, default to **false**
    */
   function createRecorder(parameters?: RecorderParameters): Recorder | ConferenceRecorder;
 }
@@ -8429,10 +8447,10 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Creates a new [WebSocket] object. You can attach media streams later via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
-   * @param url URL to which to connect (wss:// + domain + path).
-   * @param protocols Either a single protocol string or an array of protocol strings. The default value is **chat**.
+   * @param url URL to connect **(wss:// + domain + path)**
+   * @param parameters Optional. [WebSocket] parameters
    */
-  function createWebSocket(url: string, protocols: WebSocketParameters): WebSocket;
+  function createWebSocket(url: string, parameters?: WebSocketParameters): WebSocket;
 }
 
 declare namespace VoxEngine {
@@ -8464,7 +8482,7 @@ declare namespace VoxEngine {
    * @param call1 incoming alerting call
    * @param call2 Newly created outgoing call
    * @param onEstablishedCallback Function to be called once the call is established. Both call1 and call2 are passed to this function as parameters
-   * @param direct Whether the call is in the P2P mode. It is The default value is **false**.
+   * @param direct Whether the call is in the P2P mode. It is The default value is **false**
    */
   function easyProcess(
     call1: Call,
@@ -8505,7 +8523,7 @@ declare namespace VoxEngine {
    * Helper function to forward an incoming call to PSTN. The method handles numbers only in the E.164 format by default. If you need to handle a number in another format, pass an additional function (as a parameter) to the method. For more details see the [GitHub repo](https://github.com/voximplant/easyprocess).
    * @param numberTransform Optional. Function used to transform dialed number to international format. This function accepts dialed number and returns phone number in E.164 format
    * @param onEstablishedCallback Optional. Function that is invoked after a call is established. Both calls (incoming and outgoing) are passed to this function
-   * @param options An object with a number used as the callerid that is displayed to the callee. Whitespaces are not allowed. A valid phone number that can be used to call back if required.
+   * @param options An object with a number used as the callerid that is displayed to the callee. Whitespaces are not allowed. A valid phone number that can be used to call back if required
    */
   function forwardCallToPSTN(
     numberTransform?: (number: string) => string,
@@ -14537,7 +14555,7 @@ declare namespace VoximplantAvatar {
      */
     asrEndOfPhraseDetectorTimeout?: number;
     /**
-     * Optional. ASR listen timeout in milliseconds. If there is no response from the customer, the [AvatarState.onTimeout](/docs/references/avatarengine/avatarstate#ontimeout) required callback function executes. You can override the global timeout via the [AvatarResponseParameters.listenTimeout](/docs/references/avatarengine/avatarresponseparameters#listentimeout) parameter for the current response. Default value is 10000 milliseconds (10 seconds).
+     * Optional. ASR listen timeout in milliseconds. If there is no response from the customer, the [AvatarState.onTimeout](/docs/references/avatarengine/avatarstate#ontimeout) required callback function executes. You can override the global timeout via the [AvatarResponseParameters.listenTimeout](/docs/references/avatarengine/avatarresponseparameters#listentimeout) parameter for the current response. The default value is **10000** milliseconds (10 seconds).
      */
     defaultListenTimeout?: number;
     /**
@@ -14860,13 +14878,13 @@ declare interface WebSocketMediaInfo {
  */
 declare interface WebSocketParameters {
   /**
-   * Either a single protocol string or an array of protocol strings. The default value is **chat**.
+   * Optional. Either a single protocol string or an array of protocol strings. The default value is **chat**.
    */
-  protocols: string | string[];
+  protocols?: string | string[];
   /**
-   * List of dictionaries with key and value fields representing headers.
+   * Optional. List of dictionaries with key and value fields representing headers.
    */
-  headers: { name: string; value: string }[];
+  headers?: { name: string; value: string }[];
 }
 
 declare enum WebSocketReadyState {
@@ -14889,9 +14907,9 @@ declare enum WebSocketReadyState {
 }
 
 /**
- * Represents a WebSocket object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
- * @param url URL to connect (wss:// + domain + path)
- * @param protocols Either a single protocol string or an array of protocol strings. The default value is **chat**
+ * Represents a [WebSocket] object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
+ * @param url URL to connect **(wss:// + domain + path)**
+ * @param parameters Optional. [WebSocket] parameters
  */
 declare class WebSocket {
   constructor(url: string, parameters?: WebSocketParameters);
@@ -14982,8 +15000,15 @@ declare class WebSocket {
   /**
    * Stops sending media from the websocket to the media unit.
    * @param mediaUnit Media unit that stops receiving media
+   * @param parameters Optional. WebSocket interaction only parameters
    */
-  stopMediaTo(mediaUnit: VoxMediaUnit): void;
+  stopMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+  /**
+   * Stops sending media from the websocket to the media unit.
+   * @param parameters Optional. Media buffer clearing parameters
+   */
+  clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
 }
 
 declare module ASRModelList {
@@ -17911,14 +17936,14 @@ declare function base64_encode(data: string | number[]): string;
 /**
  * Creates a hex string from given bytes array.
  * @param data Array of numbers to convert into a string
- * @param toUpperCase Whether the resulting string has uppercase 'A-F' chars. Default is 'false'.
+ * @param toUpperCase Whether the resulting string has uppercase 'A-F' chars. Default is **false**
  */
 declare function bytes2hex(data: number[], toUpperCase: boolean): string;
 
 /**
  * Creates a string from an array of numbers with specified encoding
  * @param data Array of integers from 0 to 255 to create a string from
- * @param encoding Encoding to use for string creation, the default value is **utf-8**.
+ * @param encoding Encoding to use for string creation, the default value is **utf-8**
  */
 declare function bytes2str(data: number[], encoding: string): string;
 
@@ -17938,20 +17963,20 @@ declare interface ChannelParameters {
 
 /**
  * Cancels a timed, repeating action which is previously established by a call to setInterval().
- * @param intervalID The identifier of the repeated action you want to cancel. This ID is returned by the corresponding call to setInterval().
+ * @param intervalID The identifier of the repeated action you want to cancel. This ID is returned by the corresponding call
  */
 declare function clearInterval(intervalID: number): void;
 
 /**
  * Cancels a timeout previously established by calling setTimeout().
- * @param timeoutID The identifier of the timeout you want to cancel. This ID is returned by the corresponding call to setTimeout().
+ * @param timeoutID The identifier of the timeout you want to cancel. This ID is returned by the corresponding call
  */
 declare function clearTimeout(timeoutID: number): void;
 
 /**
  * Converts the date to the specified local timezone. Note that `new Date()` always returns time in the UTC+0 timezone.
- * @param timezone Local timezone in the AREA/LOCATION format of the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
- * @param date Instance of the `Date` object.
+ * @param timezone Local timezone in the AREA/LOCATION format of the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+ * @param date Instance of the `Date` object
  */
 declare function getLocalTime(timezone: string, date: Date): Date;
 
@@ -18231,14 +18256,14 @@ declare type SequencePlaybackSegment = TTSPlaybackParameters | URLPlaybackParame
 
 /**
  * Repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.
- * @param callback A function to be executed every specified milliseconds. The function should not have any parameters, and no return value is expected.
- * @param timeout The time, in milliseconds (thousandths of a second), the timer specifies the delay between executions of the specified function or code. If this parameter is less than 100, a value of 100 is used. Note that the actual delay might be longer.
+ * @param callback A function to be executed every specified milliseconds. The function should not have any parameters, and no return value is expected
+ * @param timeout The time, in milliseconds (thousandths of a second), the timer specifies the delay between executions of the specified function or code. If this parameter is less than 100, a value of 100 is used. Note that the actual delay might be longer
  */
 declare function setInterval(callback: () => any, timeout?: number): number;
 
 /**
  * Sets a timer which executes a function or specified piece of code once after the timer expires.
- * @param callback A function to be executed after the timer expires.
+ * @param callback A function to be executed after the timer expires
  * @param timeout The time, in milliseconds (thousandths of a second), the timer should wait before the specified function or code is executed. If this parameter is omitted, a value of 0 is used, meaning execute "immediately", or more accurately, as soon as possible. Note that in either case, the actual delay may be longer than intended
  */
 declare function setTimeout(callback: () => any, timeout?: number): number;
@@ -18246,7 +18271,7 @@ declare function setTimeout(callback: () => any, timeout?: number): number;
 /**
  * Creates an array of numbers from parsing string in specified codepage
  * @param data String to parse
- * @param encoding String encoding, the default value is **utf-8**.
+ * @param encoding String encoding, the default value is **utf-8**
  */
 declare function str2bytes(data: string, encoding: string): number[];
 

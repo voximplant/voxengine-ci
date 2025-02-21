@@ -85,7 +85,7 @@ export class VoxScenarioPlatformRepository {
         ),
       );
     }
-    const scenarioInfo = response.result?.find(
+    let scenarioInfo = response.result?.find(
       (s) => s?.scenarioName === scenarioName,
     );
     if (!scenarioInfo || !scenarioInfo.scenarioId) {
@@ -95,6 +95,13 @@ export class VoxScenarioPlatformRepository {
           scenarioName,
         ),
       );
+      return;
+    }
+    if (!scenarioInfo.scenarioScript) {
+      const scenarioInfoById = await this.downloadScenarioById(
+        scenarioInfo.scenarioId,
+      );
+      if (scenarioInfoById) scenarioInfo = scenarioInfoById;
     }
     console.info(
       this.lmg.generate('INFO__SCENARIO_BY_NAME_DOWNLOADED', scenarioName),

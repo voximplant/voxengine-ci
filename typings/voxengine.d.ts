@@ -1357,7 +1357,6 @@ declare interface _CallAlertingEvent {
    */
   scheme: string;
 }
-
 /**
  * Represents an application storage object to manipulate key-value pairs.
  * <br>
@@ -15109,6 +15108,73 @@ declare module ASRModelList {
      * @const
      */
     video,
+
+    /**
+     * Optimized for everyday audio processing.
+     * @const 
+     */
+    nova_general,
+    /**
+     * Optimized for low-bandwidth audio phone calls.
+     * @const
+     */
+    nova_phonecall,
+
+    /**
+     * Optimized for everyday audio processing.
+     * @const
+     */
+    nova2_general,
+    /**
+     * Optimized for conference room settings, which include multiple speakers with a single microphone.
+     * @const
+     */
+    nova2_meeting,
+    /**
+     * Optimized for low-bandwidth audio phone calls.
+     * @const
+     */
+    nova2_phonecall,
+    /**
+     * Optimized for low-bandwidth audio clips with a single speaker. Derived from the phonecall model.
+     * @const
+     */
+    nova2_voicemail,
+    /**
+     * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented.
+     * @const
+     */
+    nova2_finance,
+    /**
+     * Optimized for use cases in which a human is talking to an automated bot, such as IVR, a voice assistant, or an automated kiosk.
+     * @const
+     */
+    nova2_conversationalai,
+    /**
+     * Optimized for audio sourced from videos.
+     * @const
+     */
+    nova2_video,
+    /**
+     * Optimized for audio with medical oriented vocabulary.
+     * @const
+     */
+    nova2_medical,
+    /**
+     * Optimized for audio sources from drivethrus.
+     * @const
+     */
+    nova2_drivethru,
+    /**
+     * Optimized for audio with automative oriented vocabulary.
+     * @const
+     */
+    nova2_automotive,
+    /**
+     * Optimized for audio from air traffic control.
+     * @const
+     */
+    nova2_atc,
   }
 }
 
@@ -16761,7 +16827,6 @@ declare module ASRProfileList {
     zu_ZA,
   }
 }
-
 declare module ASRProfileList {
   /**
    * List of Microsoft ASR profiles.
@@ -16891,6 +16956,12 @@ declare module ASRProfileList {
      * @const
      */
     ar_YE,
+
+    /**
+     * Assamese (India)
+     * @const
+     */
+    as_IN,
 
     /**
      * Azerbaijani (Latin, Azerbaijan)
@@ -17437,6 +17508,12 @@ declare module ASRProfileList {
      * @const
      */
     nl_NL,
+
+    /**
+     * Odia (India)
+     * @const
+     */
+    or_IN,
 
     /**
      * Punjabi (India)
@@ -18592,6 +18669,16 @@ declare namespace VoiceList {
    */
   namespace Amazon {
     /**
+     * Amazon voice, US English Female, Joanna.
+     * @const
+     */
+    const en_US_Joanna: Voice;
+    /**
+     * Amazon voice, US Spanish Female, Lupe.
+     * @const
+     */
+    const es_US_Lupe: Voice;
+    /**
      * Amazon voice, Turkish Female, Filiz.
      * @const
      */
@@ -18747,11 +18834,6 @@ declare namespace VoiceList {
      */
     const es_US_Miguel: Voice;
     /**
-     * Amazon voice, US Spanish Female (second voice), Lupe.
-     * @const
-     */
-    const es_US_Lupe: Voice;
-    /**
      * Amazon voice, Mexican Spanish Female, Mia.
      * @const
      */
@@ -18807,12 +18889,7 @@ declare namespace VoiceList {
      */
     const en_US_Joey: Voice;
     /**
-     * Amazon voice, US English Female (fourth voice), Joanna.
-     * @const
-     */
-    const en_US_Joanna: Voice;
-    /**
-     * Amazon voice, US English Female (fifth voice), Ivy.
+     * Amazon voice, US English Female (fourth voice), Ivy.
      * @const
      */
     const en_US_Ivy: Voice;
@@ -18922,6 +18999,36 @@ declare namespace VoiceList {
        */
       const tr_TR_Burcu: Voice;
       /**
+       * Neural Amazon voice, Czech Female, Jitka.
+       * @const
+       */
+      const cs_CZ_Jitka: Voice;
+      /**
+       * Neural Amazon voice, Swiss Standard German Female, Sabrina.
+       * @const
+       */
+      const de_CH_Sabrina: Voice;
+      /**
+       * Neural Amazon voice, US English Female, Joanna.
+       * @const
+       */
+      const en_US_Joanna: Voice;
+      /**
+       * Neural Amazon voice, US English Female (second voice), Ruth.
+       * @const
+       */
+      const en_US_Ruth: Voice;
+      /**
+       * Neural Amazon voice, US Spanish Female, Lupe.
+       * @const
+       */
+      const es_US_Lupe: Voice;
+      /**
+       * Neural Amazon voice, Singaporean English Female, Jasmine.
+       * @const
+       */
+      const en_SG_Jasmine: Voice;
+      /**
        * Neural Amazon voice, US English Male, Kevin.
        * @const
        */
@@ -19002,11 +19109,6 @@ declare namespace VoiceList {
        */
       const fr_CA_Gabrielle: Voice;
       /**
-       * Neural Amazon voice, US Spanish Female, Lupe.
-       * @const
-       */
-      const es_US_Lupe: Voice;
-      /**
        * Neural Amazon voice, Mexican Spanish Female, Mia.
        * @const
        */
@@ -19047,12 +19149,7 @@ declare namespace VoiceList {
        */
       const en_US_Joey: Voice;
       /**
-       * Neural Amazon voice, US English Female (fourth voice), Joanna.
-       * @const
-       */
-      const en_US_Joanna: Voice;
-      /**
-       * Neural Amazon voice, US English Female (fifth voice), Ivy.
+       * Neural Amazon voice, US English Female (fourth voice), Ivy.
        * @const
        */
       const en_US_Ivy: Voice;
@@ -19116,11 +19213,6 @@ declare namespace VoiceList {
        * @const
        */
       const de_AT_Hannah: Voice;
-      /**
-       * Neural Amazon voice, US English Female, Ruth.
-       * @const
-       */
-      const en_US_Ruth: Voice;
       /**
        * Neural Amazon voice, US English Male, Stephen.
        * @const
@@ -19199,7 +19291,6 @@ declare namespace VoiceList {
     }
   }
 }
-
 declare namespace VoiceList {
   /**
    * List of available freemium TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -19510,6 +19601,46 @@ declare namespace VoiceList {
      * Google voice, Arabic (Pseudo-Accents) female.
      * @const
      */
+    const ar_XA_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male.
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (second voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (second voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (third voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (third voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (fourth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (fourth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female.
+     * @const
+     */
     const ar_XA_Standard_A: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) male.
@@ -19551,6 +19682,51 @@ declare namespace VoiceList {
      * @const
      */
     const bg_BG_Standard_A: Voice;
+    /**
+     * Google voice, Bulgarian (Bulgaria) female (second voice).
+     * @const
+     */
+    const bg_BG_Standard_B: Voice;
+    /**
+     * Google voice, Bangla (India) female.
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Bangla (India) male.
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Bangla (India) male (second voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Bangla (India) female (second voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Bangla (India) female (third voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Bangla (India) male (third voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Bangla (India) male (fourth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Bangla (India) female (fourth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Bangla (India) female.
      * @const
@@ -19596,6 +19772,51 @@ declare namespace VoiceList {
      * @const
      */
     const ca_ES_Standard_A: Voice;
+    /**
+     * Google voice, Catalan (Spain) female (second voice).
+     * @const
+     */
+    const ca_ES_Standard_B: Voice;
+    /**
+     * Google voice, Chinese (China) female.
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Chinese (China) male.
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Chinese (China) male (second voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Chinese (China) female (second voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Chinese (China) female (third voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Chinese (China) male (third voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Chinese (China) male (fourth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Chinese (China) female (fourth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Chinese (China) female.
      * @const
@@ -19672,15 +19893,25 @@ declare namespace VoiceList {
      */
     const cs_CZ_Standard_A: Voice;
     /**
+     * Google voice, Czech (Czechia) female (second voice).
+     * @const
+     */
+    const cs_CZ_Standard_B: Voice;
+    /**
      * Google voice, Czech (Czechia) female.
      * @const
      */
     const cs_CZ_Wavenet_A: Voice;
     /**
+     * Google voice, Czech (Czechia) female (second voice).
+     * @const
+     */
+    const cs_CZ_Wavenet_B: Voice;
+    /**
      * Google voice, Danish (Denmark) female.
      * @const
      */
-    const da_DK_Neural2_D: Voice;
+    const da_DK_Neural2_F: Voice;
     /**
      * Google voice, Danish (Denmark) female.
      * @const
@@ -19702,6 +19933,16 @@ declare namespace VoiceList {
      */
     const da_DK_Standard_E: Voice;
     /**
+     * Google voice, Danish (Denmark) female (fourth voice).
+     * @const
+     */
+    const da_DK_Standard_F: Voice;
+    /**
+     * Google voice, Danish (Denmark) male (second voice).
+     * @const
+     */
+    const da_DK_Standard_G: Voice;
+    /**
      * Google voice, Danish (Denmark) female.
      * @const
      */
@@ -19722,30 +19963,80 @@ declare namespace VoiceList {
      */
     const da_DK_Wavenet_E: Voice;
     /**
-     * Google voice, German (Germany) female.
+     * Google voice, Danish (Denmark) female (fourth voice).
      * @const
      */
-    const de_DE_Neural2_A: Voice;
+    const da_DK_Wavenet_F: Voice;
+    /**
+     * Google voice, Danish (Denmark) male (second voice).
+     * @const
+     */
+    const da_DK_Wavenet_G: Voice;
     /**
      * Google voice, German (Germany) male.
      * @const
      */
-    const de_DE_Neural2_B: Voice;
+    const de_DE_Chirp_HD_D: Voice;
+    /**
+     * Google voice, German (Germany) female.
+     * @const
+     */
+    const de_DE_Chirp_HD_F: Voice;
     /**
      * Google voice, German (Germany) female (second voice).
      * @const
      */
-    const de_DE_Neural2_C: Voice;
+    const de_DE_Chirp_HD_O: Voice;
+    /**
+     * Google voice, German (Germany) female.
+     * @const
+     */
+    const de_DE_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, German (Germany) male.
+     * @const
+     */
+    const de_DE_Chirp3_HD_Charon: Voice;
     /**
      * Google voice, German (Germany) male (second voice).
      * @const
      */
-    const de_DE_Neural2_D: Voice;
+    const de_DE_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, German (Germany) female (second voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Kore: Voice;
     /**
      * Google voice, German (Germany) female (third voice).
      * @const
      */
-    const de_DE_Neural2_F: Voice;
+    const de_DE_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, German (Germany) male (third voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, German (Germany) male (fourth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, German (Germany) female (fourth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, German (Germany) female.
+     * @const
+     */
+    const de_DE_Neural2_G: Voice;
+    /**
+     * Google voice, German (Germany) male.
+     * @const
+     */
+    const de_DE_Neural2_H: Voice;
     /**
      * Google voice, German (Germany) male.
      * @const
@@ -19781,6 +20072,16 @@ declare namespace VoiceList {
      * @const
      */
     const de_DE_Standard_F: Voice;
+    /**
+     * Google voice, German (Germany) female (fourth voice).
+     * @const
+     */
+    const de_DE_Standard_G: Voice;
+    /**
+     * Google voice, German (Germany) male (fourth voice).
+     * @const
+     */
+    const de_DE_Standard_H: Voice;
     /**
      * Google voice, German (Germany) male.
      * @const
@@ -19822,15 +20123,90 @@ declare namespace VoiceList {
      */
     const de_DE_Wavenet_F: Voice;
     /**
+     * Google voice, German (Germany) female (fourth voice).
+     * @const
+     */
+    const de_DE_Wavenet_G: Voice;
+    /**
+     * Google voice, German (Germany) male (fourth voice).
+     * @const
+     */
+    const de_DE_Wavenet_H: Voice;
+    /**
      * Google voice, Greek (Greece) female.
      * @const
      */
     const el_GR_Standard_A: Voice;
     /**
+     * Google voice, Greek (Greece) female (second voice).
+     * @const
+     */
+    const el_GR_Standard_B: Voice;
+    /**
      * Google voice, Greek (Greece) female.
      * @const
      */
     const el_GR_Wavenet_A: Voice;
+    /**
+     * Google voice, Greek (Greece) female (second voice).
+     * @const
+     */
+    const el_GR_Wavenet_B: Voice;
+    /**
+     * Google voice, Australian English male.
+     * @const
+     */
+    const en_AU_Chirp_HD_D: Voice;
+    /**
+     * Google voice, Australian English female.
+     * @const
+     */
+    const en_AU_Chirp_HD_F: Voice;
+    /**
+     * Google voice, Australian English female (second voice).
+     * @const
+     */
+    const en_AU_Chirp_HD_O: Voice;
+    /**
+     * Google voice, Australian English female.
+     * @const
+     */
+    const en_AU_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Australian English male.
+     * @const
+     */
+    const en_AU_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Australian English male (second voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Australian English female (second voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Australian English female (third voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Australian English male (third voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Australian English male (fourth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Australian English female (fourth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Australian English female.
      * @const
@@ -19912,6 +20288,61 @@ declare namespace VoiceList {
      */
     const en_AU_Wavenet_D: Voice;
     /**
+     * Google voice, British English male.
+     * @const
+     */
+    const en_GB_Chirp_HD_D: Voice;
+    /**
+     * Google voice, British English female.
+     * @const
+     */
+    const en_GB_Chirp_HD_F: Voice;
+    /**
+     * Google voice, British English female (second voice).
+     * @const
+     */
+    const en_GB_Chirp_HD_O: Voice;
+    /**
+     * Google voice, British English female.
+     * @const
+     */
+    const en_GB_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, British English male.
+     * @const
+     */
+    const en_GB_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, British English male (second voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, British English female (second voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, British English female (third voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, British English male (third voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, British English male (fourth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, British English female (fourth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Zephyr: Voice;
+    /**
      * Google voice, British English female.
      * @const
      */
@@ -19936,6 +20367,16 @@ declare namespace VoiceList {
      * @const
      */
     const en_GB_Neural2_F: Voice;
+    /**
+     * Google voice, British English female (fourth voice).
+     * @const
+     */
+    const en_GB_Neural2_N: Voice;
+    /**
+     * Google voice, British English male (third voice).
+     * @const
+     */
+    const en_GB_Neural2_O: Voice;
     /**
      * Google voice, British English female.
      * @const
@@ -19997,6 +20438,16 @@ declare namespace VoiceList {
      */
     const en_GB_Standard_F: Voice;
     /**
+     * Google voice, British English female (fourth voice).
+     * @const
+     */
+    const en_GB_Standard_N: Voice;
+    /**
+     * Google voice, British English male (third voice).
+     * @const
+     */
+    const en_GB_Standard_O: Voice;
+    /**
      * Google voice, British English male.
      * @const
      */
@@ -20031,6 +20482,71 @@ declare namespace VoiceList {
      * @const
      */
     const en_GB_Wavenet_F: Voice;
+    /**
+     * Google voice, British English female (fourth voice).
+     * @const
+     */
+    const en_GB_Wavenet_N: Voice;
+    /**
+     * Google voice, British English male (third voice).
+     * @const
+     */
+    const en_GB_Wavenet_O: Voice;
+    /**
+     * Google voice, English (India) male.
+     * @const
+     */
+    const en_IN_Chirp_HD_D: Voice;
+    /**
+     * Google voice, English (India) female.
+     * @const
+     */
+    const en_IN_Chirp_HD_F: Voice;
+    /**
+     * Google voice, English (India) female (second voice).
+     * @const
+     */
+    const en_IN_Chirp_HD_O: Voice;
+    /**
+     * Google voice, English (India) female.
+     * @const
+     */
+    const en_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, English (India) male.
+     * @const
+     */
+    const en_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, English (India) male (second voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, English (India) female (second voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, English (India) female (third voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, English (India) male (third voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, English (India) male (fourth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, English (India) female (fourth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, English (India) female.
      * @const
@@ -20120,17 +20636,57 @@ declare namespace VoiceList {
      * Google voice, American English male.
      * @const
      */
-    const en_US_Journey_D: Voice;
+    const en_US_Chirp_HD_D: Voice;
     /**
      * Google voice, American English female.
      * @const
      */
-    const en_US_Journey_F: Voice;
+    const en_US_Chirp_HD_F: Voice;
     /**
      * Google voice, American English female (second voice).
      * @const
      */
-    const en_US_Journey_O: Voice;
+    const en_US_Chirp_HD_O: Voice;
+    /**
+     * Google voice, American English female.
+     * @const
+     */
+    const en_US_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, American English male.
+     * @const
+     */
+    const en_US_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, American English male (second voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, American English female (second voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, American English female (third voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, American English male (third voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, American English male (fourth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, American English female (fourth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, American English male.
      * @const
@@ -20307,35 +20863,85 @@ declare namespace VoiceList {
      */
     const en_US_Wavenet_J: Voice;
     /**
+     * Google voice, European Spanish male.
+     * @const
+     */
+    const es_ES_Chirp_HD_D: Voice;
+    /**
+     * Google voice, European Spanish female.
+     * @const
+     */
+    const es_ES_Chirp_HD_F: Voice;
+    /**
+     * Google voice, European Spanish female (second voice).
+     * @const
+     */
+    const es_ES_Chirp_HD_O: Voice;
+    /**
+     * Google voice, European Spanish female.
+     * @const
+     */
+    const es_ES_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, European Spanish male.
+     * @const
+     */
+    const es_ES_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, European Spanish male (second voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, European Spanish female (second voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, European Spanish female (third voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, European Spanish male (third voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, European Spanish male (fourth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, European Spanish female (fourth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Zephyr: Voice;
+    /**
      * Google voice, European Spanish female.
      * @const
      */
     const es_ES_Neural2_A: Voice;
     /**
-     * Google voice, European Spanish male.
-     * @const
-     */
-    const es_ES_Neural2_B: Voice;
-    /**
      * Google voice, European Spanish female (second voice).
-     * @const
-     */
-    const es_ES_Neural2_C: Voice;
-    /**
-     * Google voice, European Spanish female (third voice).
-     * @const
-     */
-    const es_ES_Neural2_D: Voice;
-    /**
-     * Google voice, European Spanish female (fourth voice).
      * @const
      */
     const es_ES_Neural2_E: Voice;
     /**
-     * Google voice, European Spanish male (second voice).
+     * Google voice, European Spanish male.
      * @const
      */
     const es_ES_Neural2_F: Voice;
+    /**
+     * Google voice, European Spanish male (second voice).
+     * @const
+     */
+    const es_ES_Neural2_G: Voice;
+    /**
+     * Google voice, European Spanish female (third voice).
+     * @const
+     */
+    const es_ES_Neural2_H: Voice;
     /**
      * Google voice, European Spanish male.
      * @const
@@ -20362,6 +20968,26 @@ declare namespace VoiceList {
      */
     const es_ES_Standard_D: Voice;
     /**
+     * Google voice, European Spanish male (second voice).
+     * @const
+     */
+    const es_ES_Standard_E: Voice;
+    /**
+     * Google voice, European Spanish female (fourth voice).
+     * @const
+     */
+    const es_ES_Standard_F: Voice;
+    /**
+     * Google voice, European Spanish male (third voice).
+     * @const
+     */
+    const es_ES_Standard_G: Voice;
+    /**
+     * Google voice, European Spanish female (fifth voice).
+     * @const
+     */
+    const es_ES_Standard_H: Voice;
+    /**
      * Google voice, European Spanish female.
      * @const
      */
@@ -20386,6 +21012,81 @@ declare namespace VoiceList {
      * @const
      */
     const es_ES_Wavenet_D: Voice;
+    /**
+     * Google voice, European Spanish male (second voice).
+     * @const
+     */
+    const es_ES_Wavenet_E: Voice;
+    /**
+     * Google voice, European Spanish female (third voice).
+     * @const
+     */
+    const es_ES_Wavenet_F: Voice;
+    /**
+     * Google voice, European Spanish male (third voice).
+     * @const
+     */
+    const es_ES_Wavenet_G: Voice;
+    /**
+     * Google voice, European Spanish female (fourth voice).
+     * @const
+     */
+    const es_ES_Wavenet_H: Voice;
+    /**
+     * Google voice, Spanish (United States) male.
+     * @const
+     */
+    const es_US_Chirp_HD_D: Voice;
+    /**
+     * Google voice, Spanish (United States) female.
+     * @const
+     */
+    const es_US_Chirp_HD_F: Voice;
+    /**
+     * Google voice, Spanish (United States) female (second voice).
+     * @const
+     */
+    const es_US_Chirp_HD_O: Voice;
+    /**
+     * Google voice, Spanish (United States) female.
+     * @const
+     */
+    const es_US_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Spanish (United States) male.
+     * @const
+     */
+    const es_US_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Spanish (United States) male (second voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Spanish (United States) female (second voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Spanish (United States) female (third voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Spanish (United States) male (third voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Spanish (United States) male (fourth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Spanish (United States) female (fourth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Spanish (United States) female.
      * @const
@@ -20462,20 +21163,40 @@ declare namespace VoiceList {
      */
     const es_US_Wavenet_C: Voice;
     /**
+     * Google voice, Estonian (Estonia) male.
+     * @const
+     */
+    const et_EE_Standard_A: Voice;
+    /**
      * Google voice, Basque (Spain) female.
      * @const
      */
     const eu_ES_Standard_A: Voice;
+    /**
+     * Google voice, Basque (Spain) female (second voice).
+     * @const
+     */
+    const eu_ES_Standard_B: Voice;
     /**
      * Google voice, Finnish (Finland) female.
      * @const
      */
     const fi_FI_Standard_A: Voice;
     /**
+     * Google voice, Finnish (Finland) female (second voice).
+     * @const
+     */
+    const fi_FI_Standard_B: Voice;
+    /**
      * Google voice, Finnish (Finland) female.
      * @const
      */
     const fi_FI_Wavenet_A: Voice;
+    /**
+     * Google voice, Finnish (Finland) female (second voice).
+     * @const
+     */
+    const fi_FI_Wavenet_B: Voice;
     /**
      * Google voice, Filipino (Philippines) female.
      * @const
@@ -20526,6 +21247,61 @@ declare namespace VoiceList {
      * @const
      */
     const fil_ph_Neural2_D: Voice;
+    /**
+     * Google voice, Canadian French male.
+     * @const
+     */
+    const fr_CA_Chirp_HD_D: Voice;
+    /**
+     * Google voice, Canadian French female.
+     * @const
+     */
+    const fr_CA_Chirp_HD_F: Voice;
+    /**
+     * Google voice, Canadian French female (second voice).
+     * @const
+     */
+    const fr_CA_Chirp_HD_O: Voice;
+    /**
+     * Google voice, Canadian French female.
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Canadian French male.
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Canadian French male (second voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Canadian French female (second voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Canadian French female (third voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Canadian French male (third voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Canadian French male (fourth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Canadian French female (fourth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Canadian French female.
      * @const
@@ -20587,30 +21363,70 @@ declare namespace VoiceList {
      */
     const fr_CA_Wavenet_D: Voice;
     /**
-     * Google voice, French (France) female.
-     * @const
-     */
-    const fr_FR_Neural2_A: Voice;
-    /**
      * Google voice, French (France) male.
      * @const
      */
-    const fr_FR_Neural2_B: Voice;
+    const fr_FR_Chirp_HD_D: Voice;
+    /**
+     * Google voice, French (France) female.
+     * @const
+     */
+    const fr_FR_Chirp_HD_F: Voice;
     /**
      * Google voice, French (France) female (second voice).
      * @const
      */
-    const fr_FR_Neural2_C: Voice;
+    const fr_FR_Chirp_HD_O: Voice;
+    /**
+     * Google voice, French (France) female.
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, French (France) male.
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Charon: Voice;
     /**
      * Google voice, French (France) male (second voice).
      * @const
      */
-    const fr_FR_Neural2_D: Voice;
+    const fr_FR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, French (France) female (second voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Kore: Voice;
     /**
      * Google voice, French (France) female (third voice).
      * @const
      */
-    const fr_FR_Neural2_E: Voice;
+    const fr_FR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, French (France) male (third voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, French (France) male (fourth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, French (France) female (fourth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, French (France) female.
+     * @const
+     */
+    const fr_FR_Neural2_F: Voice;
+    /**
+     * Google voice, French (France) male.
+     * @const
+     */
+    const fr_FR_Neural2_G: Voice;
     /**
      * Google voice, French (France) male.
      * @const
@@ -20702,6 +21518,51 @@ declare namespace VoiceList {
      */
     const gl_ES_Standard_A: Voice;
     /**
+     * Google voice, Galician (Spain) female (second voice).
+     * @const
+     */
+    const gl_ES_Standard_B: Voice;
+    /**
+     * Google voice, Gujarati (India) female.
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Gujarati (India) male.
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Gujarati (India) male (second voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Gujarati (India) female (second voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Gujarati (India) female (third voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Gujarati (India) male (third voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Gujarati (India) male (fourth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Gujarati (India) female (fourth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Zephyr: Voice;
+    /**
      * Google voice, Gujarati (India) female.
      * @const
      */
@@ -20781,6 +21642,46 @@ declare namespace VoiceList {
      * @const
      */
     const he_IL_Wavenet_D: Voice;
+    /**
+     * Google voice, Hindi (India) female.
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Hindi (India) male.
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Hindi (India) male (second voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Hindi (India) female (second voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Hindi (India) female (third voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Hindi (India) male (third voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Hindi (India) male (fourth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Hindi (India) female (fourth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Hindi (India) female.
      * @const
@@ -20867,10 +21768,55 @@ declare namespace VoiceList {
      */
     const hu_HU_Standard_A: Voice;
     /**
+     * Google voice, Hungarian (Hungary) female (second voice).
+     * @const
+     */
+    const hu_HU_Standard_B: Voice;
+    /**
      * Google voice, Hungarian (Hungary) female.
      * @const
      */
     const hu_HU_Wavenet_A: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female.
+     * @const
+     */
+    const id_ID_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male.
+     * @const
+     */
+    const id_ID_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (second voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (second voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (third voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (third voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (fourth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (fourth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Indonesian (Indonesia) female.
      * @const
@@ -20917,15 +21863,80 @@ declare namespace VoiceList {
      */
     const is_IS_Standard_A: Voice;
     /**
+     * Google voice, Icelandic (Iceland) female (second voice).
+     * @const
+     */
+    const is_IS_Standard_B: Voice;
+    /**
+     * Google voice, Italian (Italy) male.
+     * @const
+     */
+    const it_IT_Chirp_HD_D: Voice;
+    /**
+     * Google voice, Italian (Italy) female.
+     * @const
+     */
+    const it_IT_Chirp_HD_F: Voice;
+    /**
+     * Google voice, Italian (Italy) female (second voice).
+     * @const
+     */
+    const it_IT_Chirp_HD_O: Voice;
+    /**
+     * Google voice, Italian (Italy) female.
+     * @const
+     */
+    const it_IT_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Italian (Italy) male.
+     * @const
+     */
+    const it_IT_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Italian (Italy) male (second voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Italian (Italy) female (second voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Italian (Italy) female (third voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Italian (Italy) male (third voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Italian (Italy) male (fourth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Italian (Italy) female (fourth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Zephyr: Voice;
+    /**
      * Google voice, Italian (Italy) female.
      * @const
      */
     const it_IT_Neural2_A: Voice;
     /**
+     * Google voice, Italian (Italy) female (second voice).
+     * @const
+     */
+    const it_IT_Neural2_E: Voice;
+    /**
      * Google voice, Italian (Italy) male.
      * @const
      */
-    const it_IT_Neural2_C: Voice;
+    const it_IT_Neural2_F: Voice;
     /**
      * Google voice, Italian (Italy) female.
      * @const
@@ -20947,6 +21958,16 @@ declare namespace VoiceList {
      */
     const it_IT_Standard_D: Voice;
     /**
+     * Google voice, Italian (Italy) female (third voice).
+     * @const
+     */
+    const it_IT_Standard_E: Voice;
+    /**
+     * Google voice, Italian (Italy) male (third voice).
+     * @const
+     */
+    const it_IT_Standard_F: Voice;
+    /**
      * Google voice, Italian (Italy) female.
      * @const
      */
@@ -20966,6 +21987,56 @@ declare namespace VoiceList {
      * @const
      */
     const it_IT_Wavenet_D: Voice;
+    /**
+     * Google voice, Italian (Italy) female (third voice).
+     * @const
+     */
+    const it_IT_Wavenet_E: Voice;
+    /**
+     * Google voice, Italian (Italy) male (third voice).
+     * @const
+     */
+    const it_IT_Wavenet_F: Voice;
+    /**
+     * Google voice, Japanese (Japan) female.
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Japanese (Japan) male.
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (second voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (second voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (third voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (third voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (fourth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (fourth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Japanese (Japan) female.
      * @const
@@ -21025,6 +22096,46 @@ declare namespace VoiceList {
      * Google voice, Kannada (India) female.
      * @const
      */
+    const kn_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Kannada (India) male.
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Kannada (India) male (second voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Kannada (India) female (second voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Kannada (India) female (third voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Kannada (India) male (third voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Kannada (India) male (fourth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Kannada (India) female (fourth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Kannada (India) female.
+     * @const
+     */
     const kn_IN_Standard_A: Voice;
     /**
      * Google voice, Kannada (India) male.
@@ -21061,6 +22172,46 @@ declare namespace VoiceList {
      * @const
      */
     const kn_IN_Wavenet_D: Voice;
+    /**
+     * Google voice, Korean (South Korea) female.
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Korean (South Korea) male.
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (second voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (second voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (third voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (third voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (fourth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (fourth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Korean (South Korea) female.
      * @const
@@ -21122,10 +22273,60 @@ declare namespace VoiceList {
      */
     const lt_LT_Standard_A: Voice;
     /**
+     * Google voice, Lithuanian (Lithuania) male (second voice).
+     * @const
+     */
+    const lt_LT_Standard_B: Voice;
+    /**
      * Google voice, Latvian (Latvia) male.
      * @const
      */
     const lv_LV_Standard_A: Voice;
+    /**
+     * Google voice, Latvian (Latvia) male (second voice).
+     * @const
+     */
+    const lv_LV_Standard_B: Voice;
+    /**
+     * Google voice, Malayalam (India) female.
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Malayalam (India) male.
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Malayalam (India) male (second voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Malayalam (India) female (second voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Malayalam (India) female (third voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Malayalam (India) male (third voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Malayalam (India) male (fourth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Malayalam (India) female (fourth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Malayalam (India) female.
      * @const
@@ -21166,6 +22367,46 @@ declare namespace VoiceList {
      * @const
      */
     const ml_IN_Wavenet_D: Voice;
+    /**
+     * Google voice, Marathi (India) female.
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Marathi (India) male.
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Marathi (India) male (second voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Marathi (India) female (second voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Marathi (India) female (third voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Marathi (India) male (third voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Marathi (India) male (fourth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Marathi (India) female (fourth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Marathi (India) female.
      * @const
@@ -21262,6 +22503,16 @@ declare namespace VoiceList {
      */
     const nb_NO_Standard_E: Voice;
     /**
+     * Google voice, Norwegian Bokmål (Norway) female (fourth voice).
+     * @const
+     */
+    const nb_NO_Standard_F: Voice;
+    /**
+     * Google voice, Norwegian Bokmål (Norway) male (third voice).
+     * @const
+     */
+    const nb_NO_Standard_G: Voice;
+    /**
      * Google voice, Norwegian Bokmål (Norway) female.
      * @const
      */
@@ -21287,6 +22538,16 @@ declare namespace VoiceList {
      */
     const nb_NO_Wavenet_E: Voice;
     /**
+     * Google voice, Norwegian Bokmål (Norway) female (fourth voice).
+     * @const
+     */
+    const nb_NO_Wavenet_F: Voice;
+    /**
+     * Google voice, Norwegian Bokmål (Norway) male (third voice).
+     * @const
+     */
+    const nb_NO_Wavenet_G: Voice;
+    /**
      * Google voice, Flemish female.
      * @const
      */
@@ -21297,6 +22558,16 @@ declare namespace VoiceList {
      */
     const nl_BE_Standard_B: Voice;
     /**
+     * Google voice, Flemish female (second voice).
+     * @const
+     */
+    const nl_BE_Standard_C: Voice;
+    /**
+     * Google voice, Flemish male (second voice).
+     * @const
+     */
+    const nl_BE_Standard_D: Voice;
+    /**
      * Google voice, Flemish female.
      * @const
      */
@@ -21306,6 +22577,56 @@ declare namespace VoiceList {
      * @const
      */
     const nl_BE_Wavenet_B: Voice;
+    /**
+     * Google voice, Flemish female (second voice).
+     * @const
+     */
+    const nl_BE_Wavenet_C: Voice;
+    /**
+     * Google voice, Flemish male (second voice).
+     * @const
+     */
+    const nl_BE_Wavenet_D: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female.
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male.
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (second voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (second voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (third voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (third voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (fourth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (fourth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Dutch (Netherlands) female.
      * @const
@@ -21332,6 +22653,16 @@ declare namespace VoiceList {
      */
     const nl_NL_Standard_E: Voice;
     /**
+     * Google voice, Dutch (Netherlands) female (fourth voice).
+     * @const
+     */
+    const nl_NL_Standard_F: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (third voice).
+     * @const
+     */
+    const nl_NL_Standard_G: Voice;
+    /**
      * Google voice, Dutch (Netherlands) female.
      * @const
      */
@@ -21356,6 +22687,16 @@ declare namespace VoiceList {
      * @const
      */
     const nl_NL_Wavenet_E: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (fourth voice).
+     * @const
+     */
+    const nl_NL_Wavenet_F: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (third voice).
+     * @const
+     */
+    const nl_NL_Wavenet_G: Voice;
     /**
      * Google voice, Punjabi (India) female.
      * @const
@@ -21400,6 +22741,46 @@ declare namespace VoiceList {
      * Google voice, Polish (Poland) female.
      * @const
      */
+    const pl_PL_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Polish (Poland) male.
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Polish (Poland) male (second voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Polish (Poland) female (second voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Polish (Poland) female (third voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Polish (Poland) male (third voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Polish (Poland) male (fourth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Polish (Poland) female (fourth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Polish (Poland) female.
+     * @const
+     */
     const pl_PL_Standard_A: Voice;
     /**
      * Google voice, Polish (Poland) male.
@@ -21421,6 +22802,16 @@ declare namespace VoiceList {
      * @const
      */
     const pl_PL_Standard_E: Voice;
+    /**
+     * Google voice, Polish (Poland) female (fourth voice).
+     * @const
+     */
+    const pl_PL_Standard_F: Voice;
+    /**
+     * Google voice, Polish (Poland) male (third voice).
+     * @const
+     */
+    const pl_PL_Standard_G: Voice;
     /**
      * Google voice, Polish (Poland) female.
      * @const
@@ -21446,6 +22837,56 @@ declare namespace VoiceList {
      * @const
      */
     const pl_PL_Wavenet_E: Voice;
+    /**
+     * Google voice, Polish (Poland) female (fourth voice).
+     * @const
+     */
+    const pl_PL_Wavenet_F: Voice;
+    /**
+     * Google voice, Polish (Poland) male (third voice).
+     * @const
+     */
+    const pl_PL_Wavenet_G: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female.
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male.
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (second voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (second voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (third voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (third voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (fourth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (fourth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Brazilian Portuguese female.
      * @const
@@ -21532,6 +22973,16 @@ declare namespace VoiceList {
      */
     const pt_PT_Standard_D: Voice;
     /**
+     * Google voice, European Portuguese female (third voice).
+     * @const
+     */
+    const pt_PT_Standard_E: Voice;
+    /**
+     * Google voice, European Portuguese male (third voice).
+     * @const
+     */
+    const pt_PT_Standard_F: Voice;
+    /**
      * Google voice, European Portuguese female.
      * @const
      */
@@ -21552,15 +23003,75 @@ declare namespace VoiceList {
      */
     const pt_PT_Wavenet_D: Voice;
     /**
+     * Google voice, European Portuguese female (third voice).
+     * @const
+     */
+    const pt_PT_Wavenet_E: Voice;
+    /**
+     * Google voice, European Portuguese male (third voice).
+     * @const
+     */
+    const pt_PT_Wavenet_F: Voice;
+    /**
      * Google voice, Romanian (Romania) female.
      * @const
      */
     const ro_RO_Standard_A: Voice;
     /**
+     * Google voice, Romanian (Romania) female (second voice).
+     * @const
+     */
+    const ro_RO_Standard_B: Voice;
+    /**
      * Google voice, Romanian (Romania) female.
      * @const
      */
     const ro_RO_Wavenet_A: Voice;
+    /**
+     * Google voice, Romanian (Romania) female (second voice).
+     * @const
+     */
+    const ro_RO_Wavenet_B: Voice;
+    /**
+     * Google voice, Russian (Russia) female.
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Russian (Russia) male.
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Russian (Russia) male (second voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Russian (Russia) female (second voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Russian (Russia) female (third voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Russian (Russia) male (third voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Russian (Russia) male (fourth voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Russian (Russia) female (fourth voice).
+     * @const
+     */
+    const ru_RU_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Russian (Russia) female.
      * @const
@@ -21617,10 +23128,20 @@ declare namespace VoiceList {
      */
     const sk_SK_Standard_A: Voice;
     /**
+     * Google voice, Slovak (Slovakia) female (second voice).
+     * @const
+     */
+    const sk_SK_Standard_B: Voice;
+    /**
      * Google voice, Slovak (Slovakia) female.
      * @const
      */
     const sk_SK_Wavenet_A: Voice;
+    /**
+     * Google voice, Slovak (Slovakia) female (second voice).
+     * @const
+     */
+    const sk_SK_Wavenet_B: Voice;
     /**
      * Google voice, Serbian (Serbia) female.
      * @const
@@ -21652,6 +23173,16 @@ declare namespace VoiceList {
      */
     const sv_SE_Standard_E: Voice;
     /**
+     * Google voice, Swedish (Sweden) female (fourth voice).
+     * @const
+     */
+    const sv_SE_Standard_F: Voice;
+    /**
+     * Google voice, Swedish (Sweden) male (third voice).
+     * @const
+     */
+    const sv_SE_Standard_G: Voice;
+    /**
      * Google voice, Swedish (Sweden) female.
      * @const
      */
@@ -21676,6 +23207,56 @@ declare namespace VoiceList {
      * @const
      */
     const sv_SE_Wavenet_E: Voice;
+    /**
+     * Google voice, Swedish (Sweden) female (fourth voice).
+     * @const
+     */
+    const sv_SE_Wavenet_F: Voice;
+    /**
+     * Google voice, Swedish (Sweden) male (third voice).
+     * @const
+     */
+    const sv_SE_Wavenet_G: Voice;
+    /**
+     * Google voice, Tamil (India) female.
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Tamil (India) male.
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Tamil (India) male (second voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Tamil (India) female (second voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Tamil (India) female (third voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Tamil (India) male (third voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Tamil (India) male (fourth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Tamil (India) female (fourth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Tamil (India) female.
      * @const
@@ -21720,12 +23301,102 @@ declare namespace VoiceList {
      * Google voice, Telugu (India) female.
      * @const
      */
+    const te_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Telugu (India) male.
+     * @const
+     */
+    const te_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Telugu (India) male (second voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Telugu (India) female (second voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Telugu (India) female (third voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Telugu (India) male (third voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Telugu (India) male (fourth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Telugu (India) female (fourth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Telugu (India) female.
+     * @const
+     */
     const te_IN_Standard_A: Voice;
     /**
      * Google voice, Telugu (India) male.
      * @const
      */
     const te_IN_Standard_B: Voice;
+    /**
+     * Google voice, Telugu (India) female (second voice).
+     * @const
+     */
+    const te_IN_Standard_C: Voice;
+    /**
+     * Google voice, Telugu (India) male (second voice).
+     * @const
+     */
+    const te_IN_Standard_D: Voice;
+    /**
+     * Google voice, Thai (Thailand) female.
+     * @const
+     */
+    const th_TH_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Thai (Thailand) male.
+     * @const
+     */
+    const th_TH_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (second voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (second voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (third voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (third voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (fourth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (fourth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Thai (Thailand) female.
      * @const
@@ -21736,6 +23407,46 @@ declare namespace VoiceList {
      * @const
      */
     const th_TH_Standard_A: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female.
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male.
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (second voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (second voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (third voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (third voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (fourth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (fourth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Zephyr: Voice;
     /**
      * Google voice, Turkish (Türkiye) female.
      * @const
@@ -21820,6 +23531,46 @@ declare namespace VoiceList {
      * Google voice, Vietnamese (Vietnam) female.
      * @const
      */
+    const vi_VN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male.
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (second voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (second voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (third voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (third voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (fourth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (fourth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female.
+     * @const
+     */
     const vi_VN_Neural2_A: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) male.
@@ -21888,7 +23639,6 @@ declare namespace VoiceList {
     const yue_HK_Standard_D: Voice;
   }
 }
-
 declare namespace VoiceList {
   /**
    * List of available IBM TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -22105,11 +23855,10 @@ declare namespace VoiceList {
    */
   namespace Microsoft {}
 }
-
 declare namespace VoiceList {
   namespace Microsoft {
     /**
-     * List of available premium Microsoft TTS voices that sound more natural due to advanced synthesis technology.
+     * List of available premium Microsoft TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods that sound more natural due to advanced synthesis technology.
      * @namespace
      */
     namespace Neural {
@@ -22294,6 +24043,16 @@ declare namespace VoiceList {
        */
       const ar_YE_SalehNeural: Voice;
       /**
+       * Neural Microsoft voice, Assamese (India) Female, YashicaNeural.
+       * @const
+       */
+      const as_IN_YashicaNeural: Voice;
+      /**
+       * Neural Microsoft voice, Assamese (India) Male, PriyomNeural.
+       * @const
+       */
+      const as_IN_PriyomNeural: Voice;
+      /**
        * Neural Microsoft voice, Azerbaijani (Latin, Azerbaijan) Female, BanuNeural.
        * @const
        */
@@ -22344,17 +24103,17 @@ declare namespace VoiceList {
        */
       const bs_BA_GoranNeural: Voice;
       /**
-       * Neural Microsoft voice, Catalan (Spain) Female, JoanaNeural.
+       * Neural Microsoft voice, Catalan Female, JoanaNeural.
        * @const
        */
       const ca_ES_JoanaNeural: Voice;
       /**
-       * Neural Microsoft voice, Catalan (Spain) Male, EnricNeural.
+       * Neural Microsoft voice, Catalan Male, EnricNeural.
        * @const
        */
       const ca_ES_EnricNeural: Voice;
       /**
-       * Neural Microsoft voice, Catalan (Spain) Female, AlbaNeural.
+       * Neural Microsoft voice, Catalan Female, AlbaNeural.
        * @const
        */
       const ca_ES_AlbaNeural: Voice;
@@ -22419,6 +24178,16 @@ declare namespace VoiceList {
        */
       const de_DE_ConradNeural: Voice;
       /**
+       * Neural Microsoft voice, German (Germany) Female, SeraphinaMultilingualNeural.
+       * @const
+       */
+      const de_DE_SeraphinaMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, German (Germany) Male, FlorianMultilingualNeural.
+       * @const
+       */
+      const de_DE_FlorianMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, German (Germany) Female, AmalaNeural.
        * @const
        */
@@ -22438,11 +24207,6 @@ declare namespace VoiceList {
        * @const
        */
       const de_DE_ElkeNeural: Voice;
-      /**
-       * Neural Microsoft voice, German (Germany) Male, FlorianMultilingualNeural.
-       * @const
-       */
-      const de_DE_FlorianMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, German (Germany) Female, GiselaNeural.
        * @const
@@ -22483,11 +24247,6 @@ declare namespace VoiceList {
        * @const
        */
       const de_DE_RalfNeural: Voice;
-      /**
-       * Neural Microsoft voice, German (Germany) Female, SeraphinaMultilingualNeural.
-       * @const
-       */
-      const de_DE_SeraphinaMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, German (Germany) Female, TanjaNeural.
        * @const
@@ -22599,6 +24358,16 @@ declare namespace VoiceList {
        */
       const en_GB_LibbyNeural: Voice;
       /**
+       * Neural Microsoft voice, English (United Kingdom) Female, AdaMultilingualNeural.
+       * @const
+       */
+      const en_GB_AdaMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United Kingdom) Male, OllieMultilingualNeural.
+       * @const
+       */
+      const en_GB_OllieMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, English (United Kingdom) Female, AbbiNeural.
        * @const
        */
@@ -22674,6 +24443,41 @@ declare namespace VoiceList {
        */
       const en_IE_ConnorNeural: Voice;
       /**
+       * Neural Microsoft voice, English (India) Male, AaravNeural.
+       * @const
+       */
+      const en_IN_AaravNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Female, AashiNeural.
+       * @const
+       */
+      const en_IN_AashiNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Female, AartiNeural.
+       * @const
+       */
+      const en_IN_AartiNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Male, ArjunNeural.
+       * @const
+       */
+      const en_IN_ArjunNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Female, AnanyaNeural.
+       * @const
+       */
+      const en_IN_AnanyaNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Female, KavyaNeural.
+       * @const
+       */
+      const en_IN_KavyaNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Male, KunalNeural.
+       * @const
+       */
+      const en_IN_KunalNeural: Voice;
+      /**
        * Neural Microsoft voice, English (India) Female, NeerjaNeural.
        * @const
        */
@@ -22683,6 +24487,11 @@ declare namespace VoiceList {
        * @const
        */
       const en_IN_PrabhatNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (India) Male, RehaanNeural.
+       * @const
+       */
+      const en_IN_RehaanNeural: Voice;
       /**
        * Neural Microsoft voice, English (Kenya) Female, AsiliaNeural.
        * @const
@@ -22759,6 +24568,36 @@ declare namespace VoiceList {
        */
       const en_US_EmmaMultilingualNeural: Voice;
       /**
+       * Neural Microsoft voice, English (United States) Male, AlloyTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_AlloyTurboMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Male, EchoTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_EchoTurboMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Neutral, FableTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_FableTurboMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Male, OnyxTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_OnyxTurboMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, NovaTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_NovaTurboMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, ShimmerTurboMultilingualNeural.
+       * @const
+       */
+      const en_US_ShimmerTurboMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, English (United States) Male, BrianMultilingualNeural.
        * @const
        */
@@ -22814,6 +24653,16 @@ declare namespace VoiceList {
        */
       const en_US_JasonNeural: Voice;
       /**
+       * Neural Microsoft voice, English (United States) Male, KaiNeural.
+       * @const
+       */
+      const en_US_KaiNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, LunaNeural.
+       * @const
+       */
+      const en_US_LunaNeural: Voice;
+      /**
        * Neural Microsoft voice, English (United States) Female, SaraNeural.
        * @const
        */
@@ -22828,6 +24677,21 @@ declare namespace VoiceList {
        * @const
        */
       const en_US_NancyNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, CoraMultilingualNeural.
+       * @const
+       */
+      const en_US_CoraMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Male, ChristopherMultilingualNeural.
+       * @const
+       */
+      const en_US_ChristopherMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Male, BrandonMultilingualNeural.
+       * @const
+       */
+      const en_US_BrandonMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, English (United States) Female, AmberNeural.
        * @const
@@ -23003,6 +24867,26 @@ declare namespace VoiceList {
        * @const
        */
       const es_ES_AlvaroNeural: Voice;
+      /**
+       * Neural Microsoft voice, Spanish (Spain) Female, ArabellaMultilingualNeural.
+       * @const
+       */
+      const es_ES_ArabellaMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Spanish (Spain) Female, IsidoraMultilingualNeural.
+       * @const
+       */
+      const es_ES_IsidoraMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Spanish (Spain) Male, TristanMultilingualNeural.
+       * @const
+       */
+      const es_ES_TristanMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Spanish (Spain) Female, XimenaMultilingualNeural.
+       * @const
+       */
+      const es_ES_XimenaMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, Spanish (Spain) Female, AbrilNeural.
        * @const
@@ -23374,6 +25258,21 @@ declare namespace VoiceList {
        */
       const fr_FR_HenriNeural: Voice;
       /**
+       * Neural Microsoft voice, French (France) Female, VivienneMultilingualNeural.
+       * @const
+       */
+      const fr_FR_VivienneMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, French (France) Male, RemyMultilingualNeural.
+       * @const
+       */
+      const fr_FR_RemyMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, French (France) Male, LucienMultilingualNeural.
+       * @const
+       */
+      const fr_FR_LucienMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, French (France) Male, AlainNeural.
        * @const
        */
@@ -23424,16 +25323,6 @@ declare namespace VoiceList {
        */
       const fr_FR_MauriceNeural: Voice;
       /**
-       * Neural Microsoft voice, French (France) Male, RemyMultilingualNeural.
-       * @const
-       */
-      const fr_FR_RemyMultilingualNeural: Voice;
-      /**
-       * Neural Microsoft voice, French (France) Female, VivienneMultilingualNeural.
-       * @const
-       */
-      const fr_FR_VivienneMultilingualNeural: Voice;
-      /**
        * Neural Microsoft voice, French (France) Male, YvesNeural.
        * @const
        */
@@ -23483,6 +25372,41 @@ declare namespace VoiceList {
        * @const
        */
       const he_IL_AvriNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Male, AaravNeural.
+       * @const
+       */
+      const hi_IN_AaravNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Female, AnanyaNeural.
+       * @const
+       */
+      const hi_IN_AnanyaNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Female, AartiNeural.
+       * @const
+       */
+      const hi_IN_AartiNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Male, ArjunNeural.
+       * @const
+       */
+      const hi_IN_ArjunNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Female, KavyaNeural.
+       * @const
+       */
+      const hi_IN_KavyaNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Male, KunalNeural.
+       * @const
+       */
+      const hi_IN_KunalNeural: Voice;
+      /**
+       * Neural Microsoft voice, Hindi (India) Male, RehaanNeural.
+       * @const
+       */
+      const hi_IN_RehaanNeural: Voice;
       /**
        * Neural Microsoft voice, Hindi (India) Female, SwaraNeural.
        * @const
@@ -23559,6 +25483,26 @@ declare namespace VoiceList {
        */
       const it_IT_DiegoNeural: Voice;
       /**
+       * Neural Microsoft voice, Italian (Italy) Male, AlessioMultilingualNeural.
+       * @const
+       */
+      const it_IT_AlessioMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Italian (Italy) Female, IsabellaMultilingualNeural.
+       * @const
+       */
+      const it_IT_IsabellaMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Italian (Italy) Male, GiuseppeMultilingualNeural.
+       * @const
+       */
+      const it_IT_GiuseppeMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Italian (Italy) Male, MarcelloMultilingualNeural.
+       * @const
+       */
+      const it_IT_MarcelloMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, Italian (Italy) Male, BenignoNeural.
        * @const
        */
@@ -23623,6 +25567,26 @@ declare namespace VoiceList {
        * @const
        */
       const it_IT_RinaldoNeural: Voice;
+      /**
+       * Neural Microsoft voice, Inuktitut (Syllabics, Canada) Female, CA.
+       * @const
+       */
+      const iu_Cans_CA_SiqiniqNeural: Voice;
+      /**
+       * Neural Microsoft voice, Inuktitut (Syllabics, Canada) Male, CA.
+       * @const
+       */
+      const iu_Cans_CA_TaqqiqNeural: Voice;
+      /**
+       * Neural Microsoft voice, Inuktitut (Latin, Canada) Female, CA.
+       * @const
+       */
+      const iu_Latn_CA_SiqiniqNeural: Voice;
+      /**
+       * Neural Microsoft voice, Inuktitut (Latin, Canada) Male, CA.
+       * @const
+       */
+      const iu_Latn_CA_TaqqiqNeural: Voice;
       /**
        * Neural Microsoft voice, Japanese (Japan) Female, NanamiNeural.
        * @const
@@ -23718,6 +25682,11 @@ declare namespace VoiceList {
        * @const
        */
       const ko_KR_InJoonNeural: Voice;
+      /**
+       * Neural Microsoft voice, Korean (Korea) Male, HyunsuMultilingualNeural.
+       * @const
+       */
+      const ko_KR_HyunsuMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, Korean (Korea) Male, BongJinNeural.
        * @const
@@ -23904,6 +25873,26 @@ declare namespace VoiceList {
        */
       const nl_NL_ColetteNeural: Voice;
       /**
+       * Neural Microsoft voice, Odia (India) Female, SubhasiniNeural.
+       * @const
+       */
+      const or_IN_SubhasiniNeural: Voice;
+      /**
+       * Neural Microsoft voice, Odia (India) Male, SukantNeural.
+       * @const
+       */
+      const or_IN_SukantNeural: Voice;
+      /**
+       * Neural Microsoft voice, Punjabi (India) Male, OjasNeural.
+       * @const
+       */
+      const pa_IN_OjasNeural: Voice;
+      /**
+       * Neural Microsoft voice, Punjabi (India) Female, VaaniNeural.
+       * @const
+       */
+      const pa_IN_VaaniNeural: Voice;
+      /**
        * Neural Microsoft voice, Polish (Poland) Female, AgnieszkaNeural.
        * @const
        */
@@ -23938,6 +25927,16 @@ declare namespace VoiceList {
        * @const
        */
       const pt_BR_AntonioNeural: Voice;
+      /**
+       * Neural Microsoft voice, Portuguese (Brazil) Male, MacerioMultilingualNeural.
+       * @const
+       */
+      const pt_BR_MacerioMultilingualNeural: Voice;
+      /**
+       * Neural Microsoft voice, Portuguese (Brazil) Female, ThalitaMultilingualNeural.
+       * @const
+       */
+      const pt_BR_ThalitaMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, Portuguese (Brazil) Female, BrendaNeural.
        * @const
@@ -24229,12 +26228,12 @@ declare namespace VoiceList {
        */
       const th_TH_AcharaNeural: Voice;
       /**
-       * Neural Microsoft voice, Turkish (Turkey) Female, EmelNeural.
+       * Neural Microsoft voice, Turkish (Türkiye) Female, EmelNeural.
        * @const
        */
       const tr_TR_EmelNeural: Voice;
       /**
-       * Neural Microsoft voice, Turkish (Turkey) Male, AhmetNeural.
+       * Neural Microsoft voice, Turkish (Türkiye) Male, AhmetNeural.
        * @const
        */
       const tr_TR_AhmetNeural: Voice;
@@ -24511,7 +26510,6 @@ declare namespace VoiceList {
     }
   }
 }
-
 declare namespace VoiceList {
   /**
    * List of availabl SaluteSpeech TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -24560,6 +26558,17 @@ declare namespace VoiceList {
    * List of available T-Bank TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
    */
   namespace TBank {
+    /**
+     * T-Bank voice, Russian female.
+     * @const
+     */
+    const ru_RU_Anna: Voice;
+    /**
+     * T-Bank voice, Russian male.
+     * @const
+     */
+    const ru_RU_Dima: Voice;
+    
     /**
      * T-Bank voice, Russian female.
      * @const

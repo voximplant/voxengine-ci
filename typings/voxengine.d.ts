@@ -3072,7 +3072,7 @@ declare interface CallRecordParameters extends BaseRecorderParameters {
  */
 declare interface CallSayParameters {
   /**
-   * Optional. Language and voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex.*
+   * Optional. Language and voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex, ElevenLabs.*
    */
   language?: Voice;
   /**
@@ -5292,265 +5292,265 @@ declare class Endpoint {
 }
 
 declare namespace Gemini {
-  namespace Experimental {
+  /*
+   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
+   */
+  enum Backend {
     /**
-     * Creates a [Gemini.Experimental.LiveAPIClient] instance.
-     * @param parameters The [Gemini.Experimental.LiveAPIClient] parameters
+     * The Gemini API backend.
      */
-    function createLiveAPIClient(parameters: LiveAPIClientParameters): Promise<LiveAPIClient>
+    GEMINI_API = 'GeminiAPI'
   }
 }
 
 declare namespace Gemini {
-  namespace Experimental {
-    /**
-     * @event
-     */
-    enum Events {
-      /**
-       * Triggered when the audio stream sent by a third party through a Gemini WebSocket is started playing.
-       * @typedef _WebSocketMediaStartedEvent
-       */
-      WebSocketMediaStarted = 'Gemini.Experimental.Events.WebSocketMediaStarted',
-      /**
-       * Triggers after the end of the audio stream sent by a third party through a Gemini WebSocket (**1 second of silence**).
-       * @typedef _WebSocketMediaEndedEvent
-       */
-      WebSocketMediaEnded = 'Gemini.Experimental.Events.WebSocketMediaEnded',
-    }
-
-    /**
-     * @private
-     */
-    interface _Events {
-      [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
-      [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
-    }
-
-    /**
-     * @private
-     */
-    interface _Event {
-      /**
-       * The [Gemini.Experimental.LiveAPIClient] instance.
-       */
-      client: LiveAPIClient;
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEvent extends _Event {
-      /**
-       * Special tag to name audio streams sent over one Gemini WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
-       */
-      tag?: string;
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
-      /**
-       * Audio encoding formats.
-       */
-      encoding?: string;
-      /**
-       * Custom parameters.
-       */
-      customParameters?: { [key: string]: string };
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
-      /**
-       * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
-       */
-      mediaInfo?: WebSocketMediaInfo;
-    }
-  }
-}
-
-
-declare namespace Gemini {
-  namespace Experimental {
-  }
-}
-declare namespace Gemini {
-  namespace Experimental {
-    /**
-     * @private
-     */
-    interface _LiveAPIClientEvents extends _Events, _LiveAPIEvents {
-    }
-  }
-}
-declare namespace Gemini {
-  namespace Experimental {
-    /**
-     * [Gemini.Experimental.LiveAPIClient] parameters. Can be passed as arguments to the [Gemini.Experimental.createLiveAPIClient] method.
-     */
-    interface LiveAPIClientParameters {
-      /**
-       * The API key for the Gemini Experimental Live API.
-       */
-      apiKey: string;
-      /**
-       * Optional. The model to use for Gemini Experimental Live API processing. The default value is **gemini-2.0-flash-exp**.
-       */
-      model?: string;
-      /**
-       * Optional. A callback function that is called when the [WebSocket] connection is closed.
-       */
-      onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
-      /**
-       * Optional. Contains configuration that will apply for the duration of the streaming session. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentsetup](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentsetup)
-       */
-      contentSetup?: Object;
-    }
-  }
+  /**
+   * Creates a [Gemini.LiveAPIClient] instance.
+   * @param parameters The [Gemini.LiveAPIClient] parameters
+   */
+  function createLiveAPIClient(parameters: LiveAPIClientParameters): Promise<LiveAPIClient>
 }
 
 declare namespace Gemini {
-  namespace Experimental {
-    class LiveAPIClient {
-      /**
-       * Returns the LiveAPIClient id.
-       */
-      id(): string;
-
-      /**
-       * Returns the LiveAPI WebSocket id.
-       */
-      webSocketId(): string;
-
-      /**
-       * Closes the LiveAPI connection (over WebSocket) or connection attempt.
-       */
-      close(): void;
-
-      /**
-       * Starts sending media from the LiveAPI (via WebSocket) to the media unit. LiveAPI works in real time.
-       * @param mediaUnit Media unit that receives media
-       * @param parameters Optional interaction parameters
-       */
-      sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
-
-      /**
-       * Stops sending media from the LiveAPI (via WebSocket) to the media unit.
-       * @param mediaUnit Media unit that stops receiving media
-       */
-      stopMediaTo(mediaUnit: VoxMediaUnit): void;
-
-      /**
-       * Clears the LiveAPI WebSocket media buffer.
-       * @param parameters Optional. Media buffer clearing parameters
-       */
-      clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
-
-      /**
-       * Adds a handler for the specified [Gemini.Experimental.LiveAPIEvents] or [Gemini.Experimental.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-       * @param event Event class (i.e., [Gemini.Experimental.LiveAPIEvents.BidiGenerateContentSetupComplete])
-       * @param callback Handler function. A single parameter is passed - object with event information
-       */
-      addEventListener<T extends keyof Gemini.Experimental._LiveAPIClientEvents>(
-        event: Gemini.Experimental.Events | Gemini.Experimental.LiveAPIEvents | T,
-        callback: (event: Gemini.Experimental._LiveAPIClientEvents[T]) => any,
-      ): void;
-
-      /**
-       * Removes a handler for the specified [Gemini.Experimental.LiveAPIEvents] or [Gemini.Experimental.Events] event.
-       * @param event Event class (i.e., [Gemini.Experimental.LiveAPIEvents.BidiGenerateContentSetupComplete])
-       * @param callback Optional. Handler function. If not specified, all handler functions are removed
-       */
-      removeEventListener<T extends keyof Gemini.Experimental._LiveAPIClientEvents>(
-        event: Gemini.Experimental.Events | Gemini.Experimental.LiveAPIEvents | T,
-        callback?: (event: Gemini.Experimental._LiveAPIClientEvents[T]) => any,
-      ): void;
-
-      /**
-       * Incremental update of the current conversation delivered from the client. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentclientcontent](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentclientcontent)
-       * @param parameters
-       */
-      bidiGenerateContentClientContent(parameters: Object): void
-
-      /**
-       * User input that is sent in real time. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentrealtimeinput](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentrealtimeinput)
-       * @param parameters
-       */
-      bidiGenerateContentRealtimeInput(parameters: Object): void
-
-      /**
-       * Client generated response to a ToolCall received from the server. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolresponse](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolresponse)
-       * @param parameters
-       */
-      bidiGenerateContentToolResponse(parameters: Object): void
-    }
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through a Gemini WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedEvent
+     */
+    WebSocketMediaStarted = 'Gemini.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through a Gemini WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedEvent
+     */
+    WebSocketMediaEnded = 'Gemini.Events.WebSocketMediaEnded',
   }
-}
 
-declare namespace Gemini {
-  namespace Experimental {
+  /**
+   * @private
+   */
+  interface _Events {
+    [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
+    [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
     /**
-     * @event
+     * The [Gemini.LiveAPIClient] instance.
      */
-    enum LiveAPIEvents {
-      /**
-       * The unknown event.
-       * @typedef _LiveAPIEvent
-       */
-      Unknown = 'Gemini.Experimental.LiveAPI.Unknown',
+    client: LiveAPIClient;
+  }
 
-      /**
-       * Content generated by the model in response to a client message. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentservercontent](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontentservercontent)
-       * @typedef _LiveAPIEvent
-       */
-      BidiGenerateContentServerContent = 'Gemini.Experimental.LiveAPI.BidiGenerateContentServerContent',
-
-      /**
-       * Request for the client to run the function calls and return the responses with the matching IDs. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolcall](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolcall)
-       * @typedef _LiveAPIEvent
-       */
-      BidiGenerateContentToolCall = 'Gemini.Experimental.LiveAPI.BidiGenerateContentToolCall',
-
-      /**
-       * Sent when a function call is canceled due to the user interrupting model output. [https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolcallcancellation](https://ai.google.dev/gemini-api/docs/live#bidigeneratecontenttoolcallcancellation)
-       * @typedef _LiveAPIEvent
-       */
-      BidiGenerateContentToolCallCancellation = 'Gemini.Experimental.LiveAPI.BidiGenerateContentToolCallCancellation',
-    }
-
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEvent extends _Event {
     /**
-     * @private
+     * Special tag to name audio streams sent over one Gemini WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
      */
-    interface _LiveAPIEvents {
-      [LiveAPIEvents.Unknown]: _LiveAPIEvent;
-      [LiveAPIEvents.BidiGenerateContentServerContent]: _LiveAPIEvent;
-      [LiveAPIEvents.BidiGenerateContentToolCall]: _LiveAPIEvent;
-      [LiveAPIEvents.BidiGenerateContentToolCallCancellation]: _LiveAPIEvent;
-    }
+    tag?: string;
+  }
 
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
     /**
-     * @private
+     * Audio encoding formats.
      */
-    interface _LiveAPIEvent {
-      /**
-       * The [Gemini.Experimental.LiveAPIClient] instance.
-       */
-      client: LiveAPIClient;
-      /**
-       * The event's data.
-       */
-      data?: Object;
-    }
+    encoding?: string;
+    /**
+     * Custom parameters.
+     */
+    customParameters?: { [key: string]: string };
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
+    /**
+     * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
+     */
+    mediaInfo?: WebSocketMediaInfo;
   }
 }
 
 
 declare namespace Gemini {
 }
+declare namespace Gemini {
+  /**
+   * @private
+   */
+  interface _LiveAPIClientEvents extends _Events, _LiveAPIEvents {
+  }
+}
+declare namespace Gemini {
+  /**
+   * [Gemini.LiveAPIClient] parameters. Can be passed as arguments to the [Gemini.createLiveAPIClient] method.
+   */
+  interface LiveAPIClientParameters {
+    /**
+     * The API key for the Gemini Live API.
+     */
+    apiKey: string;
+    /**
+     * Optional. The model to use for Gemini Live API processing. The default value is **gemini-2.0-flash-exp**.
+     */
+    model?: string;
+    /**
+     * Optional. Backend is the GenAI backend to use for the client. The default value is **Gemini.Backend.GEMINI_API**.
+     */
+    backend?: Backend;
+    /**
+     * Optional. A callback function that is called when the [WebSocket] connection is closed.
+     */
+    onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
+    /**
+     * Optional. Session config for the API connection. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig)
+     */
+    connectConfig?: Object;
+  }
+}
+
+declare namespace Gemini {
+  class LiveAPIClient {
+    /**
+     * Returns the LiveAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the LiveAPI WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the LiveAPI connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the LiveAPI (via WebSocket) to the media unit. LiveAPI works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the LiveAPI (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the LiveAPI WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [Gemini.LiveAPIEvents] or [Gemini.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [Gemini.LiveAPIEvents.SetupComplete])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof _LiveAPIClientEvents>(
+      event: Events | LiveAPIEvents | T,
+      callback: (event: _LiveAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Gemini.LiveAPIEvents] or [Gemini.Events] event.
+     * @param event Event class (i.e., [Gemini.LiveAPIEvents.SetupComplete])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof _LiveAPIClientEvents>(
+      event: Events | LiveAPIEvents | T,
+      callback?: (event: _LiveAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Transmits a LiveClientContent over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendRealtimeInput)
+     * @param input
+     */
+    sendClientContent(input: Object): void
+
+    /**
+     * Transmits a LiveClientRealtimeInput over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendClientContent)
+     * @param input
+     */
+    sendRealtimeInput(input: Object): void
+
+    /**
+     * Transmits a LiveClientToolResponse over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendToolResponse)
+     * @param input
+     */
+    sendToolResponse(input: Object): void
+  }
+}
+
+declare namespace Gemini {
+  /**
+   * @event
+   */
+  enum LiveAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _LiveAPIEvent
+     */
+    Unknown = 'Gemini.LiveAPI.Unknown',
+
+    /**
+     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerContent)
+     * @typedef _LiveAPIEvent
+     */
+    ServerContent = 'Gemini.LiveAPI.ServerContent',
+
+    /**
+     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCall)
+     * @typedef _LiveAPIEvent
+     */
+    ToolCall = 'Gemini.LiveAPI.ToolCall',
+
+    /**
+     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCallCancellation)
+     * @typedef _LiveAPIEvent
+     */
+    ToolCallCancellation = 'Gemini.LiveAPI.ToolCallCancellation',
+  }
+
+  /**
+   * @private
+   */
+  interface _LiveAPIEvents {
+    [LiveAPIEvents.Unknown]: _LiveAPIEvent;
+    [LiveAPIEvents.ServerContent]: _LiveAPIEvent;
+    [LiveAPIEvents.ToolCall]: _LiveAPIEvent;
+    [LiveAPIEvents.ToolCallCancellation]: _LiveAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _LiveAPIEvent {
+    /**
+     * The [Gemini.LiveAPIClient] instance.
+     */
+    client: LiveAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
+
 /**
  * Global IVR control module.
  * <br>
@@ -8597,7 +8597,7 @@ declare namespace Ultravox {
      */
     interface _WebSocketMediaEvent extends _Event {
         /**
-         * Special tag to name audio streams sent over one Gemini WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
+         * Special tag to name audio streams sent over one Ultravox WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
          */
         tag?: string;
     }
@@ -8633,6 +8633,7 @@ declare namespace Ultravox {
   enum HTTPEndpoint {
     CREATE_CALL = 'CreateCall',
     CREATE_AGENT_CALL = 'CreateAgentCall',
+    JOIN_CALL = 'JoinCall',
   }
 }
 
@@ -8647,6 +8648,10 @@ declare namespace Ultravox {
      * Ultravox HTTP endpoint. Note that [Ultravox Call](https://docs.ultravox.ai/api-reference/calls/overview) is created by the specified endpoint HTTP invocation, the response data for which can be handled in the [WebSocketAPIEvents.HTTPResponse] event.
      */
     endpoint: HTTPEndpoint;
+    /**
+     * Optional. Ultravox call join url.
+     */
+    joinUrl: string;
     /**
      * Optional. Ultravox request authorizations. See the documentation of the specified endpoint for details.
      */
@@ -8663,6 +8668,10 @@ declare namespace Ultravox {
      * Optional. Ultravox request body. See the documentation of the specified endpoint for details.
      */
     body?: Object;
+    /**
+     * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests. Note that you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
+     */
+    joinUrl?: string;
     /**
      * Optional. A callback function that is called when the [WebSocket] connection is closed.
      */
@@ -10654,13 +10663,21 @@ declare namespace VoximplantAPI {
      */
     modified?: Date;
     /**
-     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent in minutes. If the value has been passed in seconds, this field is also present in the answer, rounded to the bigger number
      */
     callMaxWaitingTime?: number;
     /**
-     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent in seconds. If the value has been passed in minutes, this field is also present in the answer
+     */
+    callMaxWaitingTimeInSeconds?: number;
+    /**
+     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent in minutes. If the value has been passed in seconds, this field is also present in the answer, rounded to the bigger number
      */
     imMaxWaitingTime?: number;
+    /**
+     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent in seconds. If the value has been passed in minutes, this field is also present in the answer
+     */
+    imMaxWaitingTimeInSeconds?: number;
     /**
      * Maximum size of the queue with CALL-type requests
      */
@@ -12630,6 +12647,19 @@ declare namespace VoximplantAPI {
     count: number;
     error?: APIError;
   }
+  interface IsAccountPhoneNumberRequest {
+    /**
+     * Phone number to check in the international format without `+`
+     */
+    phoneNumber: string;
+  }
+  interface IsAccountPhoneNumberResponse {
+    /**
+     * Whether the number belongs to the account
+     */
+    result: boolean;
+    error?: APIError;
+  }
   interface GetPhoneNumbersAsyncRequest {
     /**
      * Whether to get a CSV file with the column names
@@ -12648,6 +12678,12 @@ declare namespace VoximplantAPI {
      * Gets the account phone numbers.
      */
     getPhoneNumbers: (request: GetPhoneNumbersRequest) => Promise<GetPhoneNumbersResponse>;
+    /**
+     * Checks if the phone number belongs to the authorized account.
+     */
+    isAccountPhoneNumber: (
+      request: IsAccountPhoneNumberRequest
+    ) => Promise<IsAccountPhoneNumberResponse>;
     /**
      * Gets the asyncronous report regarding purchaced phone numbers.
      */
@@ -13409,11 +13445,11 @@ declare namespace VoximplantAPI {
      */
     description?: string;
     /**
-     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent. Specify either this parameter or `call_max_waiting_time_in_seconds`. Specifying both parameters simultaniously leads to an error
      */
     callMaxWaitingTime?: number;
     /**
-     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent. Specify either this parameter or `im_max_waiting_time_in_seconds`. Specifying both parameters simultaniously leads to an error
      */
     imMaxWaitingTime?: number;
     /**
@@ -13428,6 +13464,14 @@ declare namespace VoximplantAPI {
      * The queue's priority from 1 to 100
      */
     priority?: number;
+    /**
+     * Maximum call waiting time in seconds. Specify either this parameter or `call_max_waiting_time`. Specifying both parameters simultaniously leads to an error
+     */
+    callMaxWaitingTimeInSeconds?: number;
+    /**
+     * Maximum chat message waiting time in seconds. Specify either this parameter or `im_max_waiting_time`. Specifying both parameters simultaniously leads to an error
+     */
+    imMaxWaitingTimeInSeconds?: number;
   }
   interface SQ_AddQueueResponse {
     /**
@@ -13479,11 +13523,11 @@ declare namespace VoximplantAPI {
      */
     description?: string;
     /**
-     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that a CALL-type request can remain in the queue without being assigned to an agent. Specify either this parameter or `call_max_waiting_time_in_seconds`. Specifying both parameters simultaniously leads to an error
      */
     callMaxWaitingTime?: number;
     /**
-     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent
+     * Maximum time in minutes that an IM-type request can remain in the queue without being assigned to an agent. Specify either this parameter or `im_max_waiting_time_in_seconds`. Specifying both parameters simultaniously leads to an error
      */
     imMaxWaitingTime?: number;
     /**
@@ -13498,6 +13542,14 @@ declare namespace VoximplantAPI {
      * The queue's priority from 1 to 100
      */
     priority?: number;
+    /**
+     * Maximum call waiting time in seconds. Specify either this parameter or `call_max_waiting_time`. Specifying both parameters simultaniously leads to an error
+     */
+    callMaxWaitingTimeInSeconds?: number;
+    /**
+     * Maximum chat message waiting time in seconds. Specify either this parameter or `im_max_waiting_time`. Specifying both parameters simultaniously leads to an error
+     */
+    imMaxWaitingTimeInSeconds?: number;
   }
   interface SQ_SetQueueInfoResponse {
     /**
@@ -15680,6 +15732,11 @@ declare enum WebSocketEvents {
    */
   ERROR = 'WebSocket.Error',
   /**
+   * Triggered when the WebSocket connection is created. [WebSocket.oncreated] is called right before any other handlers.
+   * @typedef _WebSocketCreatedEvent
+   */
+  CREATED = 'WebSocket.Created',
+  /**
    * Triggered when the audio stream sent by a third party through a WebSocket is started playing.
    * @typedef _WebSocketMediaStartedEvent
    */
@@ -15699,6 +15756,7 @@ declare interface _WebSocketEvents {
   [WebSocketEvents.CLOSE]: _WebSocketCloseEvent;
   [WebSocketEvents.MESSAGE]: _WebSocketMessageEvent;
   [WebSocketEvents.ERROR]: _WebSocketErrorEvent;
+  [WebSocketEvents.CREATED]: _WebSocketCreatedEvent;
   [WebSocketEvents.MEDIA_STARTED]: _WebSocketMediaStartedEvent;
   [WebSocketEvents.MEDIA_ENDED]: _WebSocketMediaEndedEvent;
 }
@@ -15751,6 +15809,16 @@ declare interface _WebSocketMessageEvent extends _WebSocketEvent {
  * @private
  */
 declare interface _WebSocketErrorEvent extends _WebSocketEvent {
+}
+
+/**
+ * @private
+ */
+declare interface _WebSocketCreatedEvent extends _WebSocketEvent {
+  /**
+   * Exists when statistics is enabled.
+   */
+  readonly statisticsUrl?:string
 }
 
 /**
@@ -15809,6 +15877,16 @@ declare interface WebSocketParameters {
    * Optional. List of dictionaries with key and value fields representing headers.
    */
   headers?: { name: string; value: string }[];
+
+  /**
+   * Optional. Enables statistics functionality.
+   */
+  statistics?: boolean;
+
+  /**
+   * Optional. Enables trace functionality.
+   */
+  trace?: boolean;
 }
 
 declare enum WebSocketReadyState {
@@ -15857,6 +15935,11 @@ declare class WebSocket {
    * Event handler to call when the connection is open (ready to send and receive data).
    */
   onopen: ((ev: _WebSocketOpenEvent) => any) | null;
+
+  /**
+   * Event handler to call when the connection is created.
+   */
+  oncreated: ((ev: _WebSocketCreatedEvent) => any) | null;
 
   /**
    * Event handler to call when the audio stream is started playing.
@@ -19417,7 +19500,7 @@ declare interface TTSPlayerParameters {
    * Optional. Language and voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.
    * <br>
    * <br>
-   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank,Yandex.*
+   * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex, ElevenLabs.*
    */
   language?: Voice;
   /**
@@ -27493,52 +27576,6 @@ declare namespace VoiceList {
      * @const
      */
     const ru_RU_Dima: Voice;
-    
-    /**
-     * T-Bank voice, Russian female.
-     * @const
-     */
-    const ru_RU_Alyona: Voice;
-    /**
-     * T-Bank voice, Russian female, sad.
-     * @const
-     */
-    const ru_RU_Alyona_sad: Voice;
-    /**
-     * T-Bank voice, Russian female, funny.
-     * @const
-     */
-    const ru_RU_Alyona_funny: Voice;
-    /**
-     * T-Bank voice, Russian female, flirt.
-     * @const
-     */
-    const ru_RU_Alyona_flirt: Voice;
-    /**
-     * T-Bank voice, Russian male, neutral.
-     * @const
-     */
-    const ru_RU_Dorofeev_neutral: Voice;
-    /**
-     * T-Bank voice, Russian male, drama.
-     * @const
-     */
-    const ru_RU_Dorofeev_drama: Voice;
-    /**
-     * T-Bank voice, Russian male, comedy.
-     * @const
-     */
-    const ru_RU_Dorofeev_comedy: Voice;
-    /**
-     * T-Bank voice, Russian male, info.
-     * @const
-     */
-    const ru_RU_Dorofeev_info: Voice;
-    /**
-     * T-Bank voice, Russian male, tragedy.
-     * @const
-     */
-    const ru_RU_Dorofeev_tragedy: Voice;
   }
 }
 

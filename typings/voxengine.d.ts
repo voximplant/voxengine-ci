@@ -4500,6 +4500,21 @@ declare class Conference {
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
+interface _ConversationalAgentClientParameters {
+  /**
+   * Optional. A callback function that is called when the [WebSocket] connection is closed.
+   */
+  onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
+  /**
+   * Optional. Enables statistics functionality.
+   */
+  statistics?: boolean;
+  /**
+   * Optional. Enables trace functionality.
+   */
+  trace?: boolean;
+}
+
 declare module Crypto {}
 
 declare module Crypto {
@@ -5142,6 +5157,229 @@ declare enum DTMFType {
 }
 
 declare namespace ElevenLabs {
+  /**
+   * @private
+   */
+  interface _ConversationalAIClientEvents extends _Events, _ConversationalAIEvents {
+  }
+}
+declare namespace ElevenLabs {
+  /**
+   * [ElevenLabs.ConversationalAIClient] parameters. Can be passed as arguments to the [ElevenLabs.createConversationalAIClient] method.
+   */
+  interface ConversationalAIClientParameters extends _ConversationalAgentClientParameters {
+    /**
+     * The API key for the ElevenLabs Conversational AI.
+     */
+    xiApiKey: string;
+    /**
+     * The unique identifier for the voice to use in the TTS process.
+     */
+    agentId: string;
+  }
+}
+  
+declare namespace ElevenLabs {
+  class ConversationalAIClient {
+    /**
+     * Returns the ConversationalAIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the ElevenLabs WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the ElevenLabs connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the ElevenLabs (via WebSocket) to the media unit. ElevenLabs works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the ElevenLabs (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the ElevenLabs WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [ElevenLabs.ConversationalAIEvents] or [ElevenLabs.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [ElevenLabs.ConversationalAIEvents.UserTranscript])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof ElevenLabs._ConversationalAIClientEvents>(
+      event: ElevenLabs.Events | ElevenLabs.ConversationalAIEvents | T,
+      callback: (event: ElevenLabs._ConversationalAIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [ElevenLabs.ConversationalAIEvents] or [ElevenLabs.Events] event.
+     * @param event Event class (i.e., [ElevenLabs.ConversationalAIEvents.UserTranscript])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof ElevenLabs._ConversationalAIClientEvents>(
+      event: ElevenLabs.Events | ElevenLabs.ConversationalAIEvents | T,
+      callback?: (event: ElevenLabs._ConversationalAIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Defines what can be customized when starting a conversation. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Conversation-Initiation-Client-Data](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Conversation-Initiation-Client-Data)
+     * @param parameters
+     */
+    conversationInitiationClientData(parameters: Object): void
+    /**
+     * Result of the client tool call. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Client-Tool-Result](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Client-Tool-Result)
+     * @param parameters
+     */
+    clientToolResult(parameters: Object): void
+    /**
+     * Allows to send non-interrupting background information to the conversation. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Contextual-Update](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Contextual-Update)
+     * @param parameters
+     */
+    contextualUpdate(parameters: Object): void
+
+    /**
+     * Allows to send user text messages to the conversation.
+     * @param parameters
+     */
+    userMessage(parameters: Object): void
+  }
+}
+  
+declare namespace ElevenLabs {
+  /**
+   * @event
+   */
+  enum ConversationalAIEvents {
+    /**
+     * The unknown event.
+     * @typedef _ConversationalAIEvent
+     */
+    Unknown = 'ElevenLabs.ConversationalAI.Unknown',
+
+    /**
+     * The HTTP response event.
+     * @typedef _ConversationalAIEvent
+     */
+    HTTPResponse = 'ElevenLabs.ConversationalAI.HTTPResponse',
+
+    /**
+     * Automatically sent when starting a conversation. Initializes conversation settings and parameters. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#conversation_initiation_metadata](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#conversation_initiation_metadata)
+     * @typedef _ConversationalAIEvent
+     */
+    ConversationInitiationMetadata = 'ElevenLabs.ConversationalAI.ConversationInitiationMetadata',
+
+    /**
+     * Health check event requiring immediate response. Used to maintain WebSocket connection. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#ping](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#ping)
+     * @typedef _ConversationalAIEvent
+     */
+    Ping = 'ElevenLabs.ConversationalAI.Ping',
+
+
+    /**
+     * Contains finalized speech-to-text results. Represents complete user utterances. Used for conversation history. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#user_transcript](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#user_transcript)
+     * @typedef _ConversationalAIEvent
+     */
+    UserTranscript = 'ElevenLabs.ConversationalAI.UserTranscript',
+
+    /**
+     * Contains complete agent message. Sent with first audio chunk. Used for display and history. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response)
+     * @typedef _ConversationalAIEvent
+     */
+    AgentResponse = 'ElevenLabs.ConversationalAI.AgentResponse',
+
+    /**
+     * Contains truncated response after interruption. Updates displayed message. Maintains conversation accuracy. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response_correction](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response_correction)
+     * @typedef _ConversationalAIEvent
+     */
+    AgentResponseCorrection = 'ElevenLabs.ConversationalAI.AgentResponseCorrection',
+
+    /**
+     * Contains event id of interrupted event. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Interruption](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Interruption)
+     * @typedef _ConversationalAIEvent
+     */
+    Interruption = 'ElevenLabs.ConversationalAI.Interruption',
+
+    /**
+     * Contains contextual information to be added to the conversation state. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Contextual-Update](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Contextual-Update)
+     * @typedef _ConversationalAIEvent
+     */
+    ContextualUpdate = 'ElevenLabs.ConversationalAI.ContextualUpdate',
+
+    /**
+     * Represents a function call the agent wants the client to execute. Contains tool name, tool call ID, and parameters. Requires client-side execution of the function and sending the result back to the server. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#client_tool_call](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#client_tool_call)
+     * @typedef _ConversationalAIEvent
+     */
+    ClientToolCall = 'ElevenLabs.ConversationalAI.ClientToolCall',
+
+    /**
+     * Voice Activity Detection score event. Indicates the probability that the user is speaking. Values range from 0 to 1, where higher values indicate higher confidence of speech. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#vad_score](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#vad_score)
+     * @typedef _ConversationalAIEvent
+     */
+    VadScore = 'ElevenLabs.ConversationalAI.VadScore',
+
+    /**
+     * Contains preliminary text from the agent. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Internal-Tentative-Agent-Response](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Internal-Tentative-Agent-Response)
+     * @typedef _ConversationalAIEvent
+     */
+    InternalTentativeAgentResponse = 'ElevenLabs.ConversationalAI.InternalTentativeAgentResponse',
+  }
+
+  /**
+   * @private
+   */
+  interface _ConversationalAIEvents {
+    [ConversationalAIEvents.Unknown]: _ConversationalAIEvent;
+    [ConversationalAIEvents.HTTPResponse]: _ConversationalAIEvent;
+    [ConversationalAIEvents.ConversationInitiationMetadata]: _ConversationalAIEvent;
+    [ConversationalAIEvents.Ping]: _ConversationalAIEvent;
+    [ConversationalAIEvents.UserTranscript]: _ConversationalAIEvent;
+    [ConversationalAIEvents.AgentResponse]: _ConversationalAIEvent;
+    [ConversationalAIEvents.AgentResponseCorrection]: _ConversationalAIEvent;
+    [ConversationalAIEvents.Interruption]: _ConversationalAIEvent;
+    [ConversationalAIEvents.ClientToolCall]: _ConversationalAIEvent;
+    [ConversationalAIEvents.ContextualUpdate]: _ConversationalAIEvent;
+    [ConversationalAIEvents.VadScore]: _ConversationalAIEvent;
+    [ConversationalAIEvents.InternalTentativeAgentResponse]: _ConversationalAIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _ConversationalAIEvent {
+    /**
+     * The [ElevenLabs.ConversationalAIClient] instance.
+     */
+    client: ConversationalAIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+  
+  
+declare namespace ElevenLabs {
+    /**
+     * Creates an [ElevenLabs.ConversationalAIClient] instance.
+     * @param parameters The [ElevenLabs.ConversationalAIClient] parameters
+     */
+    function createConversationalAIClient(parameters: ConversationalAIClientParameters): Promise<ElevenLabs.ConversationalAIClient>
+}
+declare namespace ElevenLabs {
     /**
      * Creates a new [ElevenLabs.RealtimeTTSPlayer] instance with specified text (TTS is used to play the text). You can attach media streams later via the [ElevenLabs.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
      * @param text Text to synthesize
@@ -5151,6 +5389,75 @@ declare namespace ElevenLabs {
 }
 
 declare namespace ElevenLabs {
+}
+declare namespace ElevenLabs {
+    /**
+     * @event
+     */
+    enum Events {
+        /**
+         * Triggered when the audio stream sent by a third party through a ElevenLabs WebSocket is started playing.
+         * @typedef _WebSocketMediaStartedEvent
+         */
+        WebSocketMediaStarted = 'ElevenLabs.Events.WebSocketMediaStarted',
+        /**
+         * Triggers after the end of the audio stream sent by a third party through a ElevenLabs WebSocket (**1 second of silence**).
+         * @typedef _WebSocketMediaEndedEvent
+         */
+        WebSocketMediaEnded = 'ElevenLabs.Events.WebSocketMediaEnded',
+    }
+
+    /**
+     * @private
+     */
+    interface _Events {
+        [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
+        [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
+    }
+
+    /**
+     * @private
+     */
+    interface _Event {
+        /**
+         * The [ElevenLabs.ConversationalAIClient] instance.
+         */
+        client: ConversationalAIClient;
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaEvent extends _Event {
+        /**
+         * Special tag to name audio streams sent over one ElevenLabs WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
+         */
+        tag?: string;
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
+        /**
+         * Audio encoding formats.
+         */
+        encoding?: string;
+        /**
+         * Custom parameters.
+         */
+        customParameters?: { [key: string]: string };
+    }
+
+    /**
+     * @private
+     */
+    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
+        /**
+         * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
+         */
+        mediaInfo?: WebSocketMediaInfo;
+    }
 }
 declare namespace ElevenLabs {
   class RealtimeTTSPlayer extends Player {
@@ -5395,7 +5702,7 @@ declare namespace Gemini {
   /**
    * [Gemini.LiveAPIClient] parameters. Can be passed as arguments to the [Gemini.createLiveAPIClient] method.
    */
-  interface LiveAPIClientParameters {
+  interface LiveAPIClientParameters extends _ConversationalAgentClientParameters {
     /**
      * The API key for the Gemini Live API.
      */
@@ -5408,10 +5715,6 @@ declare namespace Gemini {
      * Optional. Backend is the GenAI backend to use for the client. The default value is **Gemini.Backend.GEMINI_API**.
      */
     backend?: Backend;
-    /**
-     * Optional. A callback function that is called when the [WebSocket] connection is closed.
-     */
-    onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
     /**
      * Optional. Session config for the API connection. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig)
      */
@@ -6246,7 +6549,7 @@ declare namespace OpenAI {
     /**
      * [OpenAI.Beta.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.Beta.createRealtimeAPIClient] method.
      */
-    interface RealtimeAPIClientParameters {
+    interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
       /**
        * The API key for the OpenAI Realtime API.
        */
@@ -6255,10 +6558,6 @@ declare namespace OpenAI {
        * Optional. The model to use for OpenAI Realtime API processing. The default value is **gpt-4o-realtime-preview-2024-10-01**.
        */
       model?: string;
-      /**
-       * Optional. A callback function that is called when the [WebSocket] connection is closed.
-       */
-      onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
     }
   }
 }
@@ -8643,15 +8942,11 @@ declare namespace Ultravox {
   /**
    * [Ultravox.WebSocketAPIClient] parameters. Can be passed as arguments to the [Ultravox.createWebSocketAPIClient] method.
    */
-  interface WebSocketAPIClientParameters {
+  interface WebSocketAPIClientParameters extends _ConversationalAgentClientParameters {
     /**
      * Ultravox HTTP endpoint. Note that [Ultravox Call](https://docs.ultravox.ai/api-reference/calls/overview) is created by the specified endpoint HTTP invocation, the response data for which can be handled in the [WebSocketAPIEvents.HTTPResponse] event.
      */
     endpoint: HTTPEndpoint;
-    /**
-     * Optional. Ultravox call join url.
-     */
-    joinUrl: string;
     /**
      * Optional. Ultravox request authorizations. See the documentation of the specified endpoint for details.
      */
@@ -8672,10 +8967,6 @@ declare namespace Ultravox {
      * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests. Note that you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
      */
     joinUrl?: string;
-    /**
-     * Optional. A callback function that is called when the [WebSocket] connection is closed.
-     */
-    onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
   }
 }
   
@@ -9501,7 +9792,7 @@ declare namespace VoximplantAPI {
      */
     parentAccounting: boolean;
     /**
-     * The current user's money in the currency specified for the account. The value is the number rounded to 4 decimal places and it changes during the calls, transcribing, purchases etc
+     * The current user's money in the currency specified for the account. The value is the number rounded to 4 decimal places, and it changes during the calls, transcribing, purchases etc
      */
     liveBalance: number;
     /**
@@ -9561,47 +9852,51 @@ declare namespace VoximplantAPI {
   }
   interface CallSessionInfo {
     /**
-     * The routing rule name
+     * Call's audio quality. The possible values are: Standard | HD | Ultra HD.
+     */
+    audioQuality: string;
+    /**
+     * Routing rule name
      */
     ruleName: string;
     /**
-     * The application name
+     * Application name
      */
     applicationName: string;
     /**
-     * The unique JS session identifier
+     * Unique JS session identifier
      */
     callSessionHistoryId: number;
     /**
-     * The account ID that initiates the JS session
+     * Account ID that initiates the JS session
      */
     accountId: number;
     /**
-     * The application ID that initiates the JS session
+     * Application ID that initiates the JS session
      */
     applicationId: number;
     /**
-     * The user ID that initiates the JS session
+     * User ID that initiates the JS session
      */
     userId: number;
     /**
-     * The start date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+     * Start date in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
      */
     startDate: Date;
     /**
-     * The entire JS session duration in seconds. The session can contain multiple calls
+     * Entire JS session duration in seconds. The session can contain multiple calls
      */
     duration?: number;
     /**
-     * The initiator IP address
+     * Initiator's IP address
      */
     initiatorAddress: string;
     /**
-     * The media server IP address
+     * Media server IP address
      */
     mediaServerAddress: string;
     /**
-     * The link to the session log. The log retention policy is 1 month, after that time this field clears. If you have issues accessing the log file, check if the application has "Secure storage of applications and logs" feature enabled. In this case, you need to <a href='/docs/guides/managementapi/secureobjects'>authorize</a>.
+     * Link to the session log. The log retention policy is 1 month, after that time this field clears. If you have issues accessing the log file, check if the application has "Secure storage of applications and logs" feature enabled. In this case, you need to <a href='/docs/guides/managementapi/secureobjects'>authorize</a>.
      */
     logFileUrl: string;
     /**
@@ -9895,7 +10190,7 @@ declare namespace VoximplantAPI {
      */
     readyOperatorsCount: number;
     /**
-     * List of operators with the 'READY' state that cannot accept a call from this queue. Operator cannot accept a call if they are temporarily banned or they are servicing a call right now
+     * List of operators with the 'READY' state that cannot accept a call from this queue. Operator cannot accept a call if they are temporarily banned, or they are servicing a call right now
      */
     lockedOperators: ACDLockedOperatorState[];
     /**
@@ -10135,19 +10430,19 @@ declare namespace VoximplantAPI {
      */
     autoCharge: boolean;
     /**
-     * The id of the bound application
+     * ID of the bound application
      */
     applicationId?: number;
     /**
-     * The name of the bound application
+     * Name of the bound application
      */
     applicationName?: string;
     /**
-     * The id of the bound rule
+     * ID of the bound rule
      */
     ruleId?: number;
     /**
-     * The name of the bound rule
+     * Name of the bound rule
      */
     ruleName?: string;
     /**
@@ -10389,27 +10684,27 @@ declare namespace VoximplantAPI {
      */
     isPersistent: boolean;
     /**
-     * The id of the bound user
+     * ID of the bound user
      */
     userId?: number;
     /**
-     * The name of the bound user
+     * Name of the bound user
      */
     userName?: string;
     /**
-     * The id of the bound application
+     * ID of the bound application
      */
     applicationId?: number;
     /**
-     * The name of the bound application
+     * Name of the bound application
      */
     applicationName?: string;
     /**
-     * The id of the bound rule
+     * ID of the bound rule
      */
     ruleId?: number;
     /**
-     * The name of the bound rule
+     * Name of the bound rule
      */
     ruleName?: string;
   }
@@ -11482,15 +11777,15 @@ declare namespace VoximplantAPI {
      */
     fileContent: Buffer;
     /**
-     * Interval between call attempts in seconds. The default is 0
+     * Interval between call attempts in seconds. The default value is 0
      */
     intervalSeconds?: number;
     /**
-     * Encoding file. The default is UTF-8
+     * Encoding file. The default value is UTF-8
      */
     encoding?: string;
     /**
-     * Separator values. The default is ';'
+     * Separator values. The default value is ';'
      */
     delimiter?: string;
     /**
@@ -11532,7 +11827,7 @@ declare namespace VoximplantAPI {
      */
     fileContent: Buffer;
     /**
-     * Encoding file. The default is UTF-8
+     * Encoding file. The default value is UTF-8
      */
     encoding?: string;
     /**
@@ -11540,7 +11835,7 @@ declare namespace VoximplantAPI {
      */
     escape?: string;
     /**
-     * Separator values. The default is ';'
+     * Separator values. The default value is ';'
      */
     delimiter?: string;
   }
@@ -11557,6 +11852,51 @@ declare namespace VoximplantAPI {
      * The list ID
      */
     listId: number;
+    error?: APIError;
+  }
+  interface EditCallListRequest {
+    /**
+     * Call list ID. If the ID is non existing, the 251 error returns
+     */
+    listId: number;
+    /**
+     * Minimum interval between call attempts. Cannot be a negative value
+     */
+    intervalSeconds?: number;
+    /**
+     * Maximum call attempt number. Cannot be less than 1
+     */
+    numAttempts?: number;
+    /**
+     * Maximum simultaneous call attempts for this call list. Cannot be less than 1
+     */
+    maxSimultaneous?: number;
+    /**
+     * IP address in the `Inet4Address` format
+     */
+    ipAddress?: string;
+    /**
+     * Call list name. Cannot be bigger than 255 characters, cannot contain slash symbol
+     */
+    name?: string;
+    /**
+     * Call list's priority among other call list. The lower the value, the higher is the call list's priority
+     */
+    priority?: number;
+    /**
+     * Time when the call list should start in the `yyyy-MM-dd HH:mm:ss` format
+     */
+    startAt?: string;
+    /**
+     * Location of the server processing the call list. If the ID is non existing, the 496 error returns: The 'server_location' parameter is invalid.
+     */
+    serverLocation?: string;
+  }
+  interface EditCallListResponse {
+    /**
+     * true
+     */
+    result: boolean;
     error?: APIError;
   }
   interface DeleteCallListRequest {
@@ -11676,6 +12016,10 @@ declare namespace VoximplantAPI {
      * Appends a new task to the existing call list.<br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.
      */
     appendToCallList: (request: AppendToCallListRequest) => Promise<AppendToCallListResponse>;
+    /**
+     * Edits the specified call list by its ID.
+     */
+    editCallList: (request: EditCallListRequest) => Promise<EditCallListResponse>;
     /**
      * Deletes an existing call list by its ID.
      */
@@ -12685,7 +13029,7 @@ declare namespace VoximplantAPI {
       request: IsAccountPhoneNumberRequest
     ) => Promise<IsAccountPhoneNumberResponse>;
     /**
-     * Gets the asyncronous report regarding purchaced phone numbers.
+     * Gets the asynchronous report regarding purchased phone numbers.
      */
     getPhoneNumbersAsync: (
       request: GetPhoneNumbersAsyncRequest
@@ -12703,14 +13047,14 @@ declare namespace VoximplantAPI {
      */
     result: number;
     /**
-     * The id of the callerID object
+     * ID of the callerID object
      */
     calleridId: number;
     error?: APIError;
   }
   interface ActivateCallerIDRequest {
     /**
-     * The id of the callerID object
+     * ID of the callerID object
      */
     calleridId: number;
     /**
@@ -12731,7 +13075,7 @@ declare namespace VoximplantAPI {
   }
   interface DelCallerIDRequest {
     /**
-     * The id of the callerID object
+     * ID of the callerID object
      */
     calleridId: number;
     /**
@@ -12748,7 +13092,7 @@ declare namespace VoximplantAPI {
   }
   interface GetCallerIDsRequest {
     /**
-     * The id of the callerID object to filter
+     * ID of the callerID object to filter
      */
     calleridId?: number;
     /**
@@ -12786,7 +13130,7 @@ declare namespace VoximplantAPI {
   }
   interface VerifyCallerIDRequest {
     /**
-     * The id of the callerID object
+     * ID of the callerID object
      */
     calleridId: number;
     /**
@@ -14052,7 +14396,7 @@ declare namespace VoximplantAPI {
       request: SQ_SetAgentCustomStatusMappingRequest
     ) => Promise<SQ_SetAgentCustomStatusMappingResponse>;
     /**
-     * Returns the mapping list of SQ statuses and custom statuses. SQ statuses are returned whether or not they have mappings to custom statuses.
+     * Returns the mapping list of SQ statuses and custom statuses. SQ statuses are returned whether they have mappings to custom statuses.
      */
     sQ_GetAgentCustomStatusMapping: (
       request: SQ_GetAgentCustomStatusMappingRequest
@@ -15199,7 +15543,7 @@ declare namespace VoximplantAPI {
   }
   interface InvoicesInterface {
     /**
-     * Gets all invoices of the specified USD or EUR account.
+     * Gets all invoices for the specified USD or EUR account.
      */
     getAccountInvoices: (request: GetAccountInvoicesRequest) => Promise<GetAccountInvoicesResponse>;
     /**
@@ -15877,12 +16221,10 @@ declare interface WebSocketParameters {
    * Optional. List of dictionaries with key and value fields representing headers.
    */
   headers?: { name: string; value: string }[];
-
   /**
    * Optional. Enables statistics functionality.
    */
   statistics?: boolean;
-
   /**
    * Optional. Enables trace functionality.
    */

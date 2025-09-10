@@ -7647,15 +7647,7 @@ declare interface RecorderParameters extends BaseRecorderParameters{
   /**
    * Optional. Speech recognition provider.
    */
-  provider?:
-    | ASRProfileList.Amazon
-    | ASRProfileList.Deepgram
-    | ASRProfileList.Google
-    | ASRProfileList.Microsoft
-    | ASRProfileList.SaluteSpeech
-    | ASRProfileList.TBank
-    | ASRProfileList.Yandex
-    | ASRProfileList.YandexV3;
+  provider?: ASRProfile;
 }
 
 /**
@@ -16360,7 +16352,7 @@ declare class WebSocket {
   clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of Amazon ASR models.
    * <br>
@@ -16369,13 +16361,13 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum Amazon {
+  const Amazon: {
     /**
      * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
      * @const
      */
-    default,
-  }
+    default: ASRModelItem;
+  };
 }
 
 /**
@@ -16387,9 +16379,9 @@ declare module ASRModelList {
  * ```
  * @namespace
  */
-declare module ASRModelList {}
+declare namespace ASRModelList {}
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of Deepgram ASR models.
    * <br>
@@ -16398,137 +16390,137 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum Deepgram {
+  const Deepgram: {
     /**
      * The default **General** model.
      * @const
      */
-    default,
+    default: ASRModelItem;
     /**
      * Optimized for everyday audio processing.
      * @const
      */
-    general,
+    general: ASRModelItem;
     /**
      * Optimized for everyday audio processing. Applies the newest ASR module with higher accuracy.
      */
-    general_enhanced,
+    general_enhanced: ASRModelItem;
     /**
      * Optimized for conference room settings, which include multiple speakers with a single microphone.
      * @const
      */
-    meeting,
+    meeting: ASRModelItem;
     /**
      * Optimized for conference room settings, which include multiple speakers with a single microphone. Applies the newest ASR module with higher accuracy.
      * @const
      */
-    meeting_enhanced,
+    meeting_enhanced: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio phone calls.
      * @const
      */
-    phonecall,
+    phonecall: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio phone calls. Applies the newest ASR module with higher accuracy.
      * @const
      */
-    phonecall_enhanced,
+    phonecall_enhanced: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio clips with a single speaker. Derived from the phonecall model.
      * @const
      */
-    voicemail,
+    voicemail: ASRModelItem;
     /**
      * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented.
      * @const
      */
-    finance,
+    finance: ASRModelItem;
     /**
      * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented. Applies the newest ASR module with higher accuracy.
      * @const
      */
-    finance_enhanced,
+    finance_enhanced: ASRModelItem;
     /**
      * Optimized to allow artificial intelligence technologies, such as chatbots, to interact with people in a human-like way.
      * @const
      */
-    conversational,
+    conversational: ASRModelItem;
     /**
      * Optimized for audio sourced from videos.
      * @const
      */
-    video,
+    video: ASRModelItem;
 
     /**
      * Optimized for everyday audio processing.
      * @const
      */
-    nova_general,
+    nova_general: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio phone calls.
      * @const
      */
-    nova_phonecall,
+    nova_phonecall: ASRModelItem;
 
     /**
      * Optimized for everyday audio processing.
      * @const
      */
-    nova2_general,
+    nova2_general: ASRModelItem;
     /**
      * Optimized for conference room settings, which include multiple speakers with a single microphone.
      * @const
      */
-    nova2_meeting,
+    nova2_meeting: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio phone calls.
      * @const
      */
-    nova2_phonecall,
+    nova2_phonecall: ASRModelItem;
     /**
      * Optimized for low-bandwidth audio clips with a single speaker. Derived from the phonecall model.
      * @const
      */
-    nova2_voicemail,
+    nova2_voicemail: ASRModelItem;
     /**
      * Optimized for multiple speakers with varying audio quality, such as might be found on a typical earnings call. Vocabulary is heavily finance oriented.
      * @const
      */
-    nova2_finance,
+    nova2_finance: ASRModelItem;
     /**
      * Optimized for use cases in which a human is talking to an automated bot, such as IVR, a voice assistant, or an automated kiosk.
      * @const
      */
-    nova2_conversationalai,
+    nova2_conversationalai: ASRModelItem;
     /**
      * Optimized for audio sourced from videos.
      * @const
      */
-    nova2_video,
+    nova2_video: ASRModelItem;
     /**
      * Optimized for audio with medical oriented vocabulary.
      * @const
      */
-    nova2_medical,
+    nova2_medical: ASRModelItem;
     /**
      * Optimized for audio sources from drivethrus.
      * @const
      */
-    nova2_drivethru,
+    nova2_drivethru: ASRModelItem;
     /**
      * Optimized for audio with automative oriented vocabulary.
      * @const
      */
-    nova2_automotive,
+    nova2_automotive: ASRModelItem;
     /**
      * Optimized for audio from air traffic control.
      * @const
      */
-    nova2_atc,
-  }
+    nova2_atc: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of Google ASR models. The **enhanced** models cost more than the standard rate.
    * <br>
@@ -16537,58 +16529,58 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum Google {
+  const Google: {
     /**
      * Best for audio that is not one of the specific audio models. For example, long-form audio. Ideally the audio is high-fidelity, recorded at a 16khz or greater sampling rate.
      * @const
      */
-    default,
+    default: ASRModelItem;
 
     /**
      * **Default** model with more accurate recognition.
      * @const
      */
-    default_enhanced,
+    default_enhanced: ASRModelItem;
 
     /**
      * Best for short queries such as voice commands or voice search.
      * @const
      */
-    command_and_search,
+    command_and_search: ASRModelItem;
 
     /**
      * **Command_and_search** model with more accurate recognition.
      * @const
      */
-    command_and_search_enhanced,
+    command_and_search_enhanced: ASRModelItem;
 
     /**
      * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
      * @const
      */
-    phone_call,
+    phone_call: ASRModelItem;
 
     /**
      * **Phone_call** model with more accurate recognition.
      * @const
      */
-    phone_call_enhanced,
+    phone_call_enhanced: ASRModelItem;
 
     /**
      * Best for audio that originated from video or includes multiple speakers. Ideally the audio is recorded at a 16khz or greater sampling rate.
      * @const
      */
-    video,
+    video: ASRModelItem;
 
     /**
      * **Video** model with more accurate recognition.
      * @const
      */
-    video_enhanced,
-  }
+    video_enhanced: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of Microsoft ASR models.
    * <br>
@@ -16597,16 +16589,16 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum Microsoft {
+  const Microsoft: {
     /**
      * Best for generic, day-to-day language and if there is little or no background noise.
      * @const
      */
-    default,
-  }
+    default: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of SaluteSpeech ASR models.
    * <br>
@@ -16615,31 +16607,31 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum SaluteSpeech {
+  const SaluteSpeech: {
     /**
      * The default **General** model.
      * @const
      */
-    default,
+    default: ASRModelItem;
     /**
      * Short arbitrary phrases, e.g., search queries.
      * @const
      */
-    general,
+    general: ASRModelItem;
     /**
      * The model for media usage.
      * @const
      */
-    media,
+    media: ASRModelItem;
     /**
      * The model to use in a call center.
      * @const
      */
-    callcenter,
-  }
+    callcenter: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of T-Bank ASR models.
    * <br>
@@ -16648,16 +16640,16 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum TBank {
+  const TBank: {
     /**
      * Best for audio that originated from a phone call (typically recorded at a 8khz sampling rate).
      * @const
      */
-    default,
-  }
+    default: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of Yandex ASR models.
    * <br>
@@ -16666,22 +16658,22 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum Yandex {
+  const Yandex: {
     /**
      * The default **General** model.
      * @const
      */
-    default,
+    default: ASRModelItem;
     /**
      * Short arbitrary phrases, e.g., search queries.
      * @const
      */
-    general,
+    general: ASRModelItem;
     /**
      * Short arbitrary phrases, e.g., search queries. Release candidate version.
      * @const
      */
-    generalrc,
+    generalrc: ASRModelItem;
     /**
      * Month names, cardinal and ordinal numbers.
      * <br>
@@ -16689,7 +16681,7 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    dates,
+    dates: ASRModelItem;
     /**
      * People's first and last names, as well as requests to put someone on the phone.
      * <br>
@@ -16697,13 +16689,13 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    names,
+    names: ASRModelItem;
     /**
      * Addresses, organizations, and geographical features.
      * @const
      * @deprecated
      */
-    maps,
+    maps: ASRModelItem;
     /**
      * Cardinal numbers and delimiters (comma, period).
      * <br>
@@ -16711,11 +16703,11 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    numbers,
-  }
+    numbers: ASRModelItem;
+  };
 }
 
-declare module ASRModelList {
+declare namespace ASRModelList {
   /**
    * List of YandexV3 ASR models.
    * <br>
@@ -16724,22 +16716,22 @@ declare module ASRModelList {
    * require(Modules.ASR);
    * ```
    */
-  enum YandexV3 {
+  const YandexV3: {
     /**
      * The default **General** model.
      * @const
      */
-    default,
+    default: ASRModelItem;
     /**
      * Short arbitrary phrases, e.g., search queries.
      * @const
      */
-    general,
+    general: ASRModelItem;
     /**
      * Short arbitrary phrases, e.g., search queries. Release candidate version.
      * @const
      */
-    generalrc,
+    generalrc: ASRModelItem;
     /**
      * Month names, cardinal and ordinal numbers.
      * <br>
@@ -16747,7 +16739,7 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    dates,
+    dates: ASRModelItem;
     /**
      * People's first and last names, as well as requests to put someone on the phone.
      * <br>
@@ -16755,13 +16747,13 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    names,
+    names: ASRModelItem;
     /**
      * Addresses, organizations, and geographical features.
      * @const
      * @deprecated
      */
-    maps,
+    maps: ASRModelItem;
     /**
      * Cardinal numbers and delimiters (comma, period).
      * <br>
@@ -16769,8 +16761,8 @@ declare module ASRModelList {
      * @const
      * @deprecated
      */
-    numbers,
-  }
+    numbers: ASRModelItem;
+  };
 }
 
 /**
@@ -16788,15 +16780,7 @@ declare interface ASRParameters {
    * <br>
    * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, T-Bank, Yandex, YandexV3.*
    */
-  profile:
-    | ASRProfileList.Amazon
-    | ASRProfileList.Deepgram
-    | ASRProfileList.Google
-    | ASRProfileList.Microsoft
-    | ASRProfileList.SaluteSpeech
-    | ASRProfileList.TBank
-    | ASRProfileList.Yandex
-    | ASRProfileList.YandexV3;
+  profile: ASRProfile;
 
   /**
    * Optional. Recognition model. Select the model best suited to your domain to get the best results. If it is not specified, the **default** model is used.
@@ -16804,15 +16788,7 @@ declare interface ASRParameters {
    * <br>
    * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, T-Bank, Yandex, YandexV3.*
    */
-  model?:
-    | ASRModelList.Amazon
-    | ASRModelList.Deepgram
-    | ASRModelList.Google
-    | ASRModelList.Microsoft
-    | ASRModelList.SaluteSpeech
-    | ASRModelList.TBank
-    | ASRModelList.Yandex
-    | ASRModelList.YandexV3;
+  model?: ASRModelItem;
 
   /**
    * Optional. Whether to enable interim ASR results. If set to **true**, the [ASREvents.InterimResult] triggers many times according to the speech.
@@ -16862,7 +16838,7 @@ declare interface ASRParameters {
    * <br>
    * *Available for providers: Amazon, Deepgram, Google, Microsoft, SaluteSpeech, T-Bank, Yandex, YandexV3.*
    */
-  headers?: { [key: string]: any };
+  headers?: {[key: string]: any};
 
   /**
    * Optional. Whether to use the Google [v1p1beta1 Speech API](https://cloud.google.com/speech-to-text/docs/reference/rest/v1p1beta1/speech), e.g., **enableSeparateRecognitionPerChannel**, **alternativeLanguageCodes**, **enableWordTimeOffsets**, etc.
@@ -16988,7 +16964,7 @@ declare interface ASRParameters {
     {
       phrases: string[];
       boost: number;
-    }
+    },
   ];
 
   /**
@@ -17049,7 +17025,7 @@ declare interface ASRParameters {
         search: string;
         replace: string;
         caseSensitive: boolean;
-      }
+      },
     ];
   };
 
@@ -17062,7 +17038,7 @@ declare interface ASRParameters {
   request?: Object;
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of Amazon ASR profiles.
    * <br>
@@ -17071,33 +17047,33 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum Amazon {
+  const Amazon: {
     /**
      * English (United Kingdom)
      * @const
      */
-    en_GB,
+    en_GB: ASRProfile;
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
     /**
      * Spanish (United States)
      * @const
      */
-    es_US,
+    es_US: ASRProfile;
     /**
      * French (Canada)
      * @const
      */
-    fr_CA,
+    fr_CA: ASRProfile;
     /**
      * French (France)
      * @const
      */
-    fr_FR,
-  }
+    fr_FR: ASRProfile;
+  };
 }
 
 /**
@@ -17109,9 +17085,9 @@ declare module ASRProfileList {
  * ```
  * @namespace
  */
-declare module ASRProfileList {}
+declare namespace ASRProfileList {}
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of Deepgram ASR profiles.
    * <br>
@@ -17120,171 +17096,171 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum Deepgram {
+  const Deepgram: {
     /**
      * Chinese (China)
      * @const
      */
-    zh,
+    zh: ASRProfile;
     /**
      * Chinese (Simplified)
      * @const
      */
-    zh_CN,
+    zh_CN: ASRProfile;
     /**
      * Chinese (Traditional)
      * @const
      */
-    zh_TW,
+    zh_TW: ASRProfile;
     /**
      * Danish (Denmark)
      * @const
      */
-    da,
+    da: ASRProfile;
     /**
      * Dutch (Netherlands)
      * @const
      */
-    nl,
+    nl: ASRProfile;
     /**
      * English (Common)
      * @const
      */
-    en,
+    en: ASRProfile;
     /**
      * English (Australia)
      * @const
      */
-    en_AU,
+    en_AU: ASRProfile;
     /**
      * English (Great Britain)
      * @const
      */
-    en_GB,
+    en_GB: ASRProfile;
     /**
      * English (Indonesia)
      * @const
      */
-    en_IN,
+    en_IN: ASRProfile;
     /**
      * English (New Zealand)
      * @const
      */
-    en_NZ,
+    en_NZ: ASRProfile;
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
     /**
      * French (France)
      * @const
      */
-    fr,
+    fr: ASRProfile;
     /**
      * French (Canada)
      * @const
      */
-    fr_CA,
+    fr_CA: ASRProfile;
     /**
      * German (Germany)
      * @const
      */
-    de,
+    de: ASRProfile;
     /**
      * Hindi (India)
      * @const
      */
-    hi,
+    hi: ASRProfile;
     /**
      * Hindi (Latin)
      * @const
      */
-    hi_Latn,
+    hi_Latn: ASRProfile;
     /**
      * Indonesian (Indonesia)
      * @const
      */
-    id,
+    id: ASRProfile;
     /**
      * Italian (Italy)
      * @const
      */
-    it,
+    it: ASRProfile;
     /**
      * Japanese (Japan)
      * @const
      */
-    ja,
+    ja: ASRProfile;
     /**
      * Korean (Korea)
      * @const
      */
-    ko,
+    ko: ASRProfile;
     /**
      * Norwegian (Norway)
      * @const
      */
-    no,
+    no: ASRProfile;
     /**
      * Polish (Poland)
      * @const
      */
-    pl,
+    pl: ASRProfile;
     /**
      * Portuguese (Common)
      * @const
      */
-    pt,
+    pt: ASRProfile;
     /**
      * Portuguese (Brazil)
      * @const
      */
-    pt_BR,
+    pt_BR: ASRProfile;
     /**
      * Portuguese (Portugal)
      * @const
      */
-    pt_PT,
+    pt_PT: ASRProfile;
     /**
      * Russian (Russia)
      * @const
      */
-    ru,
+    ru: ASRProfile;
     /**
      * Spanish (Spain)
      * @const
      */
-    es,
+    es: ASRProfile;
     /**
      * Spanish (Latin America)
      * @const
      */
-    es_419,
+    es_419: ASRProfile;
     /**
      * Swedish (Sweden)
      * @const
      */
-    sv,
+    sv: ASRProfile;
     /**
      * Tamil (India)
      * @const
      */
-    ta,
+    ta: ASRProfile;
     /**
      * Turkish (Turkey)
      * @const
      */
-    tr,
+    tr: ASRProfile;
     /**
      * Ukrainian (Ukraine)
      * @const
      */
-    uk,
-  }
+    uk: ASRProfile;
+  };
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of Google ASR profiles.
    * <br>
@@ -17293,891 +17269,891 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum Google {
+  const Google: {
     /**
      * Afrikaans (South Africa)
      * @const
      */
-    af_ZA,
+    af_ZA: ASRProfile;
 
     /**
      * Albanian (Albania)
      * @const
      */
-    sq_AL,
+    sq_AL: ASRProfile;
 
     /**
      * Amharic (Ethiopia)
      * @const
      */
-    am_ET,
+    am_ET: ASRProfile;
 
     /**
      * Arabic (Algeria)
      * @const
      */
-    ar_DZ,
+    ar_DZ: ASRProfile;
 
     /**
      * Arabic (Bahrain)
      * @const
      */
-    ar_BH,
+    ar_BH: ASRProfile;
 
     /**
      * Arabic (Egypt)
      * @const
      */
-    ar_EG,
+    ar_EG: ASRProfile;
 
     /**
      * Arabic (Iraq)
      * @const
      */
-    ar_IQ,
+    ar_IQ: ASRProfile;
 
     /**
      * Arabic (Israel)
      * @const
      */
-    ar_IL,
+    ar_IL: ASRProfile;
 
     /**
      * Arabic (Jordan)
      * @const
      */
-    ar_JO,
+    ar_JO: ASRProfile;
 
     /**
      * Arabic (Kuwait)
      * @const
      */
-    ar_KW,
+    ar_KW: ASRProfile;
 
     /**
      * Arabic (Lebanon)
      * @const
      */
-    ar_LB,
+    ar_LB: ASRProfile;
 
     /**
      * Arabic (Mauritania)
      * @const
      */
-    ar_MR,
+    ar_MR: ASRProfile;
 
     /**
      * Arabic (Morocco)
      * @const
      */
-    ar_MA,
+    ar_MA: ASRProfile;
 
     /**
      * Arabic (Oman)
      * @const
      */
-    ar_OM,
+    ar_OM: ASRProfile;
 
     /**
      * Arabic (Qatar)
      * @const
      */
-    ar_QA,
+    ar_QA: ASRProfile;
 
     /**
      * Arabic (Saudi Arabia)
      * @const
      */
-    ar_SA,
+    ar_SA: ASRProfile;
 
     /**
      * Arabic (State of Palestine)
      * @const
      */
-    ar_PS,
+    ar_PS: ASRProfile;
 
     /**
      * Arabic (Syria)
      * @const
      */
-    ar_SY,
+    ar_SY: ASRProfile;
 
     /**
      * Arabic (Tunisia)
      * @const
      */
-    ar_TN,
+    ar_TN: ASRProfile;
 
     /**
      * Arabic (United Arab Emirates)
      * @const
      */
-    ar_AE,
+    ar_AE: ASRProfile;
 
     /**
      * Arabic (Yemen)
      * @const
      */
-    ar_YE,
+    ar_YE: ASRProfile;
 
     /**
      * Armenian (Armenia)
      * @const
      */
-    hy_AM,
+    hy_AM: ASRProfile;
 
     /**
      * Azerbaijani (Azerbaijan)
      * @const
      */
-    az_AZ,
+    az_AZ: ASRProfile;
 
     /**
      * Basque (Spain)
      * @const
      */
-    eu_ES,
+    eu_ES: ASRProfile;
 
     /**
      * Bengali (Bangladesh)
      * @const
      */
-    bn_BD,
+    bn_BD: ASRProfile;
 
     /**
      * Bengali (India)
      * @const
      */
-    bn_IN,
+    bn_IN: ASRProfile;
 
     /**
      * Bosnian (Bosnia and Herzegovina)
      * @const
      */
-    bs_BA,
+    bs_BA: ASRProfile;
 
     /**
      * Bulgarian (Bulgaria)
      * @const
      */
-    bg_BG,
+    bg_BG: ASRProfile;
 
     /**
      * Burmese (Myanmar)
      * @const
      */
-    my_MM,
+    my_MM: ASRProfile;
 
     /**
      * Catalan (Spain)
      * @const
      */
-    ca_ES,
+    ca_ES: ASRProfile;
 
     /**
      * Chinese (Simplified, China)
      * @const
      */
-    cmn_Hans_CN,
+    cmn_Hans_CN: ASRProfile;
 
     /**
      * Chinese (Simplified, Hong Kong)
      * @const
      */
-    cmn_Hans_HK,
+    cmn_Hans_HK: ASRProfile;
 
     /**
      * Chinese (Traditional, Taiwan)
      * @const
      */
-    cmn_Hant_TW,
+    cmn_Hant_TW: ASRProfile;
 
     /**
      * Chinese, Cantonese (Traditional Hong Kong)
      * @const
      */
-    yue_Hant_HK,
+    yue_Hant_HK: ASRProfile;
 
     /**
      * Croatian (Croatia)
      * @const
      */
-    hr_HR,
+    hr_HR: ASRProfile;
 
     /**
      * Czech (Czech Republic)
      * @const
      */
-    cs_CZ,
+    cs_CZ: ASRProfile;
 
     /**
      * Danish (Denmark)
      * @const
      */
-    da_DK,
+    da_DK: ASRProfile;
 
     /**
      * Dutch (Belgium)
      * @const
      */
-    nl_BE,
+    nl_BE: ASRProfile;
 
     /**
      * Dutch (Netherlands)
      * @const
      */
-    nl_NL,
+    nl_NL: ASRProfile;
 
     /**
      * English (Australia)
      * @const
      */
-    en_AU,
+    en_AU: ASRProfile;
 
     /**
      * English (Canada)
      * @const
      */
-    en_CA,
+    en_CA: ASRProfile;
 
     /**
      * English (Ghana)
      * @const
      */
-    en_GH,
+    en_GH: ASRProfile;
 
     /**
      * English (Hong Kong)
      * @const
      */
-    en_HK,
+    en_HK: ASRProfile;
 
     /**
      * English (India)
      * @const
      */
-    en_IN,
+    en_IN: ASRProfile;
 
     /**
      * English (Ireland)
      * @const
      */
-    en_IE,
+    en_IE: ASRProfile;
 
     /**
      * English (Kenya)
      * @const
      */
-    en_KE,
+    en_KE: ASRProfile;
 
     /**
      * English (New Zealand)
      * @const
      */
-    en_NZ,
+    en_NZ: ASRProfile;
 
     /**
      * English (Nigeria)
      * @const
      */
-    en_NG,
+    en_NG: ASRProfile;
 
     /**
      * English (Pakistan)
      * @const
      */
-    en_PK,
+    en_PK: ASRProfile;
 
     /**
      * English (Philippines)
      * @const
      */
-    en_PH,
+    en_PH: ASRProfile;
 
     /**
      * English (Singapore)
      * @const
      */
-    en_SG,
+    en_SG: ASRProfile;
 
     /**
      * English (South Africa)
      * @const
      */
-    en_ZA,
+    en_ZA: ASRProfile;
 
     /**
      * English (Tanzania)
      * @const
      */
-    en_TZ,
+    en_TZ: ASRProfile;
 
     /**
      * English (United Kingdom)
      * @const
      */
-    en_GB,
+    en_GB: ASRProfile;
 
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
 
     /**
      * Estonian (Estonia)
      * @const
      */
-    et_EE,
+    et_EE: ASRProfile;
 
     /**
      * Filipino (Philippines)
      * @const
      */
-    fil_PH,
+    fil_PH: ASRProfile;
 
     /**
      * Finnish (Finland)
      * @const
      */
-    fi_FI,
+    fi_FI: ASRProfile;
 
     /**
      * French (Belgium)
      * @const
      */
-    fr_BE,
+    fr_BE: ASRProfile;
 
     /**
      * French (Canada)
      * @const
      */
-    fr_CA,
+    fr_CA: ASRProfile;
 
     /**
      * French (France)
      * @const
      */
-    fr_FR,
+    fr_FR: ASRProfile;
 
     /**
      * French (Switzerland)
      * @const
      */
-    fr_CH,
+    fr_CH: ASRProfile;
 
     /**
      * Galician (Spain)
      * @const
      */
-    gl_ES,
+    gl_ES: ASRProfile;
 
     /**
      * Georgian (Georgia)
      * @const
      */
-    ka_GE,
+    ka_GE: ASRProfile;
 
     /**
      * German (Austria)
      * @const
      */
-    de_AT,
+    de_AT: ASRProfile;
 
     /**
      * German (Germany)
      * @const
      */
-    de_DE,
+    de_DE: ASRProfile;
 
     /**
      * German (Switzerland)
      * @const
      */
-    de_CH,
+    de_CH: ASRProfile;
 
     /**
      * Greek (Greece)
      * @const
      */
-    el_GR,
+    el_GR: ASRProfile;
 
     /**
      * Gujarati (India)
      * @const
      */
-    gu_IN,
+    gu_IN: ASRProfile;
 
     /**
      * Hebrew (Israel)
      * @const
      */
-    iw_IL,
+    iw_IL: ASRProfile;
 
     /**
      * Hindi (India)
      * @const
      */
-    hi_IN,
+    hi_IN: ASRProfile;
 
     /**
      * Hungarian (Hungary)
      * @const
      */
-    hu_HU,
+    hu_HU: ASRProfile;
 
     /**
      * Icelandic (Iceland)
      * @const
      */
-    is_IS,
+    is_IS: ASRProfile;
 
     /**
      * Indonesian (Indonesia)
      * @const
      */
-    id_ID,
+    id_ID: ASRProfile;
 
     /**
      * Italian (Italy)
      * @const
      */
-    it_IT,
+    it_IT: ASRProfile;
 
     /**
      * Italian (Switzerland)
      * @const
      */
-    it_CH,
+    it_CH: ASRProfile;
 
     /**
      * Japanese (Japan)
      * @const
      */
-    ja_JP,
+    ja_JP: ASRProfile;
 
     /**
      * Javanese (Indonesia)
      * @const
      */
-    jv_ID,
+    jv_ID: ASRProfile;
 
     /**
      * Kannada (India)
      * @const
      */
-    kn_IN,
+    kn_IN: ASRProfile;
 
     /**
      * Kazakh (Kazakhstan)
      * @const
      */
-    kk_KZ,
+    kk_KZ: ASRProfile;
 
     /**
      * Khmer (Cambodia)
      * @const
      */
-    km_KH,
+    km_KH: ASRProfile;
 
     /**
      * Kinyarwanda (Rwanda)
      * @const
      */
-    rw_RW,
+    rw_RW: ASRProfile;
 
     /**
      * Korean (South Korea)
      * @const
      */
-    ko_KR,
+    ko_KR: ASRProfile;
 
     /**
      * Lao (Laos)
      * @const
      */
-    lo_LA,
+    lo_LA: ASRProfile;
 
     /**
      * Latvian (Latvia)
      * @const
      */
-    lv_LV,
+    lv_LV: ASRProfile;
 
     /**
      * Lithuanian (Lithuania)
      * @const
      */
-    lt_LT,
+    lt_LT: ASRProfile;
 
     /**
      * Macedonian (North Macedonia)
      * @const
      */
-    mk_MK,
+    mk_MK: ASRProfile;
 
     /**
      * Malay (Malaysia)
      * @const
      */
-    ms_MY,
+    ms_MY: ASRProfile;
 
     /**
      * Malayalam (India)
      * @const
      */
-    ml_IN,
+    ml_IN: ASRProfile;
 
     /**
      * Marathi (India)
      * @const
      */
-    mr_IN,
+    mr_IN: ASRProfile;
 
     /**
      * Mongolian (Mongolia)
      * @const
      */
-    mn_MN,
+    mn_MN: ASRProfile;
 
     /**
      * Nepali (Nepal)
      * @const
      */
-    ne_NP,
+    ne_NP: ASRProfile;
 
     /**
      * Norwegian Bokmål (Norway)
      * @const
      */
-    no_NO,
+    no_NO: ASRProfile;
 
     /**
      * Persian (Iran)
      * @const
      */
-    fa_IR,
+    fa_IR: ASRProfile;
 
     /**
      * Polish (Poland)
      * @const
      */
-    pl_PL,
+    pl_PL: ASRProfile;
 
     /**
      * Portuguese (Brazil)
      * @const
      */
-    pt_BR,
+    pt_BR: ASRProfile;
 
     /**
      * Portuguese (Portugal)
      * @const
      */
-    pt_PT,
+    pt_PT: ASRProfile;
 
     /**
      * Punjabi (Gurmukhi India)
      * @const
      */
-    pa_Guru_IN,
+    pa_Guru_IN: ASRProfile;
 
     /**
      * Romanian (Romania)
      * @const
      */
-    ro_RO,
+    ro_RO: ASRProfile;
 
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
+    ru_RU: ASRProfile;
 
     /**
      * Serbian (Serbia)
      * @const
      */
-    sr_RS,
+    sr_RS: ASRProfile;
 
     /**
      * Sinhala (Sri Lanka)
      * @const
      */
-    si_LK,
+    si_LK: ASRProfile;
 
     /**
      * Slovak (Slovakia)
      * @const
      */
-    sk_SK,
+    sk_SK: ASRProfile;
 
     /**
      * Slovenian (Slovenia)
      * @const
      */
-    sl_SI,
+    sl_SI: ASRProfile;
 
     /**
      * Southern Sotho (South Africa)
      * @const
      */
-    st_ZA,
+    st_ZA: ASRProfile;
 
     /**
      * Spanish (Argentina)
      * @const
      */
-    es_AR,
+    es_AR: ASRProfile;
 
     /**
      * Spanish (Bolivia)
      * @const
      */
-    es_BO,
+    es_BO: ASRProfile;
 
     /**
      * Spanish (Chile)
      * @const
      */
-    es_CL,
+    es_CL: ASRProfile;
 
     /**
      * Spanish (Colombia)
      * @const
      */
-    es_CO,
+    es_CO: ASRProfile;
 
     /**
      * Spanish (Costa Rica)
      * @const
      */
-    es_CR,
+    es_CR: ASRProfile;
 
     /**
      * Spanish (Dominican Republic)
      * @const
      */
-    es_DO,
+    es_DO: ASRProfile;
 
     /**
      * Spanish (Ecuador)
      * @const
      */
-    es_EC,
+    es_EC: ASRProfile;
 
     /**
      * Spanish (El Salvador)
      * @const
      */
-    es_SV,
+    es_SV: ASRProfile;
 
     /**
      * Spanish (Guatemala)
      * @const
      */
-    es_GT,
+    es_GT: ASRProfile;
 
     /**
      * Spanish (Honduras)
      * @const
      */
-    es_HN,
+    es_HN: ASRProfile;
 
     /**
      * Spanish (Mexico)
      * @const
      */
-    es_MX,
+    es_MX: ASRProfile;
 
     /**
      * Spanish (Nicaragua)
      * @const
      */
-    es_NI,
+    es_NI: ASRProfile;
 
     /**
      * Spanish (Panama)
      * @const
      */
-    es_PA,
+    es_PA: ASRProfile;
 
     /**
      * Spanish (Paraguay)
      * @const
      */
-    es_PY,
+    es_PY: ASRProfile;
 
     /**
      * Spanish (Peru)
      * @const
      */
-    es_PE,
+    es_PE: ASRProfile;
 
     /**
      * Spanish (Puerto Rico)
      * @const
      */
-    es_PR,
+    es_PR: ASRProfile;
 
     /**
      * Spanish (Spain)
      * @const
      */
-    es_ES,
+    es_ES: ASRProfile;
 
     /**
      * Spanish (United States)
      * @const
      */
-    es_US,
+    es_US: ASRProfile;
 
     /**
      * Spanish (Uruguay)
      * @const
      */
-    es_UY,
+    es_UY: ASRProfile;
 
     /**
      * Spanish (Venezuela)
      * @const
      */
-    es_VE,
+    es_VE: ASRProfile;
 
     /**
      * Sundanese (Indonesia)
      * @const
      */
-    su_ID,
+    su_ID: ASRProfile;
 
     /**
      * Swahili (Kenya)
      * @const
      */
-    sw_KE,
+    sw_KE: ASRProfile;
 
     /**
      * Swahili (Tanzania)
      * @const
      */
-    sw_TZ,
+    sw_TZ: ASRProfile;
 
     /**
      * Swati (Latin, South Africa)
      * @const
      */
-    ss_Latn_ZA,
+    ss_Latn_ZA: ASRProfile;
 
     /**
      * Swedish (Sweden)
      * @const
      */
-    sv_SE,
+    sv_SE: ASRProfile;
 
     /**
      * Tamil (India)
      * @const
      */
-    ta_IN,
+    ta_IN: ASRProfile;
 
     /**
      * Tamil (Malaysia)
      * @const
      */
-    ta_MY,
+    ta_MY: ASRProfile;
 
     /**
      * Tamil (Singapore)
      * @const
      */
-    ta_SG,
+    ta_SG: ASRProfile;
 
     /**
      * Tamil (Sri Lanka)
      * @const
      */
-    ta_LK,
+    ta_LK: ASRProfile;
 
     /**
      * Telugu (India)
      * @const
      */
-    te_IN,
+    te_IN: ASRProfile;
 
     /**
      * Thai (Thailand)
      * @const
      */
-    th_TH,
+    th_TH: ASRProfile;
 
     /**
      * Tsonga (South Africa)
      * @const
      */
-    ts_ZA,
+    ts_ZA: ASRProfile;
 
     /**
      * Tswana (Latin, South Africa)
      * @const
      */
-    tn_Latn_ZA,
+    tn_Latn_ZA: ASRProfile;
 
     /**
      * Turkish (Turkey)
      * @const
      */
-    tr_TR,
+    tr_TR: ASRProfile;
 
     /**
      * Ukrainian (Ukraine)
      * @const
      */
-    uk_UA,
+    uk_UA: ASRProfile;
 
     /**
      * Urdu (India)
      * @const
      */
-    ur_IN,
+    ur_IN: ASRProfile;
 
     /**
      * Urdu (Pakistan)
      * @const
      */
-    ur_PK,
+    ur_PK: ASRProfile;
 
     /**
      * Uzbek (Uzbekistan)
      * @const
      */
-    uz_UZ,
+    uz_UZ: ASRProfile;
 
     /**
      * Venda (South Africa)
      * @const
      */
-    ve_ZA,
+    ve_ZA: ASRProfile;
 
     /**
      * Vietnamese (Vietnam)
      * @const
      */
-    vi_VN,
+    vi_VN: ASRProfile;
 
     /**
      * Xhosa (South Africa)
      * @const
      */
-    xh_ZA,
+    xh_ZA: ASRProfile;
 
     /**
      * Zulu (South Africa)
      * @const
      */
-    zu_ZA,
-  }
+    zu_ZA: ASRProfile;
+  };
 }
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of Microsoft ASR profiles.
    * <br>
@@ -18186,880 +18162,880 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum Microsoft {
+  const Microsoft: {
     /**
      * Afrikaans (South Africa)
      * @const
      */
-    af_ZA,
+    af_ZA: ASRProfile;
 
     /**
      * Amharic (Ethiopia)
      * @const
      */
-    am_ET,
+    am_ET: ASRProfile;
 
     /**
      * Arabic (United Arab Emirates)
      * @const
      */
-    ar_AE,
+    ar_AE: ASRProfile;
 
     /**
      * Arabic (Bahrain)
      * @const
      */
-    ar_BH,
+    ar_BH: ASRProfile;
 
     /**
      * Arabic (Algeria)
      * @const
      */
-    ar_DZ,
+    ar_DZ: ASRProfile;
 
     /**
      * Arabic (Egypt)
      * @const
      */
-    ar_EG,
+    ar_EG: ASRProfile;
 
     /**
      * Arabic (Israel)
      * @const
      */
-    ar_IL,
+    ar_IL: ASRProfile;
 
     /**
      * Arabic (Iraq)
      * @const
      */
-    ar_IQ,
+    ar_IQ: ASRProfile;
 
     /**
      * Arabic (Jordan)
      * @const
      */
-    ar_JO,
+    ar_JO: ASRProfile;
 
     /**
      * Arabic (Kuwait)
      * @const
      */
-    ar_KW,
+    ar_KW: ASRProfile;
 
     /**
      * Arabic (Lebanon)
      * @const
      */
-    ar_LB,
+    ar_LB: ASRProfile;
 
     /**
      * Arabic (Libya)
      * @const
      */
-    ar_LY,
+    ar_LY: ASRProfile;
 
     /**
      * Arabic (Morocco)
      * @const
      */
-    ar_MA,
+    ar_MA: ASRProfile;
 
     /**
      * Arabic (Oman)
      * @const
      */
-    ar_OM,
+    ar_OM: ASRProfile;
 
     /**
      * Arabic (Palestinian Authority)
      * @const
      */
-    ar_PS,
+    ar_PS: ASRProfile;
 
     /**
      * Arabic (Qatar)
      * @const
      */
-    ar_QA,
+    ar_QA: ASRProfile;
 
     /**
      * Arabic (Saudi Arabia)
      * @const
      */
-    ar_SA,
+    ar_SA: ASRProfile;
 
     /**
      * Arabic (Syria)
      * @const
      */
-    ar_SY,
+    ar_SY: ASRProfile;
 
     /**
      * Arabic (Tunisia)
      * @const
      */
-    ar_TN,
+    ar_TN: ASRProfile;
 
     /**
      * Arabic (Yemen)
      * @const
      */
-    ar_YE,
+    ar_YE: ASRProfile;
 
     /**
      * Assamese (India)
      * @const
      */
-    as_IN,
+    as_IN: ASRProfile;
 
     /**
      * Azerbaijani (Latin, Azerbaijan)
      * @const
      */
-    az_AZ,
+    az_AZ: ASRProfile;
 
     /**
      * Bulgarian (Bulgaria)
      * @const
      */
-    bg_BG,
+    bg_BG: ASRProfile;
 
     /**
      * Bengali (India)
      * @const
      */
-    bn_IN,
+    bn_IN: ASRProfile;
 
     /**
      * Bosnian (Bosnia and Herzegovina)
      * @const
      */
-    bs_BA,
+    bs_BA: ASRProfile;
 
     /**
      * Catalan
      * @const
      */
-    ca_ES,
+    ca_ES: ASRProfile;
 
     /**
      * Czech (Czechia)
      * @const
      */
-    cs_CZ,
+    cs_CZ: ASRProfile;
 
     /**
      * Welsh (United Kingdom)
      * @const
      */
-    cy_GB,
+    cy_GB: ASRProfile;
 
     /**
      * Danish (Denmark)
      * @const
      */
-    da_DK,
+    da_DK: ASRProfile;
 
     /**
      * German (Austria)
      * @const
      */
-    de_AT,
+    de_AT: ASRProfile;
 
     /**
      * German (Switzerland)
      * @const
      */
-    de_CH,
+    de_CH: ASRProfile;
 
     /**
      * German (Germany)
      * @const
      */
-    de_DE,
+    de_DE: ASRProfile;
 
     /**
      * Greek (Greece)
      * @const
      */
-    el_GR,
+    el_GR: ASRProfile;
 
     /**
      * English (Australia)
      * @const
      */
-    en_AU,
+    en_AU: ASRProfile;
 
     /**
      * English (Canada)
      * @const
      */
-    en_CA,
+    en_CA: ASRProfile;
 
     /**
      * English (United Kingdom)
      * @const
      */
-    en_GB,
+    en_GB: ASRProfile;
 
     /**
      * English (Ghana)
      * @const
      */
-    en_GH,
+    en_GH: ASRProfile;
 
     /**
      * English (Hong Kong SAR)
      * @const
      */
-    en_HK,
+    en_HK: ASRProfile;
 
     /**
      * English (Ireland)
      * @const
      */
-    en_IE,
+    en_IE: ASRProfile;
 
     /**
      * English (India)
      * @const
      */
-    en_IN,
+    en_IN: ASRProfile;
 
     /**
      * English (Kenya)
      * @const
      */
-    en_KE,
+    en_KE: ASRProfile;
 
     /**
      * English (Nigeria)
      * @const
      */
-    en_NG,
+    en_NG: ASRProfile;
 
     /**
      * English (New Zealand)
      * @const
      */
-    en_NZ,
+    en_NZ: ASRProfile;
 
     /**
      * English (Philippines)
      * @const
      */
-    en_PH,
+    en_PH: ASRProfile;
 
     /**
      * English (Singapore)
      * @const
      */
-    en_SG,
+    en_SG: ASRProfile;
 
     /**
      * English (Tanzania)
      * @const
      */
-    en_TZ,
+    en_TZ: ASRProfile;
 
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
 
     /**
      * English (South Africa)
      * @const
      */
-    en_ZA,
+    en_ZA: ASRProfile;
 
     /**
      * Spanish (Argentina)
      * @const
      */
-    es_AR,
+    es_AR: ASRProfile;
 
     /**
      * Spanish (Bolivia)
      * @const
      */
-    es_BO,
+    es_BO: ASRProfile;
 
     /**
      * Spanish (Chile)
      * @const
      */
-    es_CL,
+    es_CL: ASRProfile;
 
     /**
      * Spanish (Colombia)
      * @const
      */
-    es_CO,
+    es_CO: ASRProfile;
 
     /**
      * Spanish (Costa Rica)
      * @const
      */
-    es_CR,
+    es_CR: ASRProfile;
 
     /**
      * Spanish (Cuba)
      * @const
      */
-    es_CU,
+    es_CU: ASRProfile;
 
     /**
      * Spanish (Dominican Republic)
      * @const
      */
-    es_DO,
+    es_DO: ASRProfile;
 
     /**
      * Spanish (Ecuador)
      * @const
      */
-    es_EC,
+    es_EC: ASRProfile;
 
     /**
      * Spanish (Spain)
      * @const
      */
-    es_ES,
+    es_ES: ASRProfile;
 
     /**
      * Spanish (Equatorial Guinea)
      * @const
      */
-    es_GQ,
+    es_GQ: ASRProfile;
 
     /**
      * Spanish (Guatemala)
      * @const
      */
-    es_GT,
+    es_GT: ASRProfile;
 
     /**
      * Spanish (Honduras)
      * @const
      */
-    es_HN,
+    es_HN: ASRProfile;
 
     /**
      * Spanish (Mexico)
      * @const
      */
-    es_MX,
+    es_MX: ASRProfile;
 
     /**
      * Spanish (Nicaragua)
      * @const
      */
-    es_NI,
+    es_NI: ASRProfile;
 
     /**
      * Spanish (Panama)
      * @const
      */
-    es_PA,
+    es_PA: ASRProfile;
 
     /**
      * Spanish (Peru)
      * @const
      */
-    es_PE,
+    es_PE: ASRProfile;
 
     /**
      * Spanish (Puerto Rico)
      * @const
      */
-    es_PR,
+    es_PR: ASRProfile;
 
     /**
      * Spanish (Paraguay)
      * @const
      */
-    es_PY,
+    es_PY: ASRProfile;
 
     /**
      * Spanish (El Salvador)
      * @const
      */
-    es_SV,
+    es_SV: ASRProfile;
 
     /**
      * Spanish (United States)
      * @const
      */
-    es_US,
+    es_US: ASRProfile;
 
     /**
      * Spanish (Uruguay)
      * @const
      */
-    es_UY,
+    es_UY: ASRProfile;
 
     /**
      * Spanish (Venezuela)
      * @const
      */
-    es_VE,
+    es_VE: ASRProfile;
 
     /**
      * Estonian (Estonia)
      * @const
      */
-    et_EE,
+    et_EE: ASRProfile;
 
     /**
      * Basque
      * @const
      */
-    eu_ES,
+    eu_ES: ASRProfile;
 
     /**
      * Persian (Iran)
      * @const
      */
-    fa_IR,
+    fa_IR: ASRProfile;
 
     /**
      * Finnish (Finland)
      * @const
      */
-    fi_FI,
+    fi_FI: ASRProfile;
 
     /**
      * Filipino (Philippines)
      * @const
      */
-    fil_PH,
+    fil_PH: ASRProfile;
 
     /**
      * French (Belgium)
      * @const
      */
-    fr_BE,
+    fr_BE: ASRProfile;
 
     /**
      * French (Canada)
      * @const
      */
-    fr_CA,
+    fr_CA: ASRProfile;
 
     /**
      * French (Switzerland)
      * @const
      */
-    fr_CH,
+    fr_CH: ASRProfile;
 
     /**
      * French (France)
      * @const
      */
-    fr_FR,
+    fr_FR: ASRProfile;
 
     /**
      * Irish (Ireland)
      * @const
      */
-    ga_IE,
+    ga_IE: ASRProfile;
 
     /**
      * Galician
      * @const
      */
-    gl_ES,
+    gl_ES: ASRProfile;
 
     /**
      * Gujarati (India)
      * @const
      */
-    gu_IN,
+    gu_IN: ASRProfile;
 
     /**
      * Hebrew (Israel)
      * @const
      */
-    he_IL,
+    he_IL: ASRProfile;
 
     /**
      * Hindi (India)
      * @const
      */
-    hi_IN,
+    hi_IN: ASRProfile;
 
     /**
      * Croatian (Croatia)
      * @const
      */
-    hr_HR,
+    hr_HR: ASRProfile;
 
     /**
      * Hungarian (Hungary)
      * @const
      */
-    hu_HU,
+    hu_HU: ASRProfile;
 
     /**
      * Armenian (Armenia)
      * @const
      */
-    hy_AM,
+    hy_AM: ASRProfile;
 
     /**
      * Indonesian (Indonesia)
      * @const
      */
-    id_ID,
+    id_ID: ASRProfile;
 
     /**
      * Icelandic (Iceland)
      * @const
      */
-    is_IS,
+    is_IS: ASRProfile;
 
     /**
      * Italian (Switzerland)
      * @const
      */
-    it_CH,
+    it_CH: ASRProfile;
 
     /**
      * Italian (Italy)
      * @const
      */
-    it_IT,
+    it_IT: ASRProfile;
 
     /**
      * Japanese (Japan)
      * @const
      */
-    ja_JP,
+    ja_JP: ASRProfile;
 
     /**
      * Javanese (Latin, Indonesia)
      * @const
      */
-    jv_ID,
+    jv_ID: ASRProfile;
 
     /**
      * Georgian (Georgia)
      * @const
      */
-    ka_GE,
+    ka_GE: ASRProfile;
 
     /**
      * Kazakh (Kazakhstan)
      * @const
      */
-    kk_KZ,
+    kk_KZ: ASRProfile;
 
     /**
      * Khmer (Cambodia)
      * @const
      */
-    km_KH,
+    km_KH: ASRProfile;
 
     /**
      * Kannada (India)
      * @const
      */
-    kn_IN,
+    kn_IN: ASRProfile;
 
     /**
      * Korean (Korea)
      * @const
      */
-    ko_KR,
+    ko_KR: ASRProfile;
 
     /**
      * Lao (Laos)
      * @const
      */
-    lo_LA,
+    lo_LA: ASRProfile;
 
     /**
      * Lithuanian (Lithuania)
      * @const
      */
-    lt_LT,
+    lt_LT: ASRProfile;
 
     /**
      * Latvian (Latvia)
      * @const
      */
-    lv_LV,
+    lv_LV: ASRProfile;
 
     /**
      * Macedonian (North Macedonia)
      * @const
      */
-    mk_MK,
+    mk_MK: ASRProfile;
 
     /**
      * Malayalam (India)
      * @const
      */
-    ml_IN,
+    ml_IN: ASRProfile;
 
     /**
      * Mongolian (Mongolia)
      * @const
      */
-    mn_MN,
+    mn_MN: ASRProfile;
 
     /**
      * Marathi (India)
      * @const
      */
-    mr_IN,
+    mr_IN: ASRProfile;
 
     /**
      * Malay (Malaysia)
      * @const
      */
-    ms_MY,
+    ms_MY: ASRProfile;
 
     /**
      * Maltese (Malta)
      * @const
      */
-    mt_MT,
+    mt_MT: ASRProfile;
 
     /**
      * Burmese (Myanmar)
      * @const
      */
-    my_MM,
+    my_MM: ASRProfile;
 
     /**
      * Norwegian Bokmål (Norway)
      * @const
      */
-    nb_NO,
+    nb_NO: ASRProfile;
 
     /**
      * Nepali (Nepal)
      * @const
      */
-    ne_NP,
+    ne_NP: ASRProfile;
 
     /**
      * Dutch (Belgium)
      * @const
      */
-    nl_BE,
+    nl_BE: ASRProfile;
 
     /**
      * Dutch (Netherlands)
      * @const
      */
-    nl_NL,
+    nl_NL: ASRProfile;
 
     /**
      * Odia (India)
      * @const
      */
-    or_IN,
+    or_IN: ASRProfile;
 
     /**
      * Punjabi (India)
      * @const
      */
-    pa_IN,
+    pa_IN: ASRProfile;
 
     /**
      * Polish (Poland)
      * @const
      */
-    pl_PL,
+    pl_PL: ASRProfile;
 
     /**
      * Pashto (Afghanistan)
      * @const
      */
-    ps_AF,
+    ps_AF: ASRProfile;
 
     /**
      * Portuguese (Brazil)
      * @const
      */
-    pt_BR,
+    pt_BR: ASRProfile;
 
     /**
      * Portuguese (Portugal)
      * @const
      */
-    pt_PT,
+    pt_PT: ASRProfile;
 
     /**
      * Romanian (Romania)
      * @const
      */
-    ro_RO,
+    ro_RO: ASRProfile;
 
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
+    ru_RU: ASRProfile;
 
     /**
      * Sinhala (Sri Lanka)
      * @const
      */
-    si_LK,
+    si_LK: ASRProfile;
 
     /**
      * Slovak (Slovakia)
      * @const
      */
-    sk_SK,
+    sk_SK: ASRProfile;
 
     /**
      * Slovenian (Slovenia)
      * @const
      */
-    sl_SI,
+    sl_SI: ASRProfile;
 
     /**
      * Somali (Somalia)
      * @const
      */
-    so_SO,
+    so_SO: ASRProfile;
 
     /**
      * Albanian (Albania)
      * @const
      */
-    sq_AL,
+    sq_AL: ASRProfile;
 
     /**
      * Serbian (Cyrillic, Serbia)
      * @const
      */
-    sr_RS,
+    sr_RS: ASRProfile;
 
     /**
      * Swedish (Sweden)
      * @const
      */
-    sv_SE,
+    sv_SE: ASRProfile;
 
     /**
      * Kiswahili (Kenya)
      * @const
      */
-    sw_KE,
+    sw_KE: ASRProfile;
 
     /**
      * Kiswahili (Tanzania)
      * @const
      */
-    sw_TZ,
+    sw_TZ: ASRProfile;
 
     /**
      * Tamil (India)
      * @const
      */
-    ta_IN,
+    ta_IN: ASRProfile;
 
     /**
      * Telugu (India)
      * @const
      */
-    te_IN,
+    te_IN: ASRProfile;
 
     /**
      * Thai (Thailand)
      * @const
      */
-    th_TH,
+    th_TH: ASRProfile;
 
     /**
      * Turkish (Türkiye)
      * @const
      */
-    tr_TR,
+    tr_TR: ASRProfile;
 
     /**
      * Ukrainian (Ukraine)
      * @const
      */
-    uk_UA,
+    uk_UA: ASRProfile;
 
     /**
      * Urdu (India)
      * @const
      */
-    ur_IN,
+    ur_IN: ASRProfile;
 
     /**
      * Uzbek (Latin, Uzbekistan)
      * @const
      */
-    uz_UZ,
+    uz_UZ: ASRProfile;
 
     /**
      * Vietnamese (Vietnam)
      * @const
      */
-    vi_VN,
+    vi_VN: ASRProfile;
 
     /**
      * Chinese (Wu, Simplified)
      * @const
      */
-    wuu_CN,
+    wuu_CN: ASRProfile;
 
     /**
      * Chinese (Cantonese, Simplified)
      * @const
      */
-    yue_CN,
+    yue_CN: ASRProfile;
 
     /**
      * Chinese (Mandarin, Simplified)
      * @const
      */
-    zh_CN,
+    zh_CN: ASRProfile;
 
     /**
      * Chinese (Jilu Mandarin, Simplified)
      * @const
      */
-    zh_CN_shandong,
+    zh_CN_shandong: ASRProfile;
 
     /**
      * Chinese (Southwestern Mandarin, Simplified)
      * @const
      */
-    zh_CN_sichuan,
+    zh_CN_sichuan: ASRProfile;
 
     /**
      * Chinese (Cantonese, Traditional)
      * @const
      */
-    zh_HK,
+    zh_HK: ASRProfile;
 
     /**
      * Chinese (Taiwanese Mandarin, Traditional)
      * @const
      */
-    zh_TW,
+    zh_TW: ASRProfile;
 
     /**
      * isiZulu (South Africa)
      * @const
      */
-    zu_ZA,
-  }
+    zu_ZA: ASRProfile;
+  };
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of SaluteSpeech ASR profiles.
    * <br>
@@ -19068,16 +19044,16 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum SaluteSpeech {
+  const SaluteSpeech: {
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
-  }
+    ru_RU: ASRProfile;
+  };
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of T-Bank ASR profiles.
    * <br>
@@ -19086,16 +19062,16 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum TBank {
+  const TBank: {
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
-  }
+    ru_RU: ASRProfile;
+  };
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of Yandex ASR profiles.
    * <br>
@@ -19104,96 +19080,96 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum Yandex {
+  const Yandex: {
     /**
      * Automatic language recognition
      * @const
      */
-    auto,
+    auto: ASRProfile;
     /**
      * German (Germany)
      * @const
      */
-    de_DE,
+    de_DE: ASRProfile;
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
     /**
      * Spanish (Spain)
      * @const
      */
-    es_ES,
+    es_ES: ASRProfile;
     /**
      * Finnish (Finland)
      * @const
      */
-    fi_FI,
+    fi_FI: ASRProfile;
     /**
      * French (France)
      * @const
      */
-    fr_FR,
+    fr_FR: ASRProfile;
     /**
      * Hebrew (Israel)
      * @const
      */
-    he_HE,
+    he_HE: ASRProfile;
     /**
      * Italian (Italy)
      * @const
      */
-    it_IT,
+    it_IT: ASRProfile;
     /**
      * Kazakh (Kazakhstan)
      * @const
      */
-    kk_KK,
+    kk_KK: ASRProfile;
     /**
      * Dutch (Holland)
      * @const
      */
-    nl_NL,
+    nl_NL: ASRProfile;
     /**
      * Polish (Poland)
      * @const
      */
-    pl_PL,
+    pl_PL: ASRProfile;
     /**
      * Portuguese (Portugal)
      * @const
      */
-    pt_PT,
+    pt_PT: ASRProfile;
     /**
      * Portuguese (Brazilian)
      * @const
      */
-    pt_BR,
+    pt_BR: ASRProfile;
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
+    ru_RU: ASRProfile;
     /**
      * Swedish (Sweden)
      * @const
      */
-    sv_SE,
+    sv_SE: ASRProfile;
     /**
      * Turkish (Turkey)
      * @const
      */
-    tr_TR,
+    tr_TR: ASRProfile;
     /**
      * Uzbek (Uzbekistan)
      * @const
      */
-    uz_UZ,
-  }
+    uz_UZ: ASRProfile;
+  };
 }
 
-declare module ASRProfileList {
+declare namespace ASRProfileList {
   /**
    * List of YandexV3 ASR profiles.
    * <br>
@@ -19202,93 +19178,93 @@ declare module ASRProfileList {
    * require(Modules.ASR);
    * ```
    */
-  enum YandexV3 {
+  const YandexV3: {
     /**
      * Automatic language recognition
      * @const
      */
-    auto,
+    auto: ASRProfile;
     /**
      * German (Germany)
      * @const
      */
-    de_DE,
+    de_DE: ASRProfile;
     /**
      * English (United States)
      * @const
      */
-    en_US,
+    en_US: ASRProfile;
     /**
      * Spanish (Spain)
      * @const
      */
-    es_ES,
+    es_ES: ASRProfile;
     /**
      * Finnish (Finland)
      * @const
      */
-    fi_FI,
+    fi_FI: ASRProfile;
     /**
      * French (France)
      * @const
      */
-    fr_FR,
+    fr_FR: ASRProfile;
     /**
      * Hebrew (Israel)
      * @const
      */
-    he_HE,
+    he_HE: ASRProfile;
     /**
      * Italian (Italy)
      * @const
      */
-    it_IT,
+    it_IT: ASRProfile;
     /**
      * Kazakh (Kazakhstan)
      * @const
      */
-    kk_KK,
+    kk_KK: ASRProfile;
     /**
      * Dutch (Holland)
      * @const
      */
-    nl_NL,
+    nl_NL: ASRProfile;
     /**
      * Polish (Poland)
      * @const
      */
-    pl_PL,
+    pl_PL: ASRProfile;
     /**
      * Portuguese (Portugal)
      * @const
      */
-    pt_PT,
+    pt_PT: ASRProfile;
     /**
      * Portuguese (Brazilian)
      * @const
      */
-    pt_BR,
+    pt_BR: ASRProfile;
     /**
      * Russian (Russia)
      * @const
      */
-    ru_RU,
+    ru_RU: ASRProfile;
     /**
      * Swedish (Sweden)
      * @const
      */
-    sv_SE,
+    sv_SE: ASRProfile;
     /**
      * Turkish (Turkey)
      * @const
      */
-    tr_TR,
+    tr_TR: ASRProfile;
     /**
      * Uzbek (Uzbekistan)
      * @const
      */
-    uz_UZ,
-  }
+    uz_UZ: ASRProfile;
+  };
 }
 
 /**
@@ -28168,4 +28144,19 @@ declare namespace VoiceList {
  * Represents a language and a voice for TTS. List of all supported voices: [VoiceList].
  */
 declare class Voice {
+  private _brand: never;
+}
+
+/**
+ * Profile that specifies an ASR provider and a language to use. List of all supported profiles: [ASRProfileList].
+ */
+declare class ASRProfile {
+  private _brand: never;
+}
+
+/**
+ * Recognition model an ASR. List of all supported models: [ASRModelList].
+ */
+declare class ASRModelItem {
+  private _brand: never;
 }

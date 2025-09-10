@@ -1513,8 +1513,8 @@ declare enum ASREvents {
   SpeechCaptured = 'ASR.SpeechCaptured',
   /**
    * Triggered when a speech recognition result has been received from ASR.
-   * 
-   * We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.  
+   *
+   * We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.
    * Note: We recommend to take a decision about continuing speech recognition in this event's handler. Otherwise, speech recognition continues automatically.
    * @typedef _ASRResultEvent
    */
@@ -3449,11 +3449,11 @@ declare namespace CallList {}
 declare namespace CallList {
   /**
    * Reports error to the CallList module asynchronously and continues the call list.
-   * 
-   * Call this method if the call attempt is not successful. If you do not call this method or 
-   * [reportErrorAsync](/docs/references/voxengine/calllist/reporterrorasync), the call list considers this task 
+   *
+   * Call this method if the call attempt is not successful. If you do not call this method or
+   * [reportErrorAsync](/docs/references/voxengine/calllist/reporterrorasync), the call list considers this task
    * successful and does not make any more attempts to call this task.
-   * 
+   *
    * @param error Error string or JSON
    */
   function reportErrorAsync(error: string | Object): Promise<Net.HttpRequestResult>;
@@ -3462,11 +3462,11 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Reports error to the CallList module and continues the call list.
-   * 
-   * Call this method if the call attempt is not successful. If you do not call this method or 
-   * [reportError](/docs/references/voxengine/calllist/reporterror), the call list considers this task 
+   *
+   * Call this method if the call attempt is not successful. If you do not call this method or
+   * [reportError](/docs/references/voxengine/calllist/reporterror), the call list considers this task
    * successful and does not make any more attempts to call this task.
-   * 
+   *
    * @param error Error string or JSON
    * @param callback Optional. Callback to execute when a result is processed
    */
@@ -3498,7 +3498,7 @@ declare namespace CallList {
 
 declare namespace CallList {
   /**
-   * Reports successful result to the CallList module asynchronously, saves the report to result_data field in the sheet, 
+   * Reports successful result to the CallList module asynchronously, saves the report to result_data field in the sheet,
    * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
    */
@@ -3507,7 +3507,7 @@ declare namespace CallList {
 
 declare namespace CallList {
   /**
-   * Reports successful result to the CallList module, saves the report to result_data field in the sheet, 
+   * Reports successful result to the CallList module, saves the report to result_data field in the sheet,
    * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
    * @param callback Optional. Callback to execute when a result is processed
@@ -3521,16 +3521,16 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data asynchronously.
-   * 
-   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   *
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`,
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
-   * 
+   *
    * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
-   * 
-   * After an unsuccessful calling attempt, this method executes the 
+   *
+   * After an unsuccessful calling attempt, this method executes the
    * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
-   * 
+   *
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
    */
@@ -3540,16 +3540,16 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data.
-   * 
-   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   *
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`,
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
-   * 
+   *
    * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
-   * 
-   * After an unsuccessful calling attempt, this method executes the 
+   *
+   * After an unsuccessful calling attempt, this method executes the
    * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
-   * 
+   *
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
    * @param callback Optional. Callback function to execute after the request is done
@@ -5178,7 +5178,7 @@ declare namespace ElevenLabs {
     agentId: string;
   }
 }
-  
+
 declare namespace ElevenLabs {
   class ConversationalAIClient {
     /**
@@ -5258,7 +5258,7 @@ declare namespace ElevenLabs {
     userMessage(parameters: Object): void
   }
 }
-  
+
 declare namespace ElevenLabs {
   /**
    * @event
@@ -5370,8 +5370,8 @@ declare namespace ElevenLabs {
     data?: Object;
   }
 }
-  
-  
+
+
 declare namespace ElevenLabs {
     /**
      * Creates an [ElevenLabs.ConversationalAIClient] instance.
@@ -8969,7 +8969,7 @@ declare namespace Ultravox {
     joinUrl?: string;
   }
 }
-  
+
 declare namespace Ultravox {
   class WebSocketAPIClient {
     /**
@@ -9045,7 +9045,7 @@ declare namespace Ultravox {
     clientToolResult(parameters: Object): void
   }
 }
-  
+
 declare namespace Ultravox {
   /**
    * @event
@@ -9121,8 +9121,8 @@ declare namespace Ultravox {
     data?: Object;
   }
 }
-  
-  
+
+
 declare namespace Ultravox {
   /**
    * @private
@@ -9556,7 +9556,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Terminates the current JavaScript session. All audio/video streams are disconnected and scenario execution stops. Note that after this function, only the [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered.
-   * 
+   *
    * Note: if you are using this method inside a code block (e.g., an "if" block), it does not stop the execution of the current block. Use `return;` after using this method to exit the current code block.
    */
   function terminate(): void;
@@ -15552,7 +15552,7 @@ declare namespace VoximplantAPI {
     downloadInvoice: (request: DownloadInvoiceRequest) => Promise<DownloadInvoiceResponse>;
   }
   class Client {
-    
+
     Accounts: AccountsInterface;
     Applications: ApplicationsInterface;
     Users: UsersInterface;
@@ -15578,7 +15578,7 @@ declare namespace VoximplantAPI {
     KeyValueStorage: KeyValueStorageInterface;
     Invoices: InvoicesInterface;
   }
-  
+
 }
 
 declare namespace VoximplantAvatar {
@@ -16461,7 +16461,7 @@ declare module ASRModelList {
 
     /**
      * Optimized for everyday audio processing.
-     * @const 
+     * @const
      */
     nova_general,
     /**
@@ -20916,7 +20916,7 @@ declare namespace VoiceList {
     const createBrandVoice: (name: string) => Voice;
   }
 }
-  
+
 declare namespace VoiceList {
   /**
    * List of available Google TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.

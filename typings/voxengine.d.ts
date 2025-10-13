@@ -1380,8 +1380,9 @@ declare namespace ApplicationStorage {
   /**
    * Retrieves all the keys assigned to a Voximplant application.
    * @param pattern Optional. Namespace that keys should contain
+   * @param count Optional. Maximum number of keys to return in a single request. The default value is **1000**.
    */
-  function keys(pattern?: string): Promise<StoragePage>;
+  function keys(pattern?: string, count?: number): Promise<StoragePage>;
 }
 
 declare namespace ApplicationStorage {
@@ -2281,6 +2282,121 @@ declare enum ASRModel {
 }
 
 /**
+ * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Parameters **language** or **dictionary** should be passed to the [VoxEngine.createASR] function.
+ * <br>
+ * Add the following line to your scenario code to use the class:
+ * ```
+ * require(Modules.ASR);
+ * ```
+ */
+declare class ASR {
+  /**
+   * @param id
+   * @param language
+   * @param dictionary
+   */
+  constructor(id: string, language: string, dictionary: string);
+
+  /**
+   * Returns the asr's id.
+   */
+  id(): string;
+
+  /**
+   * Returns the asr's language.
+   */
+  language(): string;
+
+  /**
+   * Returns the asr's dictionary.
+   */
+  dictionary(): string[];
+
+  /**
+   * Adds a handler for the specified [ASREvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+   * @param event Event class (i.e., [ASREvents.Stopped])
+   * @param callback Handler function. A single parameter is passed - object with event information
+   */
+  addEventListener<T extends keyof _ASREvents>(
+    event: ASREvents | T,
+    callback: (event: _ASREvents[T]) => any
+  ): void;
+
+  /**
+   * Removes a handler for the specified [ASREvents] event.
+   * @param event Event class (i.e., [ASREvents.Stopped])
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
+   */
+  removeEventListener<T extends keyof _ASREvents>(
+    event: ASREvents | T,
+    callback?: (event: _ASREvents[T]) => any
+  ): void;
+
+  /**
+   * Stops recognition. Triggers the [ASREvents.Stopped] event. Do not call any other ASR functions/handlers after the **ASR.stop** call.
+   */
+  stop(): void;
+}
+
+/**
+ * @private
+ */
+declare class BasePlayer {
+  /**
+   * Adds a handler for the specified [PlayerEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+   * @param event Event class (i.e., [PlayerEvents.PlaybackFinished])
+   * @param callback Handler function. A single parameter is passed - object with event information
+   */
+  addEventListener<T extends keyof _PlayerEvents>(
+    event: PlayerEvents | T,
+    callback: (event: _PlayerEvents[T]) => any
+  ): void;
+
+  /**
+   * Removes a handler for the specified [PlayerEvents] event.
+   * @param event Event class (i.e., [PlayerEvents.PlaybackFinished])
+   * @param callback Optional. Handler function. If not specified, all handler functions are removed
+   */
+  removeEventListener<T extends keyof _PlayerEvents>(
+    event: PlayerEvents | T,
+    callback?: (event: _PlayerEvents[T]) => any
+  ): void;
+
+  /**
+   * Returns the player's id.
+   */
+  id(): string;
+
+  /**
+   * Pauses playback. To continue the playback use the [Player.resume] method.
+   */
+  pause(): void;
+
+  /**
+   * Resumes playback after the [Player.pause] method is called.
+   */
+  resume(): void;
+
+  /**
+   * Stops playback. The current player's instance is destroyed.
+   */
+  stop(): void;
+
+  /**
+   * Starts sending media from the player to the media unit.
+   * @param mediaUnit Media unit that receives media
+   * @param parameters Optional. WebSocket interaction only parameters
+   */
+  sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+  /**
+   * Stops sending media from the player to the media unit.
+   * @param mediaUnit Media unit that does not need to receive media from this conference anymore
+   */
+  stopMediaTo(mediaUnit: VoxMediaUnit): void;
+}
+
+/**
  * @private
  */
 declare interface BaseRecorderParameters {
@@ -2301,7 +2417,7 @@ declare interface BaseRecorderParameters {
    */
   hd_audio?: boolean;
   /**
-   * Optional. Storage time for recorded files. The default value is **[RecordExpireTime.THREEMONTHS]**.
+   * Optional. Storage time for recorded files. The default value is [RecordExpireTime.THREEMONTHS](/docs/references/voxengine/recordexpiretime#threemonths).
    */
   expire?: RecordExpireTime;
   /**
@@ -2326,6 +2442,36 @@ declare interface BaseRecorderParameters {
  * The parameters can be passed as arguments to the [Call.answer] method.
  */
 declare interface CallAnswerParameters extends CallParameters {}
+
+/**
+ * List of available call audio quality options.
+ */
+declare enum CallAudioQuality {
+  /**
+   * High definition of audio.
+   * @const
+   */
+  HD = 'HD',
+
+  /**
+   * Standard audio quality.
+   * @const
+   */
+  STANDARD = 'Standard'
+}
+/**
+ * Parameters for the [Call.enableBeepDetection] method.
+ */
+declare interface CallEnableBeepDetectionParameters {
+  /**
+   * Optional. Array of frequencies to detect in Hz.
+   */
+  frequencies?: number[];
+  /**
+   * Optional. Timeout in milliseconds to wait for the beep detection.
+   */
+  timeout?: number;
+}
 
 /**
  * @event
@@ -2553,6 +2699,21 @@ declare enum CallEvents {
    * @typedef _RtpResumedEvent
    */
   RtpResumed = 'Call.RtpResumed',
+  /**
+   * Triggers after the beep detection is complete.
+   * @typedef _BeepDetectionComplete
+   */
+  BeepDetectionComplete = 'Call.BeepDetectionComplete',
+  /**
+   * Error during beep detection.
+   * @typedef _BeepDetectionError
+   */
+  BeepDetectionError = 'Call.BeepDetectionError',
+  /**
+   * Triggers after the audio quality detected.
+   * @typedef _AudioQualityDetectedEvent
+   */
+  AudioQualityDetected = 'Call.AudioQualityDetected',
 }
 
 /**
@@ -2596,6 +2757,9 @@ declare interface _CallEvents {
   [CallEvents.FirstVideoPacketReceived]: _FirstVideoPacketReceivedEvent;
   [CallEvents.RtpStopped]: _RtpStoppedEvent;
   [CallEvents.RtpResumed]: _RtpResumedEvent;
+  [CallEvents.BeepDetectionComplete]: _BeepDetectionComplete;
+  [CallEvents.BeepDetectionError]: _BeepDetectionError;
+  [CallEvents.AudioQualityDetected]: _AudioQualityDetectedEvent;
 }
 
 /**
@@ -2992,6 +3156,41 @@ declare interface _RtpResumedEvent extends _CallEvent {
 /**
  * @private
  */
+declare interface _BeepDetectionComplete extends _CallEvent {
+  /**
+   * Array of frequencies detected during the beep detection in Hz.
+   */
+  frequencies?: number[];
+  /**
+   * Whether the timeout occurred during beep detection.
+   */
+  timeout?: boolean;
+}
+
+/**
+ * @private
+ */
+declare interface _BeepDetectionError extends _CallEvent {
+  /**
+   * Beep detection failure reason.
+   */
+  reason: string;
+}
+
+/**
+ * @private
+ */
+declare interface _AudioQualityDetectedEvent extends _CallEvent {
+  /**
+   * The audio quality.
+   */
+  quality: CallAudioQuality;
+}
+
+
+/**
+ * @private
+ */
 declare interface CallParameters {
   /**
    * Optional. Name of the caller that is displayed to the user. Normally it is a human-readable version of CallerID, e.g. a person's name.
@@ -3025,6 +3224,10 @@ declare interface CallParameters {
    * Optional. Whether the call is coming from a conference. The default value is **false**.
    */
   conferenceCall?: boolean;
+  /**
+   * Optional. Disables DTX for audio. The default value is **false**.
+   */
+  disableDtxForAudio?: boolean;
 }
 
 /**
@@ -3072,9 +3275,9 @@ declare interface CallRecordParameters extends BaseRecorderParameters {
  */
 declare interface CallSayParameters {
   /**
-   * Optional. Language and voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex, ElevenLabs.*
+   * Optional. Voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex, ElevenLabs.*
    */
-  language?: Voice;
+  voice?: Voice;
   /**
    * Optional. Whether to use progressive playback. If true, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.<br><br>*Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex.*
    */
@@ -3198,6 +3401,28 @@ declare interface CallUserParameters extends CallParameters {
 }
 
 /**
+ * [Call] parameters. Can be passed as an argument to the [VoxEngine.callWhatsappUser] method.
+ */
+declare interface CallWhatsappUserParameters {
+  /**
+   * WhatsApp phone number to call.
+   */
+  number: string;
+  /**
+   * WhatsApp Business account's phone number that is displayed as the CallerID to the callee. Usage of whitespaces is not allowed.
+   */
+  callerid: string;
+  /**
+   * Optional. Extra headers to be sent with the request. Example: `{'X-header':'value'}`.
+   */
+  headers?: Object;
+  /**
+   * Optional. Wheter to disable DTX (Discontinuous Transmission) for the audio codec.
+   */
+  disableDtxForAudio?: boolean;
+}
+
+/**
  * Represents an audio or video call.
  */
 declare class Call {
@@ -3271,7 +3496,7 @@ declare class Call {
   ): void;
 
   /**
-   * Returns a type of the client.
+   * Returns a type of the client. The possible values are: 'pstn', 'sip', 'user', 'wab'.
    */
   clientType(): string;
 
@@ -3332,6 +3557,7 @@ declare class Call {
    * @param maxVideoBitrate Optional. Set the maximum possible video bitrate for the customer device in kbps
    * @param audioLevelExtension Optional. Audio level extension
    * @param conferenceCall Optional. Whether the call is coming from a conference. The default value is **false**
+   * @param disableDtxForAudio Optional. Whether the call is coming from a conference. The default value is **false**
    */
   startEarlyMedia(
     extraHeaders?: { [header: string]: string },
@@ -3339,6 +3565,7 @@ declare class Call {
     maxVideoBitrate?: number,
     audioLevelExtension?: boolean,
     conferenceCall?: boolean,
+    disableDtxForAudio?: boolean,
   ): void;
 
   /**
@@ -3439,6 +3666,22 @@ declare class Call {
    * @param reason Reason why the blind transfer is failed
    */
   notifyBlindTransferFailed(code: number, reason: string): void;
+
+  /**
+   * Enables beep detection in a call. The beep detection is used to detect beeps in the call audio stream.
+   * @param parameters Beep detection parameters
+   */
+  enableBeepDetection(parameters: CallEnableBeepDetectionParameters): void;
+
+  /**
+   * Disables beep detection in a call.
+   */
+  disableBeepDetection(): void;
+
+  /**
+   * Transfers a SIP call to a 3rd party provider which supports the REFER command. If the transfer is successful, Voximplant disconnects from handling this call and the [CallEvents.TransferComplete] event is triggered. Otherwise, the [CallEvents.TransferFailed] event is triggered.
+   */
+  transferTo(parameters: TransferToParameters): void;
 }
 
 /**
@@ -4500,6 +4743,9 @@ declare class Conference {
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
+/**
+ * @private
+ */
 interface _ConversationalAgentClientParameters {
   /**
    * Optional. A callback function that is called when the [WebSocket] connection is closed.
@@ -5160,29 +5406,33 @@ declare namespace ElevenLabs {
   /**
    * @private
    */
-  interface _ConversationalAIClientEvents extends _Events, _ConversationalAIEvents {
+  interface _AgentsClientEvents extends _Events, _AgentsEvents {
   }
 }
 declare namespace ElevenLabs {
   /**
-   * [ElevenLabs.ConversationalAIClient] parameters. Can be passed as arguments to the [ElevenLabs.createConversationalAIClient] method.
+   * [ElevenLabs.AgentsClient] parameters. Can be passed as arguments to the [ElevenLabs.createAgentsClient] method.
    */
-  interface ConversationalAIClientParameters extends _ConversationalAgentClientParameters {
+  interface AgentsClientParameters extends _ConversationalAgentClientParameters {
     /**
-     * The API key for the ElevenLabs Conversational AI.
+     * The API key for the ElevenLabs Agents.
      */
     xiApiKey: string;
     /**
      * The unique identifier for the voice to use in the TTS process.
      */
     agentId: string;
+    /**
+     * Optional. Whether to include a [conversation_id](https://elevenlabs.io/docs/api-reference/conversations/get-signed-url#request.query.include_conversation_id.include_conversation_id) with the response. If included, the conversation_signature cannot be used again. The default value is **false**.
+     */
+    includeConversationId?: boolean;
   }
 }
   
 declare namespace ElevenLabs {
-  class ConversationalAIClient {
+  class AgentsClient {
     /**
-     * Returns the ConversationalAIClient id.
+     * Returns the AgentsClient id.
      */
     id(): string;
 
@@ -5216,37 +5466,37 @@ declare namespace ElevenLabs {
     clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
 
     /**
-     * Adds a handler for the specified [ElevenLabs.ConversationalAIEvents] or [ElevenLabs.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-     * @param event Event class (i.e., [ElevenLabs.ConversationalAIEvents.UserTranscript])
+     * Adds a handler for the specified [ElevenLabs.AgentsEvents] or [ElevenLabs.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [ElevenLabs.AgentsEvents.UserTranscript])
      * @param callback Handler function. A single parameter is passed - object with event information
      */
-    addEventListener<T extends keyof ElevenLabs._ConversationalAIClientEvents>(
-      event: ElevenLabs.Events | ElevenLabs.ConversationalAIEvents | T,
-      callback: (event: ElevenLabs._ConversationalAIClientEvents[T]) => any,
+    addEventListener<T extends keyof ElevenLabs._AgentsClientEvents>(
+      event: ElevenLabs.Events | ElevenLabs.AgentsEvents | T,
+      callback: (event: ElevenLabs._AgentsClientEvents[T]) => any,
     ): void;
 
     /**
-     * Removes a handler for the specified [ElevenLabs.ConversationalAIEvents] or [ElevenLabs.Events] event.
-     * @param event Event class (i.e., [ElevenLabs.ConversationalAIEvents.UserTranscript])
+     * Removes a handler for the specified [ElevenLabs.AgentsEvents] or [ElevenLabs.Events] event.
+     * @param event Event class (i.e., [ElevenLabs.AgentsEvents.UserTranscript])
      * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
-    removeEventListener<T extends keyof ElevenLabs._ConversationalAIClientEvents>(
-      event: ElevenLabs.Events | ElevenLabs.ConversationalAIEvents | T,
-      callback?: (event: ElevenLabs._ConversationalAIClientEvents[T]) => any,
+    removeEventListener<T extends keyof ElevenLabs._AgentsClientEvents>(
+      event: ElevenLabs.Events | ElevenLabs.AgentsEvents | T,
+      callback?: (event: ElevenLabs._AgentsClientEvents[T]) => any,
     ): void;
 
     /**
-     * Defines what can be customized when starting a conversation. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Conversation-Initiation-Client-Data](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Conversation-Initiation-Client-Data)
+     * Defines what can be customized when starting a conversation. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Conversation-Initiation-Client-Data](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Conversation-Initiation-Client-Data)
      * @param parameters
      */
     conversationInitiationClientData(parameters: Object): void
     /**
-     * Result of the client tool call. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Client-Tool-Result](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Client-Tool-Result)
+     * Result of the client tool call. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Client-Tool-Result](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Client-Tool-Result)
      * @param parameters
      */
     clientToolResult(parameters: Object): void
     /**
-     * Allows to send non-interrupting background information to the conversation. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Contextual-Update](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#send.Contextual-Update)
+     * Allows to send non-interrupting background information to the conversation. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Contextual-Update](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#send.Contextual-Update)
      * @param parameters
      */
     contextualUpdate(parameters: Object): void
@@ -5263,107 +5513,128 @@ declare namespace ElevenLabs {
   /**
    * @event
    */
-  enum ConversationalAIEvents {
+  enum AgentsEvents {
     /**
      * The unknown event.
-     * @typedef _ConversationalAIEvent
+     * @typedef _AgentsEvent
      */
-    Unknown = 'ElevenLabs.ConversationalAI.Unknown',
+    Unknown = 'ElevenLabs.Agents.Unknown',
 
     /**
      * The HTTP response event.
-     * @typedef _ConversationalAIEvent
+     * @typedef _AgentsEvent
      */
-    HTTPResponse = 'ElevenLabs.ConversationalAI.HTTPResponse',
+    HTTPResponse = 'ElevenLabs.Agents.HTTPResponse',
 
     /**
-     * Automatically sent when starting a conversation. Initializes conversation settings and parameters. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#conversation_initiation_metadata](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#conversation_initiation_metadata)
-     * @typedef _ConversationalAIEvent
+     * Automatically sent when starting a conversation. Initializes conversation settings and parameters. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#conversation_initiation_metadata](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#conversation_initiation_metadata)
+     * @typedef _AgentsEvent
      */
-    ConversationInitiationMetadata = 'ElevenLabs.ConversationalAI.ConversationInitiationMetadata',
+    ConversationInitiationMetadata = 'ElevenLabs.Agents.ConversationInitiationMetadata',
 
     /**
-     * Health check event requiring immediate response. Used to maintain WebSocket connection. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#ping](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#ping)
-     * @typedef _ConversationalAIEvent
+     * Health check event requiring immediate response. Used to maintain WebSocket connection. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#ping](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#ping)
+     * @typedef _AgentsEvent
      */
-    Ping = 'ElevenLabs.ConversationalAI.Ping',
+    Ping = 'ElevenLabs.Agents.Ping',
 
 
     /**
-     * Contains finalized speech-to-text results. Represents complete user utterances. Used for conversation history. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#user_transcript](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#user_transcript)
-     * @typedef _ConversationalAIEvent
+     * Contains finalized speech-to-text results. Represents complete user utterances. Used for conversation history. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#user_transcript](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#user_transcript)
+     * @typedef _AgentsEvent
      */
-    UserTranscript = 'ElevenLabs.ConversationalAI.UserTranscript',
+    UserTranscript = 'ElevenLabs.Agents.UserTranscript',
 
     /**
-     * Contains complete agent message. Sent with first audio chunk. Used for display and history. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response)
-     * @typedef _ConversationalAIEvent
+     * Contains complete agent message. Sent with first audio chunk. Used for display and history. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_response](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_response)
+     * @typedef _AgentsEvent
      */
-    AgentResponse = 'ElevenLabs.ConversationalAI.AgentResponse',
+    AgentResponse = 'ElevenLabs.Agents.AgentResponse',
 
     /**
-     * Contains truncated response after interruption. Updates displayed message. Maintains conversation accuracy. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response_correction](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#agent_response_correction)
-     * @typedef _ConversationalAIEvent
+     * Contains truncated response after interruption. Updates displayed message. Maintains conversation accuracy. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_response_correction](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_response_correction)
+     * @typedef _AgentsEvent
      */
-    AgentResponseCorrection = 'ElevenLabs.ConversationalAI.AgentResponseCorrection',
+    AgentResponseCorrection = 'ElevenLabs.Agents.AgentResponseCorrection',
 
     /**
-     * Contains event id of interrupted event. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Interruption](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Interruption)
-     * @typedef _ConversationalAIEvent
+     * Contains event id of interrupted event. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Interruption](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Interruption)
+     * @typedef _AgentsEvent
      */
-    Interruption = 'ElevenLabs.ConversationalAI.Interruption',
+    Interruption = 'ElevenLabs.Agents.Interruption',
 
     /**
-     * Contains contextual information to be added to the conversation state. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Contextual-Update](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Contextual-Update)
-     * @typedef _ConversationalAIEvent
+     * Contains contextual information to be added to the conversation state. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Contextual-Update](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Contextual-Update)
+     * @typedef _AgentsEvent
      */
-    ContextualUpdate = 'ElevenLabs.ConversationalAI.ContextualUpdate',
+    ContextualUpdate = 'ElevenLabs.Agents.ContextualUpdate',
 
     /**
-     * Represents a function call the agent wants the client to execute. Contains tool name, tool call ID, and parameters. Requires client-side execution of the function and sending the result back to the server. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#client_tool_call](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#client_tool_call)
-     * @typedef _ConversationalAIEvent
+     * Represents a function call the agent wants the client to execute. Contains tool name, tool call ID, and parameters. Requires client-side execution of the function and sending the result back to the server. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#client_tool_call](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#client_tool_call)
+     * @typedef _AgentsEvent
      */
-    ClientToolCall = 'ElevenLabs.ConversationalAI.ClientToolCall',
+    ClientToolCall = 'ElevenLabs.Agents.ClientToolCall',
 
     /**
-     * Voice Activity Detection score event. Indicates the probability that the user is speaking. Values range from 0 to 1, where higher values indicate higher confidence of speech. [https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#vad_score](https://elevenlabs.io/docs/conversational-ai/customization/events/client-events#vad_score)
-     * @typedef _ConversationalAIEvent
+     * Voice Activity Detection score event. Indicates the probability that the user is speaking. Values range from 0 to 1, where higher values indicate higher confidence of speech. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#vad_score](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#vad_score)
+     * @typedef _AgentsEvent
      */
-    VadScore = 'ElevenLabs.ConversationalAI.VadScore',
+    VadScore = 'ElevenLabs.Agents.VadScore',
 
     /**
-     * Contains preliminary text from the agent. [https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Internal-Tentative-Agent-Response](https://elevenlabs.io/docs/conversational-ai/api-reference/conversational-ai/websocket#receive.Internal-Tentative-Agent-Response)
-     * @typedef _ConversationalAIEvent
+     * Contains preliminary text from the agent. [https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Internal-Tentative-Agent-Response](https://elevenlabs.io/docs/agents-platform/api-reference/agents-platform/websocket#receive.Internal-Tentative-Agent-Response)
+     * @typedef _AgentsEvent
      */
-    InternalTentativeAgentResponse = 'ElevenLabs.ConversationalAI.InternalTentativeAgentResponse',
+    InternalTentativeAgentResponse = 'ElevenLabs.Agents.InternalTentativeAgentResponse',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _AgentsEvent
+     */
+    WebSocketError = 'ElevenLabs.Agents.WebSocketError',
+
+     /**
+     * Contains information about connector.
+     * @typedef _AgentsEvent
+     */
+    ConnectorInformation = 'ElevenLabs.Agents.ConnectorInformation',
+
+    /**
+     * Indicates when the agent has executed a tool function. Contains tool metadata and execution status. Provides visibility into agent tool usage during conversations. [https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_tool_response](https://elevenlabs.io/docs/agents-platform/customization/events/client-events#agent_tool_response)
+     * @typedef _AgentsEvent
+     */
+    AgentToolResponse = 'ElevenLabs.Agents.AgentToolResponse',
   }
 
   /**
    * @private
    */
-  interface _ConversationalAIEvents {
-    [ConversationalAIEvents.Unknown]: _ConversationalAIEvent;
-    [ConversationalAIEvents.HTTPResponse]: _ConversationalAIEvent;
-    [ConversationalAIEvents.ConversationInitiationMetadata]: _ConversationalAIEvent;
-    [ConversationalAIEvents.Ping]: _ConversationalAIEvent;
-    [ConversationalAIEvents.UserTranscript]: _ConversationalAIEvent;
-    [ConversationalAIEvents.AgentResponse]: _ConversationalAIEvent;
-    [ConversationalAIEvents.AgentResponseCorrection]: _ConversationalAIEvent;
-    [ConversationalAIEvents.Interruption]: _ConversationalAIEvent;
-    [ConversationalAIEvents.ClientToolCall]: _ConversationalAIEvent;
-    [ConversationalAIEvents.ContextualUpdate]: _ConversationalAIEvent;
-    [ConversationalAIEvents.VadScore]: _ConversationalAIEvent;
-    [ConversationalAIEvents.InternalTentativeAgentResponse]: _ConversationalAIEvent;
+  interface _AgentsEvents {
+    [AgentsEvents.Unknown]: _AgentsEvent;
+    [AgentsEvents.HTTPResponse]: _AgentsEvent;
+    [AgentsEvents.ConversationInitiationMetadata]: _AgentsEvent;
+    [AgentsEvents.Ping]: _AgentsEvent;
+    [AgentsEvents.UserTranscript]: _AgentsEvent;
+    [AgentsEvents.AgentResponse]: _AgentsEvent;
+    [AgentsEvents.AgentResponseCorrection]: _AgentsEvent;
+    [AgentsEvents.Interruption]: _AgentsEvent;
+    [AgentsEvents.ClientToolCall]: _AgentsEvent;
+    [AgentsEvents.ContextualUpdate]: _AgentsEvent;
+    [AgentsEvents.VadScore]: _AgentsEvent;
+    [AgentsEvents.InternalTentativeAgentResponse]: _AgentsEvent;
+    [AgentsEvents.WebSocketError]: _AgentsEvent;
+    [AgentsEvents.ConnectorInformation]: _AgentsEvent;
+    [AgentsEvents.AgentToolResponse]: _AgentsEvent;
   }
 
   /**
    * @private
    */
-  interface _ConversationalAIEvent {
+  interface _AgentsEvent {
     /**
-     * The [ElevenLabs.ConversationalAIClient] instance.
+     * The [ElevenLabs.AgentsClient] instance.
      */
-    client: ConversationalAIClient;
+    client: AgentsClient;
     /**
      * The event's data.
      */
@@ -5374,14 +5645,15 @@ declare namespace ElevenLabs {
   
 declare namespace ElevenLabs {
     /**
-     * Creates an [ElevenLabs.ConversationalAIClient] instance.
-     * @param parameters The [ElevenLabs.ConversationalAIClient] parameters
+     * Creates an [ElevenLabs.AgentsClient] instance.
+     * @param parameters The [ElevenLabs.AgentsClient] parameters
      */
-    function createConversationalAIClient(parameters: ConversationalAIClientParameters): Promise<ElevenLabs.ConversationalAIClient>
+    function createAgentsClient(parameters: AgentsClientParameters): Promise<ElevenLabs.AgentsClient>
 }
 declare namespace ElevenLabs {
     /**
      * Creates a new [ElevenLabs.RealtimeTTSPlayer] instance with specified text (TTS is used to play the text). You can attach media streams later via the [ElevenLabs.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+     * Note: This method uses 11labs [initializeConnection](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection) method internally.
      * @param text Text to synthesize
      * @param parameters Optional. Realtime TTS player parameters
      **/
@@ -5391,82 +5663,69 @@ declare namespace ElevenLabs {
 declare namespace ElevenLabs {
 }
 declare namespace ElevenLabs {
+  /**
+   * @event
+   */
+  enum Events {
     /**
-     * @event
+     * Triggered when the audio stream sent by a third party through an ElevenLabs WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedElevenLabsEvent
      */
-    enum Events {
-        /**
-         * Triggered when the audio stream sent by a third party through a ElevenLabs WebSocket is started playing.
-         * @typedef _WebSocketMediaStartedEvent
-         */
-        WebSocketMediaStarted = 'ElevenLabs.Events.WebSocketMediaStarted',
-        /**
-         * Triggers after the end of the audio stream sent by a third party through a ElevenLabs WebSocket (**1 second of silence**).
-         * @typedef _WebSocketMediaEndedEvent
-         */
-        WebSocketMediaEnded = 'ElevenLabs.Events.WebSocketMediaEnded',
-    }
+    WebSocketMediaStarted = 'ElevenLabs.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an ElevenLabs WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedElevenLabsEvent
+     */
+    WebSocketMediaEnded = 'ElevenLabs.Events.WebSocketMediaEnded',
+  }
 
-    /**
-     * @private
-     */
-    interface _Events {
-        [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
-        [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
-    }
+  /**
+   * @private
+   */
+  interface _Events {
+    [ElevenLabs.Events.WebSocketMediaStarted]: _WebSocketMediaStartedElevenLabsEvent;
+    [ElevenLabs.Events.WebSocketMediaEnded]: _WebSocketMediaEndedElevenLabsEvent;
+  }
 
+  /**
+   * @private
+   */
+  interface _Event {
     /**
-     * @private
+     * The [ElevenLabs.AgentsClient] instance.
      */
-    interface _Event {
-        /**
-         * The [ElevenLabs.ConversationalAIClient] instance.
-         */
-        client: ConversationalAIClient;
-    }
+    client: AgentsClient;
+  }
 
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEvent extends _Event {
-        /**
-         * Special tag to name audio streams sent over one ElevenLabs WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
-         */
-        tag?: string;
-    }
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedElevenLabsEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
 
-    /**
-     * @private
-     */
-    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
-        /**
-         * Audio encoding formats.
-         */
-        encoding?: string;
-        /**
-         * Custom parameters.
-         */
-        customParameters?: { [key: string]: string };
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
-        /**
-         * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
-         */
-        mediaInfo?: WebSocketMediaInfo;
-    }
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedElevenLabsEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
 }
 declare namespace ElevenLabs {
-  class RealtimeTTSPlayer extends Player {
+  class RealtimeTTSPlayer extends BasePlayer {
     /**
      * Append text to a [ElevenLabs.RealtimeTTSPlayer].
-     * @param text string
-     * @param endOfTurn boolean
+     * 
+     * The [Player.PlaybackFinished] event is triggered only if this method is called.
+     * @param text A text string to append
+     * @param endOfTurn Whether to force audio generation. Set this value to true when you have finished sending text, but want to keep the websocket connection open<br><br>This is useful when you want to ensure that the last chunk of audio is generated even when the length of text sent is smaller than the value set in chunk_length_schedule (e.g. 120 or 50)
+     * @deprecated Use [RealtimeTTSPlayer.sendText] instead
      */
     append(text: string, endOfTurn?: boolean): void;
+
+    /**
+     * Append text to a [ElevenLabs.RealtimeTTSPlayer].
+     * @param parameters Object provides the parameters directly to the ElevenLabs provider sendText method. Find more information in the [documentation](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.sendText).
+     */
+    sendText(parameters: Object): void;
 
     /**
      * Clear a [ElevenLabs.RealtimeTTSPlayer] buffer.
@@ -5512,6 +5771,19 @@ declare namespace ElevenLabs {
      * Optional. Whether to keep the connection alive after the timeout. The default value is **true**.
      */
     keepAlive?: boolean;
+
+    /**
+     * Optional. Provide the parameters directly to the 'initializeConnection' method of ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection"> documentation</a>.
+     * Note: You should not pass the 'text', 'xi-api-key' and 'authorization' fields.
+     */
+    initializeConnectionParameters?: Object;
+
+    /**
+     * Optional. Whether to enable the tracing functionality.
+     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     * Note: Enable only for diagnostic purposes.
+     */
+    trace?: boolean;
   }
 }
 
@@ -5600,13 +5872,17 @@ declare class Endpoint {
 
 declare namespace Gemini {
   /*
-   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
+   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
    */
   enum Backend {
     /**
      * The Gemini API backend.
      */
-    GEMINI_API = 'GeminiAPI'
+    GEMINI_API = 'GeminiAPI',
+    /**
+     * The VertexAI backend.
+     */
+    VERTEX_AI = 'VertexAI'
   }
 }
 
@@ -5625,12 +5901,12 @@ declare namespace Gemini {
   enum Events {
     /**
      * Triggered when the audio stream sent by a third party through a Gemini WebSocket is started playing.
-     * @typedef _WebSocketMediaStartedEvent
+     * @typedef _WebSocketMediaStartedGeminiEvent
      */
     WebSocketMediaStarted = 'Gemini.Events.WebSocketMediaStarted',
     /**
      * Triggers after the end of the audio stream sent by a third party through a Gemini WebSocket (**1 second of silence**).
-     * @typedef _WebSocketMediaEndedEvent
+     * @typedef _WebSocketMediaEndedGeminiEvent
      */
     WebSocketMediaEnded = 'Gemini.Events.WebSocketMediaEnded',
   }
@@ -5639,8 +5915,8 @@ declare namespace Gemini {
    * @private
    */
   interface _Events {
-    [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
-    [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
+    [Gemini.Events.WebSocketMediaStarted]: _WebSocketMediaStartedGeminiEvent;
+    [Gemini.Events.WebSocketMediaEnded]: _WebSocketMediaEndedGeminiEvent;
   }
 
   /**
@@ -5656,35 +5932,13 @@ declare namespace Gemini {
   /**
    * @private
    */
-  interface _WebSocketMediaEvent extends _Event {
-    /**
-     * Special tag to name audio streams sent over one Gemini WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
-     */
-    tag?: string;
+  interface _WebSocketMediaStartedGeminiEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
   }
 
   /**
    * @private
    */
-  interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
-    /**
-     * Audio encoding formats.
-     */
-    encoding?: string;
-    /**
-     * Custom parameters.
-     */
-    customParameters?: { [key: string]: string };
-  }
-
-  /**
-   * @private
-   */
-  interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
-    /**
-     * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
-     */
-    mediaInfo?: WebSocketMediaInfo;
+  interface _WebSocketMediaEndedGeminiEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
   }
 }
 
@@ -5704,25 +5958,44 @@ declare namespace Gemini {
    */
   interface LiveAPIClientParameters extends _ConversationalAgentClientParameters {
     /**
-     * The API key for the Gemini Live API.
-     */
-    apiKey: string;
-    /**
      * Optional. The model to use for Gemini Live API processing. The default value is **gemini-2.0-flash-exp**.
      */
     model?: string;
     /**
-     * Optional. Backend is the GenAI backend to use for the client. The default value is **Gemini.Backend.GEMINI_API**.
+     * Optional. Backend is the GenAI backend to use for the client. The default value is **[Backend.GEMINI_API]**.
      */
     backend?: Backend;
     /**
-     * Optional. Session config for the API connection. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveConnectConfig)
+     * Optional. Gemini API key. Required for [Backend.GEMINI_API]. Get a Gemini API key [here](https://ai.google.dev/gemini-api/docs/api-key).
+     */
+    apiKey?: string;
+    /**
+     * Optional. GCP Project ID for Vertex AI. Required for [Backend.VERTEX_AI]. Find your Project ID [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
+     */
+    project?: string;
+    /**
+     * Optional. GCP Location/Region for Vertex AI. Required for [Backend.VERTEX_AI]. [Generative AI locations](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations).
+     */
+    location?: string;
+    /**
+     * Optional. Google [credential file](https://cloud.google.com/docs/authentication/application-default-credentials#personal) content.
+     */
+    credentials?: string;
+    /**
+     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.28.0#HTTPOptions) to override. NOTE: the 'baseUrl' parameter will be ignored.
+     */
+    httpOptions?: Object;
+    /**
+     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveConnectConfig) for the API connection.
      */
     connectConfig?: Object;
   }
 }
 
 declare namespace Gemini {
+  /**
+   * Note that the [Gemini.LiveAPIClient] using the (Google Gen AI Go SDK v1.28.0)[https://pkg.go.dev/google.golang.org/genai@v1.28.0].
+   */
   class LiveAPIClient {
     /**
      * Returns the LiveAPIClient id.
@@ -5779,19 +6052,19 @@ declare namespace Gemini {
     ): void;
 
     /**
-     * Transmits a LiveClientContent over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendRealtimeInput)
+     * Transmits a LiveClientContent over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendRealtimeInput)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
-     * Transmits a LiveClientRealtimeInput over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendClientContent)
+     * Transmits a LiveClientRealtimeInput over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendClientContent)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
-     * Transmits a LiveClientToolResponse over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.1.0#Session.SendToolResponse)
+     * Transmits a LiveClientToolResponse over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendToolResponse)
      * @param input
      */
     sendToolResponse(input: Object): void
@@ -5810,22 +6083,28 @@ declare namespace Gemini {
     Unknown = 'Gemini.LiveAPI.Unknown',
 
     /**
-     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerContent)
+     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerContent)
      * @typedef _LiveAPIEvent
      */
     ServerContent = 'Gemini.LiveAPI.ServerContent',
 
     /**
-     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCall)
+     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCall)
      * @typedef _LiveAPIEvent
      */
     ToolCall = 'Gemini.LiveAPI.ToolCall',
 
     /**
-     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.2.0#LiveServerToolCallCancellation)
+     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCallCancellation)
      * @typedef _LiveAPIEvent
      */
     ToolCallCancellation = 'Gemini.LiveAPI.ToolCallCancellation',
+
+    /**
+     * Contains information about connector.
+     * @typedef _LiveAPIEvent
+     */
+    ConnectorInformation = 'Gemini.LiveAPI.ConnectorInformation',
   }
 
   /**
@@ -5836,6 +6115,7 @@ declare namespace Gemini {
     [LiveAPIEvents.ServerContent]: _LiveAPIEvent;
     [LiveAPIEvents.ToolCall]: _LiveAPIEvent;
     [LiveAPIEvents.ToolCallCancellation]: _LiveAPIEvent;
+    [LiveAPIEvents.ConnectorInformation]: _LiveAPIEvent;
   }
 
   /**
@@ -6470,12 +6750,12 @@ declare namespace OpenAI {
     enum Events {
       /**
        * Triggered when the audio stream sent by a third party through an OpenAI WebSocket is started playing.
-       * @typedef _WebSocketMediaStartedEvent
+       * @typedef _WebSocketMediaStartedOpenAIBetaEvent
        */
       WebSocketMediaStarted = 'OpenAI.Beta.Events.WebSocketMediaStarted',
       /**
        * Triggers after the end of the audio stream sent by a third party through an OpenAI WebSocket (**1 second of silence**).
-       * @typedef _WebSocketMediaEndedEvent
+       * @typedef _WebSocketMediaEndedOpenAIBetaEvent
        */
       WebSocketMediaEnded = 'OpenAI.Beta.Events.WebSocketMediaEnded',
     }
@@ -6484,8 +6764,8 @@ declare namespace OpenAI {
      * @private
      */
     interface _Events {
-      [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
-      [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
+      [OpenAI.Beta.Events.WebSocketMediaStarted]: _WebSocketMediaStartedOpenAIBetaEvent;
+      [OpenAI.Beta.Events.WebSocketMediaEnded]: _WebSocketMediaEndedOpenAIBetaEvent;
     }
 
     /**
@@ -6501,35 +6781,13 @@ declare namespace OpenAI {
     /**
      * @private
      */
-    interface _WebSocketMediaEvent extends _Event {
-      /**
-       * Special tag to name audio streams sent over one OpenAI WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
-       */
-      tag?: string;
+    interface _WebSocketMediaStartedOpenAIBetaEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
     }
 
     /**
      * @private
      */
-    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
-      /**
-       * Audio encoding formats.
-       */
-      encoding?: string;
-      /**
-       * Custom parameters.
-       */
-      customParameters?: { [key: string]: string };
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
-      /**
-       * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
-       */
-      mediaInfo?: WebSocketMediaInfo;
+    interface _WebSocketMediaEndedOpenAIBetaEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
     }
   }
 }
@@ -6620,47 +6878,54 @@ declare namespace OpenAI {
       ): void;
 
       /**
-       * Add a new Item to the Conversation's context, including messages, function calls, and function call responses. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create).
-       * @param previousItemId The ID of the preceding item after which the new item will be inserted. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-previous_item_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-previous_item_id)
-       * @param item The item to add to the conversation. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-item](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-item)
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create#realtime-client-events/conversation/item/create-event_id)
+       * Add a new Item to the Conversation's context, including messages, function calls, and function call responses. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create).
+       * @param previousItemId The ID of the preceding item after which the new item will be inserted. If set to null, the new item will be appended to the end of the conversation. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-previous_item_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-previous_item_id)
+       * @param item The item to add to the conversation. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-item](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-item)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/create#realtime_client_events/conversation/item/create-event_id)
        */
-      conversationItemCreate(previousItemId: string, item: Object, eventId?: string): void
+      conversationItemCreate(previousItemId: string | null, item: Object, eventId?: string): void
 
       /**
-       * Send this event to truncate a previous assistant message’s audio. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate).
-       * @param itemId The ID of the assistant message item to truncate. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-item_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-item_id)
-       * @param contentIndex The index of the content part to truncate. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-content_index](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-content_index)
-       * @param audioEndMs Inclusive duration up to which audio is truncated, in milliseconds. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-audio_end_ms](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-audio_end_ms)
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate#realtime-client-events/conversation/item/truncate-event_id)
+       * Send this event when you want to retrieve the server's representation of a specific item in the conversation history. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve).
+       * @param itemId The ID of the item to retrieve. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve#realtime_client_events/conversation/item/retrieve-item_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve#realtime_client_events/conversation/item/retrieve-item_id)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve#realtime_client_events/conversation/item/retrieve-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/retrieve#realtime_client_events/conversation/item/retrieve-event_id)
+       */
+      conversationItemRetrieve(itemId: string, eventId?: string): void
+
+      /**
+       * Send this event to truncate a previous assistant message’s audio. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate).
+       * @param itemId The ID of the assistant message item to truncate. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-item_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-item_id)
+       * @param contentIndex The index of the content part to truncate. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-content_index](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-content_index)
+       * @param audioEndMs Inclusive duration up to which audio is truncated, in milliseconds. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-audio_end_ms](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-audio_end_ms)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/truncate#realtime_client_events/conversation/item/truncate-event_id)
        */
       conversationItemTruncate(itemId: string, contentIndex: number, audioEndMs: number, eventId?: string): void
 
 
       /**
-       * Send this event when you want to remove any item from the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete).
-       * @param itemId The ID of the item to delete. (https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-item_id)
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete#realtime-client-events/conversation/item/delete-event_id)
+       * Send this event when you want to remove any item from the conversation history. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/delete](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/delete).
+       * @param itemId The ID of the item to delete. (https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/delete#realtime_client_events/conversation/item/delete-item_id)
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/delete#realtime_client_events/conversation/item/delete-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/conversation/item/delete#realtime_client_events/conversation/item/delete-event_id)
        */
       conversationItemDelete(itemId: string, eventId?: string): void
 
       /**
-       * Updates the session’s default configuration. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update).
-       * @param session Realtime session object configuration.[https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-session). NOTE: the 'input_audio_format' parameter will be ignored
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update#realtime-client-events/session/update-event_id)
+       * Updates the session’s default configuration. [https://platform.openai.com/docs/api-reference/realtime_client_events/session/update](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update).
+       * @param session Realtime session object configuration.[https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-event_id)
        */
       sessionUpdate(session: Object, eventId?: string): void
 
       /**
-       * Instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create).
-       * @param response The response resource. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-response). NOTE: the 'input_audio_format' parameter will be ignored
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create#realtime-client-events/response/create-event_id)
+       * Instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create).
+       * @param response The response resource. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-event_id)
        */
       responseCreate(response: Object, eventId?: string): void
 
       /**
-       * Cancels an in-progress response. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel).
-       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel#realtime-client-events/response/cancel-event_id](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel#realtime-client-events/response/cancel-event_id)
+       * Cancels an in-progress response. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/cancel](https://platform.openai.com/docs/api-reference/realtime_client_events/response/cancel).
+       * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/cancel#realtime_client_events/response/cancel-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/response/cancel#realtime_client_events/response/cancel-event_id)
        */
       responseCancel(eventId?: string): void
     }
@@ -6678,142 +6943,147 @@ declare namespace OpenAI {
        */
       Unknown = 'OpenAI.Beta.RealtimeAPI.Unknown',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/error](https://platform.openai.com/docs/api-reference/realtime-server-events/error)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/error](https://platform.openai.com/docs/api-reference/realtime_server_events/error)
        * @typedef _RealtimeAPIEvent
        */
       Error = 'OpenAI.Beta.RealtimeAPI.Error',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/session/created](https://platform.openai.com/docs/api-reference/realtime-server-events/session/created)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/session/created](https://platform.openai.com/docs/api-reference/realtime_server_events/session/created)
        * @typedef _RealtimeAPIEvent
        */
       SessionCreated = 'OpenAI.Beta.RealtimeAPI.SessionCreated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/session/updated](https://platform.openai.com/docs/api-reference/realtime_server_events/session/updated)
        * @typedef _RealtimeAPIEvent
        */
       SessionUpdated = 'OpenAI.Beta.RealtimeAPI.SessionUpdated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/created](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/created)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/created](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/created)
        * @typedef _RealtimeAPIEvent
        */
       ConversationCreated = 'OpenAI.Beta.RealtimeAPI.ConversationCreated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/created](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/created)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/created](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/created)
        * @typedef _RealtimeAPIEvent
        */
       ConversationItemCreated = 'OpenAI.Beta.RealtimeAPI.ConversationItemCreated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/retrieved](https://platform.openai.com/docs/api-reference/realtim_server_events/conversation/item/retrieved)
        * @typedef _RealtimeAPIEvent
        */
-      ConversationItemInputAudioTranscriptionCompleted = 'OpenAI.Beta.RealtimeAPI.conversationItemInputAudioTranscriptionCompleted',
+      ConversationItemRetrieved = 'OpenAI.Beta.RealtimeAPI.ConversationItemRetrieved',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/completed](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/completed)
        * @typedef _RealtimeAPIEvent
        */
-      ConversationItemInputAudioTranscriptionFailed = 'OpenAI.Beta.RealtimeAPI.conversationItemInputAudioTranscriptionFailed',
+      ConversationItemInputAudioTranscriptionCompleted = 'OpenAI.Beta.RealtimeAPI.ConversationItemInputAudioTranscriptionCompleted',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/delta](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/delta)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemInputAudioTranscriptionDelta = 'OpenAI.Beta.RealtimeAPI.ConversationItemInputAudioTranscriptionDelta',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/failed](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/input_audio_transcription/failed)
+       * @typedef _RealtimeAPIEvent
+       */
+      ConversationItemInputAudioTranscriptionFailed = 'OpenAI.Beta.RealtimeAPI.ConversationItemInputAudioTranscriptionFailed',
+      /**
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/truncated](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/truncated)
        * @typedef _RealtimeAPIEvent
        */
       ConversationItemTruncated = 'OpenAI.Beta.RealtimeAPI.ConversationItemTruncated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/deleted](https://platform.openai.com/docs/api-reference/realtime_server_events/conversation/item/deleted)
        * @typedef _RealtimeAPIEvent
        */
       ConversationItemDeleted = 'OpenAI.Beta.RealtimeAPI.ConversationItemDeleted',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/committed)
        * @typedef _RealtimeAPIEvent
        */
       InputAudioBufferCommitted = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferCommitted',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/cleared)
        * @typedef _RealtimeAPIEvent
        */
       InputAudioBufferCleared = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferCleared',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/speech_started](https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/speech_started)
        * @typedef _RealtimeAPIEvent
        */
       InputAudioBufferSpeechStarted = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferSpeechStarted',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/speech_stopped](https://platform.openai.com/docs/api-reference/realtime_server_events/input_audio_buffer/speech_stopped)
        * @typedef _RealtimeAPIEvent
        */
       InputAudioBufferSpeechStopped = 'OpenAI.Beta.RealtimeAPI.InputAudioBufferSpeechStopped',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/created](https://platform.openai.com/docs/api-reference/realtime-server-events/response/created)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/created](https://platform.openai.com/docs/api-reference/realtime_server_events/response/created)
        * @typedef _RealtimeAPIEvent
        */
       ResponseCreated = 'OpenAI.Beta.RealtimeAPI.ResponseCreated',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseDone = 'OpenAI.Beta.RealtimeAPI.ResponseDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/output_item/added](https://platform.openai.com/docs/api-reference/realtime_server_events/response/output_item/added)
        * @typedef _RealtimeAPIEvent
        */
       ResponseOutputItemAdded = 'OpenAI.Beta.RealtimeAPI.ResponseOutputItemAdded',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/output_item/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/output_item/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseOutputItemDone = 'OpenAI.Beta.RealtimeAPI.ResponseOutputItemDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/content_part/added](https://platform.openai.com/docs/api-reference/realtime_server_events/response/content_part/added)
        * @typedef _RealtimeAPIEvent
        */
       ResponseContentPartAdded = 'OpenAI.Beta.RealtimeAPI.ResponseContentPartAdded',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/content_part/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/content_part/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseContentPartDone = 'OpenAI.Beta.RealtimeAPI.ResponseContentPartDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/delta)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/text/delta](https://platform.openai.com/docs/api-reference/realtime_server_events/response/text/delta)
        * @typedef _RealtimeAPIEvent
        */
       ResponseTextDelta = 'OpenAI.Beta.RealtimeAPI.ResponseTextDelta',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/text/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/text/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/text/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseTextDone = 'OpenAI.Beta.RealtimeAPI.ResponseTextDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/delta)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio_transcript/delta)
        * @typedef _RealtimeAPIEvent
        */
       ResponseAudioTranscriptDelta = 'OpenAI.Beta.RealtimeAPI.ResponseAudioTranscriptDelta',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio_transcript/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio_transcript/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseAudioTranscriptDone = 'OpenAI.Beta.RealtimeAPI.ResponseAudioTranscriptDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/delta)
-       * @typedef _RealtimeAPIEvent
-       */
-      ResponseAudioDelta = 'OpenAI.Beta.RealtimeAPI.ResponseAudioDelta',
-      /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/audio/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/audio/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseAudioDone = 'OpenAI.Beta.RealtimeAPI.ResponseAudioDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/function_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime_server_events/response/function_call_arguments/delta)
        * @typedef _RealtimeAPIEvent
        */
       ResponseFunctionCallArgumentsDelta = 'OpenAI.Beta.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/response/function_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime_server_events/response/function_call_arguments/done)
        * @typedef _RealtimeAPIEvent
        */
       ResponseFunctionCallArgumentsDone = 'OpenAI.Beta.RealtimeAPI.ResponseFunctionCallArgumentsDone',
       /**
-       * [https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated)
+       * [https://platform.openai.com/docs/api-reference/realtime_server_events/rate_limits/updated](https://platform.openai.com/docs/api-reference/realtime_server_events/rate_limits/updated)
        * @typedef _RealtimeAPIEvent
        */
       RateLimitsUpdated = 'OpenAI.Beta.RealtimeAPI.RateLimitsUpdated',
@@ -6828,8 +7098,10 @@ declare namespace OpenAI {
       [RealtimeAPIEvents.SessionCreated]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.SessionUpdated]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationCreated]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemRetrieved]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationItemCreated]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _RealtimeAPIEvent;
+      [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionDelta]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionFailed]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationItemTruncated]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ConversationItemDeleted]: _RealtimeAPIEvent;
@@ -6847,7 +7119,6 @@ declare namespace OpenAI {
       [RealtimeAPIEvents.ResponseTextDone]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ResponseAudioTranscriptDelta]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ResponseAudioTranscriptDone]: _RealtimeAPIEvent;
-      [RealtimeAPIEvents.ResponseAudioDelta]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ResponseAudioDone]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _RealtimeAPIEvent;
       [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _RealtimeAPIEvent;
@@ -6872,7 +7143,538 @@ declare namespace OpenAI {
 
 
 declare namespace OpenAI {
+    /**
+     * Creates an [OpenAI.RealtimeAPIClient] instance.
+     * @param parameters The [OpenAI.RealtimeAPIClient] parameters
+     */
+    function createRealtimeAPIClient(parameters: RealtimeAPIClientParameters): Promise<OpenAI.RealtimeAPIClient>
 }
+declare namespace OpenAI {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an OpenAI WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedOpenAIEvent
+     */
+    WebSocketMediaStarted = 'OpenAI.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an OpenAI WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedOpenAIEvent
+     */
+    WebSocketMediaEnded = 'OpenAI.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [OpenAI.Events.WebSocketMediaStarted]: _WebSocketMediaStartedOpenAIEvent;
+    [OpenAI.Events.WebSocketMediaEnded]: _WebSocketMediaEndedOpenAIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [OpenAI.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedOpenAIEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedOpenAIEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+declare namespace OpenAI {
+}
+declare namespace OpenAI {
+  /**
+   * @private
+   */
+  interface _RealtimeAPIClientEvents extends _Events, _RealtimeAPIEvents {
+  }
+}
+declare namespace OpenAI {
+  /**
+   * [OpenAI.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.createRealtimeAPIClient] method.
+   */
+  interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
+    /**
+     * The API key for the OpenAI Realtime API.
+     */
+    apiKey: string;
+    /**
+     * Optional. The model to use for OpenAI Realtime API processing. The default value is **gpt-4o-realtime-preview-2024-10-01**.
+     */
+    model?: string;
+    /**
+     * Optional. The type of the client. The default value is **OpenAI.RealtimeAPIClientType.REALTIME**.
+     */
+    type?: OpenAI.RealtimeAPIClientType;
+  }
+}
+declare namespace OpenAI {
+  /**
+   * [OpenAI.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.createRealtimeAPIClient] method.
+   */
+  enum RealtimeAPIClientType {
+    /**
+     * The client type for real-time interactions.
+     */
+    REALTIME =  "realtime",
+    /**
+     * The client type for transcription tasks.
+     */
+    TRANSCRIPTION =  "transcription",
+  }
+}
+
+declare namespace OpenAI {
+  class RealtimeAPIClient {
+    /**
+     * Returns the RealtimeAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the OpenAI WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the OpenAI connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the OpenAI (via WebSocket) to the media unit. OpenAI works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the OpenAI (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the OpenAI WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [OpenAI.RealtimeAPIEvents] or [OpenAI.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [OpenAI.RealtimeAPIEvents.SessionCreated])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof OpenAI._RealtimeAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.RealtimeAPIEvents | T,
+      callback: (event: OpenAI._RealtimeAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [OpenAI.RealtimeAPIEvents] or [OpenAI.Events] event.
+     * @param event Event class (i.e., [OpenAI.RealtimeAPIEvents.SessionCreated])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof OpenAI._RealtimeAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.RealtimeAPIEvents | T,
+      callback?: (event: OpenAI._RealtimeAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Send this event to update the session’s configuration. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update)
+     * @param parameters
+     */
+    sessionUpdate(parameters: Object): void
+
+    /**
+     * Send this event to clear the audio bytes in the buffer. [https://platform.openai.com/docs/api-reference/realtime-client-events/input_audio_buffer/clear](https://platform.openai.com/docs/api-reference/realtime-client-events/input_audio_buffer/clear)
+     * @param parameters
+     */
+    inputAudioBufferClear(parameters: Object): void
+
+    /**
+     * Add a new Item to the Conversation's context. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create)
+     * @param parameters
+     */
+    conversationItemCreate(parameters: Object): void
+
+    /**
+     * Send this event when you want to retrieve the server's representation of a specific item in the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/retrieve](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/retrieve)
+     * @param parameters
+     */
+    conversationItemRetrieve(parameters: Object): void
+
+    /**
+     * Send this event to truncate a previous assistant message’s audio. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate)
+     * @param parameters
+     */
+    conversationItemTruncate(parameters: Object): void
+
+    /**
+     * Send this event when you want to remove any item from the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete)
+     * @param parameters
+     */
+    conversationItemDelete(parameters: Object): void
+
+    /**
+     * This event instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create)
+     * @param parameters
+     */
+    responseCreate(parameters: Object): void
+
+    /**
+     * Send this event to cancel an in-progress response. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel)
+     * @param parameters
+     */
+    responseCancel(parameters: Object): void
+  }
+}
+  
+declare namespace OpenAI {
+  /**
+   * @event
+   */
+  enum RealtimeAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _RealtimeAPIEvent
+     */
+    Unknown = 'OpenAI.RealtimeAPI.Unknown',
+
+    /**
+     * The HTTP response event.
+     * @typedef _RealtimeAPIEvent
+     */
+    HTTPResponse = 'OpenAI.RealtimeAPI.HTTPResponse',
+
+    /**
+     * Returned when an error occurs, which could be a client problem or a server problem. [https://platform.openai.com/docs/api-reference/realtime-server-events/error](https://platform.openai.com/docs/api-reference/realtime-server-events/error)
+     * @typedef _RealtimeAPIEvent
+     */
+    Error = 'OpenAI.RealtimeAPI.Error',
+
+    /**
+     * Returned when a Session is created. [https://platform.openai.com/docs/api-reference/realtime-server-events/session/created](https://platform.openai.com/docs/api-reference/realtime-server-events/session/created)
+     * @typedef _RealtimeAPIEvent
+     */
+    SessionCreated = 'OpenAI.RealtimeAPI.SessionCreated',
+
+    /**
+     * Returned when a session is updated with a session.update event, unless there is an error. [https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated)
+     * @typedef _RealtimeAPIEvent
+     */
+    SessionUpdated = 'OpenAI.RealtimeAPI.SessionUpdated',
+
+    /**
+     * Sent by the server when an Item is added to the default Conversation. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/added)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemAdded = 'OpenAI.RealtimeAPI.ConversationItemAdded',
+
+    /**
+     * Returned when a conversation item is finalized. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemDone = 'OpenAI.RealtimeAPI.ConversationItemDone',
+
+    /**
+     * Returned when a conversation item is retrieved with conversation.item.retrieve. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/retrieved](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/retrieved)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemRetrieved = 'OpenAI.RealtimeAPI.ConversationItemRetrieved',
+
+    /**
+     * This event is the output of audio transcription for user audio written to the user audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionCompleted = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionCompleted',
+
+    /**
+     * Returned when the text value of an input audio transcription content part is updated with incremental transcription results. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/delta)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionDelta = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionDelta',
+
+    /**
+     * Returned when an input audio transcription segment is identified for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/segment](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/segment)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionSegment = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionSegment',
+
+    /**
+     * Returned when input audio transcription is configured, and a transcription request for a user message failed.  [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionFailed = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionFailed',
+
+    /**
+     * Returned when an earlier assistant audio message item is truncated by the client with a conversation.item.truncate event. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemTruncated = 'OpenAI.RealtimeAPI.ConversationItemTruncated',
+
+    /**
+     * Returned when an item in the conversation is deleted by the client with a conversation.item.delete event. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemDeleted = 'OpenAI.RealtimeAPI.ConversationItemDeleted',
+
+    /**
+     * Returned when an input audio buffer is committed. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferCommited = 'OpenAI.RealtimeAPI.InputAudioBufferCommited',
+
+    /**
+     * Returned when the input audio buffer is cleared by the client with an input_audio_buffer.clear event. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferCleared = 'OpenAI.RealtimeAPI.InputAudioBufferCleared',
+
+    /**
+     * Sent by the server when in server_vad mode to indicate that speech has been detected in the audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStarted = 'OpenAI.RealtimeAPI.InputAudioBufferSpeechStarted',
+
+    /**
+     * Returned in server_vad mode when the server detects the end of speech in the audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStopped = 'OpenAI.RealtimeAPI.InputAudioBufferSpeechStopped',
+
+    /**
+     * Returned when the Server VAD timeout is triggered for the input audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/timeout_triggered](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/timeout_triggered)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferTimeoutTriggered = 'OpenAI.RealtimeAPI.InputAudioBufferTimeoutTriggered',
+
+    /**
+     * Returned when a new Response is created. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/created](https://platform.openai.com/docs/api-reference/realtime-server-events/response/created)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseCreated = 'OpenAI.RealtimeAPI.ResponseCreated',
+
+    /**
+     * Returned when a Response is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseDone = 'OpenAI.RealtimeAPI.ResponseDone',
+
+    /**
+     * Returned when a new Item is created during Response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputItemAdded = 'OpenAI.RealtimeAPI.ResponseOutputItemAdded',
+
+    /**
+     * Returned when an Item is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputItemDone = 'OpenAI.RealtimeAPI.ResponseOutputItemDone',
+
+    /**
+     * Returned when a new content part is added to an assistant message item during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseContentPartAdded = 'OpenAI.RealtimeAPI.ResponseContentPartAdded',
+
+    /**
+     * Returned when a content part is done streaming in an assistant message item. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseContentPartDone = 'OpenAI.RealtimeAPI.ResponseContentPartDone',
+
+    /**
+     * Returned when the text value of an "output_text" content part is updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/delta)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputTextDelta = 'OpenAI.RealtimeAPI.ResponseOutputTextDelta',
+
+    /**
+     * Returned when the text value of an "output_text" content part is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputTextDone = 'OpenAI.RealtimeAPI.ResponseOutputTextDone',
+
+    /**
+     * Returned when the model-generated transcription of audio output is updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptionDelta = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptionDelta',
+
+    /**
+     * Returned when the model-generated transcription of audio output is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptionDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptionDone',
+
+    /**
+     * Returned when the model-generated audio is done. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioDone',
+
+    /**
+     * Returned when the model-generated function call arguments are updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDelta = 'OpenAI.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
+
+    /**
+     * Returned when the model-generated function call arguments are done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDone = 'OpenAI.RealtimeAPI.ResponseFunctionCallArgumentsDone',
+
+    /**
+     * Returned when MCP tool call arguments are updated during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/delta)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseMCPCallArgumentsDelta = 'OpenAI.RealtimeAPI.ResponseMCPCallArgumentsDelta',
+
+    /**
+     * Returned when MCP tool call arguments are finalized during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/done)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseMCPCallArgumentsDone = 'OpenAI.RealtimeAPI.ResponseMCPCallArgumentsDone',
+
+    /**
+     * Returned when an MCP tool call has started and is in progress. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/in_progress](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/in_progress)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseMCPCallInProgress = 'OpenAI.RealtimeAPI.ResponseMCPCallInProgress',
+
+    /**
+     * Returned when an MCP tool call has completed successfully. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/completed)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseMCPCallCompleted = 'OpenAI.RealtimeAPI.ResponseMCPCallCompleted',
+
+    /**
+     * Returned when an MCP tool call has failed. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/failed)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseMCPCallFailed = 'OpenAI.RealtimeAPI.ResponseMCPCallFailed',
+
+    /**
+     * Returned when listing MCP tools is in progress for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/in_progress](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/in_progress)
+     * @typedef _RealtimeAPIEvent
+     */
+    MCPListToolsInProgress = 'OpenAI.RealtimeAPI.MCPListToolsInProgress',
+
+    /**
+     * Returned when listing MCP tools has completed for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/completed)
+     * @typedef _RealtimeAPIEvent
+     */
+    MCPListToolsCompleted = 'OpenAI.RealtimeAPI.MCPListToolsCompleted',
+
+    /**
+     * Returned when listing MCP tools has failed for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/failed)
+     * @typedef _RealtimeAPIEvent
+     */
+    MCPListToolsFailed = 'OpenAI.RealtimeAPI.MCPListToolsFailed',
+
+    /**
+     * Emitted at the beginning of a Response to indicate the updated rate limits. [https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated)
+     * @typedef _RealtimeAPIEvent
+     */
+    RateLimitsUpdated = 'OpenAI.RealtimeAPI.ResponseMCPCallFailed',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _RealtimeAPIEvent
+     */
+    WebSocketError = 'OpenAI.RealtimeAPI.WebSocketError',
+
+    /**
+    * Contains information about connector.
+    * @typedef _RealtimeAPIEvent
+    */
+    ConnectorInformation = 'OpenAI.RealtimeAPI.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _RealtimeAPIEvents {
+    [RealtimeAPIEvents.Unknown]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.HTTPResponse]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.Error]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionCreated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionUpdated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemRetrieved]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionSegment]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionFailed]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemTruncated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemDeleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCommited]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCleared]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStarted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStopped]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferTimeoutTriggered]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseCreated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptionDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptionDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallArgumentsDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallArgumentsDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallInProgress]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallCompleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallFailed]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsInProgress]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsCompleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsFailed]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.RateLimitsUpdated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.WebSocketError]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConnectorInformation]: _RealtimeAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _RealtimeAPIEvent {
+    /**
+     * The [OpenAI.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
+
 /**
  * Which media streams to receive from the endpoint. Can be passed as a [ReceiveParameters] parameter. Consists of optional video and audio keys.
  * <br>
@@ -7079,65 +7881,14 @@ declare interface _PlayerPlaybackBufferingEvent extends _PlayerEvent {}
 /**
  * Represents an audio player.
  */
-declare class Player {
-  /**
-   * Adds a handler for the specified [PlayerEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-   * @param event Event class (i.e., [PlayerEvents.PlaybackFinished])
-   * @param callback Handler function. A single parameter is passed - object with event information
-   */
-  addEventListener<T extends keyof _PlayerEvents>(
-    event: PlayerEvents | T,
-    callback: (event: _PlayerEvents[T]) => any
-  ): void;
-
-  /**
-   * Removes a handler for the specified [PlayerEvents] event.
-   * @param event Event class (i.e., [PlayerEvents.PlaybackFinished])
-   * @param callback Optional. Handler function. If not specified, all handler functions are removed
-   */
-  removeEventListener<T extends keyof _PlayerEvents>(
-    event: PlayerEvents | T,
-    callback?: (event: _PlayerEvents[T]) => any
-  ): void;
-
-  /**
-   * Returns the player's id.
-   */
-  id(): string;
-
-  /**
-   * Pauses playback. To continue the playback use the [Player.resume] method.
-   */
-  pause(): void;
-
-  /**
-   * Resumes playback after the [Player.pause] method is called.
-   */
-  resume(): void;
-
-  /**
-   * Stops playback. The current player's instance is destroyed.
-   */
-  stop(): void;
-
+declare class Player extends BasePlayer {
   /**
    * Adds a playback marker. The [PlayerEvents.PlaybackMarkerReached] event is triggered when the marker is reached.
+   * 
+   * This method is currently not supported by the ElevenLabs provider.
    * @param offset Positive/negative offset in milliseconds from the start/end of media
    */
   addMarker(offset: number): void;
-
-  /**
-   * Starts sending media from the player to the media unit.
-   * @param mediaUnit Media unit that receives media
-   * @param parameters Optional. WebSocket interaction only parameters
-   */
-  sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
-
-  /**
-   * Stops sending media from the player to the media unit.
-   * @param mediaUnit Media unit that does not need to receive media from this conference anymore
-   */
-  stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
 /**
@@ -8317,8 +9068,10 @@ declare class SmartQueueTask {
 
   /**
    * Ends the current task.
+   * @param description Description of the task's end reason.
+   * @param terminationStatus Optional. [TerminationStatus] value that describes the task's end reason. If not specified, the task is ended with the [TerminationStatus.CLIENT_TERMINATE] status.
    */
-  end(description: string): void;
+  end(description: string, terminationStatus?: TerminationStatus): void;
 
   /**
    * Adds a handler for the specified [SmartQueueEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
@@ -8327,7 +9080,7 @@ declare class SmartQueueTask {
    */
   addEventListener<T extends keyof _SmartQueueEvents>(
     event: SmartQueueEvents | T,
-    callback: (event: _SmartQueueEvents[T]) => any
+    callback: (event: _SmartQueueEvents[T]) => any,
   ): void;
 
   /**
@@ -8337,7 +9090,7 @@ declare class SmartQueueTask {
    */
   removeEventListener<T extends keyof _SmartQueueEvents>(
     event: SmartQueueEvents | T,
-    callback?: (event: _SmartQueueEvents[T]) => any
+    callback?: (event: _SmartQueueEvents[T]) => any,
   ): void;
 }
 
@@ -8747,15 +9500,23 @@ declare enum TaskWaitingCode {
 }
 
 /**
- * The [SmartQueue] termination status
+ * The [SmartQueue] termination status.
  */
 declare enum TerminationStatus {
   /**
-   * The task is completed in the scenario (TaskCanceledCode)
+   * No termination status has been provided
+   */
+  NONE = 0,
+  /**
+   * Internal error has occurred (ErrorCode, EndTaskCode, EndOperatorActivityCode)
+   */
+  INTERNAL_ERROR = 500,
+  /**
+   * Task has been completed successfully in the scenario (TaskCanceledCode)
    */
   NORMAL = 1000,
   /**
-   * The timeout for the task expired (TaskCanceledCode)
+   * Timeout for the task has expired (TaskCanceledCode)
    */
   TIMEOUT_REACHED = 1001,
   /**
@@ -8763,33 +9524,45 @@ declare enum TerminationStatus {
    */
   MS_NOT_ANSWERED = 1002,
   /**
-   * The customer has cancelled the task (EndTaskCode)
+   * Queue is empty
+   */
+  QUEUE_EMPTY = 1003,
+  /**
+   * Maximum waiting time has been reached
+   */
+  MAX_WAITING_TIME_REACHED = 1004,
+  /**
+   * Maximum queue size has been reached
+   */
+  MAX_QUEUE_SIZE_REACHED = 1005,
+  /**
+   * No agents available
+   */
+  OPERATOR_NOT_AVAILABLE = 1006,
+  /**
+   * Customer has cancelled the task (EndTaskCode)
    */
   CLIENT_TERMINATE = 1100,
   /**
-   * The customer has finished the task (EndOperatorActivityCode)
+   * Customer has finished the task (EndOperatorActivityCode)
    */
   FINISHED_BY_CLIENT = 1201,
   /**
-   * The agent has finished the task (EndOperatorActivityCode)
+   * Agent has finished the task (EndOperatorActivityCode)
    */
   FINISHED_BY_OPERATOR = 1202,
   /**
-   * The agent has missed or declined the task (EndOperatorActivityCode)
+   * Agent has missed or declined the task (EndOperatorActivityCode)
    */
   FAILED = 1203,
   /**
-   * The task is cancelled in the scenario (EndOperatorActivityCode)
+   * Task is cancelled in the scenario (EndOperatorActivityCode)
    */
   CANCELED = 1204,
   /**
-   * The task is transferred (EndOperatorActivityCode)
+   * Task is transferred (EndOperatorActivityCode)
    */
   TRANSFERRED = 1205,
-  /**
-   * An internal error occurred (ErrorCode, EndTaskCode, EndOperatorActivityCode)
-   */
-  INTERNAL_ERROR = 500,
 }
 
 /**
@@ -8834,6 +9607,24 @@ declare enum TranscriptionProvider {
     TBANK = 'tcs',
 }
 /**
+ * The parameters can be passed as arguments to the [Call.transferTo] method.
+ */
+declare interface TransferToParameters {
+  /**
+   * SIP(S) URI to make a call to. Example of an external call: **sip:alice@example.org**. Examples with the usage of TLS: **sips:alice@example.org:5061** ; **alice@example.org:5061;transport=tls**. The format for calls to another user of the same Voximplant application: user-of-the-application@application-name.account-name.voximplant.com
+   */
+  to: string;
+  /**
+   * Call (for 'attendant transfer' only)
+   */
+  call: Call;
+  /**
+   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The “X-” headers can be handled by a SIP phone or WEB SDK (e.g. see the incomingCall event). Example: {'X-header':'value'}
+   */
+  headers?: { [header: string]: string };
+}
+
+/**
  * TTS [Player] parameters. Can be passed via the [SequencePlayerParameters.segments] parameter.
  * <br>
  * Same as the [VoxEngine.createTTSPlayer] method arguments. Has a similar interface to [TTSPlaybackParameters](/docs/references/avatarengine/ttsplaybackparameters).
@@ -8857,73 +9648,51 @@ declare namespace Ultravox {
     function createWebSocketAPIClient(parameters: WebSocketAPIClientParameters): Promise<Ultravox.WebSocketAPIClient>
 }
 declare namespace Ultravox {
+  /**
+   * @event
+   */
+  enum Events {
     /**
-     * @event
+     * Triggered when the audio stream sent by a third party through an Ultravox WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedUltravoxEvent
      */
-    enum Events {
-        /**
-         * Triggered when the audio stream sent by a third party through a Ultravox WebSocket is started playing.
-         * @typedef _WebSocketMediaStartedEvent
-         */
-        WebSocketMediaStarted = 'Ultravox.Events.WebSocketMediaStarted',
-        /**
-         * Triggers after the end of the audio stream sent by a third party through a Ultravox WebSocket (**1 second of silence**).
-         * @typedef _WebSocketMediaEndedEvent
-         */
-        WebSocketMediaEnded = 'Ultravox.Events.WebSocketMediaEnded',
-    }
+    WebSocketMediaStarted = 'Ultravox.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an Ultravox WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedUltravoxEvent
+     */
+    WebSocketMediaEnded = 'Ultravox.Events.WebSocketMediaEnded',
+  }
 
-    /**
-     * @private
-     */
-    interface _Events {
-        [Events.WebSocketMediaStarted]: _WebSocketMediaStartedEvent;
-        [Events.WebSocketMediaEnded]: _WebSocketMediaEndedEvent;
-    }
+  /**
+   * @private
+   */
+  interface _Events {
+    [Ultravox.Events.WebSocketMediaStarted]: _WebSocketMediaStartedUltravoxEvent;
+    [Ultravox.Events.WebSocketMediaEnded]: _WebSocketMediaEndedUltravoxEvent;
+  }
 
+  /**
+   * @private
+   */
+  interface _Event {
     /**
-     * @private
+     * The [Ultravox.WebSocketAPIClient] instance.
      */
-    interface _Event {
-        /**
-         * The [Ultravox.WebSocketAPIClient] instance.
-         */
-        client: WebSocketAPIClient;
-    }
+    client: WebSocketAPIClient;
+  }
 
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEvent extends _Event {
-        /**
-         * Special tag to name audio streams sent over one Ultravox WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
-         */
-        tag?: string;
-    }
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedUltravoxEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
 
-    /**
-     * @private
-     */
-    interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
-        /**
-         * Audio encoding formats.
-         */
-        encoding?: string;
-        /**
-         * Custom parameters.
-         */
-        customParameters?: { [key: string]: string };
-    }
-
-    /**
-     * @private
-     */
-    interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
-        /**
-         * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
-         */
-        mediaInfo?: WebSocketMediaInfo;
-    }
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedUltravoxEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
 }
 declare namespace Ultravox {
   /*
@@ -8948,6 +9717,10 @@ declare namespace Ultravox {
      */
     endpoint: HTTPEndpoint;
     /**
+     * Optional. Ultravox call join url.
+     */
+    joinUrl: string;
+    /**
      * Optional. Ultravox request authorizations. See the documentation of the specified endpoint for details.
      */
     authorizations?: Object;
@@ -8964,7 +9737,7 @@ declare namespace Ultravox {
      */
     body?: Object;
     /**
-     * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests. Note that you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
+     * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests. NOTE: you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
      */
     joinUrl?: string;
   }
@@ -9092,6 +9865,18 @@ declare namespace Ultravox {
      * @typedef _WebSocketAPIEvent
      */
     PlaybackClearBuffer = 'Ultravox.WebSocketAPI.PlaybackClearBuffer',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _WebSocketAPIEvent
+     */
+    WebSocketError = 'Ultravox.WebSocketAPI.WebSocketError',
+
+     /**
+     * Contains information about connector.
+     * @typedef _WebSocketAPIEvent
+     */
+    ConnectorInformation = 'Ultravox.WebSocketAPI.ConnectorInformation',
   }
 
   /**
@@ -9105,6 +9890,8 @@ declare namespace Ultravox {
     [WebSocketAPIEvents.ClientToolInvocation]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.Debug]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.PlaybackClearBuffer]: _WebSocketAPIEvent;
+    [WebSocketAPIEvents.WebSocketError]: _WebSocketAPIEvent;
+    [WebSocketAPIEvents.ConnectorInformation]: _WebSocketAPIEvent;
   }
 
   /**
@@ -9284,6 +10071,15 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
+   * Starts an outgoing call to the specified WhatsApp user.
+   * This method requires a WhatsApp Business account. Read more in the [WhatsApp Business-initiated calls](/docs/guides/integrations/whatsapp-calls) article.
+   * @param parameters Call parameters.
+   */
+  function callWhatsappUser(parameters: CallWhatsappUserParameters): Call;
+}
+
+declare namespace VoxEngine {
+  /**
    * Creates a new [ASR] (speech recognizer) instance and starts recognition. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
@@ -9414,6 +10210,20 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
+   * Disables statistics for incoming WebSockets
+   */
+  function disableStatisticsForIncomingWebsockets(): void;
+}
+
+declare namespace VoxEngine {
+  /**
+   * Disables trace for incoming WebSockets
+   */
+  function disableTraceForIncomingWebsockets(): void;
+}
+
+declare namespace VoxEngine {
+  /**
    * Adds all default event listeners to pass signaling information between two calls. The source code of the method is available on [GitHub](https://github.com/voximplant/easyprocess).
    * @param call1 incoming alerting call
    * @param call2 Newly created outgoing call
@@ -9426,6 +10236,20 @@ declare namespace VoxEngine {
     onEstablishedCallback?: (call1: Call, call2: Call) => void,
     direct?: boolean
   ): void;
+}
+
+declare namespace VoxEngine {
+  /**
+   * Enables statistics for incoming WebSockets
+   */
+  function enableStatisticsForIncomingWebsockets(): void;
+}
+
+declare namespace VoxEngine {
+  /**
+   * Enables trace for incoming WebSockets
+   */
+  function enableTraceForIncomingWebsockets(): void;
 }
 
 declare namespace VoxEngine {
@@ -16162,13 +16986,13 @@ declare interface _WebSocketCreatedEvent extends _WebSocketEvent {
   /**
    * Exists when statistics is enabled.
    */
-  readonly statisticsUrl?:string
+  readonly statisticsUrl?: string;
 }
 
 /**
  * @private
  */
-declare interface _WebSocketMediaEvent extends _WebSocketEvent {
+declare interface _WebSocketMediaEvent {
   /**
    * Special tag to name audio streams sent over one WebSocket connection. With it, one can send 2 audios to 2 different media units at the same time.
    */
@@ -16178,7 +17002,7 @@ declare interface _WebSocketMediaEvent extends _WebSocketEvent {
 /**
  * @private
  */
-declare interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
+declare interface _WebSocketMediaStartedWithoutWebSocketEvent extends _WebSocketMediaEvent {
   /**
    * Audio encoding formats.
    */
@@ -16192,11 +17016,23 @@ declare interface _WebSocketMediaStartedEvent extends _WebSocketMediaEvent {
 /**
  * @private
  */
-declare interface _WebSocketMediaEndedEvent extends _WebSocketMediaEvent {
+declare interface _WebSocketMediaStartedEvent extends _WebSocketMediaStartedWithoutWebSocketEvent, _WebSocketEvent {
+}
+
+/**
+ * @private
+ */
+declare interface _WebSocketMediaEndedWithoutWebSocketEvent extends _WebSocketMediaEvent {
   /**
    * Information about the audio stream that can be obtained after the stream stops or pauses (**1 second of silence**).
    */
   mediaInfo?: WebSocketMediaInfo;
+}
+
+/**
+ * @private
+ */
+declare interface _WebSocketMediaEndedEvent extends _WebSocketMediaEndedWithoutWebSocketEvent, _WebSocketEvent {
 }
 
 /**
@@ -18177,6 +19013,8 @@ declare module ASRProfileList {
     zu_ZA,
   }
 }
+
+
 declare module ASRProfileList {
   /**
    * List of Microsoft ASR profiles.
@@ -19292,63 +20130,6 @@ declare module ASRProfileList {
 }
 
 /**
- * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Parameters **language** or **dictionary** should be passed to the [VoxEngine.createASR] function.
- * <br>
- * Add the following line to your scenario code to use the class:
- * ```
- * require(Modules.ASR);
- * ```
- */
-declare class ASR {
-  /**
-   * @param id
-   * @param language
-   * @param dictionary
-   */
-  constructor(id: string, language: string, dictionary: string);
-
-  /**
-   * Returns the asr's id.
-   */
-  id(): string;
-
-  /**
-   * Returns the asr's language.
-   */
-  language(): string;
-
-  /**
-   * Returns the asr's dictionary.
-   */
-  dictionary(): string[];
-
-  /**
-   * Adds a handler for the specified [ASREvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-   * @param event Event class (i.e., [ASREvents.Stopped])
-   * @param callback Handler function. A single parameter is passed - object with event information
-   */
-  addEventListener<T extends keyof _ASREvents>(
-    event: ASREvents | T,
-    callback: (event: _ASREvents[T]) => any
-  ): void;
-
-  /**
-   * Removes a handler for the specified [ASREvents] event.
-   * @param event Event class (i.e., [ASREvents.Stopped])
-   * @param callback Optional. Handler function. If not specified, all handler functions are removed
-   */
-  removeEventListener<T extends keyof _ASREvents>(
-    event: ASREvents | T,
-    callback?: (event: _ASREvents[T]) => any
-  ): void;
-
-  /**
-   * Stops recognition. Triggers the [ASREvents.Stopped] event. Do not call any other ASR functions/handlers after the **ASR.stop** call.
-   */
-  stop(): void;
-}
-
-/**
  * Decodes the data in the Base64 encoding
  * @param data Data to decode
  */
@@ -19839,12 +20620,12 @@ declare interface TTSPlaybackParameters {
  */
 declare interface TTSPlayerParameters {
   /**
-   * Optional. Language and voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.
+   * Optional. Voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.
    * <br>
    * <br>
    * *Available for providers: Amazon, Google, IBM, Microsoft, SaluteSpeech, T-Bank, Yandex, ElevenLabs.*
    */
-  language?: Voice;
+  voice?: Voice;
   /**
    * Optional. Whether to use progressive playback. If **true**, the generated speech is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.
    * <br>
@@ -20379,6 +21160,11 @@ declare namespace VoiceList {
        */
       const en_SG_Jasmine: Voice;
       /**
+       * Neural Amazon voice, Korean Female, Jihye.
+       * @const
+       */
+      const ko_KR_Jihye: Voice;
+      /**
        * Neural Amazon voice, US English Male, Kevin.
        * @const
        */
@@ -20641,6 +21427,7 @@ declare namespace VoiceList {
     }
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of available freemium TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -20951,42 +21738,152 @@ declare namespace VoiceList {
      * Google voice, Arabic (Pseudo-Accents) female.
      * @const
      */
-    const ar_XA_Chirp3_HD_Aoede: Voice;
+    const ar_XA_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) male.
      * @const
      */
-    const ar_XA_Chirp3_HD_Charon: Voice;
+    const ar_XA_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) male (second voice).
      * @const
      */
-    const ar_XA_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Arabic (Pseudo-Accents) female (second voice).
-     * @const
-     */
-    const ar_XA_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Arabic (Pseudo-Accents) female (third voice).
-     * @const
-     */
-    const ar_XA_Chirp3_HD_Leda: Voice;
+    const ar_XA_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) male (third voice).
      * @const
      */
-    const ar_XA_Chirp3_HD_Orus: Voice;
+    const ar_XA_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) male (fourth voice).
      * @const
      */
-    const ar_XA_Chirp3_HD_Puck: Voice;
+    const ar_XA_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (second voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (third voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) female (fourth voice).
      * @const
      */
+    const ar_XA_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (fifth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (fifth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (sixth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (sixth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (seventh voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (seventh voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (eighth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (eighth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (ninth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (tenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (ninth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (tenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (eleventh voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (eleventh voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (twelfth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (thirteenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (fourteenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (twelfth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (fifteenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (thirteenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) female (fourteenth voice).
+     * @const
+     */
     const ar_XA_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Arabic (Pseudo-Accents) male (sixteenth voice).
+     * @const
+     */
+    const ar_XA_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Arabic (Pseudo-Accents) female.
      * @const
@@ -21031,52 +21928,157 @@ declare namespace VoiceList {
      * Google voice, Bulgarian (Bulgaria) female.
      * @const
      */
-    const bg_BG_Standard_A: Voice;
-    /**
-     * Google voice, Bulgarian (Bulgaria) female (second voice).
-     * @const
-     */
     const bg_BG_Standard_B: Voice;
     /**
      * Google voice, Bangla (India) female.
      * @const
      */
-    const bn_IN_Chirp3_HD_Aoede: Voice;
+    const bn_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Bangla (India) male.
      * @const
      */
-    const bn_IN_Chirp3_HD_Charon: Voice;
+    const bn_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Bangla (India) male (second voice).
      * @const
      */
-    const bn_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Bangla (India) female (second voice).
-     * @const
-     */
-    const bn_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Bangla (India) female (third voice).
-     * @const
-     */
-    const bn_IN_Chirp3_HD_Leda: Voice;
+    const bn_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Bangla (India) male (third voice).
      * @const
      */
-    const bn_IN_Chirp3_HD_Orus: Voice;
+    const bn_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Bangla (India) male (fourth voice).
      * @const
      */
-    const bn_IN_Chirp3_HD_Puck: Voice;
+    const bn_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Bangla (India) female (second voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Bangla (India) female (third voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Bangla (India) female (fourth voice).
      * @const
      */
+    const bn_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Bangla (India) male (fifth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Bangla (India) female (fifth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Bangla (India) male (sixth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Bangla (India) female (sixth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Bangla (India) male (seventh voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Bangla (India) female (seventh voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Bangla (India) male (eighth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Bangla (India) female (eighth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Bangla (India) female (ninth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Bangla (India) female (tenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Bangla (India) male (ninth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Bangla (India) male (tenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Bangla (India) female (eleventh voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Bangla (India) male (eleventh voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Bangla (India) male (twelfth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Bangla (India) male (thirteenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Bangla (India) male (fourteenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Bangla (India) female (twelfth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Bangla (India) male (fifteenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Bangla (India) female (thirteenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Bangla (India) female (fourteenth voice).
+     * @const
+     */
     const bn_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Bangla (India) male (sixteenth voice).
+     * @const
+     */
+    const bn_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Bangla (India) female.
      * @const
@@ -21121,52 +22123,157 @@ declare namespace VoiceList {
      * Google voice, Catalan (Spain) female.
      * @const
      */
-    const ca_ES_Standard_A: Voice;
-    /**
-     * Google voice, Catalan (Spain) female (second voice).
-     * @const
-     */
     const ca_ES_Standard_B: Voice;
     /**
      * Google voice, Chinese (China) female.
      * @const
      */
-    const cmn_CN_Chirp3_HD_Aoede: Voice;
+    const cmn_CN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Chinese (China) male.
      * @const
      */
-    const cmn_CN_Chirp3_HD_Charon: Voice;
+    const cmn_CN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Chinese (China) male (second voice).
      * @const
      */
-    const cmn_CN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Chinese (China) female (second voice).
-     * @const
-     */
-    const cmn_CN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Chinese (China) female (third voice).
-     * @const
-     */
-    const cmn_CN_Chirp3_HD_Leda: Voice;
+    const cmn_CN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Chinese (China) male (third voice).
      * @const
      */
-    const cmn_CN_Chirp3_HD_Orus: Voice;
+    const cmn_CN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Chinese (China) male (fourth voice).
      * @const
      */
-    const cmn_CN_Chirp3_HD_Puck: Voice;
+    const cmn_CN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Chinese (China) female (second voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Chinese (China) female (third voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Chinese (China) female (fourth voice).
      * @const
      */
+    const cmn_CN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Chinese (China) male (fifth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Chinese (China) female (fifth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Chinese (China) male (sixth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Chinese (China) female (sixth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Chinese (China) male (seventh voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Chinese (China) female (seventh voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Chinese (China) male (eighth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Chinese (China) female (eighth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Chinese (China) female (ninth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Chinese (China) female (tenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Chinese (China) male (ninth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Chinese (China) male (tenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Chinese (China) female (eleventh voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Chinese (China) male (eleventh voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Chinese (China) male (twelfth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Chinese (China) male (thirteenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Chinese (China) male (fourteenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Chinese (China) female (twelfth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Chinese (China) male (fifteenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Chinese (China) female (thirteenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Chinese (China) female (fourteenth voice).
+     * @const
+     */
     const cmn_CN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Chinese (China) male (sixteenth voice).
+     * @const
+     */
+    const cmn_CN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Chinese (China) female.
      * @const
@@ -21241,19 +22348,9 @@ declare namespace VoiceList {
      * Google voice, Czech (Czechia) female.
      * @const
      */
-    const cs_CZ_Standard_A: Voice;
-    /**
-     * Google voice, Czech (Czechia) female (second voice).
-     * @const
-     */
     const cs_CZ_Standard_B: Voice;
     /**
      * Google voice, Czech (Czechia) female.
-     * @const
-     */
-    const cs_CZ_Wavenet_A: Voice;
-    /**
-     * Google voice, Czech (Czechia) female (second voice).
      * @const
      */
     const cs_CZ_Wavenet_B: Voice;
@@ -21266,29 +22363,9 @@ declare namespace VoiceList {
      * Google voice, Danish (Denmark) female.
      * @const
      */
-    const da_DK_Standard_A: Voice;
-    /**
-     * Google voice, Danish (Denmark) male.
-     * @const
-     */
-    const da_DK_Standard_C: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (second voice).
-     * @const
-     */
-    const da_DK_Standard_D: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (third voice).
-     * @const
-     */
-    const da_DK_Standard_E: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (fourth voice).
-     * @const
-     */
     const da_DK_Standard_F: Voice;
     /**
-     * Google voice, Danish (Denmark) male (second voice).
+     * Google voice, Danish (Denmark) male.
      * @const
      */
     const da_DK_Standard_G: Voice;
@@ -21296,29 +22373,9 @@ declare namespace VoiceList {
      * Google voice, Danish (Denmark) female.
      * @const
      */
-    const da_DK_Wavenet_A: Voice;
-    /**
-     * Google voice, Danish (Denmark) male.
-     * @const
-     */
-    const da_DK_Wavenet_C: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (second voice).
-     * @const
-     */
-    const da_DK_Wavenet_D: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (third voice).
-     * @const
-     */
-    const da_DK_Wavenet_E: Voice;
-    /**
-     * Google voice, Danish (Denmark) female (fourth voice).
-     * @const
-     */
     const da_DK_Wavenet_F: Voice;
     /**
-     * Google voice, Danish (Denmark) male (second voice).
+     * Google voice, Danish (Denmark) male.
      * @const
      */
     const da_DK_Wavenet_G: Voice;
@@ -21341,42 +22398,152 @@ declare namespace VoiceList {
      * Google voice, German (Germany) female.
      * @const
      */
-    const de_DE_Chirp3_HD_Aoede: Voice;
+    const de_DE_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, German (Germany) male.
      * @const
      */
-    const de_DE_Chirp3_HD_Charon: Voice;
+    const de_DE_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, German (Germany) male (second voice).
      * @const
      */
-    const de_DE_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, German (Germany) female (second voice).
-     * @const
-     */
-    const de_DE_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, German (Germany) female (third voice).
-     * @const
-     */
-    const de_DE_Chirp3_HD_Leda: Voice;
+    const de_DE_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, German (Germany) male (third voice).
      * @const
      */
-    const de_DE_Chirp3_HD_Orus: Voice;
+    const de_DE_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, German (Germany) male (fourth voice).
      * @const
      */
-    const de_DE_Chirp3_HD_Puck: Voice;
+    const de_DE_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, German (Germany) female (second voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, German (Germany) female (third voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, German (Germany) female (fourth voice).
      * @const
      */
+    const de_DE_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, German (Germany) male (fifth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, German (Germany) female (fifth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, German (Germany) male (sixth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, German (Germany) female (sixth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, German (Germany) male (seventh voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, German (Germany) female (seventh voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, German (Germany) male (eighth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, German (Germany) female (eighth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, German (Germany) female (ninth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, German (Germany) female (tenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, German (Germany) male (ninth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, German (Germany) male (tenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, German (Germany) female (eleventh voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, German (Germany) male (eleventh voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, German (Germany) male (twelfth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, German (Germany) male (thirteenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, German (Germany) male (fourteenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, German (Germany) female (twelfth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, German (Germany) male (fifteenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, German (Germany) female (thirteenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, German (Germany) female (fourteenth voice).
+     * @const
+     */
     const de_DE_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, German (Germany) male (sixteenth voice).
+     * @const
+     */
+    const de_DE_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, German (Germany) female.
      * @const
@@ -21396,39 +22563,9 @@ declare namespace VoiceList {
      * Google voice, German (Germany) female.
      * @const
      */
-    const de_DE_Standard_A: Voice;
-    /**
-     * Google voice, German (Germany) male.
-     * @const
-     */
-    const de_DE_Standard_B: Voice;
-    /**
-     * Google voice, German (Germany) female (second voice).
-     * @const
-     */
-    const de_DE_Standard_C: Voice;
-    /**
-     * Google voice, German (Germany) male (second voice).
-     * @const
-     */
-    const de_DE_Standard_D: Voice;
-    /**
-     * Google voice, German (Germany) male (third voice).
-     * @const
-     */
-    const de_DE_Standard_E: Voice;
-    /**
-     * Google voice, German (Germany) female (third voice).
-     * @const
-     */
-    const de_DE_Standard_F: Voice;
-    /**
-     * Google voice, German (Germany) female (fourth voice).
-     * @const
-     */
     const de_DE_Standard_G: Voice;
     /**
-     * Google voice, German (Germany) male (fourth voice).
+     * Google voice, German (Germany) male.
      * @const
      */
     const de_DE_Standard_H: Voice;
@@ -21446,39 +22583,9 @@ declare namespace VoiceList {
      * Google voice, German (Germany) female.
      * @const
      */
-    const de_DE_Wavenet_A: Voice;
-    /**
-     * Google voice, German (Germany) male.
-     * @const
-     */
-    const de_DE_Wavenet_B: Voice;
-    /**
-     * Google voice, German (Germany) female (second voice).
-     * @const
-     */
-    const de_DE_Wavenet_C: Voice;
-    /**
-     * Google voice, German (Germany) male (second voice).
-     * @const
-     */
-    const de_DE_Wavenet_D: Voice;
-    /**
-     * Google voice, German (Germany) male (third voice).
-     * @const
-     */
-    const de_DE_Wavenet_E: Voice;
-    /**
-     * Google voice, German (Germany) female (third voice).
-     * @const
-     */
-    const de_DE_Wavenet_F: Voice;
-    /**
-     * Google voice, German (Germany) female (fourth voice).
-     * @const
-     */
     const de_DE_Wavenet_G: Voice;
     /**
-     * Google voice, German (Germany) male (fourth voice).
+     * Google voice, German (Germany) male.
      * @const
      */
     const de_DE_Wavenet_H: Voice;
@@ -21486,19 +22593,9 @@ declare namespace VoiceList {
      * Google voice, Greek (Greece) female.
      * @const
      */
-    const el_GR_Standard_A: Voice;
-    /**
-     * Google voice, Greek (Greece) female (second voice).
-     * @const
-     */
     const el_GR_Standard_B: Voice;
     /**
      * Google voice, Greek (Greece) female.
-     * @const
-     */
-    const el_GR_Wavenet_A: Voice;
-    /**
-     * Google voice, Greek (Greece) female (second voice).
      * @const
      */
     const el_GR_Wavenet_B: Voice;
@@ -21521,42 +22618,152 @@ declare namespace VoiceList {
      * Google voice, Australian English female.
      * @const
      */
-    const en_AU_Chirp3_HD_Aoede: Voice;
+    const en_AU_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Australian English male.
      * @const
      */
-    const en_AU_Chirp3_HD_Charon: Voice;
+    const en_AU_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Australian English male (second voice).
      * @const
      */
-    const en_AU_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Australian English female (second voice).
-     * @const
-     */
-    const en_AU_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Australian English female (third voice).
-     * @const
-     */
-    const en_AU_Chirp3_HD_Leda: Voice;
+    const en_AU_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Australian English male (third voice).
      * @const
      */
-    const en_AU_Chirp3_HD_Orus: Voice;
+    const en_AU_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Australian English male (fourth voice).
      * @const
      */
-    const en_AU_Chirp3_HD_Puck: Voice;
+    const en_AU_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Australian English female (second voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Australian English female (third voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Australian English female (fourth voice).
      * @const
      */
+    const en_AU_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Australian English male (fifth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Australian English female (fifth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Australian English male (sixth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Australian English female (sixth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Australian English male (seventh voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Australian English female (seventh voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Australian English male (eighth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Australian English female (eighth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Australian English female (ninth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Australian English female (tenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Australian English male (ninth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Australian English male (tenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Australian English female (eleventh voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Australian English male (eleventh voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Australian English male (twelfth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Australian English male (thirteenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Australian English male (fourteenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Australian English female (twelfth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Australian English male (fifteenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Australian English female (thirteenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Australian English female (fourteenth voice).
+     * @const
+     */
     const en_AU_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Australian English male (sixteenth voice).
+     * @const
+     */
+    const en_AU_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Australian English female.
      * @const
@@ -21656,42 +22863,152 @@ declare namespace VoiceList {
      * Google voice, British English female.
      * @const
      */
-    const en_GB_Chirp3_HD_Aoede: Voice;
+    const en_GB_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, British English male.
      * @const
      */
-    const en_GB_Chirp3_HD_Charon: Voice;
+    const en_GB_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, British English male (second voice).
      * @const
      */
-    const en_GB_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, British English female (second voice).
-     * @const
-     */
-    const en_GB_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, British English female (third voice).
-     * @const
-     */
-    const en_GB_Chirp3_HD_Leda: Voice;
+    const en_GB_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, British English male (third voice).
      * @const
      */
-    const en_GB_Chirp3_HD_Orus: Voice;
+    const en_GB_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, British English male (fourth voice).
      * @const
      */
-    const en_GB_Chirp3_HD_Puck: Voice;
+    const en_GB_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, British English female (second voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, British English female (third voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, British English female (fourth voice).
      * @const
      */
+    const en_GB_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, British English male (fifth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, British English female (fifth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, British English male (sixth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, British English female (sixth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, British English male (seventh voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, British English female (seventh voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, British English male (eighth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, British English female (eighth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, British English female (ninth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, British English female (tenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, British English male (ninth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, British English male (tenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, British English female (eleventh voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, British English male (eleventh voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, British English male (twelfth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, British English male (thirteenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, British English male (fourteenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, British English female (twelfth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, British English male (fifteenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, British English female (thirteenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, British English female (fourteenth voice).
+     * @const
+     */
     const en_GB_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, British English male (sixteenth voice).
+     * @const
+     */
+    const en_GB_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, British English female.
      * @const
@@ -21861,42 +23178,152 @@ declare namespace VoiceList {
      * Google voice, English (India) female.
      * @const
      */
-    const en_IN_Chirp3_HD_Aoede: Voice;
+    const en_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, English (India) male.
      * @const
      */
-    const en_IN_Chirp3_HD_Charon: Voice;
+    const en_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, English (India) male (second voice).
      * @const
      */
-    const en_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, English (India) female (second voice).
-     * @const
-     */
-    const en_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, English (India) female (third voice).
-     * @const
-     */
-    const en_IN_Chirp3_HD_Leda: Voice;
+    const en_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, English (India) male (third voice).
      * @const
      */
-    const en_IN_Chirp3_HD_Orus: Voice;
+    const en_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, English (India) male (fourth voice).
      * @const
      */
-    const en_IN_Chirp3_HD_Puck: Voice;
+    const en_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, English (India) female (second voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, English (India) female (third voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, English (India) female (fourth voice).
      * @const
      */
+    const en_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, English (India) male (fifth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, English (India) female (fifth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, English (India) male (sixth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, English (India) female (sixth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, English (India) male (seventh voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, English (India) female (seventh voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, English (India) male (eighth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, English (India) female (eighth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, English (India) female (ninth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, English (India) female (tenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, English (India) male (ninth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, English (India) male (tenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, English (India) female (eleventh voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, English (India) male (eleventh voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, English (India) male (twelfth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, English (India) male (thirteenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, English (India) male (fourteenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, English (India) female (twelfth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, English (India) male (fifteenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, English (India) female (thirteenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, English (India) female (fourteenth voice).
+     * @const
+     */
     const en_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, English (India) male (sixteenth voice).
+     * @const
+     */
+    const en_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, English (India) female.
      * @const
@@ -22001,42 +23428,152 @@ declare namespace VoiceList {
      * Google voice, American English female.
      * @const
      */
-    const en_US_Chirp3_HD_Aoede: Voice;
+    const en_US_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, American English male.
      * @const
      */
-    const en_US_Chirp3_HD_Charon: Voice;
+    const en_US_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, American English male (second voice).
      * @const
      */
-    const en_US_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, American English female (second voice).
-     * @const
-     */
-    const en_US_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, American English female (third voice).
-     * @const
-     */
-    const en_US_Chirp3_HD_Leda: Voice;
+    const en_US_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, American English male (third voice).
      * @const
      */
-    const en_US_Chirp3_HD_Orus: Voice;
+    const en_US_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, American English male (fourth voice).
      * @const
      */
-    const en_US_Chirp3_HD_Puck: Voice;
+    const en_US_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, American English female (second voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, American English female (third voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, American English female (fourth voice).
      * @const
      */
+    const en_US_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, American English male (fifth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, American English female (fifth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, American English male (sixth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, American English female (sixth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, American English male (seventh voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, American English female (seventh voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, American English male (eighth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, American English female (eighth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, American English female (ninth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, American English female (tenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, American English male (ninth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, American English male (tenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, American English female (eleventh voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, American English male (eleventh voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, American English male (twelfth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, American English male (thirteenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, American English male (fourteenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, American English female (twelfth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, American English male (fifteenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, American English female (thirteenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, American English female (fourteenth voice).
+     * @const
+     */
     const en_US_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, American English male (sixteenth voice).
+     * @const
+     */
+    const en_US_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, American English male.
      * @const
@@ -22231,42 +23768,152 @@ declare namespace VoiceList {
      * Google voice, European Spanish female.
      * @const
      */
-    const es_ES_Chirp3_HD_Aoede: Voice;
+    const es_ES_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, European Spanish male.
      * @const
      */
-    const es_ES_Chirp3_HD_Charon: Voice;
+    const es_ES_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, European Spanish male (second voice).
      * @const
      */
-    const es_ES_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, European Spanish female (second voice).
-     * @const
-     */
-    const es_ES_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, European Spanish female (third voice).
-     * @const
-     */
-    const es_ES_Chirp3_HD_Leda: Voice;
+    const es_ES_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, European Spanish male (third voice).
      * @const
      */
-    const es_ES_Chirp3_HD_Orus: Voice;
+    const es_ES_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, European Spanish male (fourth voice).
      * @const
      */
-    const es_ES_Chirp3_HD_Puck: Voice;
+    const es_ES_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, European Spanish female (second voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, European Spanish female (third voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, European Spanish female (fourth voice).
      * @const
      */
+    const es_ES_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, European Spanish male (fifth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, European Spanish female (fifth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, European Spanish male (sixth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, European Spanish female (sixth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, European Spanish male (seventh voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, European Spanish female (seventh voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, European Spanish male (eighth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, European Spanish female (eighth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, European Spanish female (ninth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, European Spanish female (tenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, European Spanish male (ninth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, European Spanish male (tenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, European Spanish female (eleventh voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, European Spanish male (eleventh voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, European Spanish male (twelfth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, European Spanish male (thirteenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, European Spanish male (fourteenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, European Spanish female (twelfth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, European Spanish male (fifteenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, European Spanish female (thirteenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, European Spanish female (fourteenth voice).
+     * @const
+     */
     const es_ES_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, European Spanish male (sixteenth voice).
+     * @const
+     */
+    const es_ES_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, European Spanish female.
      * @const
@@ -22298,42 +23945,22 @@ declare namespace VoiceList {
      */
     const es_ES_Polyglot_1: Voice;
     /**
-     * Google voice, European Spanish female.
-     * @const
-     */
-    const es_ES_Standard_A: Voice;
-    /**
      * Google voice, European Spanish male.
-     * @const
-     */
-    const es_ES_Standard_B: Voice;
-    /**
-     * Google voice, European Spanish female (second voice).
-     * @const
-     */
-    const es_ES_Standard_C: Voice;
-    /**
-     * Google voice, European Spanish female (third voice).
-     * @const
-     */
-    const es_ES_Standard_D: Voice;
-    /**
-     * Google voice, European Spanish male (second voice).
      * @const
      */
     const es_ES_Standard_E: Voice;
     /**
-     * Google voice, European Spanish female (fourth voice).
+     * Google voice, European Spanish female.
      * @const
      */
     const es_ES_Standard_F: Voice;
     /**
-     * Google voice, European Spanish male (third voice).
+     * Google voice, European Spanish male (second voice).
      * @const
      */
     const es_ES_Standard_G: Voice;
     /**
-     * Google voice, European Spanish female (fifth voice).
+     * Google voice, European Spanish female (second voice).
      * @const
      */
     const es_ES_Standard_H: Voice;
@@ -22351,34 +23978,19 @@ declare namespace VoiceList {
      * Google voice, European Spanish male.
      * @const
      */
-    const es_ES_Wavenet_B: Voice;
+    const es_ES_Wavenet_E: Voice;
     /**
      * Google voice, European Spanish female.
      * @const
      */
-    const es_ES_Wavenet_C: Voice;
-    /**
-     * Google voice, European Spanish female (second voice).
-     * @const
-     */
-    const es_ES_Wavenet_D: Voice;
+    const es_ES_Wavenet_F: Voice;
     /**
      * Google voice, European Spanish male (second voice).
      * @const
      */
-    const es_ES_Wavenet_E: Voice;
-    /**
-     * Google voice, European Spanish female (third voice).
-     * @const
-     */
-    const es_ES_Wavenet_F: Voice;
-    /**
-     * Google voice, European Spanish male (third voice).
-     * @const
-     */
     const es_ES_Wavenet_G: Voice;
     /**
-     * Google voice, European Spanish female (fourth voice).
+     * Google voice, European Spanish female (second voice).
      * @const
      */
     const es_ES_Wavenet_H: Voice;
@@ -22401,42 +24013,152 @@ declare namespace VoiceList {
      * Google voice, Spanish (United States) female.
      * @const
      */
-    const es_US_Chirp3_HD_Aoede: Voice;
+    const es_US_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Spanish (United States) male.
      * @const
      */
-    const es_US_Chirp3_HD_Charon: Voice;
+    const es_US_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Spanish (United States) male (second voice).
      * @const
      */
-    const es_US_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Spanish (United States) female (second voice).
-     * @const
-     */
-    const es_US_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Spanish (United States) female (third voice).
-     * @const
-     */
-    const es_US_Chirp3_HD_Leda: Voice;
+    const es_US_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Spanish (United States) male (third voice).
      * @const
      */
-    const es_US_Chirp3_HD_Orus: Voice;
+    const es_US_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Spanish (United States) male (fourth voice).
      * @const
      */
-    const es_US_Chirp3_HD_Puck: Voice;
+    const es_US_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Spanish (United States) female (second voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Spanish (United States) female (third voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Spanish (United States) female (fourth voice).
      * @const
      */
+    const es_US_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Spanish (United States) male (fifth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Spanish (United States) female (fifth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Spanish (United States) male (sixth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Spanish (United States) female (sixth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Spanish (United States) male (seventh voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Spanish (United States) female (seventh voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Spanish (United States) male (eighth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Spanish (United States) female (eighth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Spanish (United States) female (ninth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Spanish (United States) female (tenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Spanish (United States) male (ninth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Spanish (United States) male (tenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Spanish (United States) female (eleventh voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Spanish (United States) male (eleventh voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Spanish (United States) male (twelfth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Spanish (United States) male (thirteenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Spanish (United States) male (fourteenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Spanish (United States) female (twelfth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Spanish (United States) male (fifteenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Spanish (United States) female (thirteenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Spanish (United States) female (fourteenth voice).
+     * @const
+     */
     const es_US_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Spanish (United States) male (sixteenth voice).
+     * @const
+     */
+    const es_US_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Spanish (United States) female.
      * @const
@@ -22521,29 +24243,14 @@ declare namespace VoiceList {
      * Google voice, Basque (Spain) female.
      * @const
      */
-    const eu_ES_Standard_A: Voice;
-    /**
-     * Google voice, Basque (Spain) female (second voice).
-     * @const
-     */
     const eu_ES_Standard_B: Voice;
     /**
      * Google voice, Finnish (Finland) female.
      * @const
      */
-    const fi_FI_Standard_A: Voice;
-    /**
-     * Google voice, Finnish (Finland) female (second voice).
-     * @const
-     */
     const fi_FI_Standard_B: Voice;
     /**
      * Google voice, Finnish (Finland) female.
-     * @const
-     */
-    const fi_FI_Wavenet_A: Voice;
-    /**
-     * Google voice, Finnish (Finland) female (second voice).
      * @const
      */
     const fi_FI_Wavenet_B: Voice;
@@ -22616,42 +24323,152 @@ declare namespace VoiceList {
      * Google voice, Canadian French female.
      * @const
      */
-    const fr_CA_Chirp3_HD_Aoede: Voice;
+    const fr_CA_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Canadian French male.
      * @const
      */
-    const fr_CA_Chirp3_HD_Charon: Voice;
+    const fr_CA_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Canadian French male (second voice).
      * @const
      */
-    const fr_CA_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Canadian French female (second voice).
-     * @const
-     */
-    const fr_CA_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Canadian French female (third voice).
-     * @const
-     */
-    const fr_CA_Chirp3_HD_Leda: Voice;
+    const fr_CA_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Canadian French male (third voice).
      * @const
      */
-    const fr_CA_Chirp3_HD_Orus: Voice;
+    const fr_CA_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Canadian French male (fourth voice).
      * @const
      */
-    const fr_CA_Chirp3_HD_Puck: Voice;
+    const fr_CA_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Canadian French female (second voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Canadian French female (third voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Canadian French female (fourth voice).
      * @const
      */
+    const fr_CA_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Canadian French male (fifth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Canadian French female (fifth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Canadian French male (sixth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Canadian French female (sixth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Canadian French male (seventh voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Canadian French female (seventh voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Canadian French male (eighth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Canadian French female (eighth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Canadian French female (ninth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Canadian French female (tenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Canadian French male (ninth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Canadian French male (tenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Canadian French female (eleventh voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Canadian French male (eleventh voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Canadian French male (twelfth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Canadian French male (thirteenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Canadian French male (fourteenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Canadian French female (twelfth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Canadian French male (fifteenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Canadian French female (thirteenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Canadian French female (fourteenth voice).
+     * @const
+     */
     const fr_CA_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Canadian French male (sixteenth voice).
+     * @const
+     */
+    const fr_CA_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Canadian French female.
      * @const
@@ -22731,42 +24548,152 @@ declare namespace VoiceList {
      * Google voice, French (France) female.
      * @const
      */
-    const fr_FR_Chirp3_HD_Aoede: Voice;
+    const fr_FR_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, French (France) male.
      * @const
      */
-    const fr_FR_Chirp3_HD_Charon: Voice;
+    const fr_FR_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, French (France) male (second voice).
      * @const
      */
-    const fr_FR_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, French (France) female (second voice).
-     * @const
-     */
-    const fr_FR_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, French (France) female (third voice).
-     * @const
-     */
-    const fr_FR_Chirp3_HD_Leda: Voice;
+    const fr_FR_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, French (France) male (third voice).
      * @const
      */
-    const fr_FR_Chirp3_HD_Orus: Voice;
+    const fr_FR_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, French (France) male (fourth voice).
      * @const
      */
-    const fr_FR_Chirp3_HD_Puck: Voice;
+    const fr_FR_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, French (France) female (second voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, French (France) female (third voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, French (France) female (fourth voice).
      * @const
      */
+    const fr_FR_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, French (France) male (fifth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, French (France) female (fifth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, French (France) male (sixth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, French (France) female (sixth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, French (France) male (seventh voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, French (France) female (seventh voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, French (France) male (eighth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, French (France) female (eighth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, French (France) female (ninth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, French (France) female (tenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, French (France) male (ninth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, French (France) male (tenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, French (France) female (eleventh voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, French (France) male (eleventh voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, French (France) male (twelfth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, French (France) male (thirteenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, French (France) male (fourteenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, French (France) female (twelfth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, French (France) male (fifteenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, French (France) female (thirteenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, French (France) female (fourteenth voice).
+     * @const
+     */
     const fr_FR_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, French (France) male (sixteenth voice).
+     * @const
+     */
+    const fr_FR_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, French (France) female.
      * @const
@@ -22786,34 +24713,9 @@ declare namespace VoiceList {
      * Google voice, French (France) female.
      * @const
      */
-    const fr_FR_Standard_A: Voice;
-    /**
-     * Google voice, French (France) male.
-     * @const
-     */
-    const fr_FR_Standard_B: Voice;
-    /**
-     * Google voice, French (France) female (second voice).
-     * @const
-     */
-    const fr_FR_Standard_C: Voice;
-    /**
-     * Google voice, French (France) male (second voice).
-     * @const
-     */
-    const fr_FR_Standard_D: Voice;
-    /**
-     * Google voice, French (France) female (third voice).
-     * @const
-     */
-    const fr_FR_Standard_E: Voice;
-    /**
-     * Google voice, French (France) female (fourth voice).
-     * @const
-     */
     const fr_FR_Standard_F: Voice;
     /**
-     * Google voice, French (France) male (third voice).
+     * Google voice, French (France) male.
      * @const
      */
     const fr_FR_Standard_G: Voice;
@@ -22831,34 +24733,9 @@ declare namespace VoiceList {
      * Google voice, French (France) female.
      * @const
      */
-    const fr_FR_Wavenet_A: Voice;
-    /**
-     * Google voice, French (France) male.
-     * @const
-     */
-    const fr_FR_Wavenet_B: Voice;
-    /**
-     * Google voice, French (France) female (second voice).
-     * @const
-     */
-    const fr_FR_Wavenet_C: Voice;
-    /**
-     * Google voice, French (France) male (second voice).
-     * @const
-     */
-    const fr_FR_Wavenet_D: Voice;
-    /**
-     * Google voice, French (France) female (third voice).
-     * @const
-     */
-    const fr_FR_Wavenet_E: Voice;
-    /**
-     * Google voice, French (France) female (fourth voice).
-     * @const
-     */
     const fr_FR_Wavenet_F: Voice;
     /**
-     * Google voice, French (France) male (third voice).
+     * Google voice, French (France) male.
      * @const
      */
     const fr_FR_Wavenet_G: Voice;
@@ -22866,52 +24743,157 @@ declare namespace VoiceList {
      * Google voice, Galician (Spain) female.
      * @const
      */
-    const gl_ES_Standard_A: Voice;
-    /**
-     * Google voice, Galician (Spain) female (second voice).
-     * @const
-     */
     const gl_ES_Standard_B: Voice;
     /**
      * Google voice, Gujarati (India) female.
      * @const
      */
-    const gu_IN_Chirp3_HD_Aoede: Voice;
+    const gu_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Gujarati (India) male.
      * @const
      */
-    const gu_IN_Chirp3_HD_Charon: Voice;
+    const gu_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Gujarati (India) male (second voice).
      * @const
      */
-    const gu_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Gujarati (India) female (second voice).
-     * @const
-     */
-    const gu_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Gujarati (India) female (third voice).
-     * @const
-     */
-    const gu_IN_Chirp3_HD_Leda: Voice;
+    const gu_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Gujarati (India) male (third voice).
      * @const
      */
-    const gu_IN_Chirp3_HD_Orus: Voice;
+    const gu_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Gujarati (India) male (fourth voice).
      * @const
      */
-    const gu_IN_Chirp3_HD_Puck: Voice;
+    const gu_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Gujarati (India) female (second voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Gujarati (India) female (third voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Gujarati (India) female (fourth voice).
      * @const
      */
+    const gu_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Gujarati (India) male (fifth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Gujarati (India) female (fifth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Gujarati (India) male (sixth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Gujarati (India) female (sixth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Gujarati (India) male (seventh voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Gujarati (India) female (seventh voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Gujarati (India) male (eighth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Gujarati (India) female (eighth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Gujarati (India) female (ninth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Gujarati (India) female (tenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Gujarati (India) male (ninth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Gujarati (India) male (tenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Gujarati (India) female (eleventh voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Gujarati (India) male (eleventh voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Gujarati (India) male (twelfth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Gujarati (India) male (thirteenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Gujarati (India) male (fourteenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Gujarati (India) female (twelfth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Gujarati (India) male (fifteenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Gujarati (India) female (thirteenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Gujarati (India) female (fourteenth voice).
+     * @const
+     */
     const gu_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Gujarati (India) male (sixteenth voice).
+     * @const
+     */
+    const gu_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Gujarati (India) female.
      * @const
@@ -22996,42 +24978,152 @@ declare namespace VoiceList {
      * Google voice, Hindi (India) female.
      * @const
      */
-    const hi_IN_Chirp3_HD_Aoede: Voice;
+    const hi_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Hindi (India) male.
      * @const
      */
-    const hi_IN_Chirp3_HD_Charon: Voice;
+    const hi_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Hindi (India) male (second voice).
      * @const
      */
-    const hi_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Hindi (India) female (second voice).
-     * @const
-     */
-    const hi_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Hindi (India) female (third voice).
-     * @const
-     */
-    const hi_IN_Chirp3_HD_Leda: Voice;
+    const hi_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Hindi (India) male (third voice).
      * @const
      */
-    const hi_IN_Chirp3_HD_Orus: Voice;
+    const hi_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Hindi (India) male (fourth voice).
      * @const
      */
-    const hi_IN_Chirp3_HD_Puck: Voice;
+    const hi_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Hindi (India) female (second voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Hindi (India) female (third voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Hindi (India) female (fourth voice).
      * @const
      */
+    const hi_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Hindi (India) male (fifth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Hindi (India) female (fifth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Hindi (India) male (sixth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Hindi (India) female (sixth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Hindi (India) male (seventh voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Hindi (India) female (seventh voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Hindi (India) male (eighth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Hindi (India) female (eighth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Hindi (India) female (ninth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Hindi (India) female (tenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Hindi (India) male (ninth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Hindi (India) male (tenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Hindi (India) female (eleventh voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Hindi (India) male (eleventh voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Hindi (India) male (twelfth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Hindi (India) male (thirteenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Hindi (India) male (fourteenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Hindi (India) female (twelfth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Hindi (India) male (fifteenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Hindi (India) female (thirteenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Hindi (India) female (fourteenth voice).
+     * @const
+     */
     const hi_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Hindi (India) male (sixteenth voice).
+     * @const
+     */
+    const hi_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Hindi (India) female.
      * @const
@@ -23116,11 +25208,6 @@ declare namespace VoiceList {
      * Google voice, Hungarian (Hungary) female.
      * @const
      */
-    const hu_HU_Standard_A: Voice;
-    /**
-     * Google voice, Hungarian (Hungary) female (second voice).
-     * @const
-     */
     const hu_HU_Standard_B: Voice;
     /**
      * Google voice, Hungarian (Hungary) female.
@@ -23131,42 +25218,152 @@ declare namespace VoiceList {
      * Google voice, Indonesian (Indonesia) female.
      * @const
      */
-    const id_ID_Chirp3_HD_Aoede: Voice;
+    const id_ID_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Indonesian (Indonesia) male.
      * @const
      */
-    const id_ID_Chirp3_HD_Charon: Voice;
+    const id_ID_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Indonesian (Indonesia) male (second voice).
      * @const
      */
-    const id_ID_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Indonesian (Indonesia) female (second voice).
-     * @const
-     */
-    const id_ID_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Indonesian (Indonesia) female (third voice).
-     * @const
-     */
-    const id_ID_Chirp3_HD_Leda: Voice;
+    const id_ID_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Indonesian (Indonesia) male (third voice).
      * @const
      */
-    const id_ID_Chirp3_HD_Orus: Voice;
+    const id_ID_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Indonesian (Indonesia) male (fourth voice).
      * @const
      */
-    const id_ID_Chirp3_HD_Puck: Voice;
+    const id_ID_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (second voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (third voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Indonesian (Indonesia) female (fourth voice).
      * @const
      */
+    const id_ID_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (fifth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (fifth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (sixth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (sixth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (seventh voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (seventh voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (eighth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (eighth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (ninth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (tenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (ninth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (tenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (eleventh voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (eleventh voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (twelfth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (thirteenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (fourteenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (twelfth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (fifteenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (thirteenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) female (fourteenth voice).
+     * @const
+     */
     const id_ID_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Indonesian (Indonesia) male (sixteenth voice).
+     * @const
+     */
+    const id_ID_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Indonesian (Indonesia) female.
      * @const
@@ -23211,11 +25408,6 @@ declare namespace VoiceList {
      * Google voice, Icelandic (Iceland) female.
      * @const
      */
-    const is_IS_Standard_A: Voice;
-    /**
-     * Google voice, Icelandic (Iceland) female (second voice).
-     * @const
-     */
     const is_IS_Standard_B: Voice;
     /**
      * Google voice, Italian (Italy) male.
@@ -23236,42 +25428,152 @@ declare namespace VoiceList {
      * Google voice, Italian (Italy) female.
      * @const
      */
-    const it_IT_Chirp3_HD_Aoede: Voice;
+    const it_IT_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Italian (Italy) male.
      * @const
      */
-    const it_IT_Chirp3_HD_Charon: Voice;
+    const it_IT_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Italian (Italy) male (second voice).
      * @const
      */
-    const it_IT_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Italian (Italy) female (second voice).
-     * @const
-     */
-    const it_IT_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Italian (Italy) female (third voice).
-     * @const
-     */
-    const it_IT_Chirp3_HD_Leda: Voice;
+    const it_IT_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Italian (Italy) male (third voice).
      * @const
      */
-    const it_IT_Chirp3_HD_Orus: Voice;
+    const it_IT_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Italian (Italy) male (fourth voice).
      * @const
      */
-    const it_IT_Chirp3_HD_Puck: Voice;
+    const it_IT_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Italian (Italy) female (second voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Italian (Italy) female (third voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Italian (Italy) female (fourth voice).
      * @const
      */
+    const it_IT_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Italian (Italy) male (fifth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Italian (Italy) female (fifth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Italian (Italy) male (sixth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Italian (Italy) female (sixth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Italian (Italy) male (seventh voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Italian (Italy) female (seventh voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Italian (Italy) male (eighth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Italian (Italy) female (eighth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Italian (Italy) female (ninth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Italian (Italy) female (tenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Italian (Italy) male (ninth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Italian (Italy) male (tenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Italian (Italy) female (eleventh voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Italian (Italy) male (eleventh voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Italian (Italy) male (twelfth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Italian (Italy) male (thirteenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Italian (Italy) male (fourteenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Italian (Italy) female (twelfth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Italian (Italy) male (fifteenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Italian (Italy) female (thirteenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Italian (Italy) female (fourteenth voice).
+     * @const
+     */
     const it_IT_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Italian (Italy) male (sixteenth voice).
+     * @const
+     */
+    const it_IT_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Italian (Italy) female.
      * @const
@@ -23291,29 +25593,9 @@ declare namespace VoiceList {
      * Google voice, Italian (Italy) female.
      * @const
      */
-    const it_IT_Standard_A: Voice;
-    /**
-     * Google voice, Italian (Italy) female (second voice).
-     * @const
-     */
-    const it_IT_Standard_B: Voice;
-    /**
-     * Google voice, Italian (Italy) male.
-     * @const
-     */
-    const it_IT_Standard_C: Voice;
-    /**
-     * Google voice, Italian (Italy) male (second voice).
-     * @const
-     */
-    const it_IT_Standard_D: Voice;
-    /**
-     * Google voice, Italian (Italy) female (third voice).
-     * @const
-     */
     const it_IT_Standard_E: Voice;
     /**
-     * Google voice, Italian (Italy) male (third voice).
+     * Google voice, Italian (Italy) male.
      * @const
      */
     const it_IT_Standard_F: Voice;
@@ -23321,29 +25603,9 @@ declare namespace VoiceList {
      * Google voice, Italian (Italy) female.
      * @const
      */
-    const it_IT_Wavenet_A: Voice;
-    /**
-     * Google voice, Italian (Italy) female (second voice).
-     * @const
-     */
-    const it_IT_Wavenet_B: Voice;
-    /**
-     * Google voice, Italian (Italy) male.
-     * @const
-     */
-    const it_IT_Wavenet_C: Voice;
-    /**
-     * Google voice, Italian (Italy) male (second voice).
-     * @const
-     */
-    const it_IT_Wavenet_D: Voice;
-    /**
-     * Google voice, Italian (Italy) female (third voice).
-     * @const
-     */
     const it_IT_Wavenet_E: Voice;
     /**
-     * Google voice, Italian (Italy) male (third voice).
+     * Google voice, Italian (Italy) male.
      * @const
      */
     const it_IT_Wavenet_F: Voice;
@@ -23351,42 +25613,152 @@ declare namespace VoiceList {
      * Google voice, Japanese (Japan) female.
      * @const
      */
-    const ja_JP_Chirp3_HD_Aoede: Voice;
+    const ja_JP_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Japanese (Japan) male.
      * @const
      */
-    const ja_JP_Chirp3_HD_Charon: Voice;
+    const ja_JP_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Japanese (Japan) male (second voice).
      * @const
      */
-    const ja_JP_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Japanese (Japan) female (second voice).
-     * @const
-     */
-    const ja_JP_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Japanese (Japan) female (third voice).
-     * @const
-     */
-    const ja_JP_Chirp3_HD_Leda: Voice;
+    const ja_JP_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Japanese (Japan) male (third voice).
      * @const
      */
-    const ja_JP_Chirp3_HD_Orus: Voice;
+    const ja_JP_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Japanese (Japan) male (fourth voice).
      * @const
      */
-    const ja_JP_Chirp3_HD_Puck: Voice;
+    const ja_JP_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (second voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (third voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Japanese (Japan) female (fourth voice).
      * @const
      */
+    const ja_JP_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (fifth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (fifth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (sixth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (sixth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (seventh voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (seventh voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (eighth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (eighth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (ninth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (tenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (ninth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (tenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (eleventh voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (eleventh voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (twelfth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (thirteenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (fourteenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (twelfth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (fifteenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (thirteenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Japanese (Japan) female (fourteenth voice).
+     * @const
+     */
     const ja_JP_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Japanese (Japan) male (sixteenth voice).
+     * @const
+     */
+    const ja_JP_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Japanese (Japan) female.
      * @const
@@ -23446,42 +25818,152 @@ declare namespace VoiceList {
      * Google voice, Kannada (India) female.
      * @const
      */
-    const kn_IN_Chirp3_HD_Aoede: Voice;
+    const kn_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Kannada (India) male.
      * @const
      */
-    const kn_IN_Chirp3_HD_Charon: Voice;
+    const kn_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Kannada (India) male (second voice).
      * @const
      */
-    const kn_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Kannada (India) female (second voice).
-     * @const
-     */
-    const kn_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Kannada (India) female (third voice).
-     * @const
-     */
-    const kn_IN_Chirp3_HD_Leda: Voice;
+    const kn_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Kannada (India) male (third voice).
      * @const
      */
-    const kn_IN_Chirp3_HD_Orus: Voice;
+    const kn_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Kannada (India) male (fourth voice).
      * @const
      */
-    const kn_IN_Chirp3_HD_Puck: Voice;
+    const kn_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Kannada (India) female (second voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Kannada (India) female (third voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Kannada (India) female (fourth voice).
      * @const
      */
+    const kn_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Kannada (India) male (fifth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Kannada (India) female (fifth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Kannada (India) male (sixth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Kannada (India) female (sixth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Kannada (India) male (seventh voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Kannada (India) female (seventh voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Kannada (India) male (eighth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Kannada (India) female (eighth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Kannada (India) female (ninth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Kannada (India) female (tenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Kannada (India) male (ninth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Kannada (India) male (tenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Kannada (India) female (eleventh voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Kannada (India) male (eleventh voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Kannada (India) male (twelfth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Kannada (India) male (thirteenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Kannada (India) male (fourteenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Kannada (India) female (twelfth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Kannada (India) male (fifteenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Kannada (India) female (thirteenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Kannada (India) female (fourteenth voice).
+     * @const
+     */
     const kn_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Kannada (India) male (sixteenth voice).
+     * @const
+     */
+    const kn_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Kannada (India) female.
      * @const
@@ -23526,42 +26008,152 @@ declare namespace VoiceList {
      * Google voice, Korean (South Korea) female.
      * @const
      */
-    const ko_KR_Chirp3_HD_Aoede: Voice;
+    const ko_KR_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Korean (South Korea) male.
      * @const
      */
-    const ko_KR_Chirp3_HD_Charon: Voice;
+    const ko_KR_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Korean (South Korea) male (second voice).
      * @const
      */
-    const ko_KR_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Korean (South Korea) female (second voice).
-     * @const
-     */
-    const ko_KR_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Korean (South Korea) female (third voice).
-     * @const
-     */
-    const ko_KR_Chirp3_HD_Leda: Voice;
+    const ko_KR_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Korean (South Korea) male (third voice).
      * @const
      */
-    const ko_KR_Chirp3_HD_Orus: Voice;
+    const ko_KR_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Korean (South Korea) male (fourth voice).
      * @const
      */
-    const ko_KR_Chirp3_HD_Puck: Voice;
+    const ko_KR_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (second voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (third voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Korean (South Korea) female (fourth voice).
      * @const
      */
+    const ko_KR_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (fifth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (fifth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (sixth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (sixth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (seventh voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (seventh voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (eighth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (eighth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (ninth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (tenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (ninth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (tenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (eleventh voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (eleventh voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (twelfth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (thirteenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (fourteenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (twelfth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (fifteenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (thirteenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Korean (South Korea) female (fourteenth voice).
+     * @const
+     */
     const ko_KR_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Korean (South Korea) male (sixteenth voice).
+     * @const
+     */
+    const ko_KR_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Korean (South Korea) female.
      * @const
@@ -23621,19 +26213,9 @@ declare namespace VoiceList {
      * Google voice, Lithuanian (Lithuania) male.
      * @const
      */
-    const lt_LT_Standard_A: Voice;
-    /**
-     * Google voice, Lithuanian (Lithuania) male (second voice).
-     * @const
-     */
     const lt_LT_Standard_B: Voice;
     /**
      * Google voice, Latvian (Latvia) male.
-     * @const
-     */
-    const lv_LV_Standard_A: Voice;
-    /**
-     * Google voice, Latvian (Latvia) male (second voice).
      * @const
      */
     const lv_LV_Standard_B: Voice;
@@ -23641,42 +26223,152 @@ declare namespace VoiceList {
      * Google voice, Malayalam (India) female.
      * @const
      */
-    const ml_IN_Chirp3_HD_Aoede: Voice;
+    const ml_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Malayalam (India) male.
      * @const
      */
-    const ml_IN_Chirp3_HD_Charon: Voice;
+    const ml_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Malayalam (India) male (second voice).
      * @const
      */
-    const ml_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Malayalam (India) female (second voice).
-     * @const
-     */
-    const ml_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Malayalam (India) female (third voice).
-     * @const
-     */
-    const ml_IN_Chirp3_HD_Leda: Voice;
+    const ml_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Malayalam (India) male (third voice).
      * @const
      */
-    const ml_IN_Chirp3_HD_Orus: Voice;
+    const ml_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Malayalam (India) male (fourth voice).
      * @const
      */
-    const ml_IN_Chirp3_HD_Puck: Voice;
+    const ml_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Malayalam (India) female (second voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Malayalam (India) female (third voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Malayalam (India) female (fourth voice).
      * @const
      */
+    const ml_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Malayalam (India) male (fifth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Malayalam (India) female (fifth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Malayalam (India) male (sixth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Malayalam (India) female (sixth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Malayalam (India) male (seventh voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Malayalam (India) female (seventh voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Malayalam (India) male (eighth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Malayalam (India) female (eighth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Malayalam (India) female (ninth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Malayalam (India) female (tenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Malayalam (India) male (ninth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Malayalam (India) male (tenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Malayalam (India) female (eleventh voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Malayalam (India) male (eleventh voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Malayalam (India) male (twelfth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Malayalam (India) male (thirteenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Malayalam (India) male (fourteenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Malayalam (India) female (twelfth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Malayalam (India) male (fifteenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Malayalam (India) female (thirteenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Malayalam (India) female (fourteenth voice).
+     * @const
+     */
     const ml_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Malayalam (India) male (sixteenth voice).
+     * @const
+     */
+    const ml_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Malayalam (India) female.
      * @const
@@ -23721,42 +26413,152 @@ declare namespace VoiceList {
      * Google voice, Marathi (India) female.
      * @const
      */
-    const mr_IN_Chirp3_HD_Aoede: Voice;
+    const mr_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Marathi (India) male.
      * @const
      */
-    const mr_IN_Chirp3_HD_Charon: Voice;
+    const mr_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Marathi (India) male (second voice).
      * @const
      */
-    const mr_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Marathi (India) female (second voice).
-     * @const
-     */
-    const mr_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Marathi (India) female (third voice).
-     * @const
-     */
-    const mr_IN_Chirp3_HD_Leda: Voice;
+    const mr_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Marathi (India) male (third voice).
      * @const
      */
-    const mr_IN_Chirp3_HD_Orus: Voice;
+    const mr_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Marathi (India) male (fourth voice).
      * @const
      */
-    const mr_IN_Chirp3_HD_Puck: Voice;
+    const mr_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Marathi (India) female (second voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Marathi (India) female (third voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Marathi (India) female (fourth voice).
      * @const
      */
+    const mr_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Marathi (India) male (fifth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Marathi (India) female (fifth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Marathi (India) male (sixth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Marathi (India) female (sixth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Marathi (India) male (seventh voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Marathi (India) female (seventh voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Marathi (India) male (eighth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Marathi (India) female (eighth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Marathi (India) female (ninth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Marathi (India) female (tenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Marathi (India) male (ninth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Marathi (India) male (tenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Marathi (India) female (eleventh voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Marathi (India) male (eleventh voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Marathi (India) male (twelfth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Marathi (India) male (thirteenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Marathi (India) male (fourteenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Marathi (India) female (twelfth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Marathi (India) male (fifteenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Marathi (India) female (thirteenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Marathi (India) female (fourteenth voice).
+     * @const
+     */
     const mr_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Marathi (India) male (sixteenth voice).
+     * @const
+     */
+    const mr_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Marathi (India) female.
      * @const
@@ -23831,34 +26633,9 @@ declare namespace VoiceList {
      * Google voice, Norwegian Bokmål (Norway) female.
      * @const
      */
-    const nb_NO_Standard_A: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) male.
-     * @const
-     */
-    const nb_NO_Standard_B: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (second voice).
-     * @const
-     */
-    const nb_NO_Standard_C: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) male (second voice).
-     * @const
-     */
-    const nb_NO_Standard_D: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (third voice).
-     * @const
-     */
-    const nb_NO_Standard_E: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (fourth voice).
-     * @const
-     */
     const nb_NO_Standard_F: Voice;
     /**
-     * Google voice, Norwegian Bokmål (Norway) male (third voice).
+     * Google voice, Norwegian Bokmål (Norway) male.
      * @const
      */
     const nb_NO_Standard_G: Voice;
@@ -23866,34 +26643,9 @@ declare namespace VoiceList {
      * Google voice, Norwegian Bokmål (Norway) female.
      * @const
      */
-    const nb_NO_Wavenet_A: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) male.
-     * @const
-     */
-    const nb_NO_Wavenet_B: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (second voice).
-     * @const
-     */
-    const nb_NO_Wavenet_C: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) male (second voice).
-     * @const
-     */
-    const nb_NO_Wavenet_D: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (third voice).
-     * @const
-     */
-    const nb_NO_Wavenet_E: Voice;
-    /**
-     * Google voice, Norwegian Bokmål (Norway) female (fourth voice).
-     * @const
-     */
     const nb_NO_Wavenet_F: Voice;
     /**
-     * Google voice, Norwegian Bokmål (Norway) male (third voice).
+     * Google voice, Norwegian Bokmål (Norway) male.
      * @const
      */
     const nb_NO_Wavenet_G: Voice;
@@ -23901,19 +26653,119 @@ declare namespace VoiceList {
      * Google voice, Flemish female.
      * @const
      */
-    const nl_BE_Standard_A: Voice;
+    const nl_BE_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Flemish male.
      * @const
      */
-    const nl_BE_Standard_B: Voice;
+    const nl_BE_Chirp3_HD_Achird: Voice;
+    /**
+     * Google voice, Flemish male (second voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Algenib: Voice;
+    /**
+     * Google voice, Flemish male (third voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Algieba: Voice;
+    /**
+     * Google voice, Flemish male (fourth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Alnilam: Voice;
     /**
      * Google voice, Flemish female (second voice).
      * @const
      */
+    const nl_BE_Chirp3_HD_Autonoe: Voice;
+    /**
+     * Google voice, Flemish female (third voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Flemish female (fourth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Flemish male (fifth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Flemish female (fifth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Flemish female (sixth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Flemish male (sixth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Flemish female (seventh voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Flemish female (eighth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Flemish male (seventh voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Flemish male (eighth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Flemish male (ninth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Flemish male (tenth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Flemish female (ninth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Flemish male (eleventh voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Flemish female (tenth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Flemish male (twelfth voice).
+     * @const
+     */
+    const nl_BE_Chirp3_HD_Zubenelgenubi: Voice;
+    /**
+     * Google voice, Flemish female.
+     * @const
+     */
     const nl_BE_Standard_C: Voice;
     /**
-     * Google voice, Flemish male (second voice).
+     * Google voice, Flemish male.
      * @const
      */
     const nl_BE_Standard_D: Voice;
@@ -23921,19 +26773,9 @@ declare namespace VoiceList {
      * Google voice, Flemish female.
      * @const
      */
-    const nl_BE_Wavenet_A: Voice;
-    /**
-     * Google voice, Flemish male.
-     * @const
-     */
-    const nl_BE_Wavenet_B: Voice;
-    /**
-     * Google voice, Flemish female (second voice).
-     * @const
-     */
     const nl_BE_Wavenet_C: Voice;
     /**
-     * Google voice, Flemish male (second voice).
+     * Google voice, Flemish male.
      * @const
      */
     const nl_BE_Wavenet_D: Voice;
@@ -23941,74 +26783,159 @@ declare namespace VoiceList {
      * Google voice, Dutch (Netherlands) female.
      * @const
      */
-    const nl_NL_Chirp3_HD_Aoede: Voice;
+    const nl_NL_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Dutch (Netherlands) male.
      * @const
      */
-    const nl_NL_Chirp3_HD_Charon: Voice;
+    const nl_NL_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Dutch (Netherlands) male (second voice).
      * @const
      */
-    const nl_NL_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (second voice).
-     * @const
-     */
-    const nl_NL_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (third voice).
-     * @const
-     */
-    const nl_NL_Chirp3_HD_Leda: Voice;
+    const nl_NL_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Dutch (Netherlands) male (third voice).
      * @const
      */
-    const nl_NL_Chirp3_HD_Orus: Voice;
+    const nl_NL_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Dutch (Netherlands) male (fourth voice).
      * @const
      */
-    const nl_NL_Chirp3_HD_Puck: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (fourth voice).
-     * @const
-     */
-    const nl_NL_Chirp3_HD_Zephyr: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female.
-     * @const
-     */
-    const nl_NL_Standard_A: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) male.
-     * @const
-     */
-    const nl_NL_Standard_B: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) male (second voice).
-     * @const
-     */
-    const nl_NL_Standard_C: Voice;
+    const nl_NL_Chirp3_HD_Alnilam: Voice;
     /**
      * Google voice, Dutch (Netherlands) female (second voice).
      * @const
      */
-    const nl_NL_Standard_D: Voice;
+    const nl_NL_Chirp3_HD_Aoede: Voice;
     /**
      * Google voice, Dutch (Netherlands) female (third voice).
      * @const
      */
-    const nl_NL_Standard_E: Voice;
+    const nl_NL_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Dutch (Netherlands) female (fourth voice).
      * @const
      */
+    const nl_NL_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (fifth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (fifth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (sixth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (sixth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (seventh voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (seventh voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (eighth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (eighth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (ninth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (tenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (ninth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (tenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (eleventh voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (eleventh voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (twelfth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (thirteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (fourteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (twelfth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (fifteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (thirteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female (fourteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) male (sixteenth voice).
+     * @const
+     */
+    const nl_NL_Chirp3_HD_Zubenelgenubi: Voice;
+    /**
+     * Google voice, Dutch (Netherlands) female.
+     * @const
+     */
     const nl_NL_Standard_F: Voice;
     /**
-     * Google voice, Dutch (Netherlands) male (third voice).
+     * Google voice, Dutch (Netherlands) male.
      * @const
      */
     const nl_NL_Standard_G: Voice;
@@ -24016,34 +26943,9 @@ declare namespace VoiceList {
      * Google voice, Dutch (Netherlands) female.
      * @const
      */
-    const nl_NL_Wavenet_A: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) male.
-     * @const
-     */
-    const nl_NL_Wavenet_B: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) male (second voice).
-     * @const
-     */
-    const nl_NL_Wavenet_C: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (second voice).
-     * @const
-     */
-    const nl_NL_Wavenet_D: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (third voice).
-     * @const
-     */
-    const nl_NL_Wavenet_E: Voice;
-    /**
-     * Google voice, Dutch (Netherlands) female (fourth voice).
-     * @const
-     */
     const nl_NL_Wavenet_F: Voice;
     /**
-     * Google voice, Dutch (Netherlands) male (third voice).
+     * Google voice, Dutch (Netherlands) male.
      * @const
      */
     const nl_NL_Wavenet_G: Voice;
@@ -24091,74 +26993,159 @@ declare namespace VoiceList {
      * Google voice, Polish (Poland) female.
      * @const
      */
-    const pl_PL_Chirp3_HD_Aoede: Voice;
+    const pl_PL_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Polish (Poland) male.
      * @const
      */
-    const pl_PL_Chirp3_HD_Charon: Voice;
+    const pl_PL_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Polish (Poland) male (second voice).
      * @const
      */
-    const pl_PL_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Polish (Poland) female (second voice).
-     * @const
-     */
-    const pl_PL_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Polish (Poland) female (third voice).
-     * @const
-     */
-    const pl_PL_Chirp3_HD_Leda: Voice;
+    const pl_PL_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Polish (Poland) male (third voice).
      * @const
      */
-    const pl_PL_Chirp3_HD_Orus: Voice;
+    const pl_PL_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Polish (Poland) male (fourth voice).
      * @const
      */
-    const pl_PL_Chirp3_HD_Puck: Voice;
-    /**
-     * Google voice, Polish (Poland) female (fourth voice).
-     * @const
-     */
-    const pl_PL_Chirp3_HD_Zephyr: Voice;
-    /**
-     * Google voice, Polish (Poland) female.
-     * @const
-     */
-    const pl_PL_Standard_A: Voice;
-    /**
-     * Google voice, Polish (Poland) male.
-     * @const
-     */
-    const pl_PL_Standard_B: Voice;
-    /**
-     * Google voice, Polish (Poland) male (second voice).
-     * @const
-     */
-    const pl_PL_Standard_C: Voice;
+    const pl_PL_Chirp3_HD_Alnilam: Voice;
     /**
      * Google voice, Polish (Poland) female (second voice).
      * @const
      */
-    const pl_PL_Standard_D: Voice;
+    const pl_PL_Chirp3_HD_Aoede: Voice;
     /**
      * Google voice, Polish (Poland) female (third voice).
      * @const
      */
-    const pl_PL_Standard_E: Voice;
+    const pl_PL_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Polish (Poland) female (fourth voice).
      * @const
      */
+    const pl_PL_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Polish (Poland) male (fifth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Polish (Poland) female (fifth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Polish (Poland) male (sixth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Polish (Poland) female (sixth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Polish (Poland) male (seventh voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Polish (Poland) female (seventh voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Polish (Poland) male (eighth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Polish (Poland) female (eighth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Polish (Poland) female (ninth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Polish (Poland) female (tenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Polish (Poland) male (ninth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Polish (Poland) male (tenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Polish (Poland) female (eleventh voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Polish (Poland) male (eleventh voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Polish (Poland) male (twelfth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Polish (Poland) male (thirteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Polish (Poland) male (fourteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Polish (Poland) female (twelfth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Polish (Poland) male (fifteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Polish (Poland) female (thirteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Polish (Poland) female (fourteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Polish (Poland) male (sixteenth voice).
+     * @const
+     */
+    const pl_PL_Chirp3_HD_Zubenelgenubi: Voice;
+    /**
+     * Google voice, Polish (Poland) female.
+     * @const
+     */
     const pl_PL_Standard_F: Voice;
     /**
-     * Google voice, Polish (Poland) male (third voice).
+     * Google voice, Polish (Poland) male.
      * @const
      */
     const pl_PL_Standard_G: Voice;
@@ -24166,34 +27153,9 @@ declare namespace VoiceList {
      * Google voice, Polish (Poland) female.
      * @const
      */
-    const pl_PL_Wavenet_A: Voice;
-    /**
-     * Google voice, Polish (Poland) male.
-     * @const
-     */
-    const pl_PL_Wavenet_B: Voice;
-    /**
-     * Google voice, Polish (Poland) male (second voice).
-     * @const
-     */
-    const pl_PL_Wavenet_C: Voice;
-    /**
-     * Google voice, Polish (Poland) female (second voice).
-     * @const
-     */
-    const pl_PL_Wavenet_D: Voice;
-    /**
-     * Google voice, Polish (Poland) female (third voice).
-     * @const
-     */
-    const pl_PL_Wavenet_E: Voice;
-    /**
-     * Google voice, Polish (Poland) female (fourth voice).
-     * @const
-     */
     const pl_PL_Wavenet_F: Voice;
     /**
-     * Google voice, Polish (Poland) male (third voice).
+     * Google voice, Polish (Poland) male.
      * @const
      */
     const pl_PL_Wavenet_G: Voice;
@@ -24201,42 +27163,152 @@ declare namespace VoiceList {
      * Google voice, Brazilian Portuguese female.
      * @const
      */
-    const pt_BR_Chirp3_HD_Aoede: Voice;
+    const pt_BR_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Brazilian Portuguese male.
      * @const
      */
-    const pt_BR_Chirp3_HD_Charon: Voice;
+    const pt_BR_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Brazilian Portuguese male (second voice).
      * @const
      */
-    const pt_BR_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Brazilian Portuguese female (second voice).
-     * @const
-     */
-    const pt_BR_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Brazilian Portuguese female (third voice).
-     * @const
-     */
-    const pt_BR_Chirp3_HD_Leda: Voice;
+    const pt_BR_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Brazilian Portuguese male (third voice).
      * @const
      */
-    const pt_BR_Chirp3_HD_Orus: Voice;
+    const pt_BR_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Brazilian Portuguese male (fourth voice).
      * @const
      */
-    const pt_BR_Chirp3_HD_Puck: Voice;
+    const pt_BR_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (second voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (third voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Brazilian Portuguese female (fourth voice).
      * @const
      */
+    const pt_BR_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (fifth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (fifth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (sixth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (sixth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (seventh voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (seventh voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (eighth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (eighth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (ninth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (tenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (ninth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (tenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (eleventh voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (eleventh voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (twelfth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (thirteenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (fourteenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (twelfth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (fifteenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (thirteenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Brazilian Portuguese female (fourteenth voice).
+     * @const
+     */
     const pt_BR_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Brazilian Portuguese male (sixteenth voice).
+     * @const
+     */
+    const pt_BR_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Brazilian Portuguese female.
      * @const
@@ -24306,29 +27378,9 @@ declare namespace VoiceList {
      * Google voice, European Portuguese female.
      * @const
      */
-    const pt_PT_Standard_A: Voice;
-    /**
-     * Google voice, European Portuguese male.
-     * @const
-     */
-    const pt_PT_Standard_B: Voice;
-    /**
-     * Google voice, European Portuguese male (second voice).
-     * @const
-     */
-    const pt_PT_Standard_C: Voice;
-    /**
-     * Google voice, European Portuguese female (second voice).
-     * @const
-     */
-    const pt_PT_Standard_D: Voice;
-    /**
-     * Google voice, European Portuguese female (third voice).
-     * @const
-     */
     const pt_PT_Standard_E: Voice;
     /**
-     * Google voice, European Portuguese male (third voice).
+     * Google voice, European Portuguese male.
      * @const
      */
     const pt_PT_Standard_F: Voice;
@@ -24336,29 +27388,9 @@ declare namespace VoiceList {
      * Google voice, European Portuguese female.
      * @const
      */
-    const pt_PT_Wavenet_A: Voice;
-    /**
-     * Google voice, European Portuguese male.
-     * @const
-     */
-    const pt_PT_Wavenet_B: Voice;
-    /**
-     * Google voice, European Portuguese male (second voice).
-     * @const
-     */
-    const pt_PT_Wavenet_C: Voice;
-    /**
-     * Google voice, European Portuguese female (second voice).
-     * @const
-     */
-    const pt_PT_Wavenet_D: Voice;
-    /**
-     * Google voice, European Portuguese female (third voice).
-     * @const
-     */
     const pt_PT_Wavenet_E: Voice;
     /**
-     * Google voice, European Portuguese male (third voice).
+     * Google voice, European Portuguese male.
      * @const
      */
     const pt_PT_Wavenet_F: Voice;
@@ -24366,19 +27398,9 @@ declare namespace VoiceList {
      * Google voice, Romanian (Romania) female.
      * @const
      */
-    const ro_RO_Standard_A: Voice;
-    /**
-     * Google voice, Romanian (Romania) female (second voice).
-     * @const
-     */
     const ro_RO_Standard_B: Voice;
     /**
      * Google voice, Romanian (Romania) female.
-     * @const
-     */
-    const ro_RO_Wavenet_A: Voice;
-    /**
-     * Google voice, Romanian (Romania) female (second voice).
      * @const
      */
     const ro_RO_Wavenet_B: Voice;
@@ -24476,19 +27498,9 @@ declare namespace VoiceList {
      * Google voice, Slovak (Slovakia) female.
      * @const
      */
-    const sk_SK_Standard_A: Voice;
-    /**
-     * Google voice, Slovak (Slovakia) female (second voice).
-     * @const
-     */
     const sk_SK_Standard_B: Voice;
     /**
      * Google voice, Slovak (Slovakia) female.
-     * @const
-     */
-    const sk_SK_Wavenet_A: Voice;
-    /**
-     * Google voice, Slovak (Slovakia) female (second voice).
      * @const
      */
     const sk_SK_Wavenet_B: Voice;
@@ -24496,7 +27508,7 @@ declare namespace VoiceList {
      * Google voice, Serbian (Serbia) female.
      * @const
      */
-    const sr_RS_Standard_A: Voice;
+    const sr_RS_Standard_B: Voice;
     /**
      * Google voice, Swedish (Sweden) female.
      * @const
@@ -24568,45 +27580,305 @@ declare namespace VoiceList {
      */
     const sv_SE_Wavenet_G: Voice;
     /**
+     * Google voice, Swahili (Kenya) female.
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Achernar: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male.
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Achird: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (second voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Algenib: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (third voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Algieba: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (fourth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (second voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (third voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Autonoe: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (fourth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (fifth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (fifth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (sixth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (sixth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (seventh voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (seventh voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (eighth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (eighth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (ninth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (tenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (ninth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (tenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (eleventh voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (eleventh voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (twelfth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (thirteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (fourteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (twelfth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (fifteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (thirteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Swahili (Kenya) female (fourteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Swahili (Kenya) male (sixteenth voice).
+     * @const
+     */
+    const sw_KE_Chirp3_HD_Zubenelgenubi: Voice;
+    /**
      * Google voice, Tamil (India) female.
      * @const
      */
-    const ta_IN_Chirp3_HD_Aoede: Voice;
+    const ta_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Tamil (India) male.
      * @const
      */
-    const ta_IN_Chirp3_HD_Charon: Voice;
+    const ta_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Tamil (India) male (second voice).
      * @const
      */
-    const ta_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Tamil (India) female (second voice).
-     * @const
-     */
-    const ta_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Tamil (India) female (third voice).
-     * @const
-     */
-    const ta_IN_Chirp3_HD_Leda: Voice;
+    const ta_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Tamil (India) male (third voice).
      * @const
      */
-    const ta_IN_Chirp3_HD_Orus: Voice;
+    const ta_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Tamil (India) male (fourth voice).
      * @const
      */
-    const ta_IN_Chirp3_HD_Puck: Voice;
+    const ta_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Tamil (India) female (second voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Tamil (India) female (third voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Tamil (India) female (fourth voice).
      * @const
      */
+    const ta_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Tamil (India) male (fifth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Tamil (India) female (fifth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Tamil (India) male (sixth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Tamil (India) female (sixth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Tamil (India) male (seventh voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Tamil (India) female (seventh voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Tamil (India) male (eighth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Tamil (India) female (eighth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Tamil (India) female (ninth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Tamil (India) female (tenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Tamil (India) male (ninth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Tamil (India) male (tenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Tamil (India) female (eleventh voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Tamil (India) male (eleventh voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Tamil (India) male (twelfth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Tamil (India) male (thirteenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Tamil (India) male (fourteenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Tamil (India) female (twelfth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Tamil (India) male (fifteenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Tamil (India) female (thirteenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Tamil (India) female (fourteenth voice).
+     * @const
+     */
     const ta_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Tamil (India) male (sixteenth voice).
+     * @const
+     */
+    const ta_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Tamil (India) female.
      * @const
@@ -24651,42 +27923,152 @@ declare namespace VoiceList {
      * Google voice, Telugu (India) female.
      * @const
      */
-    const te_IN_Chirp3_HD_Aoede: Voice;
+    const te_IN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Telugu (India) male.
      * @const
      */
-    const te_IN_Chirp3_HD_Charon: Voice;
+    const te_IN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Telugu (India) male (second voice).
      * @const
      */
-    const te_IN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Telugu (India) female (second voice).
-     * @const
-     */
-    const te_IN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Telugu (India) female (third voice).
-     * @const
-     */
-    const te_IN_Chirp3_HD_Leda: Voice;
+    const te_IN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Telugu (India) male (third voice).
      * @const
      */
-    const te_IN_Chirp3_HD_Orus: Voice;
+    const te_IN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Telugu (India) male (fourth voice).
      * @const
      */
-    const te_IN_Chirp3_HD_Puck: Voice;
+    const te_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Telugu (India) female (second voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Telugu (India) female (third voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Telugu (India) female (fourth voice).
      * @const
      */
+    const te_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Telugu (India) male (fifth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Telugu (India) female (fifth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Telugu (India) male (sixth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Telugu (India) female (sixth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Telugu (India) male (seventh voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Telugu (India) female (seventh voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Telugu (India) male (eighth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Telugu (India) female (eighth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Telugu (India) female (ninth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Telugu (India) female (tenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Telugu (India) male (ninth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Telugu (India) male (tenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Telugu (India) female (eleventh voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Telugu (India) male (eleventh voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Telugu (India) male (twelfth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Telugu (India) male (thirteenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Telugu (India) male (fourteenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Telugu (India) female (twelfth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Telugu (India) male (fifteenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Telugu (India) female (thirteenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Telugu (India) female (fourteenth voice).
+     * @const
+     */
     const te_IN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Telugu (India) male (sixteenth voice).
+     * @const
+     */
+    const te_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Telugu (India) female.
      * @const
@@ -24711,42 +28093,152 @@ declare namespace VoiceList {
      * Google voice, Thai (Thailand) female.
      * @const
      */
-    const th_TH_Chirp3_HD_Aoede: Voice;
+    const th_TH_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Thai (Thailand) male.
      * @const
      */
-    const th_TH_Chirp3_HD_Charon: Voice;
+    const th_TH_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Thai (Thailand) male (second voice).
      * @const
      */
-    const th_TH_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Thai (Thailand) female (second voice).
-     * @const
-     */
-    const th_TH_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Thai (Thailand) female (third voice).
-     * @const
-     */
-    const th_TH_Chirp3_HD_Leda: Voice;
+    const th_TH_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Thai (Thailand) male (third voice).
      * @const
      */
-    const th_TH_Chirp3_HD_Orus: Voice;
+    const th_TH_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Thai (Thailand) male (fourth voice).
      * @const
      */
-    const th_TH_Chirp3_HD_Puck: Voice;
+    const th_TH_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (second voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (third voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Thai (Thailand) female (fourth voice).
      * @const
      */
+    const th_TH_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (fifth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (fifth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (sixth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (sixth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (seventh voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (seventh voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (eighth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (eighth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (ninth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (tenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (ninth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (tenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (eleventh voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (eleventh voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (twelfth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (thirteenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (fourteenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (twelfth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (fifteenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (thirteenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Thai (Thailand) female (fourteenth voice).
+     * @const
+     */
     const th_TH_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Thai (Thailand) male (sixteenth voice).
+     * @const
+     */
+    const th_TH_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Thai (Thailand) female.
      * @const
@@ -24761,42 +28253,152 @@ declare namespace VoiceList {
      * Google voice, Turkish (Türkiye) female.
      * @const
      */
-    const tr_TR_Chirp3_HD_Aoede: Voice;
+    const tr_TR_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Turkish (Türkiye) male.
      * @const
      */
-    const tr_TR_Chirp3_HD_Charon: Voice;
+    const tr_TR_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Turkish (Türkiye) male (second voice).
      * @const
      */
-    const tr_TR_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Turkish (Türkiye) female (second voice).
-     * @const
-     */
-    const tr_TR_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Turkish (Türkiye) female (third voice).
-     * @const
-     */
-    const tr_TR_Chirp3_HD_Leda: Voice;
+    const tr_TR_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Turkish (Türkiye) male (third voice).
      * @const
      */
-    const tr_TR_Chirp3_HD_Orus: Voice;
+    const tr_TR_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Turkish (Türkiye) male (fourth voice).
      * @const
      */
-    const tr_TR_Chirp3_HD_Puck: Voice;
+    const tr_TR_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (second voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (third voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Turkish (Türkiye) female (fourth voice).
      * @const
      */
+    const tr_TR_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (fifth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (fifth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (sixth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (sixth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (seventh voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (seventh voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (eighth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (eighth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (ninth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (tenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (ninth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (tenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (eleventh voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (eleventh voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (twelfth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (thirteenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (fourteenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (twelfth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (fifteenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (thirteenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) female (fourteenth voice).
+     * @const
+     */
     const tr_TR_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Turkish (Türkiye) male (sixteenth voice).
+     * @const
+     */
+    const tr_TR_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Turkish (Türkiye) female.
      * @const
@@ -24851,12 +28453,232 @@ declare namespace VoiceList {
      * Google voice, Ukrainian (Ukraine) female.
      * @const
      */
-    const uk_UA_Standard_A: Voice;
+    const uk_UA_Chirp3_HD_Achernar: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male.
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Achird: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (second voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Algenib: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (third voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Algieba: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (fourth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (second voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Autonoe: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (third voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (fourth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (fifth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (fifth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (sixth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (sixth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (seventh voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (eighth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (seventh voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (eighth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (ninth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (tenth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (ninth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (eleventh voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female (tenth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) male (twelfth voice).
+     * @const
+     */
+    const uk_UA_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Ukrainian (Ukraine) female.
      * @const
      */
-    const uk_UA_Wavenet_A: Voice;
+    const uk_UA_Standard_B: Voice;
+    /**
+     * Google voice, Ukrainian (Ukraine) female.
+     * @const
+     */
+    const uk_UA_Wavenet_B: Voice;
+    /**
+     * Google voice, Urdu (India) female.
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Achernar: Voice;
+    /**
+     * Google voice, Urdu (India) male.
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Achird: Voice;
+    /**
+     * Google voice, Urdu (India) male (second voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Algenib: Voice;
+    /**
+     * Google voice, Urdu (India) male (third voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Algieba: Voice;
+    /**
+     * Google voice, Urdu (India) male (fourth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Urdu (India) female (second voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Autonoe: Voice;
+    /**
+     * Google voice, Urdu (India) female (third voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Urdu (India) female (fourth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Urdu (India) male (fifth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Urdu (India) female (fifth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Urdu (India) female (sixth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Urdu (India) male (sixth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Urdu (India) female (seventh voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Urdu (India) female (eighth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Urdu (India) male (seventh voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Urdu (India) male (eighth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Urdu (India) male (ninth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Urdu (India) male (tenth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Urdu (India) female (ninth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Urdu (India) male (eleventh voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Urdu (India) female (tenth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Urdu (India) male (twelfth voice).
+     * @const
+     */
+    const ur_IN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Urdu (India) female.
      * @const
@@ -24881,42 +28703,152 @@ declare namespace VoiceList {
      * Google voice, Vietnamese (Vietnam) female.
      * @const
      */
-    const vi_VN_Chirp3_HD_Aoede: Voice;
+    const vi_VN_Chirp3_HD_Achernar: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) male.
      * @const
      */
-    const vi_VN_Chirp3_HD_Charon: Voice;
+    const vi_VN_Chirp3_HD_Achird: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) male (second voice).
      * @const
      */
-    const vi_VN_Chirp3_HD_Fenrir: Voice;
-    /**
-     * Google voice, Vietnamese (Vietnam) female (second voice).
-     * @const
-     */
-    const vi_VN_Chirp3_HD_Kore: Voice;
-    /**
-     * Google voice, Vietnamese (Vietnam) female (third voice).
-     * @const
-     */
-    const vi_VN_Chirp3_HD_Leda: Voice;
+    const vi_VN_Chirp3_HD_Algenib: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) male (third voice).
      * @const
      */
-    const vi_VN_Chirp3_HD_Orus: Voice;
+    const vi_VN_Chirp3_HD_Algieba: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) male (fourth voice).
      * @const
      */
-    const vi_VN_Chirp3_HD_Puck: Voice;
+    const vi_VN_Chirp3_HD_Alnilam: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (second voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Aoede: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (third voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Autonoe: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) female (fourth voice).
      * @const
      */
+    const vi_VN_Chirp3_HD_Callirrhoe: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (fifth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Charon: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (fifth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Despina: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (sixth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Enceladus: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (sixth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Erinome: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (seventh voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Fenrir: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (seventh voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Gacrux: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (eighth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Iapetus: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (eighth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Kore: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (ninth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Laomedeia: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (tenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Leda: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (ninth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Orus: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (tenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Puck: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (eleventh voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Pulcherrima: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (eleventh voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Rasalgethi: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (twelfth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Sadachbia: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (thirteenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Sadaltager: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (fourteenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Schedar: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (twelfth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Sulafat: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (fifteenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Umbriel: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (thirteenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Vindemiatrix: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) female (fourteenth voice).
+     * @const
+     */
     const vi_VN_Chirp3_HD_Zephyr: Voice;
+    /**
+     * Google voice, Vietnamese (Vietnam) male (sixteenth voice).
+     * @const
+     */
+    const vi_VN_Chirp3_HD_Zubenelgenubi: Voice;
     /**
      * Google voice, Vietnamese (Vietnam) female.
      * @const
@@ -24989,6 +28921,7 @@ declare namespace VoiceList {
     const yue_HK_Standard_D: Voice;
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of available IBM TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -25205,6 +29138,7 @@ declare namespace VoiceList {
    */
   namespace Microsoft {}
 }
+
 declare namespace VoiceList {
   namespace Microsoft {
     /**
@@ -27860,6 +31794,7 @@ declare namespace VoiceList {
     }
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of availabl SaluteSpeech TTS voices for the [Call.say] and [VoxEngine.createTTSPlayer] methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.

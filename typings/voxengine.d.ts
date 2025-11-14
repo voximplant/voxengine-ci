@@ -234,7 +234,7 @@ declare namespace AI {}
 
 declare namespace AI {
   /**
-   * Creates a new [AI.Dialogflow] instance which provides resources for exchanging data with the Dialogflow API, handling events, etc. You can attach media streams later via the [AI.DialogflowInstance.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [AI.Dialogflow] instance which provides resources for exchanging data with the Dialogflow API, handling specified events, etc. You can attach media streams later via the [AI.DialogflowInstance.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -991,7 +991,7 @@ declare namespace AMD {
 
 declare namespace AMD {
   /**
-   * Creates a new [AMD.AnsweringMachineDetector](answering machine or voicemail detector) instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [AMD.AnsweringMachineDetector] instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    */
   function create(parameters: AMD.AMDParameters): AMD.AnsweringMachineDetector;
 }
@@ -1198,9 +1198,12 @@ declare enum AppEvents {
    */
   Started = 'Application.Started',
   /**
-   * Triggered when the managing HTTP request is received by the session.
-   * If you [start a call session with HTTP request](/docs/references/httpapi/managing_scenarios#startscenarios), you get an answer: an object with media\_session\_access\_url property.
+   * Triggered when the Management API request is received by the session.
+   * 
+   * If you [start a call session with the HTTP request](/docs/references/httpapi/managing_scenarios#startscenarios), you get an answer: an object with media\_session\_access\_url property.
    * The property's value is the managing URL for the specified session, so it can be used in managing HTTP request that triggers [AppEvents.HttpRequest] event.
+   * 
+   * You can find more information in the [Remote session management](/docs/guides/voxengine/remote-sessions) article.
    * @typedef _HttpRequestEvent
    */
   HttpRequest = 'Application.HttpRequest',
@@ -1305,12 +1308,19 @@ declare interface _StartedEvent {
 /**
  * @private
  */
-declare interface _TerminatedEvent {}
+declare interface _SystemError {
+  systemError?: boolean
+}
 
 /**
  * @private
  */
-declare interface _TerminatingEvent {}
+declare interface _TerminatedEvent extends _SystemError {}
+
+/**
+ * @private
+ */
+declare interface _TerminatingEvent extends _SystemError {}
 
 /**
  * @private
@@ -2282,7 +2292,7 @@ declare enum ASRModel {
 }
 
 /**
- * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] objects. Parameters **language** or **dictionary** should be passed to the [VoxEngine.createASR] function.
+ * Represents an ASR object provides speech recognition capabilities. Audio stream can be sent to an ASR instance from [Call], [Player] or [Conference] instances. Parameters **language** or **dictionary** should be passed to the [VoxEngine.createASR] function.
  * <br>
  * Add the following line to your scenario code to use the class:
  * ```
@@ -2520,7 +2530,9 @@ declare enum CallEvents {
   Forwarding = 'Call.Forwarding',
   /**
    * Triggered when a call is terminated.
-   * Most frequent status codes (returned when a call is terminated before being answered):<br>
+   * 
+   * Most frequent status codes (returned when a call is terminated before being answered):
+   * 
    * <table class="b-list" style="margin-top:10px">
    * <thead><tr><th>Code</th><th>Description</th></tr></thead>
    * <tbody>
@@ -2530,6 +2542,9 @@ declare enum CallEvents {
    * <tr><td>487</td><td>Request terminated</td></tr>
    * </tbody>
    * </table>
+   * 
+   * You can find the complete list of rfc3261 response codes [on Wikipedia](https://en.wikipedia.org/wiki/List_of_SIP_response_codes).
+   * 
    * Note that this event does not mean the end of the JavaScript session.
    * The session without calls and/or ACD requests are automatically terminated after some time (see the [session limits](/docs/guides/voxengine/limits) for details).
    * It is a good idea to explicitly terminate the session with [VoxEngine.terminate](/docs/references/voxengine/voxengine/terminate) after it is no longer needed.
@@ -2690,7 +2705,7 @@ declare enum CallEvents {
    */
   FirstVideoPacketReceived = 'Call.FirstVideoPacketReceived',
   /**
-   * Triggers after the RTP stopped.
+   * Triggers within 7 seconds after the RTP/RTCP has stopped. Applies to all types of calls (users, SIP, and PSTN).
    * @typedef _RtpStoppedEvent
    */
   RtpStopped = 'Call.RtpStopped',
@@ -3094,9 +3109,13 @@ declare interface _ToneDetectedEvent extends _CallEvent {
  */
 declare interface _ToneReceivedEvent extends _CallEvent {
   /**
-   * Tone received in this event: the possible values are 0-9,*,#
+   * Tone received in this event. The possible values are: 0-9,*,#
    */
   tone: string;
+  /**
+   * Type of the received tone. The possible values are: 1 (rfc 2833), 2 (Inband), 3 (SipInfo)
+   */
+  type: string;
 }
 
 /**
@@ -3239,7 +3258,7 @@ declare interface CallPSTNParameters {
    */
   amd?: AMD.AnsweringMachineDetector;
   /**
-   * Optional. Whether to use the inbound caller ID for the outbound call from the scenario. The default value is false.
+   * Optional. Whether to use the inbound caller ID for the outbound call from the scenario. The default value is **false**.
    */
   followDiversion?: boolean;
 }
@@ -3334,6 +3353,10 @@ declare interface CallSIPParameters {
    * Optional. Answering machine or voicemail detector.
    */
   amd?: AMD.AnsweringMachineDetector;
+  /**
+   * Optional. Internal information about codecs.
+   */
+  scheme?: Object;
 }
 
 /**
@@ -3437,7 +3460,7 @@ declare class Call {
   toString(): string;
 
   /**
-   * Sets or gets a custom string associated with the particular call (the Call object). The **customData** value could be sent from WEB/iOS/Android SDKs, and then it becomes the **customData** value in the [Call] object. Note that if you receive a value from an SDK, you can always replace it manually.
+   * Sets or gets a custom string associated with the particular call (the Call object). The **customData** value could be sent from WEB/iOS/Android SDKs, and then it becomes the **customData** value in the [Call] instance. Note that if you receive a value from an SDK, you can always replace it manually.
    * SDKs can pass customData in two ways:<br>
    * 1) when SDK calls the Voximplant cloud</br>
    * 2) when SDK answers the call from the Voximplant cloud. See the syntax and details in the corresponding references: [WEB SDK call()](/docs/references/websdk/voximplant/client#call) / [WEB SDK answer()](/docs/references/websdk/voximplant/call#answer) / [iOS call:settings:](/docs/references/iossdk/client/viclient#callsettings) / [iOS answerWithSettings](/docs/references/iossdk/call/vicall#answerwithsettings:) / [Android call()](/docs/references/androidsdk/client/iclient#call) / [Android answer()](/docs/references/androidsdk/call/icall#answer)
@@ -3801,6 +3824,66 @@ declare namespace CallList {
     data: Object,
     callback?: (result: Net.HttpRequestResult) => void
   ): void;
+}
+
+declare namespace Cartesia {
+}
+declare namespace Cartesia {
+    /**
+     * Creates a new [Cartesia.RealtimeTTSPlayer] instance with the specified text (TTS is used to play the text). You can attach media streams later via the [Cartesia.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+     * @param text Text to synthesize
+     * @param parameters Optional. Realtime TTS player parameters
+     **/
+    function createRealtimeTTSPlayer(text: string, parameters?: RealtimeTTSPlayerParameters): RealtimeTTSPlayer;
+}
+
+declare namespace Cartesia {
+  class RealtimeTTSPlayer extends BasePlayer {
+    /**
+     * Appends text to a [Cartesia.RealtimeTTSPlayer].
+     * 
+     * Use this to generate speech for a transcript.
+     * @param parameters Object provides the parameters directly to the Cartesia provider Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request)
+     */
+    generationRequest(parameters: Object): void;
+
+    /**
+     * Cancels a context request. No more messages are generated for that context.
+     * @param parameters Object provides the parameters directly to the Cartesia provider Cancel Context Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Cancel-Context-Request)
+     */
+    cancelContextRequest(parameters: Object): void;
+
+    /**
+     * Clears a [Cartesia.RealtimeTTSPlayer] buffer.
+     */
+    clearBuffer(): void;
+  }
+}
+
+declare namespace Cartesia {
+  /**
+   * [Cartesia.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [Cartesia.createRealtimeTTSPlayer] method.
+   */
+  interface RealtimeTTSPlayerParameters {
+    /**
+     * Object to provide parameters directly to the Cartesia provider's Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request).
+     */
+    generationRequestParameters?: Object;
+
+    /**
+     * Optional. Cartesia API key. Use your Cartesia API key if you have your own Cartesia account.
+     */
+    apiKey?: string;
+
+    /**
+     * Optional. Whether to enable the tracing functionality.
+     * 
+     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     * 
+     * Note: Enable this only for diagnostic purposes.
+     */
+    trace?: boolean;
+  }
 }
 
 declare module CCAI {
@@ -4797,8 +4880,8 @@ declare module Crypto {
 }
 
 /**
- * See https://cloud.google.com/dialogflow/es/docs/reference/language#table
- * <br>
+ * See the [Dialogflow ES language table](https://cloud.google.com/dialogflow/es/docs/reference/language#table) for reference.  
+ * 
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.AI);
@@ -5502,7 +5585,7 @@ declare namespace ElevenLabs {
     contextualUpdate(parameters: Object): void
 
     /**
-     * Allows to send user text messages to the conversation.
+     * Allows to send user text messages to the conversation. [https://elevenlabs.io/docs/agents-platform/customization/events/client-to-server-events#user-messages](https://elevenlabs.io/docs/agents-platform/customization/events/client-to-server-events#user-messages)
      * @param parameters
      */
     userMessage(parameters: Object): void
@@ -5652,7 +5735,7 @@ declare namespace ElevenLabs {
 }
 declare namespace ElevenLabs {
     /**
-     * Creates a new [ElevenLabs.RealtimeTTSPlayer] instance with specified text (TTS is used to play the text). You can attach media streams later via the [ElevenLabs.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+     * Creates a new [ElevenLabs.RealtimeTTSPlayer] instance with the specified text (TTS is used to play the text). You can attach media streams later via the [ElevenLabs.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
      * Note: This method uses 11labs [initializeConnection](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection) method internally.
      * @param text Text to synthesize
      * @param parameters Optional. Realtime TTS player parameters
@@ -5740,7 +5823,7 @@ declare namespace ElevenLabs {
    */
   interface RealtimeTTSPlayerHeader {
     /**
-     * HTTP request header name. Now only available [**xi-api-key** header](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.Initialize%20Connection.xi-api-key).
+     * HTTP request header to use your own ElevenLabs API key. See the [ElevenLabs documentation](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.Initialize%20Connection.xi-api-key) for more details.
      */
     name: 'xi-api-key';
     /**
@@ -5865,14 +5948,14 @@ declare class Endpoint {
   manageEndpoint(parameters: ReceiveParameters): Promise<void>;
 
   /**
-   * Returns the endpoint's [Call] object if the endpoint is not a player or recorder instance.
+   * Returns the endpoint's [Call] instance if the endpoint is not a player or recorder instance.
    */
   getCall(): Call;
 }
 
 declare namespace Gemini {
   /*
-   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
+   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
    */
   enum Backend {
     /**
@@ -5982,11 +6065,11 @@ declare namespace Gemini {
      */
     credentials?: string;
     /**
-     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.28.0#HTTPOptions) to override. NOTE: the 'baseUrl' parameter will be ignored.
+     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.32.0#HTTPOptions) to override. NOTE: the 'baseUrl' parameter will be ignored.
      */
     httpOptions?: Object;
     /**
-     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveConnectConfig) for the API connection.
+     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveConnectConfig) for the API connection.
      */
     connectConfig?: Object;
   }
@@ -5994,7 +6077,7 @@ declare namespace Gemini {
 
 declare namespace Gemini {
   /**
-   * Note that the [Gemini.LiveAPIClient] using the (Google Gen AI Go SDK v1.28.0)[https://pkg.go.dev/google.golang.org/genai@v1.28.0].
+   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.32.0](https://pkg.go.dev/google.golang.org/genai@v1.32.0).
    */
   class LiveAPIClient {
     /**
@@ -6052,19 +6135,22 @@ declare namespace Gemini {
     ): void;
 
     /**
-     * Transmits a LiveClientContent over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendRealtimeInput)
+     * Transmits a LiveClientContent over the established connection. 
+     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendClientContent)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
-     * Transmits a LiveClientRealtimeInput over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendClientContent)
+     * Transmits a LiveClientRealtimeInput over the established connection. 
+     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendRealtimeInput)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
-     * Transmits a LiveClientToolResponse over the established connection. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.28.0#Session.SendToolResponse)
+     * Transmits a LiveClientToolResponse over the established connection. 
+     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendToolResponse)
      * @param input
      */
     sendToolResponse(input: Object): void
@@ -6083,19 +6169,19 @@ declare namespace Gemini {
     Unknown = 'Gemini.LiveAPI.Unknown',
 
     /**
-     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerContent)
+     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerContent)
      * @typedef _LiveAPIEvent
      */
     ServerContent = 'Gemini.LiveAPI.ServerContent',
 
     /**
-     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCall)
+     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCall)
      * @typedef _LiveAPIEvent
      */
     ToolCall = 'Gemini.LiveAPI.ToolCall',
 
     /**
-     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.28.0#LiveServerToolCallCancellation)
+     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCallCancellation)
      * @typedef _LiveAPIEvent
      */
     ToolCallCancellation = 'Gemini.LiveAPI.ToolCallCancellation',
@@ -6146,7 +6232,7 @@ declare module IVR {}
 
 declare module IVR {
   /**
-   * Resets the IVR; i.e., the method clears the list of existed [IVRState] objects. Use it to stop the entire IVR logic (e.g. near the call's ending).
+   * Resets the IVR; i.e., the method clears the list of existed [IVRState] instances. Use it to stop the entire IVR logic (e.g. near the call's ending).
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -6602,6 +6688,14 @@ declare enum Modules {
    * Provides the [Ultravox](https://docs.ultravox.ai/introduction) functionality.
    */
   Ultravox = 'ultravox',
+  /**
+   * Provides the [Cartesia](https://docs.cartesia.ai/get-started/overview) functionality.
+   */
+  Cartesia = 'cartesia',
+  /**
+   * Provides the [Yandex](https://yandex.cloud/ru/docs/ai-studio/concepts/agents/realtime) functionality.
+   */
+  Yandex = 'yandex',
   /**
    * Provides the [Voximplant HTTP API](https://voximplant.com/docs/references/httpapi) functionality.
    * <br>
@@ -7215,7 +7309,7 @@ declare namespace OpenAI {
      */
     apiKey: string;
     /**
-     * Optional. The model to use for OpenAI Realtime API processing. The default value is **gpt-4o-realtime-preview-2024-10-01**.
+     * Optional. The model to use for OpenAI Realtime API processing. The default value is **gpt-realtime**.
      */
     model?: string;
     /**
@@ -7439,7 +7533,7 @@ declare namespace OpenAI {
      * Returned when an input audio buffer is committed. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed)
      * @typedef _RealtimeAPIEvent
      */
-    InputAudioBufferCommited = 'OpenAI.RealtimeAPI.InputAudioBufferCommited',
+    InputAudioBufferCommitted = 'OpenAI.RealtimeAPI.InputAudioBufferCommitted',
 
     /**
      * Returned when the input audio buffer is cleared by the client with an input_audio_buffer.clear event. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared)
@@ -7517,13 +7611,13 @@ declare namespace OpenAI {
      * Returned when the model-generated transcription of audio output is updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta)
      * @typedef _RealtimeAPIEvent
      */
-    ResponseOutputAudioTranscriptionDelta = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptionDelta',
+    ResponseOutputAudioTranscriptDelta = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptDelta',
 
     /**
      * Returned when the model-generated transcription of audio output is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done)
      * @typedef _RealtimeAPIEvent
      */
-    ResponseOutputAudioTranscriptionDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptionDone',
+    ResponseOutputAudioTranscriptDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptDone',
 
     /**
      * Returned when the model-generated audio is done. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done)
@@ -7628,7 +7722,7 @@ declare namespace OpenAI {
     [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionFailed]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemTruncated]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemDeleted]: _RealtimeAPIEvent;
-    [RealtimeAPIEvents.InputAudioBufferCommited]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCommitted]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.InputAudioBufferCleared]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.InputAudioBufferSpeechStarted]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.InputAudioBufferSpeechStopped]: _RealtimeAPIEvent;
@@ -7641,8 +7735,8 @@ declare namespace OpenAI {
     [RealtimeAPIEvents.ResponseContentPartDone]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ResponseOutputTextDelta]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ResponseOutputTextDone]: _RealtimeAPIEvent;
-    [RealtimeAPIEvents.ResponseOutputAudioTranscriptionDelta]: _RealtimeAPIEvent;
-    [RealtimeAPIEvents.ResponseOutputAudioTranscriptionDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDone]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ResponseOutputAudioDone]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _RealtimeAPIEvent;
@@ -7879,7 +7973,9 @@ declare interface _PlayerPlaybackMarkerReachedEvent extends _PlayerEvent {
 declare interface _PlayerPlaybackBufferingEvent extends _PlayerEvent {}
 
 /**
- * Represents an audio player.
+ * Represents an instance of an audio player.
+ * <br>
+ * Can be created by calling the [VoxEngine.createTTSPlayer], [VoxEngine.createToneScriptPlayer] or [VoxEngine.createURLPlayer] methods.
  */
 declare class Player extends BasePlayer {
   /**
@@ -8309,42 +8405,42 @@ declare enum RecorderLabelTextAlign {
 declare interface RecorderLabels {
   /**
    * Optional. Participant's label font.
-   * The default value is **[RecorderLabelFont.ROBOTO_REGULAR]**
+   * The default value is **[RecorderLabelFont.ROBOTO_REGULAR]**.
    */
   font?: RecorderLabelFont;
   /**
    * Optional. Participant's label text horizontal and vertical alignment.
-   * The default value is **[RecorderLabelTextAlign.MIDDLE_LEFT]**
+   * The default value is **[RecorderLabelTextAlign.MIDDLE_LEFT]**.
    */
   textAlign?: RecorderLabelTextAlign;
   /**
    * Optional. Margin space outside the label in pixels.
-   * The default value is **8**
+   * The default value is **8**.
    */
   margin?: number;
   /**
    * Optional. Participant's label position.
-   * The default value is **[RecorderLabelPosition.BOTTOM_RIGHT]**
+   * The default value is **[RecorderLabelPosition.BOTTOM_RIGHT]**.
    */
   position?: RecorderLabelPosition;
   /**
    * Optional. Participant's label background color in HEX format.
-   * The default value is **#c7c7cc**
+   * The default value is **#c7c7cc**.
    */
   background?: string;
   /**
    * Optional. Participant's label color in HEX format.
-   * The default value is **#000000**
+   * The default value is **#000000**.
    */
   color?: string;
   /**
    * Optional. Participant's label width in pixels.
-   * The default value is **104**
+   * The default value is **104**.
    */
   width?: number;
   /**
    * Optional. Participant's label height in pixels.
-   * The default value is **24**
+   * The default value is **24**.
    */
   height?: number;
 }
@@ -8667,7 +8763,7 @@ declare type SequencePlayerSegment = TTSPlayerSegment | URLPlayerSegment;
 /**
  * Represents an instance with segments represented by audio and URL players.
  * <br>
- * Can be used by calling the [VoxEngine.createSequencePlayer] method.
+ * Can be created by calling the [VoxEngine.createSequencePlayer] method.
  */
 declare class SequencePlayer {
   /**
@@ -9095,7 +9191,7 @@ declare class SmartQueueTask {
 }
 
 /*
- * A [SmartQueue] object.
+ * Represents an instance of a Smart Queue.
  */
 declare interface SmartQueue {
   /**
@@ -9566,7 +9662,7 @@ declare enum TerminationStatus {
 }
 
 /**
- * [Player] parameters. Can be passed as arguments to the [VoxEngine.createToneScriptPlayer] method.
+ * Tone Script [Player] parameters. Can be passed as arguments to the [VoxEngine.createToneScriptPlayer] method.
  */
 declare interface ToneScriptPlayerParameters {
   /**
@@ -10039,7 +10135,7 @@ declare namespace VoxEngine {
    * @param parameters Call parameters. Note that if this parameter is not an object, it is treated as "callerid". Further parameters are treated as "displayName", "password", "authUser", "extraHeaders", "video", "outProxy" respectively
    * @param scheme Internal information about codecs from the [AppEvents.CallAlerting] event
    */
-  function callSIP(to: string, parameters?: CallSIPParameters, scheme?: Object): Call;
+  function callSIP(to: string, parameters?: CallSIPParameters): Call;
 }
 
 declare namespace VoxEngine {
@@ -10080,7 +10176,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [ASR] (speech recognizer) instance and starts recognition. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [ASR] instance and starts recognition. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -10106,7 +10202,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Recorder] (audio recorder) or [ConferenceRecorder] (conference recorder) object. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [Recorder] or [ConferenceRecorder] instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -10127,7 +10223,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [StreamingAgent](streaming) instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
+   * Creates a new [StreamingAgent] instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    * <br>
    * Add the following line to your scenario code to use the function:
    * ```
@@ -10140,7 +10236,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player](audio player) instance with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player] instance with the specified [ToneScript](https://en.wikipedia.org/wiki/ToneScript) sequence. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param script ToneScript string
    * @param parameters Optional. Tone script player parameters
    **/
@@ -10149,7 +10245,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] (audio player) instance with specified text (TTS is used to play the text). You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player] instance with the specified text (TTS is used to play the text). You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * If the text length exceeds 1500 characters, the [PlayerEvents.PlaybackFinished] event is triggered with error description. After the very first playing, a phrase is cached; each createTTSPlayer instance stores the cache data up to 2 weeks. Note that cache addresses only the URL, without additional headers. The cached phrase is available for all applications and further sessions.
    * @param text Text to synthesize
    * @param parameters Optional. TTS player parameters
@@ -10159,7 +10255,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] (audio player) instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [Player] instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * <br>
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
@@ -10178,7 +10274,7 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [WebSocket] object. You can attach media streams later via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * Creates a new [WebSocket] instance. You can attach media streams later via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * @param url URL to connect **(wss:// + domain + path)**
    * @param parameters Optional. [WebSocket] parameters
    */
@@ -17087,7 +17183,7 @@ declare enum WebSocketReadyState {
 }
 
 /**
- * Represents a [WebSocket] object that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
+ * Represents a [WebSocket] instance that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
  * @param url URL to connect **(wss:// + domain + path)**
  * @param parameters Optional. [WebSocket] parameters
  */
@@ -17196,6 +17292,537 @@ declare class WebSocket {
   clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
 }
 
+declare namespace Yandex {
+    /**
+     * Creates an [Yandex.RealtimeAPIClient] instance.
+     * @param parameters The [Yandex.RealtimeAPIClient] parameters
+     */
+    function createRealtimeAPIClient(parameters: RealtimeAPIClientParameters): Promise<Yandex.RealtimeAPIClient>
+}
+declare namespace Yandex {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an Yandex WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedYandexEvent
+     */
+    WebSocketMediaStarted = 'Yandex.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an Yandex WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedYandexEvent
+     */
+    WebSocketMediaEnded = 'Yandex.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [Yandex.Events.WebSocketMediaStarted]: _WebSocketMediaStartedYandexEvent;
+    [Yandex.Events.WebSocketMediaEnded]: _WebSocketMediaEndedYandexEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [Yandex.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedYandexEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedYandexEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+declare namespace Yandex {
+  /**
+   * @private
+   */
+  interface _RealtimeAPIClientEvents extends _Events, _RealtimeAPIEvents {
+  }
+}
+declare namespace Yandex {
+  /**
+   * [Yandex.RealtimeAPIClient] parameters. Can be passed as arguments to the [Yandex.createRealtimeAPIClient] method.
+   */
+  interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
+    /**
+     * The API key for the Yandex Realtime API.
+     */
+    apiKey: string;
+    /**
+     * The folder ID for the Yandex Realtime API.
+     */
+    folderId: string;
+    /**
+     * Optional. The model to use for Yandex Realtime API processing. The default value is **speech-realtime-250923**.
+     */
+    model?: string;
+  }
+}
+  
+declare namespace Yandex {
+  class RealtimeAPIClient {
+    /**
+     * Returns the RealtimeAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the Yandex WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the Yandex connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the Yandex (via WebSocket) to the media unit. Yandex works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the Yandex (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the Yandex WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [Yandex.RealtimeAPIEvents] or [Yandex.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [Yandex.RealtimeAPIEvents.InputAudioBufferCommitted])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof Yandex._RealtimeAPIClientEvents>(
+      event: Yandex.Events | Yandex.RealtimeAPIEvents | T,
+      callback: (event: Yandex._RealtimeAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Yandex.RealtimeAPIEvents] or [Yandex.Events] event.
+     * @param event Event class (i.e., [Yandex.RealtimeAPIEvents.InputAudioBufferCommitted])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof Yandex._RealtimeAPIClientEvents>(
+      event: Yandex.Events | Yandex.RealtimeAPIEvents | T,
+      callback?: (event: Yandex._RealtimeAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Send this event to update the session’s configuration. 
+     * @param parameters
+     */
+    sessionUpdate(parameters: Object): void
+
+    //TODO: uncomment when Yandex will start accepting these events
+    // /**
+    //  * Send this event to clear the audio bytes in the buffer.
+    //  * @param parameters
+    //  */
+    // inputAudioBufferClear(parameters: Object): void
+
+    /**
+     * Add a new Item to the Conversation's context.
+     * @param parameters
+     */
+    conversationItemCreate(parameters: Object): void
+
+    /**
+     * Send this event when you want to retrieve the server's representation of a specific item in the conversation history.
+     * @param parameters
+     */
+    conversationItemRetrieve(parameters: Object): void
+
+    /**
+     * Send this event to truncate a previous assistant message’s audio.
+     * @param parameters
+     */
+    conversationItemTruncate(parameters: Object): void
+
+    /**
+     * Send this event when you want to remove any item from the conversation history.
+     * @param parameters
+     */
+    conversationItemDelete(parameters: Object): void
+
+    /**
+     * This event instructs the server to create a Response, which means triggering model inference.
+     * @param parameters
+     */
+    responseCreate(parameters: Object): void
+
+    /**
+     * Send this event to cancel an in-progress response. 
+     * @param parameters
+     */
+    responseCancel(parameters: Object): void
+  }
+}
+  
+declare namespace Yandex {
+  /**
+   * @event
+   */
+  enum RealtimeAPIEvents {
+    //TODO: add docs links and check event descriptions
+    /**
+     * The unknown event.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    Unknown = 'Yandex.RealtimeAPI.Unknown',
+
+    /**
+     * The HTTP response event.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    HTTPResponse = 'Yandex.RealtimeAPI.HTTPResponse',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    WebSocketError = 'Yandex.RealtimeAPI.WebSocketError',
+
+     /**
+     * Contains information about connector.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConnectorInformation = 'Yandex.RealtimeAPI.ConnectorInformation',
+
+    /**
+     * Returned when an error occurs, which could be a client problem or a server problem.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    Error = 'Yandex.RealtimeAPI.Error',
+
+    /**
+     * Returned when a Session is created.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    SessionCreated = 'Yandex.RealtimeAPI.SessionCreated',
+
+    /**
+     * Returned when a session is updated with a session.update event, unless there is an error.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    SessionUpdated = 'Yandex.RealtimeAPI.SessionUpdated',
+
+    // /**
+    //  * Sent by the server when an Item is added to the default Conversation.
+    //  * @typedef _YandexRealtimeAPIEvent
+    //  */
+    // ConversationItemAdded = 'Yandex.RealtimeAPI.ConversationItemAdded',
+
+    // /**
+    //  * Returned when a conversation item is finalized. 
+    //  * @typedef _YandexRealtimeAPIEvent
+    //  */
+    // ConversationItemDone = 'Yandex.RealtimeAPI.ConversationItemDone',
+
+    /**
+     * Returned when a new Item is created in the Conversation.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemCreated = 'Yandex.RealtimeAPI.ConversationItemCreated',
+     
+    /**
+     * Returned when a conversation item is retrieved with conversation.item.retrieve.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemRetrieved = 'Yandex.RealtimeAPI.ConversationItemRetrieved',
+
+    /**
+     * This event is the output of audio transcription for user audio written to the user audio buffer. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionCompleted = 'Yandex.RealtimeAPI.ConversationItemInputAudioTranscriptionCompleted',
+
+    /**
+     * Returned when the text value of an input audio transcription content part is updated with incremental transcription results.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionDelta = 'Yandex.RealtimeAPI.ConversationItemInputAudioTranscriptionDelta',
+
+    /**
+     * Returned when an input audio transcription segment is identified for an item.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionSegment = 'Yandex.RealtimeAPI.ConversationItemInputAudioTranscriptionSegment',
+
+    /**
+     * Returned when input audio transcription is configured, and a transcription request for a user message failed. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionFailed = 'Yandex.RealtimeAPI.ConversationItemInputAudioTranscriptionFailed',
+
+    /**
+     * Returned when an earlier assistant audio message item is truncated by the client with a conversation.item.truncate event.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemTruncated = 'Yandex.RealtimeAPI.ConversationItemTruncated',
+
+    /**
+     * Returned when an item in the conversation is deleted by the client with a conversation.item.delete event.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ConversationItemDeleted = 'Yandex.RealtimeAPI.ConversationItemDeleted',
+
+    /**
+     * Returned when an input audio buffer is committed.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    InputAudioBufferCommitted = 'Yandex.RealtimeAPI.InputAudioBufferCommitted',
+
+    /**
+     * Returned when the input audio buffer is cleared by the client with an input_audio_buffer.clear event. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    InputAudioBufferCleared = 'Yandex.RealtimeAPI.InputAudioBufferCleared',
+
+    /**
+     * Sent by the server when in server_vad mode to indicate that speech has been detected in the audio buffer.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStarted = 'Yandex.RealtimeAPI.InputAudioBufferSpeechStarted',
+
+    /**
+     * Returned in server_vad mode when the server detects the end of speech in the audio buffer.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStopped = 'Yandex.RealtimeAPI.InputAudioBufferSpeechStopped',
+
+    /**
+     * Returned when the Server VAD timeout is triggered for the input audio buffer.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    InputAudioBufferTimeoutTriggered = 'Yandex.RealtimeAPI.InputAudioBufferTimeoutTriggered',
+
+    /**
+     * Returned when a new Response is created. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseCreated = 'Yandex.RealtimeAPI.ResponseCreated',
+
+    /**
+     * Returned when a Response is done streaming. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseDone = 'Yandex.RealtimeAPI.ResponseDone',
+
+    /**
+     * Returned when a new Item is created during Response generation. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputItemAdded = 'Yandex.RealtimeAPI.ResponseOutputItemAdded',
+
+    /**
+     * Returned when an Item is done streaming. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputItemDone = 'Yandex.RealtimeAPI.ResponseOutputItemDone',
+
+    /**
+     * Returned when a new content part is added to an assistant message item during response generation.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseContentPartAdded = 'Yandex.RealtimeAPI.ResponseContentPartAdded',
+
+    /**
+     * Returned when a content part is done streaming in an assistant message item.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseContentPartDone = 'Yandex.RealtimeAPI.ResponseContentPartDone',
+
+    /**
+     * Returned when the text value of an "output_text" content part is updated.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputTextDelta = 'Yandex.RealtimeAPI.ResponseOutputTextDelta',
+
+    /**
+     * Returned when the text value of an "output_text" content part is done streaming.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputTextDone = 'Yandex.RealtimeAPI.ResponseOutputTextDone',
+
+    /**
+     * Returned when the model-generated transcription of audio output is updated. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptDelta = 'Yandex.RealtimeAPI.ResponseOutputAudioTranscriptDelta',
+
+    /**
+     * Returned when the model-generated transcription of audio output is done streaming.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptDone = 'Yandex.RealtimeAPI.ResponseOutputAudioTranscriptDone',
+    
+
+    /**
+     * Returned when the model-generated audio is done.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseOutputAudioDone = 'Yandex.RealtimeAPI.ResponseOutputAudioDone',
+
+    /**
+     * Returned when the model-generated function call arguments are updated.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDelta = 'Yandex.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
+
+    /**
+     * Returned when the model-generated function call arguments are done streaming.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDone = 'Yandex.RealtimeAPI.ResponseFunctionCallArgumentsDone',
+
+    /**
+     * Returned when MCP tool call arguments are updated during response generation. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseMCPCallArgumentsDelta = 'Yandex.RealtimeAPI.ResponseMCPCallArgumentsDelta',
+
+    /**
+     * Returned when MCP tool call arguments are finalized during response generation.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseMCPCallArgumentsDone = 'Yandex.RealtimeAPI.ResponseMCPCallArgumentsDone',
+
+    /**
+     * Returned when an MCP tool call has started and is in progress.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseMCPCallInProgress = 'Yandex.RealtimeAPI.ResponseMCPCallInProgress',
+
+    /**
+     * Returned when an MCP tool call has completed successfully. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseMCPCallCompleted = 'Yandex.RealtimeAPI.ResponseMCPCallCompleted',
+
+    /**
+     * Returned when an MCP tool call has failed. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    ResponseMCPCallFailed = 'Yandex.RealtimeAPI.ResponseMCPCallFailed',
+
+    /**
+     * Returned when listing MCP tools is in progress for an item. 
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    MCPListToolsInProgress = 'Yandex.RealtimeAPI.MCPListToolsInProgress',
+
+    /**
+     * Returned when listing MCP tools has completed for an item.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    MCPListToolsCompleted = 'Yandex.RealtimeAPI.MCPListToolsCompleted',
+
+    /**
+     * Returned when listing MCP tools has failed for an item.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    MCPListToolsFailed = 'Yandex.RealtimeAPI.MCPListToolsFailed',
+
+    /**
+     * Emitted at the beginning of a Response to indicate the updated rate limits.
+     * @typedef _YandexRealtimeAPIEvent
+     */
+    RateLimitsUpdated = 'Yandex.RealtimeAPI.ResponseMCPCallFailed',
+  }
+
+  /**
+   * @private
+   */
+  interface _YandexRealtimeAPIEvents {
+    [RealtimeAPIEvents.Unknown]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.HTTPResponse]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.WebSocketError]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConnectorInformation]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.Error]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionCreated]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionUpdated]: _YandexRealtimeAPIEvent;
+    //TODO: uncomment when Yandex will start sending these events
+    // [RealtimeAPIEvents.ConversationItemAdded]: _YandexRealtimeAPIEvent;
+    // [RealtimeAPIEvents.ConversationItemDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemCreated]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemRetrieved]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionDelta]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionSegment]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionFailed]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemTruncated]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemDeleted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCommitted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCleared]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStarted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStopped]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferTimeoutTriggered]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseCreated]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemAdded]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartAdded]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDelta]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDelta]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallArgumentsDelta]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallArgumentsDone]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallInProgress]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallCompleted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseMCPCallFailed]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsInProgress]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsCompleted]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.MCPListToolsFailed]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.RateLimitsUpdated]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.WebSocketError]: _YandexRealtimeAPIEvent;
+    [RealtimeAPIEvents.ConnectorInformation]: _YandexRealtimeAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _YandexRealtimeAPIEvent {
+    /**
+     * The [Yandex.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+  
+  
+declare namespace Yandex {
+}
 declare module ASRModelList {
   /**
    * List of Amazon ASR models.
@@ -17361,6 +17988,17 @@ declare module ASRModelList {
      * @const
      */
     nova2_atc,
+
+    /**
+     * Optimized for everyday audio processing.
+     * @const
+     */
+    nova3_general,
+    /**
+     *  Optimized for audio with medical oriented vocabulary.
+     * @const
+     */
+    nova3_medical,
   }
 }
 

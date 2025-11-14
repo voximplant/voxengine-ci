@@ -1355,7 +1355,7 @@ declare interface _CallAlertingEvent {
    */
   displayName: string;
   /**
-   * Custom SIP headers received with the call (the ones starting with "X-").
+   * Custom SIP headers received with the call starting with "X-". Additionally, it supports the "User-to-User" headers from SIP protocol.
    */
   headers: { [header: string]: string };
   /**
@@ -2596,7 +2596,7 @@ declare enum CallEvents {
   OnHold = 'Call.OnHold',
   /**
    * Triggered when the audio/voice playback is completed.
-   * Note that the [Call.stopPlayback] method finishes any media, so the PlaybackFinished event is not triggered. The playback may be started by the [Call.say] or [Call.startPlayback] methods.
+   * Note that the [Call.stopPlayback] method finishes any media**, so the [CallEvents.PlaybackFinished] event is not triggered. The playback may be started by the [Call.say] or [Call.startPlayback] methods.
    * @typedef _PlaybackFinishedEvent
    */
   PlaybackFinished = 'Call.PlaybackFinished',
@@ -2618,12 +2618,12 @@ declare enum CallEvents {
    */
   PushSent = 'Call.PushSent',
   /**
-   * Triggered when the Voximplant cloud receives the ReInviteAccepted message. This message means that a call received video from the other participant.
+   * Triggered when the Voximplant cloud receives the **ReInviteAccepted** message. This message means that a call received video from the other participant.
    * @typedef _ReInviteAcceptedEvent
    */
   ReInviteAccepted = 'Call.ReInviteAccepted',
   /**
-   * Triggered when the Voximplant cloud receives the ReInviteReceived message. This message means that a caller:<br>
+   * Triggered when the Voximplant cloud receives the **ReInviteReceived** message. This message means that a caller:<br>
    * 1) started sending video;<br>
    * 2) started/stopped screensharing;<br>
    * 3) put a call on hold / took a call off hold.
@@ -2631,17 +2631,12 @@ declare enum CallEvents {
    */
   ReInviteReceived = 'Call.ReInviteReceived',
   /**
-   * Triggered when the Voximplant cloud receives the ReInviteRejected message. This message means that a call does not receive video from the other participant.
+   * Triggered when the Voximplant cloud receives the **ReInviteRejected** message. This message means that a call does not receive video from the other participant.
    * @typedef _ReInviteRejectedEvent
    */
   ReInviteRejected = 'Call.ReInviteRejected',
   /**
-   * Triggers in case of errors during the recording process.
-   * @typedef _RecordErrorEvent
-   */
-  RecordError = 'Call.RecordError',
-  /**
-   * Triggered when call recording is started as a result of the [Call.record] method call.
+   * Triggered when call recording is started. The recording may be started by the [Call.record] method.
    * @typedef _RecordStartedEvent
    */
   RecordStarted = 'Call.RecordStarted',
@@ -2650,6 +2645,11 @@ declare enum CallEvents {
    * @typedef _RecordStoppedEvent
    */
   RecordStopped = 'Call.RecordStopped',
+  /**
+   * Triggers in case of errors during the recording process.
+   * @typedef _RecordErrorEvent
+   */
+  RecordError = 'Call.RecordError',
   /**
    * Triggers after outgoing call receives progress signal from a remote peer.
    * @typedef _RingingEvent
@@ -2705,7 +2705,7 @@ declare enum CallEvents {
    */
   FirstVideoPacketReceived = 'Call.FirstVideoPacketReceived',
   /**
-   * Triggers within 7 seconds after the RTP/RTCP has stopped. Applies to all types of calls (users, SIP, and PSTN).
+   * Triggers within **7 seconds** after the RTP/RTCP has stopped. Applies to all types of calls (users, SIP, and PSTN).
    * @typedef _RtpStoppedEvent
    */
   RtpStopped = 'Call.RtpStopped',
@@ -2715,7 +2715,7 @@ declare enum CallEvents {
    */
   RtpResumed = 'Call.RtpResumed',
   /**
-   * Triggers after the beep detection is complete.
+   * Triggers after the beep detection is complete. The beep detection may be started by the [Call.enableBeepDetection] method.
    * @typedef _BeepDetectionComplete
    */
   BeepDetectionComplete = 'Call.BeepDetectionComplete',
@@ -3876,11 +3876,11 @@ declare namespace Cartesia {
     apiKey?: string;
 
     /**
-     * Optional. Whether to enable the tracing functionality.
+     * Optional. Whether to enable the tracing functionality.  
      * 
-     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
      * 
-     * Note: Enable this only for diagnostic purposes.
+     * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
      */
     trace?: boolean;
   }
@@ -4839,7 +4839,11 @@ interface _ConversationalAgentClientParameters {
    */
   statistics?: boolean;
   /**
-   * Optional. Enables trace functionality.
+   * Optional. Whether to enable the tracing functionality.  
+   * 
+   * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+   * 
+   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
    */
   trace?: boolean;
 }
@@ -5862,9 +5866,11 @@ declare namespace ElevenLabs {
     initializeConnectionParameters?: Object;
 
     /**
-     * Optional. Whether to enable the tracing functionality.
-     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-     * Note: Enable only for diagnostic purposes.
+     * Optional. Whether to enable the tracing functionality.  
+     * 
+     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+     * 
+     * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
      */
     trace?: boolean;
   }
@@ -6364,7 +6370,6 @@ declare namespace MeasurementProtocol {
 
 /**
  * Implementation of the Measurement Protocol v1.
- * [https://developers.google.com/analytics/devguides/collection/protocol/v1](https://developers.google.com/analytics/devguides/collection/protocol/v1)
  */
 declare namespace MeasurementProtocol {}
 
@@ -9715,7 +9720,7 @@ declare interface TransferToParameters {
    */
   call: Call;
   /**
-   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix. The “X-” headers can be handled by a SIP phone or WEB SDK (e.g. see the incomingCall event). Example: {'X-header':'value'}
+   * Optional. Custom parameters (SIP headers) that should be passed with a call (INVITE) message. Custom header names have to begin with the 'X-' prefix except the 'VI-CallTimeout': '60' which hangs up if there is no answer after the timeout (in seconds, the default value is **60**, must not be less than **10** or greater than **400**). The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}.
    */
   headers?: { [header: string]: string };
 }
@@ -10076,6 +10081,22 @@ declare interface URLPlayerSegment {
   parameters?: URLPlayerParameters;
 }
 
+declare type VoxMediaUnit =
+  | Call
+  | Player
+  | SequencePlayer
+  | ASR
+  | Conference
+  | Recorder
+  | WebSocket
+  | StreamingAgent
+  | Gemini.LiveAPIClient
+  | OpenAI.Beta.RealtimeAPIClient
+  | OpenAI.RealtimeAPIClient
+  | ElevenLabs.AgentsClient
+  | Ultravox.WebSocketAPIClient
+  | Yandex.RealtimeAPIClient;
+
 declare namespace VoxEngine {
   /**
    * Adds a handler for the specified [AppEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
@@ -10255,16 +10276,17 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
-   * <br>
+   * Creates a new [Player] instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.  
+   * 
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
    * Note that cache addresses only the URL, without additional headers.
-   * The cached file is available for all applications and further sessions.
-   * <br>
-   * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.
-   * <br>
-   * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * The cached file is available for all applications and further sessions.  
+   * 
+   * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.  
+   * The supported file formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.  
+   * 
+   * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.  
    * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param request URL player request
    * @param parameters Optional. URL player parameters
@@ -10275,7 +10297,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Creates a new [WebSocket] instance. You can attach media streams later via the [WebSocket.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
-   * @param url URL to connect **(wss:// + domain + path)**
+   * @param url URL to connect. For the `wss://` protocol it accepts only domain addresses. For the `ws://` protocol, it can accept both domain and IP addresses
    * @param parameters Optional. [WebSocket] parameters
    */
   function createWebSocket(url: string, parameters?: WebSocketParameters): WebSocket;
@@ -16863,17 +16885,6 @@ declare namespace VoximplantAvatar {
  */
 declare namespace VoximplantAvatar {}
 
-declare type VoxMediaUnit =
-  | Call
-  | Player
-  | SequencePlayer
-  | ASR
-  | Conference
-  | Recorder
-  | WebSocket
-  | StreamingAgent
-  | OpenAI.Beta.RealtimeAPIClient
-
 /**
  * Available audio encoding formats. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is **PCM8**.
  */
@@ -17158,7 +17169,11 @@ declare interface WebSocketParameters {
    */
   statistics?: boolean;
   /**
-   * Optional. Enables trace functionality.
+   * Optional. Whether to enable the tracing functionality.  
+   * 
+   * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+   * 
+   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
    */
   trace?: boolean;
 }
@@ -17184,7 +17199,7 @@ declare enum WebSocketReadyState {
 
 /**
  * Represents a [WebSocket] instance that provides the API for creating and managing an outgoing or incoming WebSocket connection, as well as for sending and receiving data to/from it.
- * @param url URL to connect **(wss:// + domain + path)**
+ * @param url URL to connect. For the `wss://` protocol it accepts only domain addresses. For the `ws://` protocol, it can accept both domain and IP addresses
  * @param parameters Optional. [WebSocket] parameters
  */
 declare class WebSocket {

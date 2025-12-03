@@ -3866,19 +3866,17 @@ declare namespace Cartesia {
    */
   interface RealtimeTTSPlayerParameters {
     /**
-     * Object to provide parameters directly to the Cartesia provider's Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request).
+     * Object to provide parameters directly to the Cartesia provider Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request).
      */
     generationRequestParameters?: Object;
-
     /**
      * Optional. Cartesia API key. Use your Cartesia API key if you have your own Cartesia account.
      */
     apiKey?: string;
-
     /**
      * Optional. Whether to enable the tracing functionality.  
      * 
-     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
      * 
      * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
      */
@@ -4883,6 +4881,332 @@ declare module Crypto {
   function sha256(data: string): string;
 }
 
+declare namespace Deepgram {
+  /**
+   * Creates a [Deepgram.VoiceAgentClient] instance.
+   * @param parameters The [Deepgram.VoiceAgentClient] parameters
+   */
+  function createVoiceAgentClient(parameters: VoiceAgentClientParameters): Promise<VoiceAgentClient>
+}
+
+declare namespace Deepgram {
+}
+declare namespace Deepgram {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through a Deepgram WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedDeepgramEvent
+     */
+    WebSocketMediaStarted = 'Deepgram.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through a Deepgram WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedDeepgramEvent
+     */
+    WebSocketMediaEnded = 'Deepgram.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [Deepgram.Events.WebSocketMediaStarted]: _WebSocketMediaStartedDeepgramEvent;
+    [Deepgram.Events.WebSocketMediaEnded]: _WebSocketMediaEndedDeepgramEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [Deepgram.VoiceAgentClient] instance.
+     */
+    client: VoiceAgentClient;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedDeepgramEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedDeepgramEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+
+
+declare namespace Deepgram {
+  /**
+   * @private
+   */
+  interface _VoiceAgentClientEvents extends _Events, _VoiceAgentEvents {
+  }
+}
+declare namespace Deepgram {
+  /**
+   * [Deepgram.VoiceAgentClient] parameters. Can be passed as arguments to the [Deepgram.createVoiceAgentClient] method.
+   */
+  interface VoiceAgentClientParameters extends _ConversationalAgentClientParameters {
+    /**
+     * Optional. Deepgram API key.
+     */
+    apiKey?: string;
+    /**
+     * Optional. Deepgram access token for authentication. Use it instead of `apiKey` for more secure authentication.
+     */
+    accessToken?: string;
+    /**
+     * Optional. [Settings configuration](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1Settings) for Deepgram's Voice Agent API.
+     */
+    settingsOptions?: Object;
+  }
+}
+
+declare namespace Deepgram {
+  class VoiceAgentClient {
+    /**
+     * Returns the VoiceAgentClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the VoiceAgent WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the VoiceAgent connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the VoiceAgent (via WebSocket) to the media unit. VoiceAgent works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the VoiceAgent (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the VoiceAgent WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [Deepgram.VoiceAgentEvents] or [Deepgram.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [Deepgram.VoiceAgentEvents.SettingsApplied])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof _VoiceAgentClientEvents>(
+      event: Events | VoiceAgentEvents | T,
+      callback: (event: _VoiceAgentClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Deepgram.VoiceAgentEvents] or [Deepgram.Events] event.
+     * @param event Event class (i.e., [Deepgram.VoiceAgentEvents.SettingsApplied])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof _VoiceAgentClientEvents>(
+      event: Events | VoiceAgentEvents | T,
+      callback?: (event: _VoiceAgentClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Send a message to change the Speak model in the middle of a conversation.
+     * [https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1UpdateSpeak](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1UpdateSpeak)
+     * @param input
+     */
+    sendUpdateSpeak(input: Object): void
+
+    /**
+     * Send a message to update the system prompt of the agent.
+     * [https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1UpdatePrompt](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1UpdatePrompt)
+     * @param input
+     */
+    sendUpdatePrompt(input: Object): void
+
+    /**
+     * Send a message to immediately trigger an Agent statement.
+     * [https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1InjectAgentMessage](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1InjectAgentMessage)
+     * @param input
+     */
+    sendInjectAgentMessage(input: Object): void
+
+    /**
+     * Send a text based message to the agent.
+     * [https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1InjectUserMessage](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1InjectUserMessage)
+     * @param input
+     */
+    sendInjectUserMessage(input: Object): void
+
+    /**
+     * Send a message to provide a function call response in the middle of a conversation.
+     * [https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1SendFunctionCallResponse](https://developers.deepgram.com/reference/voice-agent/voice-agent#send.AgentV1SendFunctionCallResponse)
+     * @param input
+     */
+    sendFunctionCallResponse(input: Object): void
+  }
+}
+
+declare namespace Deepgram {
+  /**
+   * @event
+   */
+  enum VoiceAgentEvents {
+    /**
+     * The unknown event.
+     * @typedef _VoiceAgentEvent
+     */
+    Unknown = 'Deepgram.VoiceAgent.Unknown',
+
+    /**
+     * The HTTP response event.
+     * @typedef _AgentsEvent
+     */
+    HTTPResponse = 'ElevenLabs.Agents.HTTPResponse',
+
+    /**
+     * Receive a welcome message from the server to confirm the websocket has opened. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Welcome](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Welcome)
+     * @typedef _VoiceAgentEvent
+     */
+    Welcome = 'Deepgram.VoiceAgent.Welcome',
+
+    /**
+     * Confirms the server has successfully received and applied the Settings message. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1SettingsApplied](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1SettingsApplied)
+     * @typedef _VoiceAgentEvent
+     */
+    SettingsApplied = 'Deepgram.VoiceAgent.SettingsApplied',
+
+    /**
+     * Facilitates real-time communication by relaying spoken statements from both the user and the agent. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1ConversationText](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1ConversationText)
+     * @typedef _VoiceAgentEvent
+     */
+    ConversationText = 'Deepgram.VoiceAgent.ConversationText',
+
+    /**
+     * Notifies the client that the user has begun speaking. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1UserStartedSpeaking](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1UserStartedSpeaking)
+     * @typedef _VoiceAgentEvent
+     */
+    UserStartedSpeaking = 'Deepgram.VoiceAgent.UserStartedSpeaking',
+
+    /**
+     * Informs the client when the agent is processing information. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1AgentThinking](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1AgentThinking)
+     * @typedef _VoiceAgentEvent
+     */
+    AgentThinking = 'Deepgram.VoiceAgent.AgentThinking',
+
+    /**
+     * Server-initiated message requesting a function call, to be handled by either client or server. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1FunctionCallRequest](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1FunctionCallRequest)
+     * @typedef _VoiceAgentEvent
+     */
+    FunctionCallRequest = 'Deepgram.VoiceAgent.FunctionCallRequest',
+
+    /**
+     * Message containing the result of a function call, sent by client or server. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1ReceiveFunctionCallResponse](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1ReceiveFunctionCallResponse)
+     * @typedef _VoiceAgentEvent
+     */
+    FunctionCallResponse = 'Deepgram.VoiceAgent.FunctionCallResponse',
+
+    /**
+     * Confirms that a Prompt Configuration change has been applied. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1PromptUpdated](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1PromptUpdated)
+     * @typedef _VoiceAgentEvent
+     */
+    PromptUpdated = 'Deepgram.VoiceAgent.PromptUpdated',
+
+    /**
+     * Confirms that a Speak Configuration change has been applied. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1SpeakUpdated](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1SpeakUpdated)
+     * @typedef _VoiceAgentEvent
+     */
+    SpeakUpdated = 'Deepgram.VoiceAgent.SpeakUpdated',
+
+    /**
+     * Get signals that the server has finished sending the final audio segment to the client. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1AgentAudioDone](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1AgentAudioDone)
+     * @typedef _VoiceAgentEvent
+     */
+    AgentAudioDone = 'Deepgram.VoiceAgent.AgentAudioDone',
+
+    /**
+     * Receive errors from the server if an issue has occurred. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Error](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Error)
+     * @typedef _VoiceAgentEvent
+     */
+    Error = 'Deepgram.VoiceAgent.Error',
+
+    /**
+     * Receive warnings from the server if an issue has occurred. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Warning](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Warning)
+     * @typedef _VoiceAgentEvent
+     */
+    Warning = 'Deepgram.VoiceAgent.Warning',
+
+    /**
+     * Provide conversation and function call history when starting a new Voice Agent session. [https://developers.deepgram.com/docs/voice-agent-history](https://developers.deepgram.com/docs/voice-agent-history)
+     * @typedef _VoiceAgentEvent
+     */
+    History = 'Deepgram.VoiceAgent.History',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _AgentsEvent
+     */
+    WebSocketError = 'Deepgram.VoiceAgent.WebSocketError',
+
+    /**
+     * Contains information about connector.
+     * @typedef _VoiceAgentEvent
+     */
+    ConnectorInformation = 'Deepgram.VoiceAgent.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _VoiceAgentEvents {
+    [VoiceAgentEvents.Unknown]: _VoiceAgentEvent;
+    [VoiceAgentEvents.HTTPResponse]: _VoiceAgentEvent;
+    [VoiceAgentEvents.Welcome]: _VoiceAgentEvent;
+    [VoiceAgentEvents.SettingsApplied]: _VoiceAgentEvent;
+    [VoiceAgentEvents.ConversationText]: _VoiceAgentEvent;
+    [VoiceAgentEvents.UserStartedSpeaking]: _VoiceAgentEvent;
+    [VoiceAgentEvents.AgentThinking]: _VoiceAgentEvent;
+    [VoiceAgentEvents.FunctionCallRequest]: _VoiceAgentEvent;
+    [VoiceAgentEvents.FunctionCallResponse]: _VoiceAgentEvent;
+    [VoiceAgentEvents.PromptUpdated]: _VoiceAgentEvent;
+    [VoiceAgentEvents.SpeakUpdated]: _VoiceAgentEvent;
+    [VoiceAgentEvents.AgentAudioDone]: _VoiceAgentEvent;
+    [VoiceAgentEvents.Error]: _VoiceAgentEvent;
+    [VoiceAgentEvents.Warning]: _VoiceAgentEvent;
+    [VoiceAgentEvents.History]: _VoiceAgentEvent;
+    [VoiceAgentEvents.WebSocketError]: _VoiceAgentEvent;
+    [VoiceAgentEvents.ConnectorInformation]: _VoiceAgentEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _VoiceAgentEvent {
+    /**
+     * The [Deepgram.VoiceAgentClient] instance.
+     */
+    client: VoiceAgentClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
+
 /**
  * See the [Dialogflow ES language table](https://cloud.google.com/dialogflow/es/docs/reference/language#table) for reference.  
  * 
@@ -5843,7 +6167,7 @@ declare namespace ElevenLabs {
    */
   interface RealtimeTTSPlayerParameters {
     /**
-     * Provide the parameters directly to the ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#request.path"> documentation</a>.
+     * Optional. Provide the parameters directly to the ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#request.path"> documentation</a>.
      */
     pathParameters?: Object;
     /**
@@ -5858,17 +6182,15 @@ declare namespace ElevenLabs {
      * Optional. Whether to keep the connection alive after the timeout. The default value is **true**.
      */
     keepAlive?: boolean;
-
     /**
      * Optional. Provide the parameters directly to the 'initializeConnection' method of ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection"> documentation</a>.
-     * Note: You should not pass the 'text', 'xi-api-key' and 'authorization' fields.
+     * Note: You should not pass the **text**, **xi-api-key** and **authorization** fields.
      */
     initializeConnectionParameters?: Object;
-
     /**
      * Optional. Whether to enable the tracing functionality.  
      * 
-     * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
      * 
      * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
      */
@@ -6225,6 +6547,54 @@ declare namespace Gemini {
   }
 }
 
+
+declare namespace Inworld {
+    /**
+     * Creates a new [Inworld.RealtimeTTSPlayer] instance. You can attach media streams later via the [Inworld.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+     * @param parameters Optional. Realtime TTS player parameters
+     **/
+    function createRealtimeTTSPlayer(parameters?: RealtimeTTSPlayerParameters): RealtimeTTSPlayer;
+}
+
+declare namespace Inworld {
+}
+declare namespace Inworld {
+  class RealtimeTTSPlayer extends BasePlayer {
+    /**
+     * Send message object to the Inworld provider context.
+     * @param parameters Object provides the parameters directly to the Inworld provider context. Find more information in the [documentation](https://platform.inworld.ai/v2/documentation/api-reference/ttsAPI/texttospeech/synthesize-speech-websocket)
+     */
+    send(parameters: Object): void;
+    /**
+     * Clears an [Inworld.RealtimeTTSPlayer] buffer.
+     */
+    clearBuffer(): void;
+  }
+}
+
+declare namespace Inworld {
+  /**
+   * [Inworld.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [Inworld.createRealtimeTTSPlayer] method.
+   */
+  interface RealtimeTTSPlayerParameters {
+    /**
+     * Optional. Object to provide parameters directly to the Inworld provider Create Context message. Find more information in the [documentation](https://platform.inworld.ai/v2/documentation/api-reference/ttsAPI/texttospeech/synthesize-speech-websocket).
+     */
+    createContextParameters?: Object;
+    /**
+     * Optional. Inworld API key. Use your Inworld API key if you have your own Inworld account.
+     */
+    apiKey?: string;
+    /**
+     * Optional. Whether to enable the tracing functionality.
+     * 
+     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     * 
+     * Note: Enable this only for diagnostic purposes.
+     */
+    trace?: boolean;
+  }
+}
 
 /**
  * Global IVR control module.
@@ -6622,6 +6992,10 @@ declare enum Modules {
    */
   Avatar = 'avatar',
   /**
+   * Provides the [Cartesia](https://docs.cartesia.ai/get-started/overview) functionality.
+   */
+  Cartesia = 'cartesia',
+  /**
    * Provides the [audio and video conferencing](/docs/guides/conferences) functionality.
    * <br>
    * Add the following line to your scenario code to use the module:
@@ -6631,6 +7005,10 @@ declare enum Modules {
    */
   Conference = 'conference',
   /**
+   * Provides the [Deepgram](https://developers.deepgram.com/home) functionality.
+   */
+  Deepgram = 'deepgram',
+  /**
    * Provides the [ElevenLabs](https://elevenlabs.io) functionality.
    */
   ElevenLabs = 'elevenlabs',
@@ -6638,6 +7016,10 @@ declare enum Modules {
    * Provides the [Gemini(https://gemini.google.com) functionality.
    */
   Gemini = 'gemini',
+  /**
+   * Provides the [Inworld](https://docs.inworld.ai/docs/introduction) functionality.
+   */
+  Inworld = 'inworld',
   /**
    * Provides the [interactive voice menus](/docs/guides/speech/ivr) functionality.
    * <br>
@@ -6694,14 +7076,6 @@ declare enum Modules {
    */
   Ultravox = 'ultravox',
   /**
-   * Provides the [Cartesia](https://docs.cartesia.ai/get-started/overview) functionality.
-   */
-  Cartesia = 'cartesia',
-  /**
-   * Provides the [Yandex](https://yandex.cloud/ru/docs/ai-studio/concepts/agents/realtime) functionality.
-   */
-  Yandex = 'yandex',
-  /**
    * Provides the [Voximplant HTTP API](https://voximplant.com/docs/references/httpapi) functionality.
    * <br>
    * Add the following line to your scenario code to use the module:
@@ -6710,6 +7084,10 @@ declare enum Modules {
    * ```
    */
   VoximplantAPI = 'voximplantapi',
+  /**
+   * Provides the [Yandex](https://yandex.cloud/ru/docs/ai-studio/concepts/agents/realtime) functionality.
+   */
+  Yandex = 'yandex',
 }
 
 declare module Net {
@@ -9817,10 +10195,6 @@ declare namespace Ultravox {
      * Ultravox HTTP endpoint. Note that [Ultravox Call](https://docs.ultravox.ai/api-reference/calls/overview) is created by the specified endpoint HTTP invocation, the response data for which can be handled in the [WebSocketAPIEvents.HTTPResponse] event.
      */
     endpoint: HTTPEndpoint;
-    /**
-     * Optional. Ultravox call join url.
-     */
-    joinUrl: string;
     /**
      * Optional. Ultravox request authorizations. See the documentation of the specified endpoint for details.
      */
@@ -17208,37 +17582,37 @@ declare class WebSocket {
   /**
    * Event handler to call when the connection is closed.
    */
-  onclose: ((ev: _WebSocketCloseEvent) => any) | null;
+  onclose: ((event: _WebSocketCloseEvent) => any) | null;
 
   /**
    * Event handler to call when an error occurs.
    */
-  onerror: ((ev: _WebSocketErrorEvent) => any) | null;
+  onerror: ((event: _WebSocketErrorEvent) => any) | null;
 
   /**
    * Event handler to call when a message is received.
    */
-  onmessage: ((ev: _WebSocketMessageEvent) => any) | null;
+  onmessage: ((event: _WebSocketMessageEvent) => any) | null;
 
   /**
    * Event handler to call when the connection is open (ready to send and receive data).
    */
-  onopen: ((ev: _WebSocketOpenEvent) => any) | null;
+  onopen: ((event: _WebSocketOpenEvent) => any) | null;
 
   /**
    * Event handler to call when the connection is created.
    */
-  oncreated: ((ev: _WebSocketCreatedEvent) => any) | null;
+  oncreated: ((event: _WebSocketCreatedEvent) => any) | null;
 
   /**
    * Event handler to call when the audio stream is started playing.
    */
-  onmediastarted: ((ev: _WebSocketMediaStartedEvent) => any) | null;
+  onmediastarted: ((event: _WebSocketMediaStartedEvent) => any) | null;
 
   /**
    * Event handler to call after the end of the audio stream.
    */
-  onmediaended: ((ev: _WebSocketMediaEndedEvent) => any) | null;
+  onmediaended: ((event: _WebSocketMediaEndedEvent) => any) | null;
 
   /**
    * Returns the current state of the WebSocket connection.
@@ -21272,6 +21646,13 @@ declare interface TTSPlaybackParameters {
  * TTS [Player] parameters. Can be passed as arguments to the [VoxEngine.createTTSPlayer] method.
  */
 declare interface TTSPlayerParameters {
+  /**
+   * Optional. API key for the TTS provider.
+   * <br>
+   * <br>
+   * *Available for providers: ElevenLabs.*
+   */
+  apiKey?: string;
   /**
    * Optional. Voice for TTS. List of all supported voices: [VoiceList]. The default value is **VoiceList.Amazon.en_US_Joanna**.
    * <br>

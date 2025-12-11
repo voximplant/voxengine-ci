@@ -925,7 +925,7 @@ declare namespace AMD {
   /**
    * Parameters for the [AMD.create] method.
    */
-  interface AMDParameters {
+  interface Parameters {
     /**
      * Recognition model - [AMD.Model].
      */
@@ -993,7 +993,7 @@ declare namespace AMD {
   /**
    * Creates a new [AMD.AnsweringMachineDetector] instance. You can attach sources later via the [VoxMediaUnit] **sendMediaTo** method.
    */
-  function create(parameters: AMD.AMDParameters): AMD.AnsweringMachineDetector;
+  function create(parameters: AMD.Parameters): AMD.AnsweringMachineDetector;
 }
 
 declare namespace AMD {
@@ -10275,10 +10275,18 @@ declare namespace Ultravox {
     ): void;
 
     /**
-     * Used to send a user message to the agent via text. [https://docs.ultravox.ai/datamessages#inputtextmessage](https://docs.ultravox.ai/datamessages#inputtextmessage)
+     * @deprecated
+     * Used to send a user message to the agent via text.
+     * Note: This method is deprecated, use 'userTextMessage' instead.
      * @param parameters
      */
     inputTextMessage(parameters: Object): void
+
+    /**
+     * A user message sent via text. The message appears to the agent as if it came from the user. [https://docs.ultravox.ai/apps/datamessages#usertextmessage](https://docs.ultravox.ai/apps/datamessages#usertextmessage)
+     * @param parameters
+     */
+    userTextMessage(parameters: Object): void
 
     /**
      * Sets server’s output medium to text or voice. [https://docs.ultravox.ai/datamessages#setoutputmedium](https://docs.ultravox.ai/datamessages#setoutputmedium)
@@ -10287,10 +10295,28 @@ declare namespace Ultravox {
     setOutputMedium(parameters: Object): void
 
     /**
-     * Contains the result of a client tool invocation. [https://docs.ultravox.ai/datamessages#clienttoolresult](https://docs.ultravox.ai/datamessages#clienttoolresult)
+     * Contains the result of a client tool invocation. [https://docs.ultravox.ai/apps/datamessages#clienttoolresult-and-dataconnectiontoolresult](https://docs.ultravox.ai/apps/datamessages#clienttoolresult-and-dataconnectiontoolresult)
      * @param parameters
      */
     clientToolResult(parameters: Object): void
+
+    /**
+     * Contains the result of a client tool invocation. [https://docs.ultravox.ai/apps/datamessages#clienttoolresult-and-dataconnectiontoolresult](https://docs.ultravox.ai/apps/datamessages#clienttoolresult-and-dataconnectiontoolresult)
+     * @param parameters
+     */
+    dataConnectionToolResult(parameters: Object): void
+
+    /**
+     * Forces the agent to say a specific message or invoke tools. [https://docs.ultravox.ai/apps/datamessages#forcedagentmessage](https://docs.ultravox.ai/apps/datamessages#forcedagentmessage)
+     * @param parameters
+     */
+    forcedAgentMessage(parameters: Object): void
+
+    /**
+     * Instructs the agent to end the call with an optional farewell message. [https://docs.ultravox.ai/apps/datamessages#hangup](https://docs.ultravox.ai/apps/datamessages#hangup)
+     * @param parameters
+     */
+    hangUp(parameters: Object): void
   }
 }
   
@@ -10312,31 +10338,37 @@ declare namespace Ultravox {
     HTTPResponse = 'Ultravox.WebSocketAPI.HTTPResponse',
 
     /**
-     * Indicates the server’s current state. [https://docs.ultravox.ai/datamessages#state](https://docs.ultravox.ai/datamessages#state)
+     * Indicates the server’s current state. [https://docs.ultravox.ai/apps/datamessages#state](https://docs.ultravox.ai/apps/datamessages#state)
      * @typedef _WebSocketAPIEvent
      */
     State = 'Ultravox.WebSocketAPI.State',
 
     /**
-     * Contains text for an utterance made during the call. [https://docs.ultravox.ai/datamessages#transcript](https://docs.ultravox.ai/datamessages#transcript)
+     * Contains text for an utterance made during the call. [https://docs.ultravox.ai/apps/datamessages#transcript](https://docs.ultravox.ai/apps/datamessages#transcript)
      * @typedef _WebSocketAPIEvent
      */
     Transcript = 'Ultravox.WebSocketAPI.Transcript',
 
     /**
-     * Asks the client to invoke a client tool. [https://docs.ultravox.ai/datamessages#clienttoolinvocation](https://docs.ultravox.ai/datamessages#clienttoolinvocation)
+     * Sent by the server to ask the client or data connection to invoke a tool with the given parameters. [https://docs.ultravox.ai/apps/datamessages#clienttoolinvocation-and-dataconnectiontoolinvocation](https://docs.ultravox.ai/apps/datamessages#clienttoolinvocation-and-dataconnectiontoolinvocation)
      * @typedef _WebSocketAPIEvent
      */
     ClientToolInvocation = 'Ultravox.WebSocketAPI.ClientToolInvocation',
 
     /**
-     * Useful for application debugging. [https://docs.ultravox.ai/datamessages#debug](https://docs.ultravox.ai/datamessages#debug)
+     * Sent by the server to ask the client or data connection to invoke a tool with the given parameters. [https://docs.ultravox.ai/apps/datamessages#clienttoolinvocation-and-dataconnectiontoolinvocation](https://docs.ultravox.ai/apps/datamessages#clienttoolinvocation-and-dataconnectiontoolinvocation)
+     * @typedef _WebSocketAPIEvent
+     */
+    DataConnectionToolInvocation = 'Ultravox.WebSocketAPI.DataConnectionToolInvocation',
+
+    /**
+     * Useful for application debugging. [https://docs.ultravox.ai/apps/datamessages#debug](https://docs.ultravox.ai/apps/datamessages#debug)
      * @typedef _WebSocketAPIEvent
      */
     Debug = 'Ultravox.WebSocketAPI.Debug',
 
     /**
-     * Used to clear buffered output audio. WebSocket only. [https://docs.ultravox.ai/datamessages#playbackclearbuffer](https://docs.ultravox.ai/datamessages#playbackclearbuffer)
+     * Used to clear buffered output audio. WebSocket only. [https://docs.ultravox.ai/apps/datamessages#playbackclearbuffer](https://docs.ultravox.ai/apps/datamessages#playbackclearbuffer)
      * @typedef _WebSocketAPIEvent
      */
     PlaybackClearBuffer = 'Ultravox.WebSocketAPI.PlaybackClearBuffer',
@@ -10363,6 +10395,7 @@ declare namespace Ultravox {
     [WebSocketAPIEvents.State]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.Transcript]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.ClientToolInvocation]: _WebSocketAPIEvent;
+    [WebSocketAPIEvents.DataConnectionToolInvocation]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.Debug]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.PlaybackClearBuffer]: _WebSocketAPIEvent;
     [WebSocketAPIEvents.WebSocketError]: _WebSocketAPIEvent;
@@ -17824,13 +17857,6 @@ declare namespace Yandex {
      */
     sessionUpdate(parameters: Object): void
 
-    //TODO: uncomment when Yandex will start accepting these events
-    // /**
-    //  * Send this event to clear the audio bytes in the buffer.
-    //  * @param parameters
-    //  */
-    // inputAudioBufferClear(parameters: Object): void
-
     /**
      * Add a new Item to the Conversation's context.
      * @param parameters
@@ -17874,7 +17900,6 @@ declare namespace Yandex {
    * @event
    */
   enum RealtimeAPIEvents {
-    //TODO: add docs links and check event descriptions
     /**
      * The unknown event.
      * @typedef _YandexRealtimeAPIEvent
@@ -17916,18 +17941,6 @@ declare namespace Yandex {
      * @typedef _YandexRealtimeAPIEvent
      */
     SessionUpdated = 'Yandex.RealtimeAPI.SessionUpdated',
-
-    // /**
-    //  * Sent by the server when an Item is added to the default Conversation.
-    //  * @typedef _YandexRealtimeAPIEvent
-    //  */
-    // ConversationItemAdded = 'Yandex.RealtimeAPI.ConversationItemAdded',
-
-    // /**
-    //  * Returned when a conversation item is finalized. 
-    //  * @typedef _YandexRealtimeAPIEvent
-    //  */
-    // ConversationItemDone = 'Yandex.RealtimeAPI.ConversationItemDone',
 
     /**
      * Returned when a new Item is created in the Conversation.
@@ -18152,9 +18165,6 @@ declare namespace Yandex {
     [RealtimeAPIEvents.Error]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.SessionCreated]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.SessionUpdated]: _YandexRealtimeAPIEvent;
-    //TODO: uncomment when Yandex will start sending these events
-    // [RealtimeAPIEvents.ConversationItemAdded]: _YandexRealtimeAPIEvent;
-    // [RealtimeAPIEvents.ConversationItemDone]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemCreated]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemRetrieved]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _YandexRealtimeAPIEvent;

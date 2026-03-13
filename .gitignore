@@ -39,3 +39,7 @@ lib/**/*.d.ts
 vox_ci_credentials.json
 
 __tests__/native_tests
+
+# GitLab CI security scanner reports (may appear in workspace from previous jobs)
+gl-sast-report.json
+gl-secret-detection-report.json

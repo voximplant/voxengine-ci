@@ -921,26 +921,6 @@ declare namespace AI {
   interface _VoicemailNotDetectedEvent extends _VoicemailBaseEvent {}
 }
 
-declare namespace AMD {
-  /**
-   * Parameters for the [AMD.create] method.
-   */
-  interface Parameters {
-    /**
-     * Recognition model - [AMD.Model].
-     */
-    model: AMD.Model;
-    /**
-     * Optional. Detection timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Connected] event. The default value is **6500**. Must not be less than **0** or greater than **20000**.
-     */
-    timeout?: number;
-    /**
-     * Optional. Detection threshold in the range **0.0** - **1.0**.
-     */
-    thresholds?: AMD.Thresholds;
-  }
-}
-
 /**
  * Answering Machine Detection provides methods that allow developers to recognize voicemail prompts with the help of artificial intelligence.
  * Read more about the topic in the [Voicemail detection](/docs/guides/calls/voicemail-detection) article.
@@ -1090,6 +1070,14 @@ declare namespace AMD {
      */
     CO = 'colombia',
     /**
+     * General European multilingual model
+     */
+    EU_GENERAL = 'eu_general',
+    /**
+     * Spanish
+     */
+    ES = 'es',
+    /**
      * Kazakhstan
      */
     KZ = 'kz',
@@ -1113,10 +1101,26 @@ declare namespace AMD {
      * United States
      */
     US = 'us',
+  }
+}
+
+declare namespace AMD {
+  /**
+   * Parameters for the [AMD.create] method.
+   */
+  interface Parameters {
     /**
-     * General European multilingual model
+     * Recognition model - [AMD.Model].
      */
-    EU_GENERAL = 'eu_general',
+    model: AMD.Model;
+    /**
+     * Optional. Detection timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Connected] event. The default value is **6500**. Must not be less than **0** or greater than **20000**.
+     */
+    timeout?: number;
+    /**
+     * Optional. Detection threshold in the range **0.0** - **1.0**.
+     */
+    thresholds?: AMD.Thresholds;
   }
 }
 
@@ -2738,6 +2742,11 @@ declare enum CallEvents {
    * @typedef _AudioQualityDetectedEvent
    */
   AudioQualityDetected = 'Call.AudioQualityDetected',
+  /**
+   * Triggers after media statistic recieved. For enabling you need to call method [Call.monitorMediaStatistics].
+   * @typedef _MediaStatisticsReceived
+   */
+  MediaStatisticsReceived = 'Call.MediaStatisticsReceived'
 }
 
 /**
@@ -2784,6 +2793,7 @@ declare interface _CallEvents {
   [CallEvents.BeepDetectionComplete]: _BeepDetectionComplete;
   [CallEvents.BeepDetectionError]: _BeepDetectionError;
   [CallEvents.AudioQualityDetected]: _AudioQualityDetectedEvent;
+  [CallEvents.MediaStatisticsReceived]: _MediaStatisticsReceived;
 }
 
 /**
@@ -3219,7 +3229,16 @@ declare interface _AudioQualityDetectedEvent extends _CallEvent {
   quality: CallAudioQuality;
 }
 
-
+/**
+ * @private
+ */
+declare interface _MediaStatisticsReceived extends _CallEvent {
+  /**
+   * Statistical information about the audio channels.
+   * Contains metrics for both incoming and outgoing streams.
+   */
+  audio: MediaStatisticsReceived
+}
 /**
  * [Call] parameters. Can be passed as arguments to the [VoxEngine.callPSTN] method.
  */
@@ -3683,6 +3702,12 @@ declare class Call {
    * Transfers a SIP call to a 3rd party provider which supports the REFER command. If the transfer is successful, Voximplant disconnects from handling this call and the [CallEvents.TransferComplete] event is triggered. Otherwise, the [CallEvents.TransferFailed] event is triggered.
    */
   transferTo(parameters: TransferToParameters): void;
+
+  /**
+   * Enables the retrieval of multimedia statistics during a call. When enabled, the [CallEvents.MediaStatisticsReceived] event is triggered and retrieves multimedia statistics during a call.
+   * @param parameters Multimedia statistics parameters 
+   */
+  monitorMediaStatistics(parameters: MonitorMediaStatisticsParameters): void
 }
 
 /**
@@ -3815,7 +3840,7 @@ declare namespace Cartesia {
   /**
    * [Cartesia.AgentsClient] parameters. Can be passed as arguments to the [Cartesia.createAgentsClient] method.
    */
-  interface AgentsClientParameters extends _ConversationalAgentClientParameters {
+  interface AgentsClientParameters extends _VoiceAIClientParameters {
     /**
      * The API key for the Cartesia. Used to generate access token.
      */
@@ -4013,12 +4038,12 @@ declare namespace Cartesia {
    */
   enum Events {
     /**
-     * Triggered when the audio stream sent by a third party through an Cartesia WebSocket is started playing.
+     * Triggered when the audio stream sent by a third party through a Cartesia WebSocket is started playing.
      * @typedef _WebSocketMediaStartedCartesiaEvent
      */
     WebSocketMediaStarted = 'Cartesia.Events.WebSocketMediaStarted',
     /**
-     * Triggers after the end of the audio stream sent by a third party through an Cartesia WebSocket (**1 second of silence**).
+     * Triggers after the end of the audio stream sent by a third party through a Cartesia WebSocket (**1 second of silence**).
      * @typedef _WebSocketMediaEndedCartesiaEvent
      */
     WebSocketMediaEnded = 'Cartesia.Events.WebSocketMediaEnded',
@@ -5038,28 +5063,6 @@ declare class Conference {
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
-/**
- * @private
- */
-interface _ConversationalAgentClientParameters {
-  /**
-   * Optional. A callback function that is called when the [WebSocket] connection is closed.
-   */
-  onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
-  /**
-   * Optional. Enables statistics functionality.
-   */
-  statistics?: boolean;
-  /**
-   * Optional. Whether to enable the tracing functionality.  
-   * 
-   * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
-   * 
-   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
-   */
-  trace?: boolean;
-}
-
 declare namespace Crypto {}
 
 declare namespace Crypto {
@@ -5165,7 +5168,7 @@ declare namespace Deepgram {
   /**
    * [Deepgram.VoiceAgentClient] parameters. Can be passed as arguments to the [Deepgram.createVoiceAgentClient] method.
    */
-  interface VoiceAgentClientParameters extends _ConversationalAgentClientParameters {
+  interface VoiceAgentClientParameters extends _VoiceAIClientParameters {
     /**
      * Optional. Deepgram API key.
      */
@@ -6038,7 +6041,7 @@ declare namespace ElevenLabs {
   /**
    * [ElevenLabs.AgentsClient] parameters. Can be passed as arguments to the [ElevenLabs.createAgentsClient] method.
    */
-  interface AgentsClientParameters extends _ConversationalAgentClientParameters {
+  interface AgentsClientParameters extends _VoiceAIClientParameters {
     /**
      * The API key for the ElevenLabs Agents.
      */
@@ -6581,7 +6584,7 @@ declare namespace Gemini {
   /**
    * [Gemini.LiveAPIClient] parameters. Can be passed as arguments to the [Gemini.createLiveAPIClient] method.
    */
-  interface LiveAPIClientParameters extends _ConversationalAgentClientParameters {
+  interface LiveAPIClientParameters extends _VoiceAIClientParameters {
     /**
      * Optional. The model to use for Gemini Live API processing. The default value is **gemini-2.0-flash-exp**.
      */
@@ -6619,7 +6622,7 @@ declare namespace Gemini {
 
 declare namespace Gemini {
   /**
-   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.32.0](https://pkg.go.dev/google.golang.org/genai@v1.32.0).
+   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.49.0](https://pkg.go.dev/google.golang.org/genai@v1.49.0).
    */
   class LiveAPIClient {
     /**
@@ -6678,21 +6681,21 @@ declare namespace Gemini {
 
     /**
      * Transmits a LiveClientContent over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendClientContent)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendClientContent)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
      * Transmits a LiveClientRealtimeInput over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendRealtimeInput)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendRealtimeInput)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
      * Transmits a LiveClientToolResponse over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Session.SendToolResponse)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendToolResponse)
      * @param input
      */
     sendToolResponse(input: Object): void
@@ -6829,7 +6832,7 @@ declare namespace Grok {
   /**
    * [Grok.VoiceAgentAPIClient] parameters. Can be passed as arguments to the [Grok.createVoiceAgentAPIClient] method.
    */
-  interface VoiceAgentAPIClientParameters extends _ConversationalAgentClientParameters {
+  interface VoiceAgentAPIClientParameters extends _VoiceAIClientParameters {
     /**
      * The xAI API key for the Grok VoiceAgent API.
      */
@@ -7488,6 +7491,43 @@ declare namespace MeasurementProtocol {
   function startSession(options: StartSessionOptions): typeof MeasurementProtocol;
 }
 
+/**
+ * Single media statistics sample for a call leg (incoming or outgoing).
+ */
+declare interface MediaStatistic {
+  /**
+   * Unique call identifier.
+   */
+  id: number;
+  /**
+   * Network jitter
+   */
+  jitter: string;
+  /**
+   * Number of lost RTP packets.
+   */
+  packetLoss: number;
+  /**
+   * Total number of received/sent RTP packets.
+   */
+  numPackets: number;
+}
+
+/**
+ * Media statistics event payload received from the media server.
+ * Contains metrics for both incoming and outgoing media streams.
+ */
+declare interface MediaStatisticsReceived {
+  /**
+   * Statistics for incoming media stream.
+   */
+  in: MediaStatistic[];
+  /**
+   * Statistics for outgoing media stream.
+   */
+  out: MediaStatistic[];
+}
+
 declare enum Modules {
   /**
    * Provides the [ACD v1](/docs/guides/smartqueue/acdv1) functionality.
@@ -7585,6 +7625,15 @@ declare enum Modules {
    */
   OpenAI = 'openai',
   /**
+   * Provides the Pipecat functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Pipecat);
+   * ```
+   */
+  Pipecat = 'pipecat',
+  /**
    * Provides the push notification functionality for [iOS](/docs/guides/sdk/iospush) and [Android](/docs/guides/sdk/androidpush) devices.
    * <br>
    * Add the following line to your scenario code to use the module:
@@ -7602,6 +7651,15 @@ declare enum Modules {
    * ```
    */
   Recorder = 'recorder',
+  /**
+   * Provides the Silero functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Silero);
+   * ```
+   */
+  Silero = 'silero',
   /**
    * Provides the SmartQueue (ACD v2) functionality for implementing a [contact center](/docs/guides/smartqueue).
    * <br>
@@ -7639,6 +7697,19 @@ declare enum Modules {
   Yandex = 'yandex',
 }
 
+/**
+ * The parameters can be passed as arguments to the [Call.monitorMediaStatistics] method.
+ */
+declare interface MonitorMediaStatisticsParameters {
+  /**
+   * Enables or disables media statistics monitoring.
+   */
+  monitor: boolean;
+  /**
+   * Interval between messages (in seconds). The value must not be less than 3 or greater than 10.
+   */
+  interval: number;
+}
 declare namespace Net {
   /**
    * Performs an asynchronous HTTP request. TCP connect timeout is 6 seconds and total request timeout is 90 seconds. Learn more about the [limits](/docs/guides/voxengine/limits).
@@ -7833,7 +7904,7 @@ declare namespace OpenAI {
     /**
      * [OpenAI.Beta.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.Beta.createRealtimeAPIClient] method.
      */
-    interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
+    interface RealtimeAPIClientParameters extends _VoiceAIClientParameters {
       /**
        * The API key for the OpenAI Realtime API.
        */
@@ -8169,11 +8240,260 @@ declare namespace OpenAI {
 
 
 declare namespace OpenAI {
+  /**
+   * @private
+   */
+  interface _ChatCompletionsAPIClientEvents extends _Events, _ChatCompletionsAPIEvents {
+  }
+}
+declare namespace OpenAI {
+  /**
+   * [OpenAI.ChatCompletionsAPIClient] parameters. Can be passed as arguments to the [OpenAI.createChatCompletionsAPIClient] method.
+   */
+  interface ChatCompletionsAPIClientParameters extends _VoiceAIClientParameters {
+    /**
+     * API key for the OpenAI API.
+     */
+    apiKey: string;
+    /**
+     * Optional. Whether to store the context in the client. The default value is **false**.
+     */
+    storeContext?: boolean;
+    /**
+     * Optional. Base URL for the OpenAI API.
+     */
+    baseUrl?: string;
+    /**
+     * Optional. Project for the OpenAI API.
+     */
+    project?: string;
+    /**
+     * Optional. Prompt for the summary generation. If not specified, the default prompt is used.
+     * The API Client automatically inserts the previous summary here.
+     * The default prompt is:
+     ```
+     You are maintaining a running summary of an ongoing conversation.
+
+      Below is:
+      1. The previous summary
+      2. The messages between user and assistant you need to summarize
+
+      Provide a summary to reflect the information.
+
+      ### Instructions:
+      - Preserve important existing context from the previous summary
+      - Integrate new key information, decisions, and developments
+      - Remove outdated or redundant details
+      - Avoid repeating unchanged information
+      - Keep the summary concise and context-efficient
+      - Maintain a neutral and factual tone
+
+    ```
+     */
+    summaryPrompt?: string;
+  }
+}
+declare namespace OpenAI {
+  class ChatCompletionsAPIClient {
+    /**
+     * Returns the ChatCompletionsAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the OpenAI WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the OpenAI connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Adds a handler for the specified [OpenAI.ChatCompletionsAPIEvents] or [OpenAI.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [OpenAI.ChatCompletionsAPIEvents.ContentDelta])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof OpenAI._ChatCompletionsAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.ChatCompletionsAPIEvents | T,
+      callback: (event: OpenAI._ChatCompletionsAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [OpenAI.ChatCompletionsAPIEvents] or [OpenAI.Events] event.
+     * @param event Event class (i.e., [OpenAI.ChatCompletionsAPIEvents.ContentDelta])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof OpenAI._ChatCompletionsAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.ChatCompletionsAPIEvents | T,
+      callback?: (event: OpenAI._ChatCompletionsAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Creates a model response for the given chat conversation. [https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)
+     * @param parameters
+     */
+    createChatCompletions(parameters: Object): void
+  }
+}
+  
+declare namespace OpenAI {
+  /**
+   * @event
+   */
+  enum ChatCompletionsAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    Unknown = 'OpenAI.ChatCompletionsAPI.Unknown',
+
+    /**
+     * Represents a streamed chunk of a chat completion response returned by the model, based on the provided input. [https://developers.openai.com/api/reference/resources/chat/subresources/completions#(resource)%20chat.completions%20%3E%20(model)%20chat_completion_chunk%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/chat/subresources/completions#(resource)%20chat.completions%20%3E%20(model)%20chat_completion_chunk%20%3E%20(schema))
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    Chunk = 'OpenAI.ChatCompletionsAPI.Chunk',
+
+    /**
+     * The chat completion content event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    Content = 'OpenAI.ChatCompletionsAPI.Content',
+
+    /**
+     * The chat completion content delta event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    ContentDelta = 'OpenAI.ChatCompletionsAPI.ContentDelta',
+
+    /**
+     * The chat completion content done event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    ContentDone = 'OpenAI.ChatCompletionsAPI.ContentDone',
+
+    /**
+     * The chat completion refusal delta event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    RefusalDelta = 'OpenAI.ChatCompletionsAPI.RefusalDelta',
+
+    /**
+     * The chat completion refusal done event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    RefusalDone = 'OpenAI.ChatCompletionsAPI.RefusalDone',
+
+    /**
+     * The chat completion function tool call arguments delta event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    FunctionToolCallArgumentsDelta = 'OpenAI.ChatCompletionsAPI.FunctionToolCallArgumentsDelta',
+
+    /**
+     * The chat completion function tool call arguments done event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    FunctionToolCallArgumentsDone = 'OpenAI.ChatCompletionsAPI.FunctionToolCallArgumentsDone',
+
+    /**
+     * The chat completion log probs content delta event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    LogProbsContentDelta = 'OpenAI.ChatCompletionsAPI.LogProbsContentDelta',
+
+    /**
+     * The chat completion log probs content done event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    LogProbsContentDone = 'OpenAI.ChatCompletionsAPI.LogProbsContentDone',
+
+    /**
+     * The chat completion log probs refusal delta event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    LogProbsRefusalDelta = 'OpenAI.ChatCompletionsAPI.LogProbsRefusalDelta',
+
+    /**
+     * The chat completion log probs refusal done event.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    LogProbsRefusalDone = 'OpenAI.ChatCompletionsAPI.LogProbsRefusalDone',
+
+    /**
+     * Contains Chat Completions API error.
+     * @typedef _ChatCompletionsAPIEvent
+     */
+    ChatCompletionsAPIError = 'OpenAI.ChatCompletionsAPI.ChatCompletionsAPIError',
+
+    /**
+    * Contains information about connector.
+    * @typedef _ChatCompletionsAPIEvent
+    */
+    ConnectorInformation = 'OpenAI.ChatCompletionsAPI.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _ChatCompletionsAPIEvents {
+    [ChatCompletionsAPIEvents.Unknown]: _ChatCompletionsAPIEvent;
+
+    [ChatCompletionsAPIEvents.Chunk]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.Content]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.ContentDelta]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.ContentDone]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.RefusalDelta]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.RefusalDone]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.FunctionToolCallArgumentsDelta]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.FunctionToolCallArgumentsDone]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.LogProbsContentDelta]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.LogProbsContentDone]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.LogProbsRefusalDelta]: _ChatCompletionsAPIEvent;
+    [ChatCompletionsAPIEvents.LogProbsRefusalDone]: _ChatCompletionsAPIEvent;
+
+    [ChatCompletionsAPIEvents.ChatCompletionsAPIError]: _ChatCompletionsAPIEvent;
+
+    [ChatCompletionsAPIEvents.ConnectorInformation]: _ChatCompletionsAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _ChatCompletionsAPIEvent {
+    /**
+     * The [OpenAI.ChatCompletionsAPIClient] instance.
+     */
+    client: ChatCompletionsAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
+
+declare namespace OpenAI {
+    /**
+     * Creates a new [OpenAI.ChatCompletionsAPIClient] instance.
+     * @param parameters The [OpenAI.ChatCompletionsAPIClient] parameters
+     */
+    function createChatCompletionsAPIClient(parameters: ChatCompletionsAPIClientParameters): Promise<OpenAI.ChatCompletionsAPIClient>
+}
+declare namespace OpenAI {
     /**
      * Creates a new [OpenAI.RealtimeAPIClient] instance.
      * @param parameters The [OpenAI.RealtimeAPIClient] parameters
      */
     function createRealtimeAPIClient(parameters: RealtimeAPIClientParameters): Promise<OpenAI.RealtimeAPIClient>
+}
+declare namespace OpenAI {
+    /**
+     * Creates a new [OpenAI.ResponsesAPIClient] instance.
+     * @param parameters The [OpenAI.ResponsesAPIClient] parameters
+     */
+    function createResponsesAPIClient(parameters: ResponsesAPIClientParameters): Promise<OpenAI.ResponsesAPIClient>
 }
 declare namespace OpenAI {
   /**
@@ -8205,9 +8525,9 @@ declare namespace OpenAI {
    */
   interface _Event {
     /**
-     * The [OpenAI.RealtimeAPIClient] instance.
+     * The [OpenAI.RealtimeAPIClient] or [OpenAI.ResponsesAPIClient] | [OpenAI.ChatCompletionsAPIClient] instance.
      */
-    client: RealtimeAPIClient;
+    client: RealtimeAPIClient | ResponsesAPIClient | ChatCompletionsAPIClient;
   }
 
   /**
@@ -8235,7 +8555,7 @@ declare namespace OpenAI {
   /**
    * [OpenAI.RealtimeAPIClient] parameters. Can be passed as arguments to the [OpenAI.createRealtimeAPIClient] method.
    */
-  interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
+  interface RealtimeAPIClientParameters extends _VoiceAIClientParameters {
     /**
      * The API key for the OpenAI Realtime API.
      */
@@ -8701,6 +9021,476 @@ declare namespace OpenAI {
 }
 
 
+declare namespace OpenAI {
+  /**
+   * @private
+   */
+  interface _ResponsesAPIClientEvents extends _Events, _ResponsesAPIEvents {
+  }
+}
+declare namespace OpenAI {
+  /**
+   * [OpenAI.ResponsesAPIClient] parameters. Can be passed as arguments to the [OpenAI.createResponsesAPIClient] method.
+   */
+  interface ResponsesAPIClientParameters extends _VoiceAIClientParameters {
+    /**
+     * The API key for the OpenAI API.
+     */
+    apiKey: string;
+    /**
+     * Optional. Whether to store the context in the client. The default value is **false**.
+     */
+    storeContext?: boolean;
+    /**
+     * Optional. The base URL for the OpenAI API.
+     */
+    baseUrl?: string;
+    /**
+     * Optional. The project for the OpenAI API.
+     */
+    project?: string;
+  }
+}
+declare namespace OpenAI {
+  class ResponsesAPIClient {
+    /**
+     * Returns the ResponsesAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the OpenAI WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the OpenAI connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Adds a handler for the specified [OpenAI.ResponsesAPIEvents] or [OpenAI.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [OpenAI.ResponsesAPIEvents.ResponseCompleted])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof OpenAI._ResponsesAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.ResponsesAPIEvents | T,
+      callback: (event: OpenAI._ResponsesAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [OpenAI.ResponsesAPIEvents] or [OpenAI.Events] event.
+     * @param event Event class (i.e., [OpenAI.ResponsesAPIEvents.ResponseCompleted])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof OpenAI._ResponsesAPIClientEvents>(
+      event: OpenAI.Events | OpenAI.ResponsesAPIEvents | T,
+      callback?: (event: OpenAI._ResponsesAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Creates a model response. [https://developers.openai.com/api/reference/resources/responses/methods/create](https://developers.openai.com/api/reference/resources/responses/methods/create)
+     * @param parameters
+     */
+    createResponses(parameters: Object): void
+  }
+}
+  
+declare namespace OpenAI {
+  /**
+   * @event
+   */
+  enum ResponsesAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _ResponsesAPIEvent
+     */
+    Unknown = 'OpenAI.ResponsesAPI.Unknown',
+
+    /**
+     * Emitted when a partial code snippet is streamed by the code interpreter. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCodeInterpreterCallCodeDelta = 'OpenAI.ResponsesAPI.ResponseCodeInterpreterCallCodeDelta',
+
+    /**
+     * Emitted when the code snippet is finalized by the code interpreter. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCodeInterpreterCallCodeDone = 'OpenAI.ResponsesAPI.ResponseCodeInterpreterCallCodeDone',
+
+    /**
+     * Emitted when the code interpreter call is completed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCodeInterpreterCallCompleted = 'OpenAI.ResponsesAPI.ResponseCodeInterpreterCallCompleted',
+
+    /**
+     * Emitted when a code interpreter call is in progress. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCodeInterpreterCallInProgress = 'OpenAI.ResponsesAPI.ResponseCodeInterpreterCallInProgress',
+
+    /**
+     * Emitted when the code interpreter is actively interpreting the code snippet. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCodeInterpreterCallInterpreting = 'OpenAI.ResponsesAPI.ResponseCodeInterpreterCallInterpreting',
+
+    /**
+     * Emitted when the model response is complete. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCompleted = 'OpenAI.ResponsesAPI.ResponseCompleted',
+
+    /**
+     * Emitted when a new content part is added. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseContentPartAdded = 'OpenAI.ResponsesAPI.ResponseContentPartAdded',
+
+    /**
+     * Emitted when a content part is done. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseContentPartDone = 'OpenAI.ResponsesAPI.ResponseContentPartDone',
+
+    /**
+     * An event that is emitted when a response is created. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCreated = 'OpenAI.ResponsesAPI.ResponseCreated',
+
+    /**
+     * Emitted when an error occurs. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseError = 'OpenAI.ResponsesAPI.ResponseError',
+
+    /**
+     * Emitted when a file search call is completed (results found). [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFileSearchCallCompleted = 'OpenAI.ResponsesAPI.ResponseFileSearchCallCompleted',
+
+    /**
+     * Emitted when a file search call is initiated. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFileSearchCallInProgress = 'OpenAI.ResponsesAPI.ResponseFileSearchCallInProgress',
+
+    /**
+     * Emitted when a file search is currently searching. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFileSearchCallSearching = 'OpenAI.ResponsesAPI.ResponseFileSearchCallSearching',
+
+    /**
+     * Emitted when there is a partial function-call arguments delta. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFunctionCallArgumentsDelta = 'OpenAI.ResponsesAPI.ResponseFunctionCallArgumentsDelta',
+
+    /**
+     * Emitted when function-call arguments are finalized. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFunctionCallArgumentsDone = 'OpenAI.ResponsesAPI.ResponseFunctionCallArgumentsDone',
+
+    /**
+     * Emitted when the response is in progress. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseInProgress = 'OpenAI.ResponsesAPI.ResponseInProgress',
+
+    /**
+     * An event that is emitted when a response fails. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseFailed = 'OpenAI.ResponsesAPI.ResponseFailed',
+
+    /**
+     * An event that is emitted when a response finishes as incomplete. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseIncomplete = 'OpenAI.ResponsesAPI.ResponseIncomplete',
+
+    /**
+     * Emitted when a new output item is added. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseOutputItemAdded = 'OpenAI.ResponsesAPI.ResponseOutputItemAdded',
+
+    /**
+     * Emitted when an output item is marked done. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseOutputItemDone = 'OpenAI.ResponsesAPI.ResponseOutputItemDone',
+
+    /**
+     * Emitted when a new reasoning summary part is added. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningSummaryPartAdded = 'OpenAI.ResponsesAPI.ResponseReasoningSummaryPartAdded',
+
+    /**
+     * Emitted when a reasoning summary part is completed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningSummaryPartDone = 'OpenAI.ResponsesAPI.ResponseReasoningSummaryPartDone',
+
+    /**
+     * Emitted when a delta is added to a reasoning summary text. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningSummaryTextDelta = 'OpenAI.ResponsesAPI.ResponseReasoningSummaryTextDelta',
+
+    /**
+     * Emitted when a reasoning summary text is completed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningSummaryTextDone = 'OpenAI.ResponsesAPI.ResponseReasoningSummaryTextDone',
+
+    /**
+     * Emitted when a delta is added to a reasoning text. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningTextDelta = 'OpenAI.ResponsesAPI.ResponseReasoningTextDelta',
+
+    /**
+     * Emitted when a reasoning text is completed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseReasoningTextDone = 'OpenAI.ResponsesAPI.ResponseReasoningTextDone',
+
+    /**
+     * Emitted when there is a partial refusal text. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseRefusalDelta = 'OpenAI.ResponsesAPI.ResponseRefusalDelta',
+
+    /**
+     * Emitted when refusal text is finalized. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseRefusalDone = 'OpenAI.ResponsesAPI.ResponseRefusalDone',
+
+    /**
+     * Emitted when there is an additional text delta. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseTextDelta = 'OpenAI.ResponsesAPI.ResponseTextDelta',
+
+    /**
+     * Emitted when text content is finalized. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseTextDone = 'OpenAI.ResponsesAPI.ResponseTextDone',
+
+    /**
+     * Emitted when a web search call is completed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseWebSearchCallCompleted = 'OpenAI.ResponsesAPI.ResponseWebSearchCallCompleted',
+
+    /**
+     * Emitted when a web search call is initiated. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseWebSearchCallInProgress = 'OpenAI.ResponsesAPI.ResponseWebSearchCallInProgress',
+
+    /**
+     * Emitted when a web search call is executing. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseWebSearchCallSearching = 'OpenAI.ResponsesAPI.ResponseWebSearchCallSearching',
+
+    /**
+     * Emitted when an image generation tool call has completed and the final image is available. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseImageGenCallCompleted = 'OpenAI.ResponsesAPI.ResponseImageGenCallCompleted',
+
+    /**
+     * Emitted when an image generation tool call is actively generating an image (intermediate state). [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseImageGenCallGenerating = 'OpenAI.ResponsesAPI.ResponseImageGenCallGenerating',
+
+    /**
+     * Emitted when an image generation tool call is in progress. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseImageGenCallInProgress = 'OpenAI.ResponsesAPI.ResponseImageGenCallInProgress',
+
+    /**
+     * Emitted when a partial image is available during image generation streaming. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseImageGenCallPartialImage = 'OpenAI.ResponsesAPI.ResponseImageGenCallPartialImage',
+
+    /**
+     * Emitted when there is a delta (partial update) to the arguments of an MCP tool call. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPCallArgumentsDelta = 'OpenAI.ResponsesAPI.ResponseMCPCallArgumentsDelta',
+
+    /**
+     * Emitted when the arguments for an MCP tool call are finalized. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPCallArgumentsDone = 'OpenAI.ResponsesAPI.ResponseMCPCallArgumentsDone',
+
+    /**
+     * Emitted when an MCP tool call has completed successfully. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPCallCompleted = 'OpenAI.ResponsesAPI.ResponseMCPCallCompleted',
+
+    /**
+     * Emitted when an MCP tool call has failed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPCallFailed = 'OpenAI.ResponsesAPI.ResponseMCPCallFailed',
+
+    /**
+     * Emitted when an MCP tool call is in progress. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPCallInProgress = 'OpenAI.ResponsesAPI.ResponseMCPCallInProgress',
+
+    /**
+     * Emitted when the list of available MCP tools has been successfully retrieved. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPListToolsCompleted = 'OpenAI.ResponsesAPI.ResponseMCPListToolsCompleted',
+
+    /**
+     * Emitted when the attempt to list available MCP tools has failed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPListToolsFailed = 'OpenAI.ResponsesAPI.ResponseMCPListToolsFailed',
+
+    /**
+     * Emitted when the system is in the process of retrieving the list of available MCP tools. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseMCPListToolsInProgress = 'OpenAI.ResponsesAPI.ResponseMCPListToolsInProgress',
+
+    /**
+     * Emitted when an annotation is added to output text content. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseOutputTextAnnotationAdded = 'OpenAI.ResponsesAPI.ResponseOutputTextAnnotationAdded',
+
+    /**
+     * Emitted when a response is queued and waiting to be processed. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseQueued = 'OpenAI.ResponsesAPI.ResponseQueued',
+
+    /**
+     * Event representing a delta (partial update) to the input of a custom tool call. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCustomToolCallInputDelta = 'OpenAI.ResponsesAPI.ResponseCustomToolCallInputDelta',
+
+    /**
+     * Event indicating that input for a custom tool call is complete. [https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema)](https://developers.openai.com/api/reference/resources/responses#(resource)%20responses%20%3E%20(model)%20response_stream_event%20%3E%20(schema))
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponseCustomToolCallInputDone = 'OpenAI.ResponsesAPI.ResponseCustomToolCallInputDone',
+
+    /**
+     * Contains Responses API error.
+     * @typedef _ResponsesAPIEvent
+     */
+    ResponsesAPIError = 'OpenAI.ResponsesAPI.ResponsesAPIError',
+
+    /**
+    * Contains information about connector.
+    * @typedef _ResponsesAPIEvent
+    */
+    ConnectorInformation = 'OpenAI.ResponsesAPI.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _ResponsesAPIEvents {
+    [ResponsesAPIEvents.Unknown]: _ResponsesAPIEvent;
+
+    [ResponsesAPIEvents.ResponseCodeInterpreterCallCodeDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCodeInterpreterCallCodeDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCodeInterpreterCallCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCodeInterpreterCallInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCodeInterpreterCallInterpreting]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseContentPartAdded]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseContentPartDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCreated]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseError]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFileSearchCallCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFileSearchCallInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFileSearchCallSearching]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFunctionCallArgumentsDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFunctionCallArgumentsDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseFailed]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseIncomplete]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseOutputItemAdded]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseOutputItemDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningSummaryPartAdded]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningSummaryPartDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningSummaryTextDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningSummaryTextDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningTextDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseReasoningTextDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseRefusalDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseRefusalDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseTextDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseTextDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseWebSearchCallCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseWebSearchCallInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseWebSearchCallSearching]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseImageGenCallCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseImageGenCallGenerating]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseImageGenCallInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseImageGenCallPartialImage]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPCallArgumentsDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPCallArgumentsDone]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPCallCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPCallFailed]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPCallInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPListToolsCompleted]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPListToolsFailed]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseMCPListToolsInProgress]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseOutputTextAnnotationAdded]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseQueued]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCustomToolCallInputDelta]: _ResponsesAPIEvent;
+    [ResponsesAPIEvents.ResponseCustomToolCallInputDone]: _ResponsesAPIEvent;
+
+    [ResponsesAPIEvents.ResponsesAPIError]: _ResponsesAPIEvent;
+
+    [ResponsesAPIEvents.ConnectorInformation]: _ResponsesAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _ResponsesAPIEvent {
+    /**
+     * The [OpenAI.ResponsesAPIClient] instance.
+     */
+    client: ResponsesAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
+
 /**
  * Which media streams to receive from the endpoint. Can be passed as a [ReceiveParameters] parameter. Consists of optional video and audio keys.
  * <br>
@@ -8765,6 +9555,168 @@ declare namespace PhoneNumber {
 
 declare namespace PhoneNumber {}
 
+declare namespace Pipecat {
+    /**
+     * Creates a [Pipecat.TurnDetector] instance.
+     * @param parameters The [Pipecat.TurnDetector] parameters
+     */
+    function createTurnDetector(parameters: TurnDetectorParameters): Promise<Pipecat.TurnDetector>
+}
+declare namespace Pipecat {
+}
+declare namespace Pipecat {
+  class TurnDetector {
+    /**
+     * Returns the TurnDetector id.
+     */
+    id(): string;
+
+    /**
+     * Returns the TurnDetector WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the TurnDetector connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Reset the TurnDetector context.
+     */
+    reset(): void;
+
+    /**
+     * Triggers the TurnDetector to analyze the current audio and make a prediction. The result is returned in the [Pipecat.TurnEvents.Result] event.
+     */
+    predict(): void;
+
+    /**
+     * Adds a handler for the specified [Pipecat.TurnEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [Pipecat.TurnEvents.Result])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof Pipecat._TurnEvents>(
+      event:  Pipecat.TurnEvents | T,
+      callback: (event: Pipecat._TurnEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Pipecat.TurnEvents] event.
+     * @param event Event class (i.e., [Pipecat.TurnEvents.Result])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof Pipecat._TurnEvents>(
+      event: Pipecat.TurnEvents | T,
+      callback?: (event: Pipecat._TurnEvents[T]) => any,
+    ): void;
+  }
+}
+  
+declare namespace Pipecat {
+  /**
+   * @event
+   */
+  enum TurnEvents {
+    /**
+     * The [Pipecat.TurnDetector] result.
+     * @typedef _PipecatTurnResultEvent
+     */
+    Result = 'Pipecat.Turn.Result',
+
+    /**
+     * The [Pipecat.TurnDetector] is reset.
+     * @typedef _PipecatTurnResetEvent
+     */
+    Reset = 'Pipecat.Turn.Reset',
+
+    /**
+     * The error response event.
+     * @typedef _PipecatTurnErrorEvent
+     */
+    Error = 'Pipecat.Turn.Error',
+
+     /**
+     * Contains information about connector.
+     * @typedef _PipecatTurnConnectorInformationEvent
+     */
+    ConnectorInformation = 'Pipecat.Turn.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _TurnEvents {
+    [TurnEvents.Result]: _PipecatTurnResultEvent;
+    [TurnEvents.Reset]: _PipecatTurnResetEvent;
+    [TurnEvents.Error]: _PipecatTurnErrorEvent;
+    [TurnEvents.ConnectorInformation]: _PipecatTurnConnectorInformationEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _PipecatTurnEvent {
+    /**
+     * The [Pipecat.TurnDetector] instance.
+     */
+    turnDetector: TurnDetector;
+  }
+
+  /**
+   * @private
+   */
+  interface _PipecatTurnResultEvent extends _PipecatTurnEvent {
+    /**
+     * Indicates whether the event is emitted at the end of the turn. Is **true** when the model predicts the end of the turn.
+     */
+    endOfTurn: boolean;
+    /**
+     * The probability of the result, in the range [0.0, 1.0].
+     */
+    probability: number;
+  }
+
+  /**
+   * @private
+   */
+  interface _PipecatTurnResetEvent extends _PipecatTurnEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _PipecatTurnErrorEvent extends _PipecatTurnEvent {
+    /**
+     * The error reason.
+     */
+    reason: string;
+  }
+
+  /**
+   * @private
+   */
+  interface _PipecatTurnConnectorInformationEvent extends _PipecatTurnEvent {
+    /**
+     * The event's data.
+     */
+    data?: Object
+  }
+}
+  
+  
+declare namespace Pipecat {
+  /**
+   * [Pipecat.TurnDetector] parameters. Can be passed as arguments to the [Pipecat.createTurnDetector] method.
+   */
+  interface TurnDetectorParameters {
+    /**
+     * Optional. The probability threshold above which we detect the end of the turn (in the range [0.0, 1.0]). The default value is **0.5**.
+     */
+    threshold?: number;
+  }
+}
+  
 /**
  * @event
  */
@@ -8796,19 +9748,19 @@ declare enum PlayerEvents {
   Stopped = 'Player.Stopped',
 
   /**
-   * Triggered when playback has finished successfully or with an error
+   * Triggered when playback has finished successfully or with an error.
    * @typedef _PlayerPlaybackFinishedEvent
    */
   PlaybackFinished = 'Player.PlaybackFinished',
 
   /**
-   * Triggered when playback has finished with an error
+   * Triggered when playback has finished with an error.
    * @typedef _PlayerErrorEvent
    */
   Error = 'Player.Error',
 
   /**
-   * Triggered when [Player.addMarker] is reached
+   * Triggered when [Player.addMarker] is reached.
    * @typedef _PlayerPlaybackMarkerReachedEvent
    */
   PlaybackMarkerReached = 'Player.PlaybackMarkerReached',
@@ -8820,7 +9772,7 @@ declare enum PlayerEvents {
   PlaybackBuffering = 'Player.Buffering',
 
   /**
-   * Triggered when an audio chunk playback is finished.
+   * Triggered when an audio chunk playback is finished. Note that this event is triggered only for RealtimeTTSPlayer instances.
    * @typedef _AudioChunksPlaybackFinishedEvent
    */
   AudioChunksPlaybackFinished = 'Player.AudioChunksPlaybackFinished'
@@ -9762,6 +10714,171 @@ declare class SequencePlayer {
   stopMediaTo(mediaUnit: VoxMediaUnit): void;
 }
 
+declare namespace Silero{
+    /**
+     * Creates a [Silero.VAD] instance.
+     * @param parameters The [Silero.VAD] parameters
+     */
+    function createVAD(parameters: VADParameters): Promise<Silero.VAD>
+}
+declare namespace Silero {
+}
+declare namespace Silero {
+  /**
+   * @event
+   */
+  enum VADEvents {
+    /**
+     * The [Silero.VAD] result.
+     * @typedef _SileroVADResultEvent
+     */
+    Result = 'Silero.VAD.Result',
+
+    /**
+     * The [Silero.VAD] is reset.
+     * @typedef _SileroVADResetEvent
+     */
+    Reset = 'Silero.VAD.Reset',
+
+    /**
+     * The error response event.
+     * @typedef _SileroVADErrorEvent
+     */
+    Error = 'Silero.VAD.Error',
+
+     /**
+     * Contains information about connector.
+     * @typedef _SileroVADConnectorInformationEvent
+     */
+    ConnectorInformation = 'Silero.VAD.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _VADEvents {
+    [VADEvents.Result]: _SileroVADResultEvent;
+    [VADEvents.Reset]: _SileroVADResetEvent;
+    [VADEvents.Error]: _SileroVADErrorEvent;
+    [VADEvents.ConnectorInformation]: _SileroVADConnectorInformationEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _SileroVADEvent {
+    /**
+     * The [Silero.VAD] instance.
+     */
+    vad: VAD;
+  }
+
+  /**
+   * @private
+   */
+  interface _SileroVADResultEvent extends _SileroVADEvent {
+    /**
+     * Optional. The speech start time (in seconds).
+     */
+    speechStartAt?: number;
+    /**
+     * Optional. The speech end time (in seconds).
+     */
+    speechEndAt?: number;
+  }
+
+  /**
+   * @private
+   */
+  interface _SileroVADResetEvent extends _SileroVADEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _SileroVADErrorEvent extends _SileroVADEvent {
+    /**
+     * The error reason.
+     */
+    reason: string;
+  }
+
+  /**
+   * @private
+   */
+  interface _SileroVADConnectorInformationEvent extends _SileroVADEvent {
+    /**
+     * The event's data.
+     */
+    data?: Object
+  }
+}
+  
+  
+declare namespace Silero {
+  /**
+   * [Silero.VAD] parameters. Can be passed as arguments to the [Silero.createVAD] method.
+   */
+  interface VADParameters {
+    /**
+     * Optional. The probability threshold above which we detect speech. The default value is **0.5**.
+     */
+    threshold?: number;
+    /**
+     * Optional. The duration of silence (in milliseconds) to wait for each speech segment before separating it. The default value is **300**.
+     */
+    minSilenceDurationMs?: number;
+    /**
+     * Optional. The padding to add to speech segments to avoid aggressive cutting. The default value is **0**.
+     */
+    speechPadMs?: number;
+  }
+}
+  
+declare namespace Silero {
+  class VAD {
+    /**
+     * Returns the VAD id.
+     */
+    id(): string;
+
+    /**
+     * Returns the VAD WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the VAD connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Reset the VAD context.
+     */
+    reset(): void;
+
+    /**
+     * Adds a handler for the specified [Silero.VADEvents] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [Silero.VADEvents.Result])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof Silero._VADEvents>(
+      event:  Silero.VADEvents | T,
+      callback: (event: Silero._VADEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Silero.VADEvents] event.
+     * @param event Event class (i.e., [Silero.VADEvents.Result])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof Silero._VADEvents>(
+      event: Silero.VADEvents | T,
+      callback?: (event: Silero._VADEvents[T]) => any,
+    ): void;
+  }
+}
+  
 /**
  * Add the following line to your scenario code to use the events:
  * ```
@@ -10727,10 +11844,10 @@ declare namespace Ultravox {
   /*
    * [Ultravox.createWebSocketAPIClient] HTTP endpoint. Can be passed via the [Ultravox.createWebSocketAPIClientParameters.endpoint] parameter.
    */
-  namespace HTTPEndpoint {
-    const CREATE_CALL = 'CreateCall';
-    const CREATE_AGENT_CALL = 'CreateAgentCall';
-    const JOIN_CALL = 'JoinCall';
+  enum HTTPEndpoint {
+    CREATE_CALL = 'CreateCall',
+    CREATE_AGENT_CALL = 'CreateAgentCall',
+    JOIN_CALL= 'JoinCall',
   }
 }
 
@@ -10740,11 +11857,11 @@ declare namespace Ultravox {
   /**
    * [Ultravox.WebSocketAPIClient] parameters. Can be passed as arguments to the [Ultravox.createWebSocketAPIClient] method.
    */
-  interface WebSocketAPIClientParameters extends _ConversationalAgentClientParameters {
+  interface WebSocketAPIClientParameters extends _VoiceAIClientParameters {
     /**
-     * Ultravox HTTP endpoint. Note that [Ultravox Call](https://docs.ultravox.ai/api-reference/calls/overview) is created by the specified endpoint HTTP invocation, the response data for which can be handled in the [WebSocketAPIEvents.HTTPResponse] event.
+     * Ultravox [HTTP endpoint](HTTPEndpoint). Note that [Ultravox Call](https://docs.ultravox.ai/api-reference/calls/overview) is created by the specified endpoint HTTP invocation, the response data for which can be handled in the [WebSocketAPIEvents.HTTPResponse] event.
      */
-    endpoint: HTTPEndpoint;
+    endpoint: Ultravox.HTTPEndpoint;
     /**
      * Optional. Ultravox request authorizations. See the documentation of the specified endpoint for details.
      */
@@ -11038,6 +12155,28 @@ declare interface URLPlayerSegment {
   parameters?: URLPlayerParameters;
 }
 
+/**
+ * @private
+ */
+interface _VoiceAIClientParameters {
+  /**
+   * Optional. A callback function that is called when the [WebSocket] connection is closed.
+   */
+  onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
+  /**
+   * Optional. Enables statistics functionality.
+   */
+  statistics?: boolean;
+  /**
+   * Optional. Whether to enable the tracing functionality.  
+   * 
+   * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+   * 
+   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
+   */
+  trace?: boolean;
+}
+
 declare type VoxMediaUnit =
   | Call
   | Player
@@ -11054,7 +12193,10 @@ declare type VoxMediaUnit =
   | Ultravox.WebSocketAPIClient
   | Yandex.RealtimeAPIClient
   | Cartesia.AgentsClient
-  | Deepgram.VoiceAgentClient;
+  | Deepgram.VoiceAgentClient
+  | Grok.VoiceAgentAPIClient
+  | Silero.VAD
+  | Pipecat.Turn;
 
 declare namespace VoxEngine {
   /**
@@ -18130,7 +19272,7 @@ declare interface WebSocketParameters {
   /**
    * Optional. Whether to enable the tracing functionality.  
    * 
-   * If tracing is enabled, an URL to the trace file appears in the websocket.created message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
+   * If tracing is enabled, an URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
    * 
    * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
    */
@@ -18331,7 +19473,7 @@ declare namespace Yandex {
   /**
    * [Yandex.RealtimeAPIClient] parameters. Can be passed as arguments to the [Yandex.createRealtimeAPIClient] method.
    */
-  interface RealtimeAPIClientParameters extends _ConversationalAgentClientParameters {
+  interface RealtimeAPIClientParameters extends _VoiceAIClientParameters {
     /**
      * The API key for the Yandex Realtime API.
      */

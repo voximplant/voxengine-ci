@@ -1,3 +1,8 @@
+/**
+ * ===
+ * VoxEngine version: 7.42.0
+ * ===
+ */
 
 /**
  * [ACDRequest] parameters. Can be passed as arguments to the [VoxEngine.enqueueACDRequest] method.
@@ -48,7 +53,7 @@ declare enum ACDEvents {
    */
   OperatorCallAttempt = 'ACD.OperatorCallAttempt',
   /**
-   * Triggered when an ACD request tries to reach an agent, but the agent declines the call. IMPORTANT NOTE: This is just a notification, the request processing does not stop. The ACD request automatically redirects to the next free agent.
+   * Triggered when an ACD request tries to reach an agent, but the agent declines the call. Note that this is just a notification, the request processing does not stop. The ACD request automatically redirects to the next free agent.
    * @typedef _ACDFailedEvent
    */
   OperatorFailed = 'ACD.OperatorFailed',
@@ -380,7 +385,7 @@ declare namespace AI {
 
     /**
      * Adds a handler for the specified [AI.Events]. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-     * @param event Event class (i.e., [AI.Events.DialogflowResponse])
+     * @param event A member of [AI.Events] to handle, e.g. [DialogflowResponse].
      * @param callback Handler function. A single parameter is passed: object with event information
      */
     addEventListener<T extends keyof AI._Events>(
@@ -390,7 +395,7 @@ declare namespace AI {
 
     /**
      * Removes a handler for the specified [AI.Events] event.
-     * @param event Event class (i.e., [AI.Events.DialogflowResponse])
+     * @param event A member of [AI.Events] to handle, e.g. [DialogflowResponse].
      * @param callback Optional. Handler function. If not specified, all handler functions are removed
      */
     removeEventListener<T extends keyof AI._Events>(
@@ -1533,10 +1538,7 @@ declare enum ASREvents {
    */
   SpeechCaptured = 'ASR.SpeechCaptured',
   /**
-   * Triggered when a speech recognition result has been received from ASR.
-   * 
-   * We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time.  
-   * Note: We recommend to take a decision about continuing speech recognition in this event's handler. Otherwise, speech recognition continues automatically.
+   * Triggered when a speech recognition result has been received from ASR. We strongly recommend to create recognition timeout manually to prevent unexpectedly long recognition time. NOTE: we recommend to take a decision about continuing speech recognition in this event's handler. Otherwise, speech recognition continues automatically.
    * @typedef _ASRResultEvent
    */
   Result = 'ASR.Result',
@@ -2674,7 +2676,7 @@ declare enum CallEvents {
    */
   StateChanged = 'Call.StateChanged',
   /**
-   * Triggered when call statistic changed.
+   * Triggered when call statistics change.
    * @deprecated
    * @typedef _StatisticsEvent
    */
@@ -2743,7 +2745,7 @@ declare enum CallEvents {
    */
   AudioQualityDetected = 'Call.AudioQualityDetected',
   /**
-   * Triggers after media statistic recieved. For enabling you need to call method [Call.monitorMediaStatistics].
+   * Triggers after media statistics has been recieved. To enable, call the [Call.monitorMediaStatistics] method.
    * @typedef _MediaStatisticsReceived
    */
   MediaStatisticsReceived = 'Call.MediaStatisticsReceived'
@@ -3237,8 +3239,49 @@ declare interface _MediaStatisticsReceived extends _CallEvent {
    * Statistical information about the audio channels.
    * Contains metrics for both incoming and outgoing streams.
    */
-  audio: MediaStatisticsReceived
+  audio: CallMediaStatistics;
 }
+/**
+ * Single media statistics sample for a call leg (incoming or outgoing).
+ */
+declare interface CallMediaStatisticsSample {
+  /**
+   * Unique call identifier.
+   */
+  id: number;
+  /**
+   * Network jitter
+   */
+  jitter: number;
+  /**
+   * Number of lost RTP packets.
+   */
+  packetLoss: number;
+  /**
+   * Total number of received/sent RTP packets.
+   */
+  numPackets: number;
+  /**
+   * Call audio level in dB.
+   */
+  audioLevel: number;
+}
+
+/**
+ * Statistical information received from the media server.
+ * Contains metrics for both incoming and outgoing media streams.
+ */
+declare interface CallMediaStatistics {
+  /**
+   * Statistics for incoming media stream.
+   */
+  in: CallMediaStatisticsSample[];
+  /**
+   * Statistics for outgoing media stream.
+   */
+  out: CallMediaStatisticsSample[];
+}
+
 /**
  * [Call] parameters. Can be passed as arguments to the [VoxEngine.callPSTN] method.
  */
@@ -3354,6 +3397,14 @@ declare interface CallSIPParameters {
    * Optional. Internal information about codecs.
    */
   scheme?: Object;
+  /**
+   * Optional. Internal flag enables strict audio codec in scheme. The default value is **false**.
+   */
+  strictCodecList?: boolean | undefined;
+  /**
+   * Optional. Enables [CallEvents.Ringing] event during SIP Call. The default value is **false**.
+   */
+  allow180After183?: boolean
 }
 
 /**
@@ -3418,6 +3469,10 @@ declare interface CallUserParameters extends BaseCallParameters {
    * Optional. Push notification timeout in milliseconds. Note that the timeout is only triggered after the [CallEvents.Failed] event with *480 User Offline*. The default value is **20000**. Must not be less than **10000** or greater than **60000**.
    */
   pushNotificationTimeout?: number;
+  /**
+   * Optional. Internal flag enables strict audio codec in scheme. The default value is **false**.
+   */
+  strictCodecList?: boolean | undefined;
 }
 
 /**
@@ -3790,16 +3845,16 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data asynchronously.
-   * 
+   * <br>
    * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
-   * 
-   * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
-   * 
+   * <br>
+   * NOTE: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
+   * <br>
    * After an unsuccessful calling attempt, this method executes the 
    * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
-   * 
+   * <br>
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
    */
@@ -3809,16 +3864,16 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data.
-   * 
+   * <br>
    * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
-   * 
-   * Note: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
-   * 
+   * <br>
+   * NOTE: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
+   * <br>
    * After an unsuccessful calling attempt, this method executes the 
    * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
-   * 
+   * <br>
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
    * @param callback Optional. Callback function to execute after the request is done
@@ -4106,7 +4161,7 @@ declare namespace Cartesia {
   /**
    * [Cartesia.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [Cartesia.createRealtimeTTSPlayer] method.
    */
-  interface RealtimeTTSPlayerParameters {
+  interface RealtimeTTSPlayerParameters extends _WebSocketBasedClientParameters {
     /**
      * Object to provide parameters directly to the Cartesia provider Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request).
      */
@@ -4115,14 +4170,6 @@ declare namespace Cartesia {
      * Optional. Cartesia API key. Use your Cartesia API key if you have your own Cartesia account.
      */
     apiKey?: string;
-    /**
-     * Optional. Whether to enable the tracing functionality.  
-     * 
-     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-     * 
-     * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
-     */
-    trace?: boolean;
   }
 }
 
@@ -4702,12 +4749,14 @@ declare namespace CCAI {
       sip_recording_media_label?: string;
       /**
        * Optional. Obfuscated user id that should be associated with the created participant.
+       * <br>
        * You can specify a user id as follows:
        * * If you set this field in `CreateParticipantRequest` or `UpdateParticipantRequest`, Dialogflow adds the obfuscated user id with the participant.
        * * If you set this field in `AnalyzeContent` or `StreamingAnalyzeContent`, Dialogflow updates `Participant.obfuscated_external_user_id`.
        * Dialogflow returns an error if you try to add a user id for a non-`END_USER` participant.
        * Dialogflow uses this user id for billing and measurement purposes. For example, Dialogflow determines whether a user in one conversation returned in a later conversation.
-       * Note:
+       * <br>
+       * NOTE:
        * * Never pass raw user ids to Dialogflow. Always obfuscate your user id first.
        * * Dialogflow only accepts a UTF-8 encoded string, e.g., a hex digest of a hash function like SHA-512.
        * * The length of the user id must be <= 256 characters.
@@ -5964,13 +6013,11 @@ declare enum DialogflowModelVariant {
  */
 declare enum DialogflowModel {
   /**
-   * Use this model for transcribing audio in video clips or ones that includes multiple speakers. For best results, provide audio recorded at 16,000Hz or greater sampling rate.
-   * Note: This is a premium model that costs more than the standard rate.
+   * Use this model for transcribing audio in video clips or ones that includes multiple speakers. For best results, provide audio recorded at 16,000Hz or greater sampling rate.<br>NOTE: this is a premium model that costs more than the standard rate.
    */
   VIDEO = 'video',
   /**
-   * Use this model for transcribing audio from a phone call. Typically, phone audio is recorded at 8,000Hz sampling rate.
-   * Note: The enhanced phone model is a premium model that costs more than the standard rate.
+   * Use this model for transcribing audio from a phone call. Typically, phone audio is recorded at 8,000Hz sampling rate.<br>NOTE: the enhanced phone model is a premium model that costs more than the standard rate.
    */
   PHONE_CALL = 'phone_call',
   /**
@@ -6281,7 +6328,8 @@ declare namespace ElevenLabs {
 declare namespace ElevenLabs {
     /**
      * Creates a new [ElevenLabs.RealtimeTTSPlayer] instance with the specified text (TTS is used to play the text). You can attach media streams later via the [ElevenLabs.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
-     * Note: This method uses 11labs [initializeConnection](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection) method internally.
+     * <br>
+     * NOTE: this method uses 11labs [initializeConnection](https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection) method internally.
      * @param text Text to synthesize
      * @param parameters Optional. Realtime TTS player parameters
      **/
@@ -6382,7 +6430,7 @@ declare namespace ElevenLabs {
   /**
    * [ElevenLabs.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [ElevenLabs.createRealtimeTTSPlayer] method.
    */
-  interface RealtimeTTSPlayerParameters {
+  interface RealtimeTTSPlayerParameters extends _WebSocketBasedClientParameters {
     /**
      * Optional. Provide the parameters directly to the ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#request.path"> documentation</a>.
      */
@@ -6401,17 +6449,10 @@ declare namespace ElevenLabs {
     keepAlive?: boolean;
     /**
      * Optional. Provide the parameters directly to the 'initializeConnection' method of ElevenLabs provider. Find more information in the <a href="https://elevenlabs.io/docs/api-reference/text-to-speech/v-1-text-to-speech-voice-id-stream-input#send.initializeConnection"> documentation</a>.
-     * Note: You should not pass the **text**, **xi-api-key** and **authorization** fields.
+     * <br>
+     * NOTE: you should not pass the **text**, **xi-api-key** and **authorization** fields.
      */
     initializeConnectionParameters?: Object;
-    /**
-     * Optional. Whether to enable the tracing functionality.  
-     * 
-     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.  
-     * 
-     * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
-     */
-    trace?: boolean;
   }
 }
 
@@ -6499,8 +6540,8 @@ declare class Endpoint {
 }
 
 declare namespace Gemini {
-  /*
-   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.32.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
+  /**
+   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
    */
   enum Backend {
     /**
@@ -6610,11 +6651,11 @@ declare namespace Gemini {
      */
     credentials?: string;
     /**
-     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.32.0#HTTPOptions) to override. NOTE: the 'baseUrl' parameter will be ignored.
+     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.57.0#HTTPOptions) to override.<br>NOTE: the 'baseUrl' parameter will be ignored.
      */
     httpOptions?: Object;
     /**
-     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveConnectConfig) for the API connection.
+     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveConnectConfig) for the API connection.
      */
     connectConfig?: Object;
   }
@@ -6622,7 +6663,7 @@ declare namespace Gemini {
 
 declare namespace Gemini {
   /**
-   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.49.0](https://pkg.go.dev/google.golang.org/genai@v1.49.0).
+   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.57.0](https://pkg.go.dev/google.golang.org/genai@v1.57.0).
    */
   class LiveAPIClient {
     /**
@@ -6681,21 +6722,21 @@ declare namespace Gemini {
 
     /**
      * Transmits a LiveClientContent over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendClientContent)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendClientContent)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
      * Transmits a LiveClientRealtimeInput over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendRealtimeInput)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendRealtimeInput)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
      * Transmits a LiveClientToolResponse over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.49.0#Session.SendToolResponse)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendToolResponse)
      * @param input
      */
     sendToolResponse(input: Object): void
@@ -6714,19 +6755,19 @@ declare namespace Gemini {
     Unknown = 'Gemini.LiveAPI.Unknown',
 
     /**
-     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerContent)
+     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerContent)
      * @typedef _LiveAPIEvent
      */
     ServerContent = 'Gemini.LiveAPI.ServerContent',
 
     /**
-     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCall)
+     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCall)
      * @typedef _LiveAPIEvent
      */
     ToolCall = 'Gemini.LiveAPI.ToolCall',
 
     /**
-     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.32.0#LiveServerToolCallCancellation)
+     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCallCancellation)
      * @typedef _LiveAPIEvent
      */
     ToolCallCancellation = 'Gemini.LiveAPI.ToolCallCancellation',
@@ -6764,6 +6805,66 @@ declare namespace Gemini {
   }
 }
 
+
+declare namespace Google {
+  /**
+   * Creates a new [Google.RealtimeTTSPlayer] instance. You can attach media streams later via the [Google.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * @param parameters Optional. Realtime TTS player parameters
+   **/
+  function createRealtimeTTSPlayer(parameters?: RealtimeTTSPlayerParameters): RealtimeTTSPlayer;
+}
+
+declare namespace Google {}
+
+declare namespace Google {
+  /**
+   * [Google.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [Google.createRealtimeTTSPlayer] method.
+   */
+  interface RealtimeTTSPlayerParameters {
+    /**
+     * BCP-47 language tag representing the voice language.
+     *
+     * Specifies the locale used for speech synthesis, including language and optionally region.
+     *
+     * Must be a valid BCP-47 tag (e.g., "en-US","en-GB", "en-IN", "de-DE", "fr-FR", "pl-PL", "ru-RU").
+     */
+    language_code: string;
+    /**
+     * The name of the voice used for speech synthesis. Each voice has a unique identifier and represents a specific synthetic speaker with its own characteristics (e.g., gender, tone).
+     *
+     * Find more information in the [documentation](https://docs.cloud.google.com/text-to-speech/docs/list-voices-and-types).
+     *
+     * Example voices include: "Aoede", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Zephyr".
+     */
+    voice: string;
+    /**
+     * Optional. Whether to keep the connection alive after the timeout. The default value is **true**.
+     */
+    keepAlive?: boolean;
+    /**
+     * Optional. Whether to enable the tracing functionality.
+     *
+     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     *
+     * NOTE: enable this only for diagnostic purposes.
+     */
+    trace?: boolean;
+  }
+}
+
+declare namespace Google {
+  class RealtimeTTSPlayer extends BasePlayer {
+    /**
+     * Send message object to the Google provider context.
+     * @param parameters Object provides the parameters directly to the Google provider context. Find more information in the [documentation](https://docs.cloud.google.com/text-to-speech/docs/reference/rpc/google.cloud.texttospeech.v1#google.cloud.texttospeech.v1.SynthesisInput)
+     */
+    send(parameters: Object): void;
+    /**
+     * Clears a [Google.RealtimeTTSPlayer] buffer.
+     */
+    clearBuffer(): void;
+  }
+}
 
 declare namespace Grok {
     /**
@@ -6837,6 +6938,11 @@ declare namespace Grok {
      * The xAI API key for the Grok VoiceAgent API.
      */
     xAIApiKey: string;
+    /**
+      * The model to use for the Grok VoiceAgent API.[https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection](https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection)
+     * Note: The default value is **grok-voice-fast-1.0**.
+     */
+    model?: string;
   }
 }
 declare namespace Grok {
@@ -7124,7 +7230,7 @@ declare namespace Inworld {
   /**
    * [Inworld.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [Inworld.createRealtimeTTSPlayer] method.
    */
-  interface RealtimeTTSPlayerParameters {
+  interface RealtimeTTSPlayerParameters extends _WebSocketBasedClientParameters {
     /**
      * Optional. Object to provide parameters directly to the Inworld provider Create Context message. Find more information in the [documentation](https://docs.inworld.ai/api-reference/ttsAPI/texttospeech/synthesize-speech-websocket).
      */
@@ -7133,14 +7239,6 @@ declare namespace Inworld {
      * Optional. Inworld API key. Use your Inworld API key if you have your own Inworld account.
      */
     apiKey?: string;
-    /**
-     * Optional. Whether to enable the tracing functionality.
-     * 
-     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-     * 
-     * Note: Enable this only for diagnostic purposes.
-     */
-    trace?: boolean;
   }
 }
 
@@ -7277,6 +7375,224 @@ declare namespace Logger {
    */
   function hideTones(flag: boolean): void;
 }
+
+declare namespace MCP {
+  /**
+   * @private
+   */
+  interface _ClientEvents extends _Events, _ServerEvents {
+  }
+}
+declare namespace MCP {
+  /**
+   * [MCP.Client] parameters. Can be passed as arguments to the [MCP.createClient] method.
+   */
+  interface ClientParameters extends _VoiceAIClientParameters {
+    /**
+     * The MCP server connection configuration.
+     */
+    mcpServerConnectionConfig: MCPServerConnectionConfig;
+  }
+
+  /**
+   * MCP server connection configuration.
+   */
+  interface MCPServerConnectionConfig {
+    /**
+     * Headers to send to the MCP server on HTTP/SSE requests (e.g. Authorization, API keys).
+     * You can use it to pass authentication headers to the MCP server.
+     */
+    headers: Object;
+    /**
+     * Endpoint is the server URL for "http" or "sse" transport.
+     */
+    endpoint: string;
+    /**
+     * Transport is "http", or "sse".
+     */
+    transport: string;
+    /**
+     * ClientName and ClientVersion identify this MCP client in the protocol handshake.
+     */
+    clientName: string;
+    /**
+     * ClientVersion identify this MCP client in the protocol handshake.
+     */
+    clientVersion: string;
+  }
+}
+declare namespace MCP {
+  /**
+   * Note that the [MCP.Client] using the [Model Context Protocol Go SDK v1.5.0](https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0).
+   */
+  class Client {
+    /**
+     * Returns the Client id.
+     */
+    id(): string;
+
+    /**
+     * Returns the WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Adds a handler for the specified [MCP.ServerEvents] or [MCP.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [MCP.ServerEvents.ToolsList])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof MCP._ClientEvents>(
+      event: MCP.Events | MCP.ServerEvents | T,
+      callback: (event: MCP._ClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [MCP.ServerEvents] or [MCP.Events] event.
+     * @param event Event class (i.e., [MCP.ServerEvents.ToolsList])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof MCP._ClientEvents>(
+      event: MCP.Events | MCP.ServerEvents | T,
+      callback?: (event: MCP._ClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * List the tools available from the MCP server. [https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#ListToolsParams](https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#ListToolsParams)
+     * @param parameters
+     */
+    listTools(parameters: Object): void
+
+    /**
+     * Call a tool from the MCP server. [https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#CallToolParams](https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#CallToolParams)
+     * @param parameters
+     */
+    callTool(parameters: Object): void
+  }
+}
+  
+declare namespace MCP {
+    /**
+     * Creates a new [MCP.Client] instance.
+     * @param parameters The [MCP.Client] parameters
+     */
+    function createClient(parameters: ClientParameters): Promise<Client>
+}
+declare namespace MCP {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedMCPEvent
+     */
+    WebSocketMediaStarted = 'MCP.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedMCPEvent
+     */
+    WebSocketMediaEnded = 'MCP.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [MCP.Events.WebSocketMediaStarted]: _WebSocketMediaStartedMCPEvent;
+    [MCP.Events.WebSocketMediaEnded]: _WebSocketMediaEndedMCPEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [MCP.Client] instance.
+     */
+    client: Client;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedMCPEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedMCPEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+declare namespace MCP {
+}
+declare namespace MCP {
+  /**
+   * @event
+   */
+  enum ServerEvents {
+    /**
+     * The unknown event.
+     * @typedef _ServerEvent
+     */
+    Unknown = 'MCP.Server.Unknown',
+
+    /**
+     * The tools list returned from the MCP server. [https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#ListToolsResult](https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#ListToolsResult)
+     * @typedef _ServerEvent
+     */
+    ToolsList = 'MCP.Server.ToolsList',
+
+    /**
+     * The tool result returned from the MCP server. [https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#CallToolResult](https://pkg.go.dev/github.com/modelcontextprotocol/go-sdk@v1.5.0/mcp#CallToolResult)
+     * @typedef _ServerEvent
+     */
+    ToolResult = 'MCP.Server.ToolResult',
+
+    /**
+     * The MCP error event.
+     * @typedef _ServerEvent
+     */
+    MCPError = 'MCP.Server.MCPError',
+
+    /**
+    * Contains information about connector.
+    * @typedef _ServerEvent
+    */
+    ConnectorInformation = 'MCP.Server.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _ServerEvents {
+    [ServerEvents.Unknown]: _ServerEvent;
+    [ServerEvents.ToolsList]: _ServerEvent;
+    [ServerEvents.ToolResult]: _ServerEvent;
+    [ServerEvents.MCPError]: _ServerEvent;
+    [ServerEvents.ConnectorInformation]: _ServerEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _ServerEvent {
+    /**
+     * The [MCP.Client] instance.
+     */
+    client: Client;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
 
 declare namespace MeasurementProtocol {
   /**
@@ -7491,43 +7807,6 @@ declare namespace MeasurementProtocol {
   function startSession(options: StartSessionOptions): typeof MeasurementProtocol;
 }
 
-/**
- * Single media statistics sample for a call leg (incoming or outgoing).
- */
-declare interface MediaStatistic {
-  /**
-   * Unique call identifier.
-   */
-  id: number;
-  /**
-   * Network jitter
-   */
-  jitter: string;
-  /**
-   * Number of lost RTP packets.
-   */
-  packetLoss: number;
-  /**
-   * Total number of received/sent RTP packets.
-   */
-  numPackets: number;
-}
-
-/**
- * Media statistics event payload received from the media server.
- * Contains metrics for both incoming and outgoing media streams.
- */
-declare interface MediaStatisticsReceived {
-  /**
-   * Statistics for incoming media stream.
-   */
-  in: MediaStatistic[];
-  /**
-   * Statistics for outgoing media stream.
-   */
-  out: MediaStatistic[];
-}
-
 declare enum Modules {
   /**
    * Provides the [ACD v1](/docs/guides/smartqueue/acdv1) functionality.
@@ -7598,9 +7877,13 @@ declare enum Modules {
    */
   ElevenLabs = 'elevenlabs',
   /**
-   * Provides the [Gemini(https://gemini.google.com) functionality.
+   * Provides the [Gemini](https://gemini.google.com) functionality.
    */
   Gemini = 'gemini',
+  /**
+   * Provides the [Google](https://docs.cloud.google.com/text-to-speech/docs) functionality.
+   */
+  Google = 'google',
   /**
    * Provides the [Grok](https://docs.x.ai/docs/guides/voice/agent#grok-voice-agent-api) functionality.
    */
@@ -7620,6 +7903,10 @@ declare enum Modules {
    * ```
    */
   IVR = 'ivr',
+  /**
+   * Provides the [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) functionality.
+   */
+  MCP = 'mcp',
   /**
    * Provides the OpenAI functionality.
    */
@@ -8008,14 +8295,14 @@ declare namespace OpenAI {
 
       /**
        * Updates the session’s default configuration. [https://platform.openai.com/docs/api-reference/realtime_client_events/session/update](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update).
-       * @param session Realtime session object configuration.[https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param session Realtime session object configuration.[https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-session).<br>NOTE: the 'input_audio_format' parameter will be ignored
        * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/session/update#realtime_client_events/session/update-event_id)
        */
       sessionUpdate(session: Object, eventId?: string): void
 
       /**
        * Instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create).
-       * @param response The response resource. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response). NOTE: the 'input_audio_format' parameter will be ignored
+       * @param response The response resource. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-response).<br>NOTE: the 'input_audio_format' parameter will be ignored
        * @param eventId Optional. Client-generated ID used to identify this event. [https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-event_id](https://platform.openai.com/docs/api-reference/realtime_client_events/response/create#realtime_client_events/response/create-event_id)
        */
       responseCreate(response: Object, eventId?: string): void
@@ -8250,7 +8537,7 @@ declare namespace OpenAI {
   /**
    * [OpenAI.ChatCompletionsAPIClient] parameters. Can be passed as arguments to the [OpenAI.createChatCompletionsAPIClient] method.
    */
-  interface ChatCompletionsAPIClientParameters extends _VoiceAIClientParameters {
+  interface ChatCompletionsAPIClientParameters extends _WebSocketBasedClientParameters {
     /**
      * API key for the OpenAI API.
      */
@@ -8267,6 +8554,10 @@ declare namespace OpenAI {
      * Optional. Project for the OpenAI API.
      */
     project?: string;
+    /**
+     * Optional. Model for the summary generation. The default value is **gpt-4o**.
+     */
+    summaryModel?: string;
     /**
      * Optional. Prompt for the summary generation. If not specified, the default prompt is used.
      * The API Client automatically inserts the previous summary here.
@@ -8568,6 +8859,10 @@ declare namespace OpenAI {
      * Optional. The type of the client. The default value is **OpenAI.RealtimeAPIClientType.REALTIME**.
      */
     type?: OpenAI.RealtimeAPIClientType;
+    /**
+     * Optional. The base URL for the OpenAI Realtime API. The default value is **https://api.openai.com/**.
+     */
+    baseUrl?: string;
   }
 }
 declare namespace OpenAI {
@@ -9032,7 +9327,7 @@ declare namespace OpenAI {
   /**
    * [OpenAI.ResponsesAPIClient] parameters. Can be passed as arguments to the [OpenAI.createResponsesAPIClient] method.
    */
-  interface ResponsesAPIClientParameters extends _VoiceAIClientParameters {
+  interface ResponsesAPIClientParameters extends _WebSocketBasedClientParameters {
     /**
      * The API key for the OpenAI API.
      */
@@ -9612,7 +9907,7 @@ declare namespace Pipecat {
     ): void;
   }
 }
-  
+
 declare namespace Pipecat {
   /**
    * @event
@@ -9636,7 +9931,7 @@ declare namespace Pipecat {
      */
     Error = 'Pipecat.Turn.Error',
 
-     /**
+    /**
      * Contains information about connector.
      * @typedef _PipecatTurnConnectorInformationEvent
      */
@@ -9703,13 +9998,12 @@ declare namespace Pipecat {
     data?: Object
   }
 }
-  
-  
+
 declare namespace Pipecat {
   /**
    * [Pipecat.TurnDetector] parameters. Can be passed as arguments to the [Pipecat.createTurnDetector] method.
    */
-  interface TurnDetectorParameters {
+  interface TurnDetectorParameters extends _WebSocketBasedClientParameters {
     /**
      * Optional. The probability threshold above which we detect the end of the turn (in the range [0.0, 1.0]). The default value is **0.5**.
      */
@@ -9773,7 +10067,7 @@ declare enum PlayerEvents {
 
   /**
    * Triggered when an audio chunk playback is finished. Note that this event is triggered only for RealtimeTTSPlayer instances.
-   * @typedef _AudioChunksPlaybackFinishedEvent
+   * @typedef _PlayerAudioChunksPlaybackFinishedEvent
    */
   AudioChunksPlaybackFinished = 'Player.AudioChunksPlaybackFinished'
 }
@@ -9866,7 +10160,13 @@ declare interface _PlayerPlaybackBufferingEvent extends _PlayerEvent {}
 /**
  * @private
  */
-declare interface _PlayerAudioChunksPlaybackFinishedEvent extends _PlayerEvent {}
+declare interface _PlayerAudioChunksPlaybackFinishedEvent extends _PlayerEvent {
+  /**
+   * Time to first byte (TTFB) in milliseconds.
+   * Represents the delay between sending the request and receiving the first byte of audio data.
+   */
+  timeToFirstByte: number;
+}
 /**
  * Represents an instance of an audio player.
  * <br>
@@ -10819,7 +11119,7 @@ declare namespace Silero {
   /**
    * [Silero.VAD] parameters. Can be passed as arguments to the [Silero.createVAD] method.
    */
-  interface VADParameters {
+  interface VADParameters extends _WebSocketBasedClientParameters {
     /**
      * Optional. The probability threshold above which we detect speech. The default value is **0.5**.
      */
@@ -11072,7 +11372,7 @@ declare enum SmartQueueOperatorSettingsMode {
   SMART = 'SMART',
 }
 
-/*
+/**
  * The [SmartQueueTask] operator settings. Can be passed via the [SmartQueueTaskParameters.operatorSettings] parameter.
  */
 declare interface SmartQueueOperatorSettings {
@@ -11090,7 +11390,7 @@ declare interface SmartQueueOperatorSettings {
   timeout: number;
 }
 
-/*
+/**
  * The [SmartQueue] skill level is used to characterize an agent or a requirement for a task. Can be passed via the [SmartQueueTaskParameters.skills] parameter.
  */
 declare interface SmartQueueSkill {
@@ -11104,7 +11404,7 @@ declare interface SmartQueueSkill {
   level: (1 | 2 | 3 | 4 | 5)[];
 }
 
-/*
+/**
  * Settings of a certain [SmartQueueTask]. Can be passed as arguments to the [VoxEngine.enqueueTask] method.
  */
 declare interface SmartQueueTaskParameters {
@@ -11154,7 +11454,7 @@ declare interface SmartQueueTaskParameters {
   maxVideoBitrate: number;
 }
 
-/*
+/**
  * A [SmartQueueTask] status enumeration value.
  */
 declare interface SmartQueueTaskStatus {
@@ -11238,7 +11538,7 @@ declare class SmartQueueTask {
   ): void;
 }
 
-/*
+/**
  * Represents an instance of a Smart Queue.
  */
 declare interface SmartQueue {
@@ -11256,7 +11556,7 @@ declare interface SmartQueue {
  * The parameters can be passed as arguments to the [Call.startPlayback] method.
  */
 declare interface StartPlaybackParameters {
-  /*
+  /**
    * Whether to loop playback.
    */
   loop?: boolean;
@@ -11718,7 +12018,7 @@ declare interface ToneScriptPlayerParameters {
    */
   loop?: boolean;
   /**
-   * Optional. Whether to use progressive playback. If **true**, the generated tone is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.
+   * Optional. Whether to use progressive playback. If **true**, the generated tone is delivered in chunks, which reduces delay before a method call and playback. The default value is **false**.
    */
   progressivePlayback?: boolean;
 }
@@ -11841,7 +12141,7 @@ declare namespace Ultravox {
   }
 }
 declare namespace Ultravox {
-  /*
+  /**
    * [Ultravox.createWebSocketAPIClient] HTTP endpoint. Can be passed via the [Ultravox.createWebSocketAPIClientParameters.endpoint] parameter.
    */
   enum HTTPEndpoint {
@@ -11879,7 +12179,7 @@ declare namespace Ultravox {
      */
     body?: Object;
     /**
-     * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests. NOTE: you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
+     * Optional. Ultravox URL returned from the [https://docs.ultravox.ai/api-reference/calls/calls-post](https://docs.ultravox.ai/api-reference/calls/calls-post) or [https://docs.ultravox.ai/api-reference/agents/agents-calls-post](https://docs.ultravox.ai/api-reference/agents/agents-calls-post) requests.<br>NOTE: you must specify the [https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium](https://docs.ultravox.ai/api-reference/calls/calls-post#body-medium) with 'serverWebSocket' parameters on the call creating. See the documentation for details.
      */
     joinUrl?: string;
   }
@@ -11943,8 +12243,7 @@ declare namespace Ultravox {
 
     /**
      * @deprecated
-     * Used to send a user message to the agent via text.
-     * Note: This method is deprecated, use 'userTextMessage' instead.
+     * Used to send a user message to the agent via text.<br>NOTE: this method is deprecated, use **userTextMessage** instead.
      * @param parameters
      */
     inputTextMessage(parameters: Object): void
@@ -12158,23 +12457,11 @@ declare interface URLPlayerSegment {
 /**
  * @private
  */
-interface _VoiceAIClientParameters {
+interface _VoiceAIClientParameters extends _WebSocketBasedClientParameters {
   /**
    * Optional. A callback function that is called when the [WebSocket] connection is closed.
    */
   onWebSocketClose?: (event: _WebSocketCloseEvent) => void;
-  /**
-   * Optional. Enables statistics functionality.
-   */
-  statistics?: boolean;
-  /**
-   * Optional. Whether to enable the tracing functionality.  
-   * 
-   * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-   * 
-   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
-   */
-  trace?: boolean;
 }
 
 declare type VoxMediaUnit =
@@ -12547,6 +12834,15 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
+   * Gets a value of the secret stored in the Voximplant panel.
+   * @param name Name of the secret. If name is empty or not found, returns **undefined**.
+   * @returns
+   */
+    function getSecretValue(name: string): string | undefined;
+}
+
+declare namespace VoxEngine {
+  /**
    * Helper function to play sound to incoming call. It terminates a call in three cases:
    * 1) playback is finished
    * 2) call failed
@@ -12600,7 +12896,7 @@ declare namespace VoxEngine {
   /**
    * Terminates the current JavaScript session. All audio/video streams are disconnected and scenario execution stops. Note that after this function, only the [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered.
    * 
-   * Note: if you are using this method inside a code block (e.g., an "if" block), it does not stop the execution of the current block. Use `return;` after using this method to exit the current code block.
+   * NOTE: if you are using this method inside a code block (e.g., an "if" block), it does not stop the execution of the current block. Use `return;` after using this method to exit the current code block.
    */
   function terminate(): void;
 }
@@ -12965,27 +13261,31 @@ declare namespace VoximplantAPI {
   }
   interface CallInfo {
     /**
-     * The call history ID
+     * Call's history ID
      */
     callId: number;
     /**
-     * The start time in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
+     * Call start time in the selected timezone in 24-h format: YYYY-MM-DD HH:mm:ss
      */
     startTime: Date;
     /**
-     * The call duration in seconds
+     * Call forwarding number
+     */
+    diversionNumber?: string;
+    /**
+     * Call duration in seconds
      */
     duration?: number;
     /**
-     * The local number on the platform side
+     * Local number on the platform side
      */
     localNumber: string;
     /**
-     * The remote number on the client side
+     * Remote number on the client side
      */
     remoteNumber: string;
     /**
-     * The type of the remote number, such as PSTN, mobile, user or sip address
+     * Type of the remote number, e.g., a PSTN, mobile, user or sip address
      */
     remoteNumberType: string;
     /**
@@ -12997,23 +13297,23 @@ declare namespace VoximplantAPI {
      */
     successful: boolean;
     /**
-     * The transaction ID
+     * Transaction ID
      */
     transactionId: number;
     /**
-     * The record URL
+     * Record URL
      */
     recordUrl?: string;
     /**
-     * The media server IP address
+     * Media server's IP address
      */
     mediaServerAddress: string;
     /**
-     * The call cost
+     * Call's cost
      */
     cost?: number;
     /**
-     * The custom data passed to the JS session
+     * Custom data passed to the JS session
      */
     customData?: string;
     /**
@@ -13435,6 +13735,48 @@ declare namespace VoximplantAPI {
      */
     acdSessionHistoryId: number;
   }
+  interface WABPhoneInfo {
+    /**
+     * WhatsApp Business phone number
+     */
+    wabPhoneNumber: string;
+    /**
+     * The WhatsApp Business country code (2 symbols)
+     */
+    countryCode: string;
+    /**
+     * ID of the bound application
+     */
+    applicationId?: number;
+    /**
+     * Name of the bound application
+     */
+    applicationName?: string;
+    /**
+     * ID of the bound rule
+     */
+    ruleId?: number;
+    /**
+     * Name of the bound rule
+     */
+    ruleName?: string;
+    /**
+     * Full application name, e.g. myapp.myaccount.n1.voximplant.com
+     */
+    extendedApplicationName?: string;
+    /**
+     * WhatsApp Business phone number description
+     */
+    description?: string;
+    /**
+     * UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
+     */
+    created: Date;
+    /**
+     * UTC date of an event associated with the number in 24-h format: YYYY-MM-DD HH:mm:ss
+     */
+    modified: Date;
+  }
   interface AttachedPhoneInfo {
     /**
      * The phone ID
@@ -13445,7 +13787,7 @@ declare namespace VoximplantAPI {
      */
     phoneNumber: string;
     /**
-     * The phone monthly charge
+     * The phone monthly charge in the account's currency
      */
     phonePrice: number;
     /**
@@ -13453,7 +13795,11 @@ declare namespace VoximplantAPI {
      */
     phoneCountryCode: string;
     /**
-     * The next renewal date in format: YYYY-MM-DD
+     * Phone number activation status
+     */
+    activationStatus?: string;
+    /**
+     * The next renewal date in the following format: YYYY-MM-DD
      */
     phoneNextRenewal: Date;
     /**
@@ -13501,7 +13847,7 @@ declare namespace VoximplantAPI {
      */
     verificationStatus?: string;
     /**
-     * Unverified phone hold until the date in format: YYYY-MM-DD (if the account verification is required). The number is detached on that day automatically!
+     * Unverified phone hold until the date in the following format: YYYY-MM-DD (if the account verification is required). The number is detached on that day automatically!
      */
     unverifiedHoldUntil?: Date;
     /**
@@ -13567,7 +13913,7 @@ declare namespace VoximplantAPI {
      */
     verificationCallAttemptsLeft?: number;
     /**
-     * The verification ending date in format: YYYY-MM-DD (for the verified callerID)
+     * The verification ending date in the following format: YYYY-MM-DD (for the verified callerID)
      */
     verifiedUntil?: Date;
   }
@@ -13668,6 +14014,10 @@ declare namespace VoximplantAPI {
      * The status name. The possible values are __In progress__, __Completed__, __Canceled__
      */
     status: string;
+    /**
+     * Whether the first or repeated calls have priority.
+     */
+    taskPriorityStrategy: string;
   }
   interface SIPRegistration {
     /**
@@ -13711,7 +14061,7 @@ declare namespace VoximplantAPI {
      */
     deactivated: boolean;
     /**
-     * The next subscription renewal date in format: YYYY-MM-DD
+     * The next subscription renewal date in the following format: YYYY-MM-DD
      */
     nextSubscriptionRenewal: Date;
     /**
@@ -13905,7 +14255,7 @@ declare namespace VoximplantAPI {
      */
     cost: number;
     /**
-     * Status of the message. 1 - Success, 2 - Error
+     * Status of the message. The possible values are: 1 — Success, 2 — Error, 3 — Waiting
      */
     statusId: string;
     /**
@@ -13947,7 +14297,7 @@ declare namespace VoximplantAPI {
      */
     cost: number;
     /**
-     * The message status. 1 - Success, 2 - Error
+     * The message status. The possible values are: 1 — Success, 2 — Error, 3 — Waiting
      */
     statusId: string;
     /**
@@ -13981,6 +14331,10 @@ declare namespace VoximplantAPI {
      */
     sqQueueName: string;
     /**
+     * Whether the tasks are queued when there are no active agents
+     */
+    holdImIfInactiveAgents?: boolean;
+    /**
      * Agent selection strategy
      */
     agentSelection: string;
@@ -13988,6 +14342,10 @@ declare namespace VoximplantAPI {
      * Strategy of prioritizing requests for service
      */
     taskSelection: string;
+    /**
+     * Whether the call task is kept in the queue if all agents are unavailable
+     */
+    holdCallsIfInactiveAgents?: boolean;
     /**
      * Comment
      */
@@ -14291,7 +14649,7 @@ declare namespace VoximplantAPI {
      */
     invoiceNumber: string;
     /**
-     * Date when the invoice is created in format: YYYY-MM-DD
+     * Date when the invoice is created in the following format: YYYY-MM-DD
      */
     invoiceDate: Date;
     /**
@@ -14301,11 +14659,11 @@ declare namespace VoximplantAPI {
   }
   interface InvoicePeriod {
     /**
-     * From date in format: YYYY-MM-DD
+     * From date in the following format: YYYY-MM-DD
      */
     from: Date;
     /**
-     * To date in format: YYYY-MM-DD
+     * To date in the following format: YYYY-MM-DD
      */
     to: Date;
   }
@@ -14387,6 +14745,60 @@ declare namespace VoximplantAPI {
      */
     sqSkillId: number;
   }
+  interface AddSecretResult {
+    /**
+     * Added secret ID
+     */
+    secretId: number;
+  }
+  interface GetSecretValueResult {
+    /**
+     * Secret ID
+     */
+    secretId: number;
+    /**
+     * Secret name
+     */
+    secretName: string;
+    /**
+     * Secret value
+     */
+    secretValue: string;
+    /**
+     * Secret description
+     */
+    description?: string;
+    /**
+     * Secret creation timestamp
+     */
+    created: Date;
+    /**
+     * Secret modification timestamp
+     */
+    modified: Date;
+  }
+  interface SecretListItem {
+    /**
+     * Secret ID
+     */
+    secretId: number;
+    /**
+     * Secret name
+     */
+    secretName: string;
+    /**
+     * Secret description
+     */
+    description?: string;
+    /**
+     * Secret creation timestamp
+     */
+    created: Date;
+    /**
+     * Secret modification timestamp
+     */
+    modified: Date;
+  }
   interface GetAccountInfoRequest {
     /**
      * Whether to get the account's live balance
@@ -14433,7 +14845,7 @@ declare namespace VoximplantAPI {
   }
   interface AddApplicationRequest {
     /**
-     * The short application name in format \[a-z\]\[a-z0-9-\]{1,64}
+     * Short application name in the \[a-z\]\[a-z0-9-\]{1,64} format
      */
     applicationName: string;
     /**
@@ -14443,7 +14855,7 @@ declare namespace VoximplantAPI {
   }
   interface AddApplicationResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -14472,7 +14884,7 @@ declare namespace VoximplantAPI {
   }
   interface DelApplicationResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -14497,7 +14909,7 @@ declare namespace VoximplantAPI {
   }
   interface SetApplicationInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -14603,7 +15015,7 @@ declare namespace VoximplantAPI {
   }
   interface AddUserResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -14632,7 +15044,7 @@ declare namespace VoximplantAPI {
   }
   interface DelUserResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -14682,7 +15094,7 @@ declare namespace VoximplantAPI {
   }
   interface SetUserInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -14796,7 +15208,7 @@ declare namespace VoximplantAPI {
   }
   interface CreateCallListRequest {
     /**
-     * The rule ID. It is specified in the <a href='//manage.voximplant.com/applications'>Applications</a> section of the Control Panel
+     * Rule ID. It is specified in the <a href='//manage.voximplant.com/applications'>Applications</a> section of the Control Panel
      */
     ruleId: number;
     /**
@@ -14816,7 +15228,7 @@ declare namespace VoximplantAPI {
      */
     name: string;
     /**
-     * Send as "body" part of the HTTP request or as multiform. The sending "file_content" via URL is at its own risk because the network devices tend to drop HTTP requests with large headers
+     * Send as the "body" part of the HTTP request or as multiform. The sending "file_content" via URL is at its own risk because the network devices tend to drop HTTP requests with large headers
      */
     fileContent: Buffer;
     /**
@@ -14836,37 +15248,45 @@ declare namespace VoximplantAPI {
      */
     escape?: string;
     /**
-     * Specifies the IP from the geolocation of the call list subscribers. It allows selecting the nearest server for serving subscribers
+     * IP from the geolocation of the call list subscribers. It allows selecting the nearest server for serving subscribers
      */
     referenceIp?: string;
     /**
-     * Specifies the location of the server where the scenario needs to be executed. Has higher priority than `reference_ip`. Request [getServerLocations](https://api.voximplant.com/getServerLocations) for possible values
+     * Location of the server where the scenario needs to be executed. Has higher priority than `reference_ip`. Request [getServerLocations](https://api.voximplant.com/getServerLocations) for possible values
      */
     serverLocation?: string;
+    /**
+     * Optional. Whether to prioritize first calling attempts or repeated ones. The possible values are: first_attempts, repeated_attempts. The default values is first_attempts.
+     */
+    taskPriorityStrategy?: string;
   }
   interface CreateCallListResponse {
     /**
-     * true
+     * Whether the request completed successfully
      */
     result: boolean;
     /**
-     * The number of stored records
+     * Number of stored records
      */
     count: number;
     /**
-     * The list ID
+     * List ID
      */
     listId: number;
+    /**
+     * Batch UUID
+     */
+    batchId: string;
     error?: APIError;
   }
   interface AppendToCallListRequest {
     /**
-     * The call list ID
+     * Call list ID
      */
     listId: number;
     listName: string;
     /**
-     * Send as request body or multiform
+     * Send as the request body or multiform
      */
     fileContent: Buffer;
     /**
@@ -14884,17 +15304,39 @@ declare namespace VoximplantAPI {
   }
   interface AppendToCallListResponse {
     /**
-     * true
+     * Whether the request completed successfully
      */
     result: boolean;
     /**
-     * The number of stored records
+     * Number of stored records
      */
     count: number;
     /**
-     * The list ID
+     * List ID
      */
     listId: number;
+    /**
+     * Batch UUID
+     */
+    batchId: number;
+    error?: APIError;
+  }
+  interface CancelCallListBatchRequest {
+    /**
+     * Call list ID
+     */
+    listId: number;
+    listName: string;
+    /**
+     * Batch UUIDs of the tasks to cancel, separated by semicolon (;)
+     */
+    batchIds: string;
+  }
+  interface CancelCallListBatchResponse {
+    /**
+     * Whether the request completed successfully
+     */
+    result: boolean;
     error?: APIError;
   }
   interface EditCallListRequest {
@@ -14931,15 +15373,36 @@ declare namespace VoximplantAPI {
      */
     startAt?: string;
     /**
+     * Optional. Whether to prioritize first calling attempts or repeated ones. The possible values are: first_attempts, repeated_attempts. The default values is first_attempts
+     */
+    taskPriorityStrategy?: string;
+    /**
      * Location of the server processing the call list. If the ID is non existing, the 496 error returns: The 'server_location' parameter is invalid.
      */
     serverLocation?: string;
   }
   interface EditCallListResponse {
     /**
-     * true
+     * Whether the request completed successfully
      */
     result: boolean;
+    error?: APIError;
+  }
+  interface EditCallListTasksPriorityRequest {
+    /**
+     * Call list ID. If the ID does not exist, the 251 error returns.
+     */
+    listId: number;
+    /**
+     * JSON-encoded array of task objects. Each object should contain either 'task_id' (number) or 'task_uuid' (string), and 'task_priority' (number).
+     */
+    tasks: string;
+  }
+  interface EditCallListTasksPriorityResponse {
+    /**
+     * JSON-encoded array of each task update.
+     */
+    results: string;
     error?: APIError;
   }
   interface DeleteCallListRequest {
@@ -15004,11 +15467,11 @@ declare namespace VoximplantAPI {
      */
     result: CallList[];
     /**
-     * The returned call list count
+     * Returned call list count
      */
     count: number;
     /**
-     * The total found call list count
+     * Total found call list count
      */
     totalCount: number;
     error?: APIError;
@@ -15060,9 +15523,21 @@ declare namespace VoximplantAPI {
      */
     appendToCallList: (request: AppendToCallListRequest) => Promise<AppendToCallListResponse>;
     /**
+     * Cancels all tasks in the call list with the specified batch UUID.
+     */
+    cancelCallListBatch: (
+      request: CancelCallListBatchRequest
+    ) => Promise<CancelCallListBatchResponse>;
+    /**
      * Edits the specified call list by its ID.
      */
     editCallList: (request: EditCallListRequest) => Promise<EditCallListResponse>;
+    /**
+     * Edits priorities of existing tasks in the specified call list.
+     */
+    editCallListTasksPriority: (
+      request: EditCallListTasksPriorityRequest
+    ) => Promise<EditCallListTasksPriorityResponse>;
     /**
      * Deletes an existing call list by its ID.
      */
@@ -15072,7 +15547,7 @@ declare namespace VoximplantAPI {
      */
     getCallLists: (request: GetCallListsRequest) => Promise<GetCallListsResponse>;
     /**
-     * Cancels the specified tasks in the call list by their IDs or UUIDs.
+     * Cancels the specified tasks in the call list by their IDs or UUIDs. The maximum number of tasks to cancel is 1000.
      */
     cancelCallListTask: (request: CancelCallListTaskRequest) => Promise<CancelCallListTaskResponse>;
   }
@@ -15116,7 +15591,7 @@ declare namespace VoximplantAPI {
   }
   interface StartConferenceResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15150,7 +15625,7 @@ declare namespace VoximplantAPI {
     toDate: Date;
     timezone?: string;
     /**
-     * To get the call history for the specific sessions, pass the session IDs to this parameter separated by a semicolon (;). You can find the session ID in the <a href='/docs/references/voxengine/appevents#started'>AppEvents.Started</a> event's <b>sessionID</b> property in a scenario, or retrieve it from the <b>call_session_history_id</b> value returned from the <a href='https://voximplant.com/docs/references/httpapi/scenarios#reorderscenarios'>StartScenarios</a> or <a href='https://voximplant.com/docs/references/httpapi/scenarios#startconference'>StartConference</a> methods
+     * To get the call history for the specific sessions, pass the session IDs to this parameter separated by a semicolon (;). The maximum number of records is 1000. You can find the session ID in the <a href='/docs/references/voxengine/appevents#started'>AppEvents.Started</a> event's <b>sessionID</b> property in a scenario, or retrieve it from the <b>call_session_history_id</b> value returned from the <a href='https://voximplant.com/docs/references/httpapi/scenarios#reorderscenarios'>StartScenarios</a> or <a href='https://voximplant.com/docs/references/httpapi/scenarios#startconference'>StartConference</a> methods
      */
     callSessionHistoryId?: 'any' | number | number[];
     /**
@@ -15318,7 +15793,7 @@ declare namespace VoximplantAPI {
   }
   interface GetCallHistoryAsyncResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15380,7 +15855,7 @@ declare namespace VoximplantAPI {
   }
   interface GetBriefCallHistoryResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15515,7 +15990,7 @@ declare namespace VoximplantAPI {
   }
   interface GetTransactionHistoryAsyncResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15554,6 +16029,192 @@ declare namespace VoximplantAPI {
       request: GetTransactionHistoryAsyncRequest
     ) => Promise<GetTransactionHistoryAsyncResponse>;
   }
+  interface GetPhoneNumbersRequest {
+    /**
+     * Particular phone ID to filter
+     */
+    phoneId?: 'any' | number | number[];
+    /**
+     * Phone number list separated by semicolons (;) that can be used instead of <b>phone_id</b>
+     */
+    phoneNumber?: string | string[];
+    /**
+     * Phone number activation statuses to filter, separated by semicolons (;).<br><br>The possible values are: ACTIVE, ACTIVATING, DEACTIVATED, PROVISIONING, AWAITING_BUSINESS_PHONE_NUMBER_CONFIGURATION, LEGAL_OWNERSHIP_LIMIT_REACHED, GOSUSLUGI_DECLINED, SELF_BAN_ENABLED
+     */
+    activationStatus?: string | string[];
+    /**
+     * Application ID
+     */
+    applicationId?: number;
+    /**
+     * Application name that can be used instead of <b>application_id</b>
+     */
+    applicationName?: string;
+    /**
+     * Whether the phone number bound to an application
+     */
+    isBoundToApplication?: boolean;
+    /**
+     * Phone number start to filter
+     */
+    phoneTemplate?: string;
+    /**
+     * Country code list separated by semicolons (;)
+     */
+    countryCode?: string | string[];
+    /**
+     * Phone category name. See the [GetPhoneNumberCategories] method
+     */
+    phoneCategoryName?: string;
+    /**
+     * Whether the subscription is cancelled to filter
+     */
+    canceled?: boolean;
+    /**
+     * Whether the subscription is frozen to filter
+     */
+    deactivated?: boolean;
+    /**
+     * Whether the auto_charge flag is enabled
+     */
+    autoCharge?: boolean;
+    /**
+     * UTC 'from' date filter in the following format: YYYY-MM-DD
+     */
+    fromPhoneNextRenewal?: Date;
+    /**
+     * UTC 'to' date filter in the following format: YYYY-MM-DD
+     */
+    toPhoneNextRenewal?: Date;
+    /**
+     * UTC 'from' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+     */
+    fromPhonePurchaseDate?: Date;
+    /**
+     * UTC 'to' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
+     */
+    toPhonePurchaseDate?: Date;
+    /**
+     * Child account ID list separated by semicolons (;). Use the 'all' value to select all child accounts
+     */
+    childAccountId?: 'any' | number | number[];
+    /**
+     * Whether to get the children phones only
+     */
+    childrenPhonesOnly?: boolean;
+    /**
+     * Required account verification name to filter
+     */
+    verificationName?: string;
+    /**
+     * Account verification status list separated by semicolons (;). The following values are possible: REQUIRED, IN_PROGRESS, VERIFIED
+     */
+    verificationStatus?: string | string[];
+    /**
+     * Unverified phone hold until the date (from ...) in the following format: YYYY-MM-DD
+     */
+    fromUnverifiedHoldUntil?: Date;
+    /**
+     * Unverified phone hold until the date (... to) in the following format: YYYY-MM-DD
+     */
+    toUnverifiedHoldUntil?: Date;
+    /**
+     * Whether a not verified account can use the phone
+     */
+    canBeUsed?: boolean;
+    /**
+     * Following values are available: 'phone_number' (ascent order), 'phone_price' (ascent order), 'phone_country_code' (ascent order), 'deactivated' (deactivated first, active last), 'purchase_date' (descent order), 'phone_next_renewal' (ascent order), 'verification_status', 'unverified_hold_until' (ascent order), 'verification_name'
+     */
+    orderBy?: string;
+    /**
+     * Flag allows you to display only the numbers of the sandbox, real numbers, or all numbers. The following values are possible: 'all', 'true', 'false'
+     */
+    sandbox?: string;
+    /**
+     * Maximum returning record count
+     */
+    count?: number;
+    /**
+     * First <b>N</b> records are skipped in the output
+     */
+    offset?: number;
+    smsSupported?: boolean;
+    /**
+     * Region names list separated by semicolons (;)
+     */
+    phoneRegionName?: string | string[];
+    /**
+     * Rule ID list separated by semicolons (;)
+     */
+    ruleId?: 'any' | number | number[];
+    /**
+     * Rule names list separated by semicolons (;). Can be used only if __application_id__ or __application_name__ is specified
+     */
+    ruleName?: string | string[];
+    /**
+     * Whether the phone number is bound to some rule
+     */
+    isBoundToRule?: boolean;
+  }
+  interface GetPhoneNumbersResponse {
+    /**
+     * Phone numbers info
+     */
+    result: AttachedPhoneInfo[];
+    /**
+     * Total found phone count
+     */
+    totalCount: number;
+    /**
+     * Returned phone count
+     */
+    count: number;
+    error?: APIError;
+  }
+  interface IsAccountPhoneNumberRequest {
+    /**
+     * Phone number to check in the international format without `+`
+     */
+    phoneNumber: string;
+  }
+  interface IsAccountPhoneNumberResponse {
+    /**
+     * Whether the number belongs to the account
+     */
+    result: boolean;
+    error?: APIError;
+  }
+  interface GetPhoneNumbersAsyncRequest {
+    /**
+     * Whether to get a CSV file with the column names
+     */
+    withHeader?: boolean;
+  }
+  interface GetPhoneNumbersAsyncResponse {
+    /**
+     * The report ID (async mode)
+     */
+    result: number;
+    error?: APIError;
+  }
+  interface PhoneNumbersInterface {
+    /**
+     * Gets the account phone numbers.
+     */
+    getPhoneNumbers: (request: GetPhoneNumbersRequest) => Promise<GetPhoneNumbersResponse>;
+    /**
+     * Checks if the phone number belongs to the authorized account.
+     */
+    isAccountPhoneNumber: (
+      request: IsAccountPhoneNumberRequest
+    ) => Promise<IsAccountPhoneNumberResponse>;
+    /**
+     * Gets the asynchronous report regarding purchased phone numbers.
+     */
+    getPhoneNumbersAsync: (
+      request: GetPhoneNumbersAsyncRequest
+    ) => Promise<GetPhoneNumbersAsyncResponse>;
+  }
   interface AddPstnBlackListItemRequest {
     /**
      * The phone number in format e164 or regex pattern
@@ -15562,7 +16223,7 @@ declare namespace VoximplantAPI {
   }
   interface AddPstnBlackListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15583,7 +16244,7 @@ declare namespace VoximplantAPI {
   }
   interface SetPstnBlackListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -15596,7 +16257,7 @@ declare namespace VoximplantAPI {
   }
   interface DelPstnBlackListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -15667,7 +16328,7 @@ declare namespace VoximplantAPI {
   }
   interface AddSipWhiteListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -15684,7 +16345,7 @@ declare namespace VoximplantAPI {
   }
   interface DelSipWhiteListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -15705,7 +16366,7 @@ declare namespace VoximplantAPI {
   }
   interface SetSipWhiteListItemResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -15796,7 +16457,7 @@ declare namespace VoximplantAPI {
   }
   interface BindSipRegistrationResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -15814,9 +16475,6 @@ declare namespace VoximplantAPI {
      * The user ID list separated by semicolons (;) to filter. Can be used instead of <b>user_name</b>
      */
     userId: 'any' | number | number[];
-    /**
-     * The user name list separated by semicolons (;) to filter. Can be used instead of <b>user_id</b>
-     */
     userName: string | string[];
     /**
      * The SIP registration ID
@@ -15896,225 +16554,52 @@ declare namespace VoximplantAPI {
       request: GetSipRegistrationsRequest
     ) => Promise<GetSipRegistrationsResponse>;
   }
-  interface GetPhoneNumbersRequest {
+  interface GetWABPhoneNumbersRequest {
     /**
-     * The particular phone ID to filter
+     * WhatsApp Business phone number
      */
-    phoneId?: 'any' | number | number[];
+    wabPhoneNumber?: string;
     /**
-     * The phone number list separated by semicolons (;) that can be used instead of <b>phone_id</b>
-     */
-    phoneNumber?: string | string[];
-    /**
-     * The application ID
+     * Application ID that is bound to the WhatsApp Business phone number
      */
     applicationId?: number;
     /**
-     * The application name that can be used instead of <b>application_id</b>
+     * Bound application name that can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
-     * Whether the phone number bound to an application
+     * Country code filter (2 symbols) for the WhatsApp Business phone number
      */
-    isBoundToApplication?: boolean;
+    countryCode?: string;
     /**
-     * The phone number start to filter
-     */
-    phoneTemplate?: string;
-    /**
-     * The country code list separated by semicolons (;)
-     */
-    countryCode?: string | string[];
-    /**
-     * The phone category name. See the [GetPhoneNumberCategories] method
-     */
-    phoneCategoryName?: string;
-    /**
-     * Whether the subscription is cancelled to filter
-     */
-    canceled?: boolean;
-    /**
-     * Whether the subscription is frozen to filter
-     */
-    deactivated?: boolean;
-    /**
-     * Whether the auto_charge flag is enabled
-     */
-    autoCharge?: boolean;
-    /**
-     * The UTC 'from' date filter in format: YYYY-MM-DD
-     */
-    fromPhoneNextRenewal?: Date;
-    /**
-     * The UTC 'to' date filter in format: YYYY-MM-DD
-     */
-    toPhoneNextRenewal?: Date;
-    /**
-     * The UTC 'from' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
-     */
-    fromPhonePurchaseDate?: Date;
-    /**
-     * The UTC 'to' date filter in 24-h format: YYYY-MM-DD HH:mm:ss
-     */
-    toPhonePurchaseDate?: Date;
-    /**
-     * The child account ID list separated by semicolons (;). Use the 'all' value to select all child accounts
-     */
-    childAccountId?: 'any' | number | number[];
-    /**
-     * Whether to get the children phones only
-     */
-    childrenPhonesOnly?: boolean;
-    /**
-     * The required account verification name to filter
-     */
-    verificationName?: string;
-    /**
-     * The account verification status list separated by semicolons (;). The following values are possible: REQUIRED, IN_PROGRESS, VERIFIED
-     */
-    verificationStatus?: string | string[];
-    /**
-     * Unverified phone hold until the date (from ...) in format: YYYY-MM-DD
-     */
-    fromUnverifiedHoldUntil?: Date;
-    /**
-     * Unverified phone hold until the date (... to) in format: YYYY-MM-DD
-     */
-    toUnverifiedHoldUntil?: Date;
-    /**
-     * Whether a not verified account can use the phone
-     */
-    canBeUsed?: boolean;
-    /**
-     * The following values are available: 'phone_number' (ascent order), 'phone_price' (ascent order), 'phone_country_code' (ascent order), 'deactivated' (deactivated first, active last), 'purchase_date' (descent order), 'phone_next_renewal' (ascent order), 'verification_status', 'unverified_hold_until' (ascent order), 'verification_name'
-     */
-    orderBy?: string;
-    /**
-     * Flag allows you to display only the numbers of the sandbox, real numbers, or all numbers. The following values are possible: 'all', 'true', 'false'
-     */
-    sandbox?: string;
-    /**
-     * The max returning record count
+     * Maximum returning records count
      */
     count?: number;
     /**
-     * The first <b>N</b> records are skipped in the output
+     * Number of records to be skipped in the result
      */
     offset?: number;
-    smsSupported?: boolean;
-    /**
-     * The region names list separated by semicolons (;)
-     */
-    phoneRegionName?: string | string[];
-    /**
-     * The rule ID list separated by semicolons (;)
-     */
-    ruleId?: 'any' | number | number[];
-    /**
-     * The rule names list separated by semicolons (;). Can be used only if __application_id__ or __application_name__ is specified
-     */
-    ruleName?: string | string[];
-    /**
-     * Whether the phone number is bound to some rule
-     */
-    isBoundToRule?: boolean;
   }
-  interface GetPhoneNumbersResponse {
+  interface GetWABPhoneNumbersResponse {
     /**
-     * Phone numbers info
+     * WhatsApp Business phone numbers info
      */
-    result: AttachedPhoneInfo[];
+    result: WABPhoneInfo[];
     /**
-     * The total found phone count
+     * Number of total records found
      */
     totalCount: number;
     /**
-     * The returned phone count
+     * Number of returned records
      */
     count: number;
     error?: APIError;
   }
-  interface IsAccountPhoneNumberRequest {
+  interface WABPhoneNumbersInterface {
     /**
-     * Phone number to check in the international format without `+`
+     * Gets the account's WhatsApp Business phone numbers.
      */
-    phoneNumber: string;
-  }
-  interface IsAccountPhoneNumberResponse {
-    /**
-     * Whether the number belongs to the account
-     */
-    result: boolean;
-    error?: APIError;
-  }
-  interface GetPhoneNumbersAsyncRequest {
-    /**
-     * Whether to get a CSV file with the column names
-     */
-    withHeader?: boolean;
-  }
-  interface GetPhoneNumbersAsyncResponse {
-    /**
-     * The report ID (async mode)
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface PhoneNumbersInterface {
-    /**
-     * Gets the account phone numbers.
-     */
-    getPhoneNumbers: (request: GetPhoneNumbersRequest) => Promise<GetPhoneNumbersResponse>;
-    /**
-     * Checks if the phone number belongs to the authorized account.
-     */
-    isAccountPhoneNumber: (
-      request: IsAccountPhoneNumberRequest
-    ) => Promise<IsAccountPhoneNumberResponse>;
-    /**
-     * Gets the asynchronous report regarding purchased phone numbers.
-     */
-    getPhoneNumbersAsync: (
-      request: GetPhoneNumbersAsyncRequest
-    ) => Promise<GetPhoneNumbersAsyncResponse>;
-  }
-  interface AddCallerIDRequest {
-    /**
-     * The callerID number in E.164 format
-     */
-    calleridNumber: string;
-  }
-  interface AddCallerIDResponse {
-    /**
-     * 1
-     */
-    result: number;
-    /**
-     * ID of the callerID object
-     */
-    calleridId: number;
-    error?: APIError;
-  }
-  interface ActivateCallerIDRequest {
-    /**
-     * ID of the callerID object
-     */
-    calleridId: number;
-    /**
-     * The callerID number that can be used instead of <b>callerid_id</b>
-     */
-    calleridNumber: string;
-    /**
-     * The verification code, see the VerifyCallerID function
-     */
-    verificationCode: string;
-  }
-  interface ActivateCallerIDResponse {
-    /**
-     * 1
-     */
-    result: number;
-    error?: APIError;
+    getWABPhoneNumbers: (request: GetWABPhoneNumbersRequest) => Promise<GetWABPhoneNumbersResponse>;
   }
   interface DelCallerIDRequest {
     /**
@@ -16128,7 +16613,7 @@ declare namespace VoximplantAPI {
   }
   interface DelCallerIDResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16171,32 +16656,7 @@ declare namespace VoximplantAPI {
     count: number;
     error?: APIError;
   }
-  interface VerifyCallerIDRequest {
-    /**
-     * ID of the callerID object
-     */
-    calleridId: number;
-    /**
-     * The callerID number that can be used instead of <b>callerid_id</b>
-     */
-    calleridNumber: string;
-  }
-  interface VerifyCallerIDResponse {
-    /**
-     * 1
-     */
-    result: number;
-    error?: APIError;
-  }
   interface CallerIDsInterface {
-    /**
-     * Adds a new caller ID. Caller ID is the phone that is displayed to the called user. This number can be used for call back.
-     */
-    addCallerID: (request: AddCallerIDRequest) => Promise<AddCallerIDResponse>;
-    /**
-     * Activates the CallerID by the verification code.
-     */
-    activateCallerID: (request: ActivateCallerIDRequest) => Promise<ActivateCallerIDResponse>;
     /**
      * Deletes the CallerID. Note: you cannot delete a CID permanently (the antispam defence).
      */
@@ -16205,10 +16665,6 @@ declare namespace VoximplantAPI {
      * Gets the account callerIDs.
      */
     getCallerIDs: (request: GetCallerIDsRequest) => Promise<GetCallerIDsResponse>;
-    /**
-     * Gets a verification code via phone call to the **callerid_number**.
-     */
-    verifyCallerID: (request: VerifyCallerIDRequest) => Promise<VerifyCallerIDResponse>;
   }
   interface AddOutboundTestPhoneNumberRequest {
     /**
@@ -16218,7 +16674,7 @@ declare namespace VoximplantAPI {
   }
   interface AddOutboundTestPhoneNumberResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16239,7 +16695,7 @@ declare namespace VoximplantAPI {
   }
   interface ActivateOutboundTestPhoneNumberResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16247,7 +16703,7 @@ declare namespace VoximplantAPI {
   interface DelOutboundTestPhoneNumberRequest {}
   interface DelOutboundTestPhoneNumberResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16329,7 +16785,7 @@ declare namespace VoximplantAPI {
   }
   interface AddQueueResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -16370,7 +16826,7 @@ declare namespace VoximplantAPI {
   }
   interface BindUserToQueueResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16387,7 +16843,7 @@ declare namespace VoximplantAPI {
   }
   interface DelQueueResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16436,7 +16892,7 @@ declare namespace VoximplantAPI {
   }
   interface SetQueueInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16707,7 +17163,7 @@ declare namespace VoximplantAPI {
   }
   interface RequestSmartQueueHistoryResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -16758,7 +17214,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetAgentCustomStatusMappingResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -16792,14 +17248,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_DeleteAgentCustomStatusMappingResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_AddQueueRequest {
     /**
-     * ID of the application to bind to
+     * Application ID to bind to
      */
     applicationId: number;
     /**
@@ -16815,9 +17271,13 @@ declare namespace VoximplantAPI {
      */
     callTaskSelection: string;
     /**
-     * Name of the application to bind to. Can be used instead of <b>application_id</b>
+     * Application name to bind to. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
+    /**
+     * Whether to add the task to the queue if there are no available agents
+     */
+    holdImIfInactiveAgents?: boolean;
     /**
      * Agent selection strategy for messages. Accepts one of the following values: "MOST_QUALIFIED", "LEAST_QUALIFIED", "MAX_WAITING_TIME". The default value is **call_agent_selection**
      */
@@ -16826,6 +17286,10 @@ declare namespace VoximplantAPI {
      * IM type requests prioritizing strategy. Accepts one of the [SQTaskSelectionStrategies] enum values. The default value is **call_task_selection**
      */
     imTaskSelection?: string;
+    /**
+     * Whether to keep the call task in the queue if all agents are in the DND/BANNED/OFFLINE statuses.
+     */
+    holdCallsIfInactiveAgents?: boolean;
     fallbackAgentSelection?: string;
     /**
      * Comment, up to 200 characters
@@ -16869,7 +17333,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetQueueInfoRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -16877,13 +17341,21 @@ declare namespace VoximplantAPI {
      */
     sqQueueId: number;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
+    /**
+     * Whether to add the task to the queue if there are no available agents
+     */
+    holdImIfInactiveAgents?: boolean;
     /**
      * Name of the SmartQueue to search for. Can be used instead of <b>sq_queue_id</b>
      */
     sqQueueName?: string;
+    /**
+     * Whether to keep the call task in the queue if all agents are in the DND/BANNED/OFFLINE statuses.
+     */
+    holdCallsIfInactiveAgents?: boolean;
     /**
      * New SmartQueue name within the application, up to 100 characters
      */
@@ -16940,14 +17412,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetQueueInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_DelQueueRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -16955,7 +17427,7 @@ declare namespace VoximplantAPI {
      */
     sqQueueId: 'any' | number | number[];
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -16965,18 +17437,18 @@ declare namespace VoximplantAPI {
   }
   interface SQ_DelQueueResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_GetQueuesRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17029,7 +17501,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_AddSkillRequest {
     /**
-     * ID of the application to bind to
+     * Application ID to bind to
      */
     applicationId: number;
     /**
@@ -17037,7 +17509,7 @@ declare namespace VoximplantAPI {
      */
     sqSkillName: string;
     /**
-     * Name of the application to bind to. Can be used instead of <b>application_id</b>
+     * Application name to bind to. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17054,7 +17526,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_DelSkillRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17062,7 +17534,7 @@ declare namespace VoximplantAPI {
      */
     sqSkillId: 'any' | number | number[];
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17072,14 +17544,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_DelSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_SetSkillInfoRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17087,7 +17559,7 @@ declare namespace VoximplantAPI {
      */
     sqSkillId: number;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17105,14 +17577,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetSkillInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_BindSkillRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17124,7 +17596,7 @@ declare namespace VoximplantAPI {
      */
     sqSkills: any;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17138,14 +17610,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_BindSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_UnbindSkillRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17157,7 +17629,7 @@ declare namespace VoximplantAPI {
      */
     sqSkillId: 'any' | number | number[];
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17171,18 +17643,18 @@ declare namespace VoximplantAPI {
   }
   interface SQ_UnbindSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_GetSkillsRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17231,7 +17703,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_BindAgentRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17243,7 +17715,7 @@ declare namespace VoximplantAPI {
      */
     userId: 'any' | number | number[];
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17261,14 +17733,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_BindAgentResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_UnbindAgentRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17280,7 +17752,7 @@ declare namespace VoximplantAPI {
      */
     userId: 'any' | number | number[];
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17294,14 +17766,14 @@ declare namespace VoximplantAPI {
   }
   interface SQ_UnbindAgentResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
   }
   interface SQ_GetAgentsRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17309,7 +17781,7 @@ declare namespace VoximplantAPI {
      */
     handleCalls: boolean;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17378,7 +17850,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetAgentInfoRequest {
     /**
-     * ID of the application to search by
+     * Application ID to search by
      */
     applicationId: number;
     /**
@@ -17390,7 +17862,7 @@ declare namespace VoximplantAPI {
      */
     handleCalls: boolean;
     /**
-     * Name of the application to search by. Can be used instead of <b>application_id</b>
+     * Application name to search by. Can be used instead of <b>application_id</b>
      */
     applicationName?: string;
     /**
@@ -17404,7 +17876,7 @@ declare namespace VoximplantAPI {
   }
   interface SQ_SetAgentInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17515,7 +17987,7 @@ declare namespace VoximplantAPI {
   }
   interface AddSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -17536,7 +18008,7 @@ declare namespace VoximplantAPI {
   }
   interface DelSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17557,7 +18029,7 @@ declare namespace VoximplantAPI {
   }
   interface SetSkillInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17632,7 +18104,7 @@ declare namespace VoximplantAPI {
   }
   interface BindSkillResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17687,7 +18159,7 @@ declare namespace VoximplantAPI {
   }
   interface AddAdminUserResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -17712,7 +18184,7 @@ declare namespace VoximplantAPI {
   }
   interface DelAdminUserResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17745,7 +18217,7 @@ declare namespace VoximplantAPI {
   }
   interface SetAdminUserInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17820,7 +18292,7 @@ declare namespace VoximplantAPI {
   }
   interface AttachAdminRoleResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17875,7 +18347,7 @@ declare namespace VoximplantAPI {
   }
   interface AddAdminRoleResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     /**
@@ -17896,7 +18368,7 @@ declare namespace VoximplantAPI {
   }
   interface DelAdminRoleResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -17941,7 +18413,7 @@ declare namespace VoximplantAPI {
   }
   interface SetAdminRoleInfoResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -18057,7 +18529,7 @@ declare namespace VoximplantAPI {
   }
   interface AddAuthorizedAccountIPResponse {
     /**
-     * 1
+     * Returns 1 if the request has been completed successfully
      */
     result: number;
     error?: APIError;
@@ -18268,6 +18740,7 @@ declare namespace VoximplantAPI {
      * Sent or received SMS. Possible values: 'IN', 'OUT', 'in, 'out'. Leave blank to get both incoming and outgoing messages
      */
     direction?: string;
+    timezone?: string;
     /**
      * Maximum number of resulting rows fetched. Must be not bigger than 1000. If left blank, then the default value of 1000 is used
      */
@@ -18345,7 +18818,7 @@ declare namespace VoximplantAPI {
      */
     sendSmsMessage: (request: SendSmsMessageRequest) => Promise<SendSmsMessageResponse>;
     /**
-     * Sends an SMS message from the application to customers. The source phone number should be purchased from Voximplant and support SMS (which is indicated by the <b>is_sms_supported</b> property in the objects returned by the <a href='/docs/references/httpapi/managing_phone_numbers#getphonenumbers'>/GetPhoneNumbers</a> Management API) and SMS should be enabled for it via the <a href='/docs/references/httpapi/managing_sms#controlsms'>/ControlSms</a> Management API.
+     * Sends an A2P SMS message from the application to customers. A SenderID is required for A2P messages. Please contact support for installing a SenderID.
      */
     a2PSendSms: (request: A2PSendSmsRequest) => Promise<A2PSendSmsResponse>;
     /**
@@ -18395,7 +18868,7 @@ declare namespace VoximplantAPI {
   }
   interface SetKeyValueItemRequest {
     /**
-     * Key, up to 200 characters. A key can contain a namespace that is written before the ':' symbol, for example, test:1234. Thus, namespace 'test' can be used as a pattern in the [GetKeyValueItems](/docs/references/httpapi/keyvaluestorage#getkeyvalueitems) and [GetKeyValueKeys](/docs/references/httpapi/keyvaluestorage#getkeyvaluekeys) methods to find the keys with the same namespace
+     * Key, up to 200 characters. A key can contain a namespace that is written before the ':' symbol, for example, test:1234. Thus, namespace 'test' can be used as a pattern in the [GetKeyValueItems](/docs/references/httpapi/keyvaluestorage#getkeyvalueitems) and [GetKeyValueKeys](/docs/references/httpapi/keyvaluestorage#getkeyvaluekeys) methods to find the keys with the same namespace.<br><br>The key should match the following regular expression: `^[a-zA-Z0-9а-яА-ЯёЁ_\-:;.#+]*$`
      */
     key: string;
     /**
@@ -18403,11 +18876,11 @@ declare namespace VoximplantAPI {
      */
     value: string;
     /**
-     * The application ID
+     * Application ID
      */
     applicationId: number;
     /**
-     * The application name
+     * Application name
      */
     applicationName?: string;
     /**
@@ -18594,6 +19067,181 @@ declare namespace VoximplantAPI {
      */
     downloadInvoice: (request: DownloadInvoiceRequest) => Promise<DownloadInvoiceResponse>;
   }
+  interface AddSecretRequest {
+    /**
+     * Application ID to add the secret to
+     */
+    applicationId: number;
+    /**
+     * Application name. Can be used instead of <b>application_id</b>
+     */
+    applicationName: string;
+    /**
+     * Secret name. The name must start with a Latin letter and can contain up to 64 characters, including Latin letters, digits and underscores
+     */
+    secretName: string;
+    /**
+     * Secret value. Maximum length is 8192 characters
+     */
+    secretValue: string;
+    /**
+     * Optional. Secret description. When processing, the length is truncated to the first 200 characters
+     */
+    description?: string;
+  }
+  interface AddSecretResponse {
+    /**
+     * Result with the added secret ID
+     */
+    result: AddSecretResult[];
+    error?: APIError;
+  }
+  interface DelSecretRequest {
+    /**
+     * Application ID
+     */
+    applicationId: number;
+    /**
+     * Application name. Can be used instead of <b>application_id</b>
+     */
+    applicationName: string;
+    /**
+     * IDs to delete. A list separated by semicolons (;). Use the 'all' value to delete all secrets
+     */
+    secretId: 'any' | number | number[];
+    /**
+     * Secret names to delete. List separated by semicolons (;)
+     */
+    secretName: string | string[];
+  }
+  interface DelSecretResponse {
+    /**
+     * Returns 1 if the secret has been deleted successfully
+     */
+    result: number;
+    error?: APIError;
+  }
+  interface GetSecretValueRequest {
+    /**
+     * Application ID
+     */
+    applicationId: number;
+    /**
+     * Application name. Can be used instead of <b>application_id</b>
+     */
+    applicationName: string;
+    /**
+     * Secret ID
+     */
+    secretId: number;
+    /**
+     * Secret name. Can be used instead of <b>secret_id</b>
+     */
+    secretName: string;
+  }
+  interface GetSecretValueResponse {
+    /**
+     * The full secret info (with value)
+     */
+    result: GetSecretValueResult[];
+    error?: APIError;
+  }
+  interface GetSecretsRequest {
+    /**
+     * Application ID
+     */
+    applicationId: number;
+    /**
+     * Application name. Can be used instead of <b>application_id</b>
+     */
+    applicationName: string;
+    /**
+     * Filter by the secret name part
+     */
+    secretNamePart?: string;
+    /**
+     * Maximum returning record number
+     */
+    count?: number;
+    /**
+     * First <b>N</b> records to be skipped in the output
+     */
+    offset?: number;
+  }
+  interface GetSecretsResponse {
+    /**
+     * Secrets list
+     */
+    result: SecretListItem[];
+    /**
+     * Returned secrets number
+     */
+    count: number;
+    /**
+     * Total found secrets number
+     */
+    totalCount: number;
+    error?: APIError;
+  }
+  interface SetSecretInfoRequest {
+    /**
+     * Application ID
+     */
+    applicationId: number;
+    /**
+     * Application name. Can be used instead of <b>application_id</b>
+     */
+    applicationName: string;
+    /**
+     * Secret ID to edit
+     */
+    secretId: number;
+    /**
+     * Secret name. Can be used instead of <b>secret_id</b>
+     */
+    secretName: string;
+    /**
+     * New secret name. The name must start with a Latin letter and can contain up to 64 characters, including Latin letters, digits and underscores
+     */
+    newSecretName?: string;
+    /**
+     * Secret value. Maximum length is 8192 characters
+     */
+    secretValue?: string;
+    /**
+     * Secret description. When processing, the length is truncated to the first 200 characters
+     */
+    description?: string;
+  }
+  interface SetSecretInfoResponse {
+    /**
+     * Returns 1 if the secret has been updated successfully
+     */
+    result: number;
+    error?: APIError;
+  }
+  interface SecretsInterface {
+    /**
+     * Adds a new secret.
+     */
+    addSecret: (request: AddSecretRequest) => Promise<AddSecretResponse>;
+    /**
+     * Deletes an existing secret.
+     */
+    delSecret: (request: DelSecretRequest) => Promise<DelSecretResponse>;
+    /**
+     * Gets the value of a specific secret.
+     */
+    getSecretValue: (request: GetSecretValueRequest) => Promise<GetSecretValueResponse>;
+    /**
+     * Gets the list of an application's secrets.
+     */
+    getSecrets: (request: GetSecretsRequest) => Promise<GetSecretsResponse>;
+    /**
+     * Edits a secret's parameters.
+     */
+    setSecretInfo: (request: SetSecretInfoRequest) => Promise<SetSecretInfoResponse>;
+  }
   class Client {
     
     Accounts: AccountsInterface;
@@ -18602,10 +19250,11 @@ declare namespace VoximplantAPI {
     CallLists: CallListsInterface;
     Scenarios: ScenariosInterface;
     History: HistoryInterface;
+    PhoneNumbers: PhoneNumbersInterface;
     PSTNBlacklist: PSTNBlacklistInterface;
     SIPWhiteList: SIPWhiteListInterface;
     SIPRegistration: SIPRegistrationInterface;
-    PhoneNumbers: PhoneNumbersInterface;
+    WABPhoneNumbers: WABPhoneNumbersInterface;
     CallerIDs: CallerIDsInterface;
     OutboundTestNumbers: OutboundTestNumbersInterface;
     Queues: QueuesInterface;
@@ -18620,9 +19269,12 @@ declare namespace VoximplantAPI {
     RoleSystem: RoleSystemInterface;
     KeyValueStorage: KeyValueStorageInterface;
     Invoices: InvoicesInterface;
+    Secrets: SecretsInterface;
   }
   
 }
+
+/* === DIFF MESSAGE - REMOVE BEFORE THE PRODUCTION === */
 
 declare namespace VoximplantAvatar {
   /**
@@ -18638,7 +19290,7 @@ declare namespace VoximplantAvatar {
      */
     customData?: Object;
     /**
-     * Optional. Whether an avatar should return detailed information on recognizing the user input (i.e. whether the **intents** are passed to [VoximplantAvatar.Events.UtteranceParsed](/docs/references/voxengine/voximplantavatar/events#utteranceparsed) in the avatar script). NOTE: starting from the text implementation the avatar always returns detailed information.
+     * Optional. Whether an avatar should return detailed information on recognizing the user input (i.e. whether the **intents** are passed to [VoximplantAvatar.Events.UtteranceParsed](/docs/references/voxengine/voximplantavatar/events#utteranceparsed) in the avatar script).<br>NOTE: starting from the text implementation the avatar always returns detailed information.
      */
     extended?: boolean;
   }
@@ -19020,6 +19672,32 @@ declare enum WebSocketAudioEncoding {
   OPUS = 'OPUS',
 }
 
+/**
+ * @private
+ */
+interface _WebSocketBasedClientParameters {
+  /**
+   * Optional. Enables statistics functionality.
+   */
+  statistics?: boolean;
+  /**
+   * Optional. Whether to enable the tracing functionality.  
+   * 
+   * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+   * 
+   * NOTE: enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
+   */
+  trace?: boolean;
+  /**
+   * Optional. Whether to enable the privacy functionality.
+   * 
+   * If privacy is enabled, the logging for the WebSocket connection is disabled.
+   * 
+   * NOTE: the default value is **false**.
+   */
+   privacy?: boolean;
+}
+
 declare enum WebSocketCloseCode {
   /**
    * Normal connection closure.
@@ -19256,7 +19934,7 @@ declare interface WebSocketMediaInfo {
 /**
  * [WebSocket] parameters. Can be passed as arguments to the [VoxEngine.createWebSocket] method.
  */
-declare interface WebSocketParameters {
+declare interface WebSocketParameters extends _WebSocketBasedClientParameters {
   /**
    * Optional. Either a single protocol string or an array of protocol strings. The default value is **chat**.
    */
@@ -19265,18 +19943,6 @@ declare interface WebSocketParameters {
    * Optional. List of dictionaries with key and value fields representing headers.
    */
   headers?: { name: string; value: string }[];
-  /**
-   * Optional. Enables statistics functionality.
-   */
-  statistics?: boolean;
-  /**
-   * Optional. Whether to enable the tracing functionality.  
-   * 
-   * If tracing is enabled, an URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-   * 
-   * Note: Enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
-   */
-  trace?: boolean;
 }
 
 declare enum WebSocketReadyState {
@@ -20415,7 +21081,7 @@ declare interface ASRParameters {
    * <br>
    * *Available for providers: Amazon, Google, Microsoft, SaluteSpeech, T-Bank, Yandex.*
    * <br>
-   * *Note: for the SaluteSpeech provider the default value is **true**.*
+   * *NOTE: for the SaluteSpeech provider the default value is **true**.*
    */
   singleUtterance?: boolean;
 
@@ -23220,7 +23886,7 @@ declare interface RichContentButtons {
   items: RichContentButtonItem[];
 }
 
-/*
+/**
  * Can be passed via the [RichContent.contact] parameter.
  */
 declare interface RichContentContact {
@@ -23580,7 +24246,7 @@ declare interface URLPlayerParameters {
    */
   onPause?: boolean;
   /**
-   * Optional. Whether to use progressive playback. If true, the file is delivered in chunks which reduces delay before a method call and playback. The default value is **false**.
+   * Optional. Whether to use progressive playback. If true, the file is delivered in chunks, which reduces delay before a method call and playback. The default value is **false**.
    */
   progressivePlayback?: boolean;
   /**

@@ -1,6 +1,6 @@
 /**
  * ===
- * VoxEngine version: 7.42.0
+ * VoxEngine version: 7.44.0
  * ===
  */
 
@@ -7203,6 +7203,14 @@ declare namespace Grok {
 
 
 declare namespace Inworld {
+  /**
+   * Creates a new [Inworld.RealtimeAPIClient] instance.
+   * @param parameters The [Inworld.RealtimeAPIClient] parameters.
+   */
+  function createRealtimeAPIClient(parameters: RealtimeAPIClientParameters): Promise<Inworld.RealtimeAPIClient>;
+}
+
+declare namespace Inworld {
     /**
      * Creates a new [Inworld.RealtimeTTSPlayer] instance. You can attach media streams later via the [Inworld.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
      * @param parameters Optional. Realtime TTS player parameters
@@ -7211,7 +7219,453 @@ declare namespace Inworld {
 }
 
 declare namespace Inworld {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an Inworld WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedInworldEvent
+     */
+    WebSocketMediaStarted = 'Inworld.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an Inworld WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedInworldEvent
+     */
+    WebSocketMediaEnded = 'Inworld.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [Inworld.Events.WebSocketMediaStarted]: _WebSocketMediaStartedInworldEvent;
+    [Inworld.Events.WebSocketMediaEnded]: _WebSocketMediaEndedInworldEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [Inworld.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedInworldEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedInworldEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
 }
+
+declare namespace Inworld {
+}
+declare namespace Inworld {
+  /**
+   * @private
+   */
+  interface _RealtimeAPIClientEvents extends _Events, _RealtimeAPIEvents {
+  }
+}
+
+declare namespace Inworld {
+  /**
+   * [Inworld.RealtimeAPIClient] parameters. Can be passed as arguments to the [Inworld.createRealtimeAPIClient] method.
+   */
+  interface RealtimeAPIClientParameters extends _VoiceAIClientParameters {
+    /**
+     * The API key for the Inworld Realtime API.
+     */
+    apiKey: string;
+    
+    /**
+     * The session key for the Inworld Realtime API.
+     */
+    sessionKey: string;
+
+    /**
+     * The authentication scheme (**basic** or **bearer**) for the Inworld Realtime API. The default value is **bearer**.
+     */
+    authScheme?: string;
+  }
+}
+
+declare namespace Inworld {
+  class RealtimeAPIClient {
+    /**
+     * Returns the RealtimeAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the Inworld WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the Inworld connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the Inworld (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that receives media.
+     * @param parameters Optional interaction parameters.
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the Inworld (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media.
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the Inworld WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters.
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [Inworld.RealtimeAPIEvents] or [Inworld.Events] event.
+     * @param event Event class (i.e., [Inworld.RealtimeAPIEvents.SessionCreated]).
+     * @param callback Handler function. A single parameter is passed - object with event information.
+     */
+    addEventListener<T extends keyof Inworld._RealtimeAPIClientEvents>(
+      event: Inworld.Events | Inworld.RealtimeAPIEvents | T,
+      callback: (event: Inworld._RealtimeAPIClientEvents[T]) => any
+    ): void;
+
+    /**
+     * Removes a handler for the specified [Inworld.RealtimeAPIEvents] or [Inworld.Events] event.
+     * @param event Event class (i.e., [Inworld.RealtimeAPIEvents.SessionCreated]).
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed.
+     */
+    removeEventListener<T extends keyof Inworld._RealtimeAPIClientEvents>(
+      event: Inworld.Events | Inworld.RealtimeAPIEvents | T,
+      callback?: (event: Inworld._RealtimeAPIClientEvents[T]) => any
+    ): void;
+
+    /**
+     * Update the session configuration. The server responds with a session.updated event. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    sessionUpdate(parameters: Object): void;
+
+    /**
+     * Add a conversation item (message, function call result, etc.). [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    conversationItemCreate(parameters: Object): void;
+
+    /**
+     * Truncate an assistant message's audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    conversationItemTruncate(parameters: Object): void;
+
+    /**
+     * Delete a conversation item by ID. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    conversationItemDelete(parameters: Object): void;
+
+    /**
+     * Retrieve a conversation item by ID. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    conversationItemRetrieve(parameters: Object): void;
+
+    /**
+     * Trigger a model response. The server streams back response events. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    responseCreate(parameters: Object): void;
+
+    /**
+     * Cancel an in-progress response. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    responseCancel(parameters: Object): void;
+
+    /**
+     * Append audio bytes to the input buffer. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    inputAudioBufferAppend(parameters: Object): void;
+
+    /**
+     * Commit the buffered audio as a user message. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    inputAudioBufferCommit(parameters: Object): void;
+
+    /**
+     * Discard all audio in the input buffer. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    inputAudioBufferClear(parameters: Object): void;
+
+    /**
+     * Clear the server's output audio buffer, stopping playback. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @param parameters Event payload object.
+     */
+    outputAudioBufferClear(parameters: Object): void;
+  }
+}
+
+declare namespace Inworld {
+  /**
+   * @event
+   */
+  enum RealtimeAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _RealtimeAPIEvent
+     */
+    Unknown = 'Inworld.RealtimeAPI.Unknown',
+    /**
+     * The HTTP response event.
+     * @typedef _RealtimeAPIEvent
+     */
+    HTTPResponse = 'Inworld.RealtimeAPI.HTTPResponse',
+    /**
+     * Indicates an error occurred. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    Error = 'Inworld.RealtimeAPI.Error',
+    /**
+     * Not currently supported. The session starts immediately with default configuration. Send a session.update to configure the session. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    SessionCreated = 'Inworld.RealtimeAPI.SessionCreated',
+    /**
+     * Confirms a session.update was applied. The server responds with a session.updated event. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    SessionUpdated = 'Inworld.RealtimeAPI.SessionUpdated',
+    /**
+     * A new item was added to the conversation. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemAdded = 'Inworld.RealtimeAPI.ConversationItemAdded',
+    /**
+     * An item finished being populated. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemDone = 'Inworld.RealtimeAPI.ConversationItemDone',
+    /**
+     * An item was deleted from the conversation. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemDeleted = 'Inworld.RealtimeAPI.ConversationItemDeleted',
+    /**
+     * Response to conversation.item.retrieve. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemRetrieved = 'Inworld.RealtimeAPI.ConversationItemRetrieved',
+    /**
+     * An assistant audio item was truncated. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemTruncated = 'Inworld.RealtimeAPI.ConversationItemTruncated',
+    /**
+     * Streaming partial transcription for user audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionDelta = 'Inworld.RealtimeAPI.ConversationItemInputAudioTranscriptionDelta',
+    /**
+     * Final transcription for a user audio item. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionCompleted = 'Inworld.RealtimeAPI.ConversationItemInputAudioTranscriptionCompleted',
+    /**
+     * A new response was created. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseCreated = 'Inworld.RealtimeAPI.ResponseCreated',
+    /**
+     * The response finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseDone = 'Inworld.RealtimeAPI.ResponseDone',
+    /**
+     * An output item was added to the response. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputItemAdded = 'Inworld.RealtimeAPI.ResponseOutputItemAdded',
+    /**
+     * An output item finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputItemDone = 'Inworld.RealtimeAPI.ResponseOutputItemDone',
+    /**
+     * A content part was added to an output item. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseContentPartAdded = 'Inworld.RealtimeAPI.ResponseContentPartAdded',
+    /**
+     * A content part finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseContentPartDone = 'Inworld.RealtimeAPI.ResponseContentPartDone',
+    /**
+     * Streaming text chunk from the model. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputTextDelta = 'Inworld.RealtimeAPI.ResponseOutputTextDelta',
+    /**
+     * Text output finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputTextDone = 'Inworld.RealtimeAPI.ResponseOutputTextDone',
+    /**
+     * Audio output for a content part finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioDone = 'Inworld.RealtimeAPI.ResponseOutputAudioDone',
+    /**
+     * Streaming transcript for generated audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptDelta = 'Inworld.RealtimeAPI.ResponseOutputAudioTranscriptDelta',
+    /**
+     * Final transcript for generated audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseOutputAudioTranscriptDone = 'Inworld.RealtimeAPI.ResponseOutputAudioTranscriptDone',
+    /**
+     * Streaming function call arguments. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDelta = 'Inworld.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
+    /**
+     * Function call arguments finished. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    ResponseFunctionCallArgumentsDone = 'Inworld.RealtimeAPI.ResponseFunctionCallArgumentsDone',
+    /**
+     * Voice activity detected: user started speaking. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStarted = 'Inworld.RealtimeAPI.InputAudioBufferSpeechStarted',
+    /**
+     * Voice activity ended: user stopped speaking. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferSpeechStopped = 'Inworld.RealtimeAPI.InputAudioBufferSpeechStopped',
+    /**
+     * Buffered audio was committed as a conversation item. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferCommitted = 'Inworld.RealtimeAPI.InputAudioBufferCommitted',
+    /**
+     * Input audio buffer was cleared. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferCleared = 'Inworld.RealtimeAPI.InputAudioBufferCleared',
+    /**
+     * An idle timeout was triggered on the input buffer. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    InputAudioBufferTimeoutTriggered = 'Inworld.RealtimeAPI.InputAudioBufferTimeoutTriggered',
+    /**
+     * Server started sending output audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    OutputAudioBufferStarted = 'Inworld.RealtimeAPI.OutputAudioBufferStarted',
+    /**
+     * Server stopped sending output audio. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * @typedef _RealtimeAPIEvent
+     */
+    OutputAudioBufferStopped = 'Inworld.RealtimeAPI.OutputAudioBufferStopped',
+    /**
+     * Output audio buffer was cleared.
+     * @typedef _RealtimeAPIEvent
+     */
+    OutputAudioBufferCleared = 'Inworld.RealtimeAPI.OutputAudioBufferCleared',
+    /**
+     * Reports current rate limit state.
+     * @typedef _RealtimeAPIEvent
+     */
+    RateLimitsUpdated = 'Inworld.RealtimeAPI.RateLimitsUpdated',
+    /**
+     * The WebSocket error response event.
+     * @typedef _RealtimeAPIEvent
+     */
+    WebSocketError = 'Inworld.RealtimeAPI.WebSocketError',
+    /**
+     * Contains information about connector.
+     * @typedef _RealtimeAPIEvent
+     */
+    ConnectorInformation = 'Inworld.RealtimeAPI.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _RealtimeAPIEvents {
+    [RealtimeAPIEvents.Unknown]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.HTTPResponse]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.Error]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionCreated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.SessionUpdated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemDeleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemRetrieved]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemTruncated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseCreated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputItemDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartAdded]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseContentPartDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputTextDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseOutputAudioTranscriptDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDelta]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ResponseFunctionCallArgumentsDone]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStarted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferSpeechStopped]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCommitted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferCleared]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.InputAudioBufferTimeoutTriggered]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.OutputAudioBufferStarted]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.OutputAudioBufferStopped]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.OutputAudioBufferCleared]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.RateLimitsUpdated]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.WebSocketError]: _RealtimeAPIEvent;
+    [RealtimeAPIEvents.ConnectorInformation]: _RealtimeAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _RealtimeAPIEvent {
+    /**
+     * The [Inworld.RealtimeAPIClient] instance.
+     */
+    client: RealtimeAPIClient;
+    /**
+     * The event's data.
+     */
+    data?: Object;
+  }
+}
+
 declare namespace Inworld {
   class RealtimeTTSPlayer extends BasePlayer {
     /**
@@ -7481,53 +7935,6 @@ declare namespace MCP {
      * @param parameters The [MCP.Client] parameters
      */
     function createClient(parameters: ClientParameters): Promise<Client>
-}
-declare namespace MCP {
-  /**
-   * @event
-   */
-  enum Events {
-    /**
-     * Triggered when the audio stream sent by a third party through an WebSocket is started playing.
-     * @typedef _WebSocketMediaStartedMCPEvent
-     */
-    WebSocketMediaStarted = 'MCP.Events.WebSocketMediaStarted',
-    /**
-     * Triggers after the end of the audio stream sent by a third party through an WebSocket (**1 second of silence**).
-     * @typedef _WebSocketMediaEndedMCPEvent
-     */
-    WebSocketMediaEnded = 'MCP.Events.WebSocketMediaEnded',
-  }
-
-  /**
-   * @private
-   */
-  interface _Events {
-    [MCP.Events.WebSocketMediaStarted]: _WebSocketMediaStartedMCPEvent;
-    [MCP.Events.WebSocketMediaEnded]: _WebSocketMediaEndedMCPEvent;
-  }
-
-  /**
-   * @private
-   */
-  interface _Event {
-    /**
-     * The [MCP.Client] instance.
-     */
-    client: Client;
-  }
-
-  /**
-   * @private
-   */
-  interface _WebSocketMediaStartedMCPEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
-  }
-
-  /**
-   * @private
-   */
-  interface _WebSocketMediaEndedMCPEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
-  }
 }
 declare namespace MCP {
 }

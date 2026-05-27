@@ -1,0 +1,13 @@
+node_modules/
+.yarn/cache/
+.yarn/unplugged/
+lib/**/*.js
+lib/**/*.d.ts
+bin/**/*.js
+bin/**/*.d.ts
+.eslintcache
+coverage/
+.nyc_output/
+voxfiles/
+__tests__/native_tests/
+*.log

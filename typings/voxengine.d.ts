@@ -1,6 +1,6 @@
 /**
  * ===
- * VoxEngine version: 7.44.0
+ * VoxEngine version: 7.57.0
  * ===
  */
 
@@ -32,6 +32,14 @@ declare interface ACDEnqueueParameters {
    * Custom data for the current call object.
    */
   customData: string;
+  /**
+   * Optional. Name of the caller displayed to the agent. Defaults to the caller ID when omitted.
+   */
+  displayName?: string;
+  /**
+   * Optional. Internal information about codecs taken from the [AppEvents.CallAlerting] event.
+   */
+  scheme?: { [id: string]: any };
 }
 
 /**
@@ -150,6 +158,10 @@ declare interface _ACDErrorEvent extends _ACDBaseEvent {
    * Error message
    */
   error: string;
+  /**
+   * Optional. Status code associated with the error.
+   */
+  code?: number;
 }
 
 /**
@@ -586,15 +598,15 @@ declare namespace AI {
     /**
      * Initial query parameters.
      */
-    queryParameters: DialogflowQueryParameters;
+    queryParameters?: DialogflowQueryParameters;
     /**
      * Whether to enable single utterance.
      */
-    singleUtterance: boolean;
+    singleUtterance?: boolean;
     /**
      * Instructs the speech synthesizer how to generate the output audio content.
      */
-    outputAudioConfig: DialogflowOutputAudioConfig;
+    outputAudioConfig?: DialogflowOutputAudioConfig;
     /**
      * Optional. Dialogflow session id. Use it for connection to the existing Dialogflow session or to specify your own id for a new session.
      */
@@ -950,7 +962,7 @@ declare namespace AMD {
     /**
      * Starts answering machine or voicemail recognition session.
      */
-    detect(): Promise<AMD.Events>;
+    detect(): Promise<AMD._DetectionCompleteEvent | AMD._DetectionErrorEvent>;
 
     /**
      * Adds a handler for the specified [AMD.Events]. Use only functions as handlers; anything except a function leads to an error and scenario termination when a handler is called.
@@ -959,7 +971,7 @@ declare namespace AMD {
      */
     addEventListener<T extends keyof AMD._Events>(
       event: AMD.Events | T,
-      callback: (event: AMD._Events[T]) => any,
+      callback: (event: AMD._Events[T]) => any
     ): void;
 
     /**
@@ -969,7 +981,7 @@ declare namespace AMD {
      */
     removeEventListener<T extends keyof AMD._Events>(
       event: AMD.Events | T,
-      callback?: (event: AMD._Events[T]) => any,
+      callback?: (event: AMD._Events[T]) => any
     ): void;
   }
 }
@@ -1214,10 +1226,10 @@ declare enum AppEvents {
   Started = 'Application.Started',
   /**
    * Triggered when the Management API request is received by the session.
-   * 
+   *
    * If you [start a call session with the HTTP request](/docs/references/httpapi/managing_scenarios#startscenarios), you get an answer: an object with media\_session\_access\_url property.
    * The property's value is the managing URL for the specified session, so it can be used in managing HTTP request that triggers [AppEvents.HttpRequest] event.
-   * 
+   *
    * You can find more information in the [Remote session management](/docs/guides/voxengine/remote-sessions) article.
    * @typedef _HttpRequestEvent
    */
@@ -1271,7 +1283,6 @@ declare interface _HttpRequestEvent {
   headers: { key: string; value: string }[];
 }
 
-
 /**
  * @private
  */
@@ -1324,7 +1335,7 @@ declare interface _StartedEvent {
  * @private
  */
 declare interface _SystemError {
-  systemError?: boolean
+  systemError?: boolean;
 }
 
 /**
@@ -1380,8 +1391,9 @@ declare interface _CallAlertingEvent {
   /**
    * Internal information about codecs, should be passed to the [VoxEngine.callUser], [VoxEngine.callUserDirect], [VoxEngine.callSIP], [VoxEngine.callConference], [Call.answer], [Call.answerDirect], [Call.startEarlyMedia] methods call.
    */
-  scheme: string;
+  scheme: { [id: string]: { audio: any; video: any } };
 }
+
 /**
  * Represents an application storage object to manipulate key-value pairs.
  * <br>
@@ -2330,7 +2342,7 @@ declare interface BaseCallParameters {
   /**
    * Optional. Internal information about codecs.
    */
-  scheme?: { [id: string]: { audio: any, video: any } };
+  scheme?: { [id: string]: { audio: any; video: any } };
   /**
    * Optional. Sets the maximum possible video bitrate for the customer device in kbps.
    */
@@ -3396,7 +3408,7 @@ declare interface CallSIPParameters {
   /**
    * Optional. Internal information about codecs.
    */
-  scheme?: Object;
+  scheme?: { [id: string]: { audio: any; video: any } };
   /**
    * Optional. Internal flag enables strict audio codec in scheme. The default value is **false**.
    */
@@ -3404,7 +3416,11 @@ declare interface CallSIPParameters {
   /**
    * Optional. Enables [CallEvents.Ringing] event during SIP Call. The default value is **false**.
    */
-  allow180After183?: boolean
+  allow180After183?: boolean;
+  /**
+   * Optional. Disables DTX for audio. The default value is **false**.
+   */
+  disableDtxForAudio?: boolean;
 }
 
 /**
@@ -3492,7 +3508,7 @@ declare interface CallWhatsappUserParameters {
    */
   headers?: Object;
   /**
-   * Optional. Wheter to disable DTX (Discontinuous Transmission) for the audio codec.
+   * Optional. Whether to disable DTX (Discontinuous Transmission) for the audio codec.
    */
   disableDtxForAudio?: boolean;
 }
@@ -3557,7 +3573,7 @@ declare class Call {
    */
   addEventListener<T extends keyof _CallEvents>(
     event: CallEvents | T,
-    callback: (event: _CallEvents[T]) => any,
+    callback: (event: _CallEvents[T]) => any
   ): void;
 
   /**
@@ -3567,7 +3583,7 @@ declare class Call {
    */
   removeEventListener<T extends keyof _CallEvents>(
     event: CallEvents | T,
-    callback?: (event: _CallEvents[T]) => any,
+    callback?: (event: _CallEvents[T]) => any
   ): void;
 
   /**
@@ -3601,7 +3617,7 @@ declare class Call {
   answerDirect(
     peerCall: Call,
     extraHeaders?: { [header: string]: string },
-    parameters?: CallAnswerParameters,
+    parameters?: CallAnswerParameters
   ): void;
 
   /**
@@ -3636,11 +3652,11 @@ declare class Call {
    */
   startEarlyMedia(
     extraHeaders?: { [header: string]: string },
-    scheme?: string,
+    scheme?: { [id: string]: { audio: any; video: any } },
     maxVideoBitrate?: number,
     audioLevelExtension?: boolean,
     conferenceCall?: boolean,
-    disableDtxForAudio?: boolean,
+    disableDtxForAudio?: boolean
   ): void;
 
   /**
@@ -3760,9 +3776,9 @@ declare class Call {
 
   /**
    * Enables the retrieval of multimedia statistics during a call. When enabled, the [CallEvents.MediaStatisticsReceived] event is triggered and retrieves multimedia statistics during a call.
-   * @param parameters Multimedia statistics parameters 
+   * @param parameters Multimedia statistics parameters
    */
-  monitorMediaStatistics(parameters: MonitorMediaStatisticsParameters): void
+  monitorMediaStatistics(parameters: MonitorMediaStatisticsParameters): void;
 }
 
 /**
@@ -3852,8 +3868,7 @@ declare namespace CallList {
    * <br>
    * NOTE: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
    * <br>
-   * After an unsuccessful calling attempt, this method executes the 
-   * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
+   * After an unsuccessful calling attempt, provide an error field to the data object.
    * <br>
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
@@ -3871,8 +3886,7 @@ declare namespace CallList {
    * <br>
    * NOTE: if you do not change the `attempts_left` manually, the call list decreases its value by 1 automatically.
    * <br>
-   * After an unsuccessful calling attempt, this method executes the 
-   * [reportError](/docs/references/voxengine/calllist/reporterror) method automatically.
+   * After an unsuccessful calling attempt, provide an error field to the data object.
    * <br>
    * Refer to the [Editable call lists](/docs/guides/solutions/editable-call-lists) guide to learn more.
    * @param data Data to update
@@ -4062,9 +4076,9 @@ declare namespace Cartesia {
      */
     client: AgentsClient;
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
   
@@ -5341,7 +5355,7 @@ declare namespace Deepgram {
      * The HTTP response event.
      * @typedef _AgentsEvent
      */
-    HTTPResponse = 'ElevenLabs.Agents.HTTPResponse',
+    HTTPResponse = 'Deepgram.Agents.HTTPResponse',
 
     /**
      * Receive a welcome message from the server to confirm the websocket has opened. [https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Welcome](https://developers.deepgram.com/reference/voice-agent/voice-agent#receive.AgentV1Welcome)
@@ -5466,9 +5480,9 @@ declare namespace Deepgram {
      */
     client: VoiceAgentClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -6101,6 +6115,18 @@ declare namespace ElevenLabs {
      * Optional. Whether to include a [conversation_id](https://elevenlabs.io/docs/api-reference/conversations/get-signed-url#request.query.include_conversation_id.include_conversation_id) with the response. If included, the conversation_signature cannot be used again. The default value is **false**.
      */
     includeConversationId?: boolean;
+    /**
+     * Optional. The base URL for the ElevenLabs Agents.
+     */
+    baseUrl?: string;
+    /**
+     * Optional. The environment to use for the conversation. When specified, environment variables and tool configurations resolve using values for this environment. See [Environment variables](https://elevenlabs.io/docs/eleven-agents/integrate/environment-variables#websocket).
+     */
+    environment?: string;
+    /**
+     * Optional. The ID of the branch to use.
+     */
+    branchId?: string;
   }
 }
   
@@ -6311,9 +6337,9 @@ declare namespace ElevenLabs {
      */
     client: AgentsClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
   
@@ -6541,7 +6567,7 @@ declare class Endpoint {
 
 declare namespace Gemini {
   /**
-   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
+   * [GenAI backend](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Backend) to use for the [Gemini.LiveAPIClient]. Can be passed via the [Gemini.LiveAPIClientParameters.backend] parameter.
    */
   enum Backend {
     /**
@@ -6651,11 +6677,11 @@ declare namespace Gemini {
      */
     credentials?: string;
     /**
-     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.57.0#HTTPOptions) to override.<br>NOTE: the 'baseUrl' parameter will be ignored.
+     * Optional. [HTTP options](https://pkg.go.dev/google.golang.org/genai@v1.61.0#HTTPOptions) to override.<br>NOTE: the 'baseUrl' parameter will be ignored.
      */
     httpOptions?: Object;
     /**
-     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveConnectConfig) for the API connection.
+     * Optional. [Session config](https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveConnectConfig) for the API connection.
      */
     connectConfig?: Object;
   }
@@ -6663,7 +6689,7 @@ declare namespace Gemini {
 
 declare namespace Gemini {
   /**
-   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.57.0](https://pkg.go.dev/google.golang.org/genai@v1.57.0).
+   * Note that the [Gemini.LiveAPIClient] using the [Google Gen AI Go SDK v1.61.0](https://pkg.go.dev/google.golang.org/genai@v1.61.0).
    */
   class LiveAPIClient {
     /**
@@ -6722,21 +6748,21 @@ declare namespace Gemini {
 
     /**
      * Transmits a LiveClientContent over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendClientContent)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendClientContent)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
      * Transmits a LiveClientRealtimeInput over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendRealtimeInput)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendRealtimeInput)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
      * Transmits a LiveClientToolResponse over the established connection. 
-     * [https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.57.0#Session.SendToolResponse)
+     * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendToolResponse)
      * @param input
      */
     sendToolResponse(input: Object): void
@@ -6755,19 +6781,19 @@ declare namespace Gemini {
     Unknown = 'Gemini.LiveAPI.Unknown',
 
     /**
-     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerContent)
+     * Content generated by the model in response to client messages. [https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerContent](https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerContent)
      * @typedef _LiveAPIEvent
      */
     ServerContent = 'Gemini.LiveAPI.ServerContent',
 
     /**
-     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCall)
+     * Request for the client to execute the `function_calls` and return the responses with the matching `id`s. [https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerToolCall](https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerToolCall)
      * @typedef _LiveAPIEvent
      */
     ToolCall = 'Gemini.LiveAPI.ToolCall',
 
     /**
-     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.57.0#LiveServerToolCallCancellation)
+     * Notification for the client that a previously issued `ToolCallMessage` with the specified `id`s should have been not executed and should be cancelled. [https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerToolCallCancellation](https://pkg.go.dev/google.golang.org/genai@v1.61.0#LiveServerToolCallCancellation)
      * @typedef _LiveAPIEvent
      */
     ToolCallCancellation = 'Gemini.LiveAPI.ToolCallCancellation',
@@ -6799,9 +6825,9 @@ declare namespace Gemini {
      */
     client: LiveAPIClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -6865,342 +6891,6 @@ declare namespace Google {
     clearBuffer(): void;
   }
 }
-
-declare namespace Grok {
-    /**
-     * Creates a new [Grok.VoiceAgentAPIClient] instance.
-     * @param parameters The [Grok.VoiceAgentAPIClient] parameters
-     */
-    function createVoiceAgentAPIClient(parameters: VoiceAgentAPIClientParameters): Promise<Grok.VoiceAgentAPIClient>
-}
-declare namespace Grok {
-  /**
-   * @event
-   */
-  enum Events {
-    /**
-     * Triggered when the audio stream sent by a third party through an Grok WebSocket is started playing.
-     * @typedef _WebSocketMediaStartedGrokEvent
-     */
-    WebSocketMediaStarted = 'Grok.Events.WebSocketMediaStarted',
-    /**
-     * Triggers after the end of the audio stream sent by a third party through an Grok WebSocket (**1 second of silence**).
-     * @typedef _WebSocketMediaEndedGrokEvent
-     */
-    WebSocketMediaEnded = 'Grok.Events.WebSocketMediaEnded',
-  }
-
-  /**
-   * @private
-   */
-  interface _Events {
-    [Grok.Events.WebSocketMediaStarted]: _WebSocketMediaStartedGrokEvent;
-    [Grok.Events.WebSocketMediaEnded]: _WebSocketMediaEndedGrokEvent;
-  }
-
-  /**
-   * @private
-   */
-  interface _Event {
-    /**
-     * The [Grok.VoiceAgentAPIClient] instance.
-     */
-    client: VoiceAgentAPIClient;
-  }
-
-  /**
-   * @private
-   */
-  interface _WebSocketMediaStartedGrokEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
-  }
-
-  /**
-   * @private
-   */
-  interface _WebSocketMediaEndedGrokEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
-  }
-}
-declare namespace Grok {
-}
-declare namespace Grok {
-  /**
-   * @private
-   */
-  interface _VoiceAgentAPIClientEvents extends _Events, _VoiceAgentAPIEvents {
-  }
-}
-declare namespace Grok {
-  /**
-   * [Grok.VoiceAgentAPIClient] parameters. Can be passed as arguments to the [Grok.createVoiceAgentAPIClient] method.
-   */
-  interface VoiceAgentAPIClientParameters extends _VoiceAIClientParameters {
-    /**
-     * The xAI API key for the Grok VoiceAgent API.
-     */
-    xAIApiKey: string;
-    /**
-      * The model to use for the Grok VoiceAgent API.[https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection](https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection)
-     * Note: The default value is **grok-voice-fast-1.0**.
-     */
-    model?: string;
-  }
-}
-declare namespace Grok {
-  class VoiceAgentAPIClient {
-    /**
-     * Returns the VoiceAgentAPIClient id.
-     */
-    id(): string;
-
-    /**
-     * Returns the Grok WebSocket id.
-     */
-    webSocketId(): string;
-
-    /**
-     * Closes the Grok connection (over WebSocket) or connection attempt.
-     */
-    close(): void;
-
-    /**
-     * Starts sending media from the Grok (via WebSocket) to the media unit. Grok works in real time.
-     * @param mediaUnit Media unit that receives media
-     * @param parameters Optional interaction parameters
-     */
-    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
-
-    /**
-     * Stops sending media from the Grok (via WebSocket) to the media unit.
-     * @param mediaUnit Media unit that stops receiving media
-     */
-    stopMediaTo(mediaUnit: VoxMediaUnit): void;
-
-    /**
-     * Clears the Grok WebSocket media buffer.
-     * @param parameters Optional. Media buffer clearing parameters
-     */
-    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
-
-    /**
-     * Adds a handler for the specified [Grok.VoiceAgentAPIEvents] or [Grok.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
-     * @param event Event class (i.e., [Grok.VoiceAgentAPIEvents.ConversationCreated])
-     * @param callback Handler function. A single parameter is passed - object with event information
-     */
-    addEventListener<T extends keyof Grok._VoiceAgentAPIClientEvents>(
-      event: Grok.Events | Grok.VoiceAgentAPIEvents | T,
-      callback: (event: Grok._VoiceAgentAPIClientEvents[T]) => any,
-    ): void;
-
-    /**
-     * Removes a handler for the specified [Grok.VoiceAgentAPIEvents] or [Grok.Events] event.
-     * @param event Event class (i.e., [Grok.VoiceAgentAPIEvents.ConversationCreated])
-     * @param callback Optional. Handler function. If not specified, all handler functions are removed
-     */
-    removeEventListener<T extends keyof Grok._VoiceAgentAPIClientEvents>(
-      event: Grok.Events | Grok.VoiceAgentAPIEvents | T,
-      callback?: (event: Grok._VoiceAgentAPIClientEvents[T]) => any,
-    ): void;
-
-    /**
-     * Send this event to update the session’s configuration. [https://docs.x.ai/docs/guides/voice/agent#client-events-1](https://docs.x.ai/docs/guides/voice/agent#client-events-1)
-     * @param parameters
-     */
-    sessionUpdate(parameters: Object): void
-
-    /**
-     * Clear input audio buffer. [https://docs.x.ai/docs/guides/voice/agent#client-1](https://docs.x.ai/docs/guides/voice/agent#client-1)
-     * @param parameters
-     */
-    inputAudioBufferClear(parameters: Object): void
-
-    /**
-     * Create a new user message. [https://docs.x.ai/docs/guides/voice/agent#client](https://docs.x.ai/docs/guides/voice/agent#client)
-     * @param parameters
-     */
-    conversationItemCreate(parameters: Object): void
-
-    /**
-     * Request the server to create a new assistant response when using client side vad. (This is handled automatically when using server side vad.) [https://docs.x.ai/docs/guides/voice/agent#client-2](https://docs.x.ai/docs/guides/voice/agent#client-2)
-     * @param parameters
-     */
-    responseCreate(parameters: Object): void
-  }
-}
-  
-declare namespace Grok {
-  /**
-   * @event
-   */
-  enum VoiceAgentAPIEvents {
-    /**
-     * The unknown event.
-     * @typedef _VoiceAgentAPIEvent
-     */
-    Unknown = 'Grok.VoiceAgentAPI.Unknown',
-
-    /**
-     * The first message at connection. Notifies the client that a conversation session has been created. [https://docs.x.ai/docs/guides/voice/agent#server-events-2](https://docs.x.ai/docs/guides/voice/agent#server-events-2)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ConversationCreated = 'Grok.VoiceAgentAPI.ConversationCreated',
-
-    /**
-     * Acknowledge the client's "session.update" message that the session has been updated. [https://docs.x.ai/docs/guides/voice/agent#server-events-1](https://docs.x.ai/docs/guides/voice/agent#server-events-1)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    SessionUpdated = 'Grok.VoiceAgentAPI.SessionUpdated',
-
-    /**
-     * Responding to the client that a new user message has been added to conversation history, or if an assistance response has been added to conversation history. [https://docs.x.ai/docs/guides/voice/agent#server](https://docs.x.ai/docs/guides/voice/agent#server)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ConversationItemAdded = 'Grok.VoiceAgentAPI.ConversationItemAdded',
-
-    /**
-     * Notify the client the audio transcription for input has been completed. [https://docs.x.ai/docs/guides/voice/agent#server](https://docs.x.ai/docs/guides/voice/agent#server)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ConversationItemInputAudioTranscriptionCompleted = 'Grok.VoiceAgentAPI.ConversationItemInputAudioTranscriptionCompleted',
-
-    /**
-     * Input audio buffer has been committed. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    InputAudioBufferCommitted = 'Grok.VoiceAgentAPI.InputAudioBufferCommitted',
-
-    /**
-     * Input audio buffer has been cleared. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    InputAudioBufferCleared = 'Grok.VoiceAgentAPI.InputAudioBufferCleared',
-
-    /**
-     * Notify the client the server's VAD has detected the start of a speech. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    InputAudioBufferSpeechStarted = 'Grok.VoiceAgentAPI.InputAudioBufferSpeechStarted',
-
-    /**
-     * Notify the client the server's VAD has detected the end of a speech. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    InputAudioBufferSpeechStopped = 'Grok.VoiceAgentAPI.InputAudioBufferSpeechStopped',
-
-    /**
-     * A new assistant response turn is in progress. Audio delta created from this assistant turn will have the same response id. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseCreated = 'Grok.VoiceAgentAPI.ResponseCreated',
-
-    /**
-     * The assistant's response is completed. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseDone = 'Grok.VoiceAgentAPI.ResponseDone',
-
-    /**
-     * A new assistant response is added to message history. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseOutputItemAdded = 'Grok.VoiceAgentAPI.ResponseOutputItemAdded',
-
-    /**
-     * A new assistant response is done. 
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseOutputItemDone = 'Grok.VoiceAgentAPI.ResponseOutputItemDone',
-
-    /**
-     * Audio transcript delta of the assistant response. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseOutputAudioTranscriptDelta = 'Grok.VoiceAgentAPI.ResponseOutputAudioTranscriptDelta',
-
-    /**
-     * The audio transcript delta of the assistant response has finished generating. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseOutputAudioTranscriptDone = 'Grok.VoiceAgentAPI.ResponseOutputAudioTranscriptDone',
-
-    /**
-     * Notifies client that the audio for this turn has finished generating. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseOutputAudioDone = 'Grok.VoiceAgentAPI.ResponseOutputAudioDone',
-
-    /**
-     * Notifies client that the content part added. 
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseContentPartAdded = 'Grok.VoiceAgentAPI.ResponseContentPartAdded',
-
-    /**
-     * Notifies client that the content part done. 
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseContentPartDone = 'Grok.VoiceAgentAPI.ResponseContentPartDone',
-
-    /**
-     * Function call triggered with complete arguments. [https://docs.x.ai/docs/guides/voice/agent#handling-function-call-responses](https://docs.x.ai/docs/guides/voice/agent#handling-function-call-responses)
-     * @typedef _VoiceAgentAPIEvent
-     */
-    ResponseFunctionCallArgumentsDone = 'Grok.VoiceAgentAPI.ResponseFunctionCallArgumentsDone',
-
-    /**
-     * The WebSocket error response event.
-     * @typedef _VoiceAgentAPIEvent
-     */
-    WebSocketError = 'Grok.VoiceAgentAPI.WebSocketError',
-
-    /**
-    * Contains information about connector.
-    * @typedef _VoiceAgentAPIEvent
-    */
-    ConnectorInformation = 'Grok.VoiceAgentAPI.ConnectorInformation',
-  }
-
-  /**
-   * @private
-   */
-  interface _VoiceAgentAPIEvents {
-    [VoiceAgentAPIEvents.Unknown]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ConversationCreated]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.SessionUpdated]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ConversationItemAdded]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.InputAudioBufferCommitted]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.InputAudioBufferCleared]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.InputAudioBufferSpeechStarted]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.InputAudioBufferSpeechStopped]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseCreated]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseOutputItemAdded]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseOutputItemDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseOutputAudioTranscriptDelta]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseOutputAudioTranscriptDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseOutputAudioDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseContentPartAdded]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseContentPartDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ResponseFunctionCallArgumentsDone]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.WebSocketError]: _VoiceAgentAPIEvent;
-    [VoiceAgentAPIEvents.ConnectorInformation]: _VoiceAgentAPIEvent;
-  }
-
-  /**
-   * @private
-   */
-  interface _VoiceAgentAPIEvent {
-    /**
-     * The [Grok.VoiceAgentAPIClient] instance.
-     */
-    client: VoiceAgentAPIClient;
-    /**
-     * The event's data.
-     */
-    data?: Object;
-  }
-}
-
 
 declare namespace Inworld {
   /**
@@ -7443,7 +7133,7 @@ declare namespace Inworld {
      */
     Error = 'Inworld.RealtimeAPI.Error',
     /**
-     * Not currently supported. The session starts immediately with default configuration. Send a session.update to configure the session. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
+     * Sent by the server immediately when the WebSocket connection is established, carrying the session's default configuration. Send a session.update to configure the session. [https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket](https://docs.inworld.ai/api-reference/realtimeAPI/realtime/realtime-websocket)
      * @typedef _RealtimeAPIEvent
      */
     SessionCreated = 'Inworld.RealtimeAPI.SessionCreated',
@@ -7660,9 +7350,9 @@ declare namespace Inworld {
      */
     client: RealtimeAPIClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -7726,20 +7416,35 @@ declare namespace IVR {
  * require(Modules.IVR);
  * ```
  */
-declare interface IVRPrompt {
-  /**
-   * Voice message to say. Use it together with the lang parameter. SSML is supported; to use it, specify [TTSOptions] before creating an IVRState instance:<br><code>IVR.ttsOptions = { "pitch": "low", "rate": "slow", "volume": "loud" }</code>
-   */
-  say: string;
-  /**
-   * TTS language for pronouncing a value of the <b>say</b> parameter. List of all supported voices: [VoiceList].
-   */
-  lang: string;
-  /**
-   * Voice message url to play. Supported formats are <b>mp3</b> and <b>ogg</b>.
-   */
-  play: string;
-}
+declare type IVRPrompt =
+  | {
+      /**
+       * Voice message to say. Use it together with the lang parameter. SSML is supported; to use it, specify [TTSOptions] before creating an IVRState instance:<br><code>IVR.ttsOptions = { "pitch": "low", "rate": "slow", "volume": "loud" }</code>
+       */
+      say: string;
+      /**
+       * TTS language for pronouncing a value of the <b>say</b> parameter. List of all supported voices: [VoiceList].
+       */
+      lang: string;
+      /**
+       * Voice message url to play. Supported formats are <b>mp3</b> and <b>ogg</b>.
+       */
+      play?: string;
+    }
+  | {
+      /**
+       * Voice message to say. Use it together with the lang parameter. SSML is supported; to use it, specify [TTSOptions] before creating an IVRState instance:<br><code>IVR.ttsOptions = { "pitch": "low", "rate": "slow", "volume": "loud" }</code>
+       */
+      say?: string;
+      /**
+       * TTS language for pronouncing a value of the <b>say</b> parameter. List of all supported voices: [VoiceList].
+       */
+      lang?: string;
+      /**
+       * Voice message url to play. Supported formats are <b>mp3</b> and <b>ogg</b>.
+       */
+      play: string;
+    };
 
 /**
  * IVR menu state settings. Can be passed via the [IVRState.settings] parameter.
@@ -7761,15 +7466,15 @@ declare interface IVRSettings {
   /**
    * For **inputunknown** states - whether input is complete (input is passed as string).
    */
-  inputValidator: (input: string) => boolean;
+  inputValidator?: (input: string) => boolean;
   /**
    * For **inputfixed** - length of desired input.
    */
-  inputLength: number;
+  inputLength?: number;
   /**
    * Timeout in milliseconds for user input. The default value is **5000**.
    */
-  timeout: number;
+  timeout?: number;
   /**
    * For **select** type, map of IVR states to go to according to user input. If there is no next state for specific input, **onInputComplete** is invoked.
    */
@@ -7936,6 +7641,60 @@ declare namespace MCP {
      */
     function createClient(parameters: ClientParameters): Promise<Client>
 }
+/**
+ * @hidden
+ * NOTE: MCP doesn't use WebSocket events
+ */
+declare namespace MCP {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedMCPEvent
+     * @hidden
+     */
+    WebSocketMediaStarted = 'MCP.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedMCPEvent
+     * @hidden
+     */
+    WebSocketMediaEnded = 'MCP.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [MCP.Events.WebSocketMediaStarted]: _WebSocketMediaStartedMCPEvent;
+    [MCP.Events.WebSocketMediaEnded]: _WebSocketMediaEndedMCPEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [MCP.Client] instance.
+     */
+    client: Client;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedMCPEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedMCPEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+
 declare namespace MCP {
 }
 declare namespace MCP {
@@ -7994,9 +7753,9 @@ declare namespace MCP {
      */
     client: Client;
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -8264,6 +8023,11 @@ declare enum Modules {
   Avatar = 'avatar',
   /**
    * Provides the [Cartesia](https://docs.cartesia.ai/get-started/overview) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Cartesia);
+   * ```
    */
   Cartesia = 'cartesia',
   /**
@@ -8277,26 +8041,65 @@ declare enum Modules {
   Conference = 'conference',
   /**
    * Provides the [Deepgram](https://developers.deepgram.com/home) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Deepgram);
+   * ```
    */
   Deepgram = 'deepgram',
   /**
+   * Provides the DeepFilterNet noise suppression functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.DeepFilterNet);
+   * ```
+   */
+  DeepFilterNet = 'deepfilternet',
+  /**
    * Provides the [ElevenLabs](https://elevenlabs.io) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.ElevenLabs);
+   * ```
    */
   ElevenLabs = 'elevenlabs',
   /**
    * Provides the [Gemini](https://gemini.google.com) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Gemini);
+   * ```
    */
   Gemini = 'gemini',
   /**
    * Provides the [Google](https://docs.cloud.google.com/text-to-speech/docs) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Google);
+   * ```
    */
   Google = 'google',
   /**
-   * Provides the [Grok](https://docs.x.ai/docs/guides/voice/agent#grok-voice-agent-api) functionality.
+   * Provides the Hush noise suppression functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Hush);
+   * ```
    */
-  Grok = 'grok',
+  Hush = 'hush',
   /**
    * Provides the [Inworld](https://docs.inworld.ai/docs/introduction) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Inworld);
+   * ```
    */
   Inworld = 'inworld',
   /**
@@ -8312,10 +8115,20 @@ declare enum Modules {
   IVR = 'ivr',
   /**
    * Provides the [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.MCP);
+   * ```
    */
   MCP = 'mcp',
   /**
    * Provides the OpenAI functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.OpenAI);
+   * ```
    */
   OpenAI = 'openai',
   /**
@@ -8374,6 +8187,11 @@ declare enum Modules {
   StreamingAgent = 'streamingagent',
   /**
    * Provides the [Ultravox](https://docs.ultravox.ai/introduction) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Ultravox);
+   * ```
    */
   Ultravox = 'ultravox',
   /**
@@ -8385,8 +8203,31 @@ declare enum Modules {
    * ```
    */
   VoximplantAPI = 'voximplantapi',
+   /**
+   * Provides the [VoxTTS](/docs/guides/speech/realtime-tts#voxtts) functionality.
+    * <br>
+    * Add the following line to your scenario code to use the module:
+    * ```
+    * require(Modules.VoxTTS);
+    * ```
+   */
+  VoxTTS = 'voxtts',
+  /**
+   * Provides the [xAI](https://docs.x.ai/developers/model-capabilities/audio/voice-agent#grok-voice-agent-api) Voice Agent API and [Realtime TTS](https://docs.x.ai/developers/model-capabilities/audio/text-to-speech) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.XAI);
+   * ```
+   */
+  XAI = 'xai',
   /**
    * Provides the [Yandex](https://yandex.cloud/ru/docs/ai-studio/concepts/agents/realtime) functionality.
+   * <br>
+   * Add the following line to your scenario code to use the module:
+   * ```
+   * require(Modules.Yandex);
+   * ```
    */
   Yandex = 'yandex',
 }
@@ -8954,7 +8795,7 @@ declare namespace OpenAI {
      */
     storeContext?: boolean;
     /**
-     * Optional. Base URL for the OpenAI API.
+     * Optional. Base URL to connect an OpenAI-compatible connector (for example, Azure).
      */
     baseUrl?: string;
     /**
@@ -9030,6 +8871,8 @@ declare namespace OpenAI {
 
     /**
      * Creates a model response for the given chat conversation. [https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)
+     *
+     * You can use this API not only with OpenAI, but also with other OpenAI-compatible providers (configure the connector via [OpenAI.ChatCompletionsAPIClientParameters.baseUrl]). Third-party providers often pass custom model settings through the **chat_template_kwargs** request parameter.
      * @param parameters
      */
     createChatCompletions(parameters: Object): void
@@ -9165,9 +9008,9 @@ declare namespace OpenAI {
      */
     client: ChatCompletionsAPIClient;
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -9345,49 +9188,55 @@ declare namespace OpenAI {
     ): void;
 
     /**
-     * Send this event to update the session’s configuration. [https://platform.openai.com/docs/api-reference/realtime-client-events/session/update](https://platform.openai.com/docs/api-reference/realtime-client-events/session/update)
+     * Send this event to update the session’s configuration. [https://developers.openai.com/api/reference/resources/realtime/client-events#session.update](https://developers.openai.com/api/reference/resources/realtime/client-events#session.update)
      * @param parameters
      */
     sessionUpdate(parameters: Object): void
 
     /**
-     * Send this event to clear the audio bytes in the buffer. [https://platform.openai.com/docs/api-reference/realtime-client-events/input_audio_buffer/clear](https://platform.openai.com/docs/api-reference/realtime-client-events/input_audio_buffer/clear)
+     * Send this event to clear the audio bytes in the buffer. [https://developers.openai.com/api/reference/resources/realtime/client-events#input_audio_buffer.clear](https://developers.openai.com/api/reference/resources/realtime/client-events#input_audio_buffer.clear)
      * @param parameters
      */
     inputAudioBufferClear(parameters: Object): void
 
     /**
-     * Add a new Item to the Conversation's context. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/create)
+     * Send this event to commit the user input audio buffer, which will create a new user message item in the conversation. [https://developers.openai.com/api/reference/resources/realtime/client-events#input_audio_buffer.commit](https://developers.openai.com/api/reference/resources/realtime/client-events#input_audio_buffer.commit)
+     * @param parameters
+     */
+    inputAudioBufferCommit(parameters: Object): void
+
+    /**
+     * Add a new Item to the Conversation's context. [https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.create](https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.create)
      * @param parameters
      */
     conversationItemCreate(parameters: Object): void
 
     /**
-     * Send this event when you want to retrieve the server's representation of a specific item in the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/retrieve](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/retrieve)
+     * Send this event when you want to retrieve the server's representation of a specific item in the conversation history. [https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.retrieve](https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.retrieve)
      * @param parameters
      */
     conversationItemRetrieve(parameters: Object): void
 
     /**
-     * Send this event to truncate a previous assistant message’s audio. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/truncate)
+     * Send this event to truncate a previous assistant message’s audio. [https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.truncate](https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.truncate)
      * @param parameters
      */
     conversationItemTruncate(parameters: Object): void
 
     /**
-     * Send this event when you want to remove any item from the conversation history. [https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete](https://platform.openai.com/docs/api-reference/realtime-client-events/conversation/item/delete)
+     * Send this event when you want to remove any item from the conversation history. [https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.delete](https://developers.openai.com/api/reference/resources/realtime/client-events#conversation.item.delete)
      * @param parameters
      */
     conversationItemDelete(parameters: Object): void
 
     /**
-     * This event instructs the server to create a Response, which means triggering model inference. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/create](https://platform.openai.com/docs/api-reference/realtime-client-events/response/create)
+     * This event instructs the server to create a Response, which means triggering model inference. [https://developers.openai.com/api/reference/resources/realtime/client-events#response.create](https://developers.openai.com/api/reference/resources/realtime/client-events#response.create)
      * @param parameters
      */
     responseCreate(parameters: Object): void
 
     /**
-     * Send this event to cancel an in-progress response. [https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel](https://platform.openai.com/docs/api-reference/realtime-client-events/response/cancel)
+     * Send this event to cancel an in-progress response. [https://developers.openai.com/api/reference/resources/realtime/client-events#response.cancel](https://developers.openai.com/api/reference/resources/realtime/client-events#response.cancel)
      * @param parameters
      */
     responseCancel(parameters: Object): void
@@ -9412,238 +9261,238 @@ declare namespace OpenAI {
     HTTPResponse = 'OpenAI.RealtimeAPI.HTTPResponse',
 
     /**
-     * Returned when an error occurs, which could be a client problem or a server problem. [https://platform.openai.com/docs/api-reference/realtime-server-events/error](https://platform.openai.com/docs/api-reference/realtime-server-events/error)
+     * Returned when an error occurs, which could be a client problem or a server problem. [https://developers.openai.com/api/reference/resources/realtime/server-events#error](https://developers.openai.com/api/reference/resources/realtime/server-events#error)
      * @typedef _RealtimeAPIEvent
      */
     Error = 'OpenAI.RealtimeAPI.Error',
 
     /**
-     * Returned when a Session is created. [https://platform.openai.com/docs/api-reference/realtime-server-events/session/created](https://platform.openai.com/docs/api-reference/realtime-server-events/session/created)
+     * Returned when a Session is created. [https://developers.openai.com/api/reference/resources/realtime/server-events#session.created](https://developers.openai.com/api/reference/resources/realtime/server-events#session.created)
      * @typedef _RealtimeAPIEvent
      */
     SessionCreated = 'OpenAI.RealtimeAPI.SessionCreated',
 
     /**
-     * Returned when a session is updated with a session.update event, unless there is an error. [https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/session/updated)
+     * Returned when a session is updated with a session.update event, unless there is an error. [https://developers.openai.com/api/reference/resources/realtime/server-events#session.updated](https://developers.openai.com/api/reference/resources/realtime/server-events#session.updated)
      * @typedef _RealtimeAPIEvent
      */
     SessionUpdated = 'OpenAI.RealtimeAPI.SessionUpdated',
 
     /**
-     * Sent by the server when an Item is added to the default Conversation. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/added)
+     * Sent by the server when an Item is added to the default Conversation. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.added](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.added)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemAdded = 'OpenAI.RealtimeAPI.ConversationItemAdded',
 
     /**
-     * Returned when a conversation item is finalized. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/done)
+     * Returned when a conversation item is finalized. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.done](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.done)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemDone = 'OpenAI.RealtimeAPI.ConversationItemDone',
 
     /**
-     * Returned when a conversation item is retrieved with conversation.item.retrieve. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/retrieved](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/retrieved)
+     * Returned when a conversation item is retrieved with conversation.item.retrieve.
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemRetrieved = 'OpenAI.RealtimeAPI.ConversationItemRetrieved',
 
     /**
-     * This event is the output of audio transcription for user audio written to the user audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/completed)
+     * This event is the output of audio transcription for user audio written to the user audio buffer. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.completed](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.completed)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemInputAudioTranscriptionCompleted = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionCompleted',
 
     /**
-     * Returned when the text value of an input audio transcription content part is updated with incremental transcription results. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/delta)
+     * Returned when the text value of an input audio transcription content part is updated with incremental transcription results. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.delta](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.delta)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemInputAudioTranscriptionDelta = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionDelta',
 
     /**
-     * Returned when an input audio transcription segment is identified for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/segment](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/segment)
+     * Returned when an input audio transcription segment is identified for an item. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.segment](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.segment)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemInputAudioTranscriptionSegment = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionSegment',
 
     /**
-     * Returned when input audio transcription is configured, and a transcription request for a user message failed.  [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/input_audio_transcription/failed)
+     * Returned when input audio transcription is configured, and a transcription request for a user message failed.  [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.failed](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.input_audio_transcription.failed)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemInputAudioTranscriptionFailed = 'OpenAI.RealtimeAPI.ConversationItemInputAudioTranscriptionFailed',
 
     /**
-     * Returned when an earlier assistant audio message item is truncated by the client with a conversation.item.truncate event. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/truncated)
+     * Returned when an earlier assistant audio message item is truncated by the client with a conversation.item.truncate event. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.truncated](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.truncated)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemTruncated = 'OpenAI.RealtimeAPI.ConversationItemTruncated',
 
     /**
-     * Returned when an item in the conversation is deleted by the client with a conversation.item.delete event. [https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted](https://platform.openai.com/docs/api-reference/realtime-server-events/conversation/item/deleted)
+     * Returned when an item in the conversation is deleted by the client with a conversation.item.delete event. [https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.deleted](https://developers.openai.com/api/reference/resources/realtime/server-events#conversation.item.deleted)
      * @typedef _RealtimeAPIEvent
      */
     ConversationItemDeleted = 'OpenAI.RealtimeAPI.ConversationItemDeleted',
 
     /**
-     * Returned when an input audio buffer is committed. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/committed)
+     * Returned when an input audio buffer is committed. [https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.committed](https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.committed)
      * @typedef _RealtimeAPIEvent
      */
     InputAudioBufferCommitted = 'OpenAI.RealtimeAPI.InputAudioBufferCommitted',
 
     /**
-     * Returned when the input audio buffer is cleared by the client with an input_audio_buffer.clear event. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/cleared)
+     * Returned when the input audio buffer is cleared by the client with an input_audio_buffer.clear event. [https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.cleared](https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.cleared)
      * @typedef _RealtimeAPIEvent
      */
     InputAudioBufferCleared = 'OpenAI.RealtimeAPI.InputAudioBufferCleared',
 
     /**
-     * Sent by the server when in server_vad mode to indicate that speech has been detected in the audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_started)
+     * Sent by the server when in server_vad mode to indicate that speech has been detected in the audio buffer. [https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.speech_started](https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.speech_started)
      * @typedef _RealtimeAPIEvent
      */
     InputAudioBufferSpeechStarted = 'OpenAI.RealtimeAPI.InputAudioBufferSpeechStarted',
 
     /**
-     * Returned in server_vad mode when the server detects the end of speech in the audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/speech_stopped)
+     * Returned in server_vad mode when the server detects the end of speech in the audio buffer. [https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.speech_stopped](https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.speech_stopped)
      * @typedef _RealtimeAPIEvent
      */
     InputAudioBufferSpeechStopped = 'OpenAI.RealtimeAPI.InputAudioBufferSpeechStopped',
 
     /**
-     * Returned when the Server VAD timeout is triggered for the input audio buffer. [https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/timeout_triggered](https://platform.openai.com/docs/api-reference/realtime-server-events/input_audio_buffer/timeout_triggered)
+     * Returned when the Server VAD timeout is triggered for the input audio buffer. [https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.timeout_triggered](https://developers.openai.com/api/reference/resources/realtime/server-events#input_audio_buffer.timeout_triggered)
      * @typedef _RealtimeAPIEvent
      */
     InputAudioBufferTimeoutTriggered = 'OpenAI.RealtimeAPI.InputAudioBufferTimeoutTriggered',
 
     /**
-     * Returned when a new Response is created. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/created](https://platform.openai.com/docs/api-reference/realtime-server-events/response/created)
+     * Returned when a new Response is created. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.created](https://developers.openai.com/api/reference/resources/realtime/server-events#response.created)
      * @typedef _RealtimeAPIEvent
      */
     ResponseCreated = 'OpenAI.RealtimeAPI.ResponseCreated',
 
     /**
-     * Returned when a Response is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/done)
+     * Returned when a Response is done streaming. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseDone = 'OpenAI.RealtimeAPI.ResponseDone',
 
     /**
-     * Returned when a new Item is created during Response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/added)
+     * Returned when a new Item is created during Response generation. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_item.added](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_item.added)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputItemAdded = 'OpenAI.RealtimeAPI.ResponseOutputItemAdded',
 
     /**
-     * Returned when an Item is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_item/done)
+     * Returned when an Item is done streaming. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_item.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_item.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputItemDone = 'OpenAI.RealtimeAPI.ResponseOutputItemDone',
 
     /**
-     * Returned when a new content part is added to an assistant message item during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/added)
+     * Returned when a new content part is added to an assistant message item during response generation. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.content_part.added](https://developers.openai.com/api/reference/resources/realtime/server-events#response.content_part.added)
      * @typedef _RealtimeAPIEvent
      */
     ResponseContentPartAdded = 'OpenAI.RealtimeAPI.ResponseContentPartAdded',
 
     /**
-     * Returned when a content part is done streaming in an assistant message item. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/content_part/done)
+     * Returned when a content part is done streaming in an assistant message item. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.content_part.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.content_part.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseContentPartDone = 'OpenAI.RealtimeAPI.ResponseContentPartDone',
 
     /**
-     * Returned when the text value of an "output_text" content part is updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/delta)
+     * Returned when the text value of an "output_text" content part is updated. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_text.delta](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_text.delta)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputTextDelta = 'OpenAI.RealtimeAPI.ResponseOutputTextDelta',
 
     /**
-     * Returned when the text value of an "output_text" content part is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_text/done)
+     * Returned when the text value of an "output_text" content part is done streaming. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_text.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_text.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputTextDone = 'OpenAI.RealtimeAPI.ResponseOutputTextDone',
 
     /**
-     * Returned when the model-generated transcription of audio output is updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/delta)
+     * Returned when the model-generated transcription of audio output is updated. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio_transcript.delta](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio_transcript.delta)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputAudioTranscriptDelta = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptDelta',
 
     /**
-     * Returned when the model-generated transcription of audio output is done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio_transcript/done)
+     * Returned when the model-generated transcription of audio output is done streaming. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio_transcript.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio_transcript.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputAudioTranscriptDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioTranscriptDone',
 
     /**
-     * Returned when the model-generated audio is done. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/output_audio/done)
+     * Returned when the model-generated audio is done. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.output_audio.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseOutputAudioDone = 'OpenAI.RealtimeAPI.ResponseOutputAudioDone',
 
     /**
-     * Returned when the model-generated function call arguments are updated. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/delta)
+     * Returned when the model-generated function call arguments are updated. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.function_call_arguments.delta](https://developers.openai.com/api/reference/resources/realtime/server-events#response.function_call_arguments.delta)
      * @typedef _RealtimeAPIEvent
      */
     ResponseFunctionCallArgumentsDelta = 'OpenAI.RealtimeAPI.ResponseFunctionCallArgumentsDelta',
 
     /**
-     * Returned when the model-generated function call arguments are done streaming. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/function_call_arguments/done)
+     * Returned when the model-generated function call arguments are done streaming. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.function_call_arguments.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.function_call_arguments.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseFunctionCallArgumentsDone = 'OpenAI.RealtimeAPI.ResponseFunctionCallArgumentsDone',
 
     /**
-     * Returned when MCP tool call arguments are updated during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/delta](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/delta)
+     * Returned when MCP tool call arguments are updated during response generation. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call_arguments.delta](https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call_arguments.delta)
      * @typedef _RealtimeAPIEvent
      */
     ResponseMCPCallArgumentsDelta = 'OpenAI.RealtimeAPI.ResponseMCPCallArgumentsDelta',
 
     /**
-     * Returned when MCP tool call arguments are finalized during response generation. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/done](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call_arguments/done)
+     * Returned when MCP tool call arguments are finalized during response generation. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call_arguments.done](https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call_arguments.done)
      * @typedef _RealtimeAPIEvent
      */
     ResponseMCPCallArgumentsDone = 'OpenAI.RealtimeAPI.ResponseMCPCallArgumentsDone',
 
     /**
-     * Returned when an MCP tool call has started and is in progress. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/in_progress](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/in_progress)
+     * Returned when an MCP tool call has started and is in progress. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.in_progress](https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.in_progress)
      * @typedef _RealtimeAPIEvent
      */
     ResponseMCPCallInProgress = 'OpenAI.RealtimeAPI.ResponseMCPCallInProgress',
 
     /**
-     * Returned when an MCP tool call has completed successfully. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/completed)
+     * Returned when an MCP tool call has completed successfully. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.completed](https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.completed)
      * @typedef _RealtimeAPIEvent
      */
     ResponseMCPCallCompleted = 'OpenAI.RealtimeAPI.ResponseMCPCallCompleted',
 
     /**
-     * Returned when an MCP tool call has failed. [https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/response/mcp_call/failed)
+     * Returned when an MCP tool call has failed. [https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.failed](https://developers.openai.com/api/reference/resources/realtime/server-events#response.mcp_call.failed)
      * @typedef _RealtimeAPIEvent
      */
     ResponseMCPCallFailed = 'OpenAI.RealtimeAPI.ResponseMCPCallFailed',
 
     /**
-     * Returned when listing MCP tools is in progress for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/in_progress](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/in_progress)
+     * Returned when listing MCP tools is in progress for an item. [https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.in_progress](https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.in_progress)
      * @typedef _RealtimeAPIEvent
      */
     MCPListToolsInProgress = 'OpenAI.RealtimeAPI.MCPListToolsInProgress',
 
     /**
-     * Returned when listing MCP tools has completed for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/completed](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/completed)
+     * Returned when listing MCP tools has completed for an item. [https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.completed](https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.completed)
      * @typedef _RealtimeAPIEvent
      */
     MCPListToolsCompleted = 'OpenAI.RealtimeAPI.MCPListToolsCompleted',
 
     /**
-     * Returned when listing MCP tools has failed for an item. [https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/failed](https://platform.openai.com/docs/api-reference/realtime-server-events/mcp_list_tools/failed)
+     * Returned when listing MCP tools has failed for an item. [https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.failed](https://developers.openai.com/api/reference/resources/realtime/server-events#mcp_list_tools.failed)
      * @typedef _RealtimeAPIEvent
      */
     MCPListToolsFailed = 'OpenAI.RealtimeAPI.MCPListToolsFailed',
 
     /**
-     * Emitted at the beginning of a Response to indicate the updated rate limits. [https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated](https://platform.openai.com/docs/api-reference/realtime-server-events/rate_limits/updated)
+     * Emitted at the beginning of a Response to indicate the updated rate limits. [https://developers.openai.com/api/reference/resources/realtime/server-events#rate_limits.updated](https://developers.openai.com/api/reference/resources/realtime/server-events#rate_limits.updated)
      * @typedef _RealtimeAPIEvent
      */
-    RateLimitsUpdated = 'OpenAI.RealtimeAPI.ResponseMCPCallFailed',
+    RateLimitsUpdated = 'OpenAI.RealtimeAPI.RateLimitsUpdated',
 
     /**
      * The WebSocket error response event.
@@ -9669,7 +9518,6 @@ declare namespace OpenAI {
     [RealtimeAPIEvents.SessionUpdated]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemAdded]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemDone]: _RealtimeAPIEvent;
-    [RealtimeAPIEvents.ConversationItemRetrieved]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionDelta]: _RealtimeAPIEvent;
     [RealtimeAPIEvents.ConversationItemInputAudioTranscriptionSegment]: _RealtimeAPIEvent;
@@ -9716,9 +9564,9 @@ declare namespace OpenAI {
      */
     client: RealtimeAPIClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -10186,9 +10034,9 @@ declare namespace OpenAI {
      */
     client: ResponsesAPIClient;
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
@@ -10266,6 +10114,26 @@ declare namespace Pipecat {
 }
 declare namespace Pipecat {
 }
+declare namespace Pipecat {
+  /**
+   * [Pipecat.TurnDetector] parameters. Can be passed as arguments to the [Pipecat.createTurnDetector] method.
+   */
+  interface TurnDetectorParameters extends _WebSocketBasedClientParameters {
+    /**
+     * Optional. The probability threshold above which we detect the end of the turn (in the range [0.0, 1.0]). The default value is **0.5**.
+     */
+    threshold?: number;
+    /**
+     * Optional. Milliseconds of audio to include before speech starts. The default value is **0**.
+     */
+    preSpeechMs?: number;
+    /**
+     * Optional. Maximum segment duration in seconds. The default value is **8**.
+     */
+    maxDurationSecs?: number;
+  }
+}
+
 declare namespace Pipecat {
   class TurnDetector {
     /**
@@ -10400,24 +10268,12 @@ declare namespace Pipecat {
    */
   interface _PipecatTurnConnectorInformationEvent extends _PipecatTurnEvent {
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
 
-declare namespace Pipecat {
-  /**
-   * [Pipecat.TurnDetector] parameters. Can be passed as arguments to the [Pipecat.createTurnDetector] method.
-   */
-  interface TurnDetectorParameters extends _WebSocketBasedClientParameters {
-    /**
-     * Optional. The probability threshold above which we detect the end of the turn (in the range [0.0, 1.0]). The default value is **0.5**.
-     */
-    threshold?: number;
-  }
-}
-  
 /**
  * @event
  */
@@ -11515,9 +11371,9 @@ declare namespace Silero {
    */
   interface _SileroVADConnectorInformationEvent extends _SileroVADEvent {
     /**
-     * The event's data.
+     * The 'payload' parameter contains the event's data.
      */
-    data?: Object
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
   
@@ -11826,15 +11682,15 @@ declare interface SmartQueueTaskParameters {
   /**
    * A timeout in seconds for the task to be accepted by an agent.
    */
-  timeout: number;
+  timeout?: number;
   /**
    * The task's priority. Accept values from 1 to 100. The default value is **50**.
    */
-  priority: number;
+  priority?: number;
   /**
    * Required [skills](/docs/references/voxengine/smartqueueskill) for the task.
    */
-  skills: SmartQueueSkill[];
+  skills?: SmartQueueSkill[];
   /**
    * Queue for the current task.
    */
@@ -11842,7 +11698,7 @@ declare interface SmartQueueTaskParameters {
   /**
    * Custom data text string for the current task. After you specify the data in this field, you can find it in the [SmartQueueState_Task](/docs/references/httpapi/structure/smartqueuestate_task) object for this task. To get this object, call the [GetSQState](/docs/references/httpapi/smartqueue#getsqstate) method.
    */
-  customData: string;
+  customData?: string;
   /**
    * Optional. Custom parameters (SIP headers) to be passed with the task. Custom header names have to begin with the 'X-' prefix. The "X-" headers can be handled by a SIP phone or WEB SDK (e.g. see the [incomingCall](/docs/references/websdk/voximplant/events#incomingcall) event). Example: {'X-header':'value'}
    */
@@ -11850,15 +11706,15 @@ declare interface SmartQueueTaskParameters {
   /**
    * Whether the call has video support. Please note that prices for audio only and video calls are different.
    */
-  video: boolean;
+  video?: boolean;
   /**
    * Internal information about codecs.
    */
-  scheme: { [id: string]: { audio: any, video: any } };
+  scheme?: { [id: string]: { audio: any, video: any } };
   /**
    * Maximum possible video bitrate for the customer device in kbps
    */
-  maxVideoBitrate: number;
+  maxVideoBitrate?: number;
 }
 
 /**
@@ -11946,18 +11802,31 @@ declare class SmartQueueTask {
 }
 
 /**
- * Represents an instance of a Smart Queue.
+ * Represents an instance of a Smart Queue. Queue identifier or queue name must be provided.
  */
-declare interface SmartQueue {
-  /**
-   * Queue's identification number.
-   */
-  id: number;
-  /**
-   * Queue's name.
-   */
-  name: string;
-}
+declare type SmartQueue =
+  | {
+      /**
+       * Queue's identification number.
+       */
+      id: number;
+
+      /**
+       * Queue's name.
+       */
+      name?: string;
+    }
+  | {
+      /**
+       * Queue's identification number.
+       */
+      id?: number;
+
+      /**
+       * Queue's name.
+       */
+      name: string;
+    };
 
 /**
  * The parameters can be passed as arguments to the [Call.startPlayback] method.
@@ -12784,9 +12653,9 @@ declare namespace Ultravox {
      */
     client: WebSocketAPIClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
   
@@ -12888,9 +12757,11 @@ declare type VoxMediaUnit =
   | Yandex.RealtimeAPIClient
   | Cartesia.AgentsClient
   | Deepgram.VoiceAgentClient
-  | Grok.VoiceAgentAPIClient
+  | XAI.VoiceAgentAPIClient
   | Silero.VAD
-  | Pipecat.Turn;
+  | Pipecat.TurnDetector
+  | DeepFilterNet.NoiseSuppression
+  | Hush.NoiseSuppression;
 
 declare namespace VoxEngine {
   /**
@@ -12926,7 +12797,7 @@ declare namespace VoxEngine {
     callerid: string,
     displayName: string,
     headers?: { [header: string]: string },
-    scheme?: string
+    scheme?: { [id: string]: { audio: any; video: any } }
   ): Call;
 }
 
@@ -13726,7 +13597,7 @@ declare namespace VoximplantAPI {
     /**
      * End reason code and description
      */
-    endReason?: any;
+    endReason?: string;
   }
   interface TransactionInfo {
     /**
@@ -14508,66 +14379,6 @@ declare namespace VoximplantAPI {
      */
     ruleName?: string;
   }
-  interface AdminRole {
-    /**
-     * The admin role ID
-     */
-    adminRoleId: number;
-    /**
-     * The admin role name
-     */
-    adminRoleName: string;
-    /**
-     * Whether to ignore the allowed and denied entries
-     */
-    adminRoleActive: boolean;
-    /**
-     * Whether it is a system role
-     */
-    systemRole: boolean;
-    /**
-     * The admin role editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
-     */
-    modified: Date;
-    /**
-     * The allowed access entries (the API function names)
-     */
-    allowedEntries?: string[];
-    /**
-     * The denied access entries (the API function names)
-     */
-    deniedEntries?: string[];
-  }
-  interface AdminUser {
-    /**
-     * The admin user ID
-     */
-    adminUserId: number;
-    /**
-     * The admin user name
-     */
-    adminUserName: string;
-    /**
-     * The admin user display name
-     */
-    adminUserDisplayName: string;
-    /**
-     * Whether login is allowed
-     */
-    adminUserActive: boolean;
-    /**
-     * The admin user editing UTC date in 24-h format: YYYY-MM-DD HH:mm:ss
-     */
-    modified: Date;
-    /**
-     * The allowed access entries (the API function names)
-     */
-    accessEntries?: string[];
-    /**
-     * The attached admin roles
-     */
-    adminRoles?: AdminRole[];
-  }
   interface AuthorizedAccountIP {
     /**
      * The authorized IP4 or network
@@ -14840,11 +14651,11 @@ declare namespace VoximplantAPI {
     /**
      * JSON array of the agent's queues
      */
-    sqQueues?: any;
+    sqQueues?: string;
     /**
      * JSON array of the agent's skills
      */
-    sqSkills?: any;
+    sqSkills?: string;
   }
   interface SmartQueueMetricsResult {
     /**
@@ -14942,7 +14753,7 @@ declare namespace VoximplantAPI {
     /**
      * Custom data text string for the current task. You can set the custom data in the [enqueueTask](/docs/references/voxengine/voxengine/enqueuetask#enqueuetask) method
      */
-    customData?: any;
+    customData?: string;
   }
   interface SmartQueueStateAgent {
     /**
@@ -15281,13 +15092,13 @@ declare namespace VoximplantAPI {
   }
   interface DelApplicationRequest {
     /**
-     * The application ID list separated by semicolons (;). Use the 'all' value to select all applications
+     * The application ID list separated by semicolons (;). Use the 'all' value to select all applications. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: 'any' | number | number[];
+    applicationId?: 'any' | number | number[];
     /**
-     * The application name list separated by semicolons (;). Can be used instead of <b>application_id</b>
+     * The application name list separated by semicolons (;). <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string | string[];
+    applicationName?: string | string[];
   }
   interface DelApplicationResponse {
     /**
@@ -15298,13 +15109,13 @@ declare namespace VoximplantAPI {
   }
   interface SetApplicationInfoRequest {
     /**
-     * The application ID
+     * The application ID. <b>Required</b> unless <b>required_application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * The application name that can be used instead of <b>application_id</b>
+     * The application name. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    requiredApplicationName: string;
+    requiredApplicationName?: string;
     /**
      * The new short application name in format [a-z][a-z0-9-]{1,79}
      */
@@ -15399,13 +15210,13 @@ declare namespace VoximplantAPI {
      */
     userPassword: string;
     /**
-     * The application ID which a new user is to be bound to. Can be used instead of the <b>application_name</b> parameter
+     * The application ID which a new user is to be bound to. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * The application name which a new user is to be bound to. Can be used instead of the <b>application_id</b> parameter
+     * The application name which a new user is to be bound to. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string;
+    applicationName?: string;
     /**
      * Whether the user uses the parent account's money, 'false' if the user has a separate balance
      */
@@ -15433,13 +15244,13 @@ declare namespace VoximplantAPI {
   }
   interface DelUserRequest {
     /**
-     * The user ID list separated by semicolons (;). Use the 'all' value to select all users
+     * The user ID list separated by semicolons (;). Use the 'all' value to select all users. <b>Required</b> unless <b>user_name</b> is provided.
      */
-    userId: 'any' | number | number[];
+    userId?: 'any' | number | number[];
     /**
-     * The user name list separated by semicolons (;) that can be used instead of <b>user_id</b>
+     * The user name list separated by semicolons (;). <b>Required</b> unless <b>user_id</b> is provided.
      */
-    userName: string | string[];
+    userName?: string | string[];
     /**
      * Delete the specified users bound to the application ID. It is required if the <b>user_name</b> is specified
      */
@@ -15458,13 +15269,13 @@ declare namespace VoximplantAPI {
   }
   interface SetUserInfoRequest {
     /**
-     * The user to edit
+     * The user to edit. <b>Required</b> unless <b>user_name</b> is provided.
      */
-    userId: number;
+    userId?: number;
     /**
-     * The user name that can be used instead of <b>user_id</b>
+     * The user name. <b>Required</b> unless <b>user_id</b> is provided.
      */
-    userName: string;
+    userName?: string;
     /**
      * The application ID. It is required if the <b>user_name</b> is specified
      */
@@ -15635,9 +15446,13 @@ declare namespace VoximplantAPI {
      */
     name: string;
     /**
-     * Send as the "body" part of the HTTP request or as multiform. The sending "file_content" via URL is at its own risk because the network devices tend to drop HTTP requests with large headers
+     * Send as the "body" part of the HTTP request or as multiform. The sending "file_content" via URL is at its own risk because the network devices tend to drop HTTP requests with large headers. Refer to the <a href="https://voximplant.com/docs/guides/solutions/call-lists#csv-table-setup">Call lists guide</a> to learn about file syntax
      */
     fileContent: Buffer;
+    /**
+     * Custom data string for the call list
+     */
+    listCustomData?: string;
     /**
      * Interval between call attempts in seconds. The default value is 0
      */
@@ -15688,14 +15503,14 @@ declare namespace VoximplantAPI {
   }
   interface AppendToCallListRequest {
     /**
-     * Call list ID
-     */
-    listId: number;
-    listName: string;
-    /**
-     * Send as the request body or multiform
+     * Send as the request body or multiform. Refer to the <a href="https://voximplant.com/docs/guides/solutions/call-lists#csv-table-setup">Call lists guide</a> to learn about file syntax
      */
     fileContent: Buffer;
+    /**
+     * Call list ID. <b>Required</b> unless <b>list_name</b> is provided.
+     */
+    listId?: number;
+    listName?: string;
     /**
      * Encoding file. The default value is UTF-8
      */
@@ -15730,14 +15545,14 @@ declare namespace VoximplantAPI {
   }
   interface CancelCallListBatchRequest {
     /**
-     * Call list ID
-     */
-    listId: number;
-    listName: string;
-    /**
      * Batch UUIDs of the tasks to cancel, separated by semicolon (;)
      */
     batchIds: string;
+    /**
+     * Call list ID. <b>Required</b> unless <b>list_name</b> is provided.
+     */
+    listId?: number;
+    listName?: string;
   }
   interface CancelCallListBatchResponse {
     /**
@@ -15751,6 +15566,10 @@ declare namespace VoximplantAPI {
      * Call list ID. If the ID is non existing, the 251 error returns
      */
     listId: number;
+    /**
+     * Custom data string for the call list
+     */
+    listCustomData?: string;
     /**
      * Minimum interval between call attempts. Cannot be a negative value
      */
@@ -15922,11 +15741,11 @@ declare namespace VoximplantAPI {
   }
   interface CallListsInterface {
     /**
-     * Adds a new CSV file for call list processing and starts the specified rule immediately. To send a file, use the request body. To set the call time constraints, use the following options in a CSV file: <ul><li>**__start_execution_time** – when the call list processing starts every day, UTC+0 24-h format: HH:mm:ss</li><li>**__end_execution_time** – when the call list processing stops every day,  UTC+0 24-h format: HH:mm:ss</li><li>**__start_at** – when the call list processing starts, UNIX timestamp. If not specified, the processing starts immediately after a method call</li><li>**__task_uuid** – call list UUID. A string up to 40 characters, can contain latin letters, digits, hyphens (-) and colons (:). Unique within the call list</li></ul><br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br/><b>IMPORTANT:</b> the account's balance should be equal or greater than 1 USD. If the balance is lower than 1 USD, the call list processing does not start, or it stops immediately if it is active.
+     * Adds a new CSV file for call list processing and starts the specified rule immediately. To send a file, use the request body. To set the call time constraints, use the following options in a CSV file: <ul><li>**__start_execution_time** – when the call list processing starts every day, UTC+0 24-h format: HH:mm:ss</li><li>**__end_execution_time** – when the call list processing stops every day,  UTC+0 24-h format: HH:mm:ss</li><li>**__start_at** – when the call list processing starts, UNIX timestamp. If not specified, the processing starts immediately after a method call</li><li>**__task_uuid** – call list UUID. A string up to 40 characters, can contain latin letters, digits, hyphens (-) and colons (:). Unique within the call list</li></ul><br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br/><b>IMPORTANT:</b> the account's balance should be equal or greater than 1 USD. If the balance is lower than 1 USD, the call list processing does not start, or it stops immediately if it is active.<br><br>You can specify a custom call schedule for every record. Refer to the <a href="/docs/guides/solutions/call-lists">Call lists guide</a> for more information.
      */
     createCallList: (request: CreateCallListRequest) => Promise<CreateCallListResponse>;
     /**
-     * Appends a new task to the existing call list.<br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.
+     * Appends a new task to the existing call list.<br>This method accepts CSV files with custom delimiters, such a commas (,), semicolons (;) and other. To specify a delimiter, pass it to the <b>delimiter</b> parameter.<br><br>You can specify a custom call schedule for every record. Refer to the <a href="/docs/guides/solutions/call-lists">Call lists guide</a> for more information.
      */
     appendToCallList: (request: AppendToCallListRequest) => Promise<AppendToCallListResponse>;
     /**
@@ -16056,9 +15875,9 @@ declare namespace VoximplantAPI {
      */
     remoteNumber?: string | string[];
     /**
-     * A JS array of strings of specific remote phone numbers to sort the call history. Has higher priority than the `remote_number` parameter. If the array is empty, the `remote_number` parameter is used instead
+     * A JSON array of strings of specific remote phone numbers to sort the call history. Has higher priority than the `remote_number` parameter. If the array is empty, the `remote_number` parameter is used instead
      */
-    remoteNumberList?: any;
+    remoteNumberList?: string;
     /**
      * To receive a call history for a specific local numbers, pass the number list separated by semicolons (;). A local number is a number on the platform side
      */
@@ -16871,19 +16690,6 @@ declare namespace VoximplantAPI {
   }
   interface GetSipRegistrationsRequest {
     /**
-     * The rule ID list separated by semicolons (;) to filter. Can be used instead of <b>rule_name</b>
-     */
-    ruleId: 'any' | number | number[];
-    /**
-     * The rule name list separated by semicolons (;) to filter. Can be used instead of <b>rule_id</b>
-     */
-    ruleName: string | string[];
-    /**
-     * The user ID list separated by semicolons (;) to filter. Can be used instead of <b>user_name</b>
-     */
-    userId: 'any' | number | number[];
-    userName: string | string[];
-    /**
      * The SIP registration ID
      */
     sipRegistrationId?: number;
@@ -16915,6 +16721,19 @@ declare namespace VoximplantAPI {
      * Whether SIP registration bound to an application
      */
     isBoundToApplication?: boolean;
+    /**
+     * The rule ID list separated by semicolons (;) to filter. <b>Required</b> unless <b>rule_name</b> is provided.
+     */
+    ruleId?: 'any' | number | number[];
+    /**
+     * The rule name list separated by semicolons (;) to filter. <b>Required</b> unless <b>rule_id</b> is provided.
+     */
+    ruleName?: string | string[];
+    /**
+     * The user ID list separated by semicolons (;) to filter. <b>Required</b> unless <b>user_name</b> is provided.
+     */
+    userId?: 'any' | number | number[];
+    userName?: string | string[];
     /**
      * The list of proxy servers to use, divided by semicolon (;)
      */
@@ -17010,13 +16829,13 @@ declare namespace VoximplantAPI {
   }
   interface DelCallerIDRequest {
     /**
-     * ID of the callerID object
+     * ID of the callerID object. <b>Required</b> unless <b>callerid_number</b> is provided.
      */
-    calleridId: number;
+    calleridId?: number;
     /**
-     * The callerID number that can be used instead of <b>callerid_id</b>
+     * The callerID number. <b>Required</b> unless <b>callerid_id</b> is provided.
      */
-    calleridNumber: string;
+    calleridNumber?: string;
   }
   interface DelCallerIDResponse {
     /**
@@ -17154,17 +16973,17 @@ declare namespace VoximplantAPI {
   }
   interface AddQueueRequest {
     /**
-     * The application ID
-     */
-    applicationId: number;
-    /**
-     * The application name that can be used instead of <b>application_id</b>
-     */
-    applicationName: string;
-    /**
      * The queue name. The length must be less than 100
      */
     acdQueueName: string;
+    /**
+     * The application ID. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * The application name. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
     /**
      * The integer queue priority. The highest priority is 0
      */
@@ -17207,29 +17026,29 @@ declare namespace VoximplantAPI {
      */
     bind: boolean;
     /**
-     * The application ID
+     * The application ID. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * The application name that can be used instead of <b>application_id</b>
+     * The application name. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string;
+    applicationName?: string;
     /**
-     * The user ID list separated by semicolons (;). Use the 'all' value to specify all users bound to the application
+     * The user ID list separated by semicolons (;). Use the 'all' value to specify all users bound to the application. <b>Required</b> unless <b>user_name</b> is provided.
      */
-    userId: 'any' | number | number[];
+    userId?: 'any' | number | number[];
     /**
-     * The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+     * The user name list separated by semicolons (;). <b>Required</b> unless <b>user_id</b> is provided.
      */
-    userName: string | string[];
+    userName?: string | string[];
     /**
-     * The ACD queue ID list separated by semicolons (;). Use the 'all' value to specify all queues bound to the application
+     * The ACD queue ID list separated by semicolons (;). Use the 'all' value to specify all queues bound to the application. <b>Required</b> unless <b>acd_queue_name</b> is provided.
      */
-    acdQueueId: 'any' | number | number[];
+    acdQueueId?: 'any' | number | number[];
     /**
-     * The queue name that can be used instead of <b>acd_queue_id</b>. The queue name list separated by semicolons (;)
+     * The queue name. The queue name list separated by semicolons (;). <b>Required</b> unless <b>acd_queue_id</b> is provided.
      */
-    acdQueueName: string | string[];
+    acdQueueName?: string | string[];
   }
   interface BindUserToQueueResponse {
     /**
@@ -17240,13 +17059,13 @@ declare namespace VoximplantAPI {
   }
   interface DelQueueRequest {
     /**
-     * The ACD queue ID list separated by semicolons (;)
+     * The ACD queue ID list separated by semicolons (;). <b>Required</b> unless <b>acd_queue_name</b> is provided.
      */
-    acdQueueId: 'any' | number | number[];
+    acdQueueId?: 'any' | number | number[];
     /**
-     * The ACD queue name that can be used instead of <b>acd_queue_id</b>. The ACD queue name list separated by semicolons (;)
+     * The ACD queue name. The ACD queue name list separated by semicolons (;). <b>Required</b> unless <b>acd_queue_id</b> is provided.
      */
-    acdQueueName: string | string[];
+    acdQueueName?: string | string[];
   }
   interface DelQueueResponse {
     /**
@@ -17257,13 +17076,13 @@ declare namespace VoximplantAPI {
   }
   interface SetQueueInfoRequest {
     /**
-     * The ACD queue ID
+     * The ACD queue ID. <b>Required</b> unless <b>acd_queue_name</b> is provided.
      */
-    acdQueueId: number;
+    acdQueueId?: number;
     /**
-     * The ACD queue name that can be used instead of <b>acd_queue_id</b>
+     * The ACD queue name. <b>Required</b> unless <b>acd_queue_id</b> is provided.
      */
-    acdQueueName: string;
+    acdQueueName?: string;
     /**
      * The new queue name. The length must be less than 100
      */
@@ -17396,17 +17215,17 @@ declare namespace VoximplantAPI {
   }
   interface GetSmartQueueRealtimeMetricsRequest {
     /**
-     * The application ID to search by
-     */
-    applicationId: number;
-    /**
-     * The application name to search by. Can be used instead of the <b>application_id</b> parameter
-     */
-    applicationName: string;
-    /**
      * The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate, call_count_assigned_to_queue, im_count_assigned_to_queue
      */
     reportType: string | string[];
+    /**
+     * The application ID to search by. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * The application name to search by. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
     /**
      * The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
      */
@@ -17454,14 +17273,6 @@ declare namespace VoximplantAPI {
   }
   interface GetSmartQueueDayHistoryRequest {
     /**
-     * The application ID to search by
-     */
-    applicationId: number;
-    /**
-     * The application name to search by. Can be used instead of the <b>application_id</b> parameter
-     */
-    applicationName: string;
-    /**
      * The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
      */
     sqQueueId: 'any' | number | number[];
@@ -17469,6 +17280,14 @@ declare namespace VoximplantAPI {
      * The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate, call_count_assigned_to_queue, im_count_assigned_to_queue
      */
     reportType: string | string[];
+    /**
+     * The application ID to search by. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * The application name to search by. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
     /**
      * The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
      */
@@ -17516,14 +17335,6 @@ declare namespace VoximplantAPI {
   }
   interface RequestSmartQueueHistoryRequest {
     /**
-     * The application ID to search by
-     */
-    applicationId: number;
-    /**
-     * The application name to search by. Can be used instead of the <b>application_id</b> parameter
-     */
-    applicationName: string;
-    /**
      * The SmartQueue ID list with a maximum of 5 values separated by semicolons (;). Can operate as filter for the **calls_blocked_percentage**, **count_blocked_calls**, **average_abandonment_rate**, **count_abandonment_calls**, **service_level**, **occupancy_rate**, **min_time_in_queue**, **max_time_in_queue**, **average_time_in_queue**, **min_answer_speed**, **max_answer_speed**, **average_answer_speed**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
      */
     sqQueueId: 'any' | number | number[];
@@ -17539,6 +17350,14 @@ declare namespace VoximplantAPI {
      * The report type. Possible values are: calls_blocked_percentage, count_blocked_calls, im_blocked_chats_percentage, im_count_blocked_chats, im_answered_chats_rate, average_abandonment_rate, count_abandonment_calls, service_level, im_service_level, occupancy_rate, im_agent_occupancy_rate, agent_utilization_rate, im_agent_utilization_rate, sum_agents_online_time, sum_agents_ready_time, sum_agents_dialing_time, sum_agents_in_service_time, sum_agents_in_service_incoming_time, sum_agents_in_service_outcoming_time, sum_agents_afterservice_time, sum_agents_dnd_time, sum_agents_custom_1_time, sum_agents_custom_2_time, sum_agents_custom_3_time, sum_agents_custom_4_time, sum_agents_custom_5_time, sum_agents_custom_6_time, sum_agents_custom_7_time, sum_agents_custom_8_time, sum_agents_custom_9_time, sum_agents_custom_10_time, sum_agents_banned_time, im_sum_agents_online_time, im_sum_agents_ready_time, im_sum_agents_in_service_time, im_sum_agents_dnd_time, im_sum_agents_custom_1_time, im_sum_agents_custom_2_time, im_sum_agents_custom_3_time, im_sum_agents_custom_4_time, im_sum_agents_custom_5_time, im_sum_agents_custom_6_time, im_sum_agents_custom_7_time, im_sum_agents_custom_8_time, im_sum_agents_custom_9_time, im_sum_agents_custom_10_time, im_sum_agents_banned_time, average_agents_idle_time, max_agents_idle_time, min_agents_idle_time, percentile_0_25_agents_idle_time, percentile_0_50_agents_idle_time, percentile_0_75_agents_idle_time, min_time_in_queue, max_time_in_queue, average_time_in_queue, min_answer_speed, max_answer_speed, average_answer_speed, im_min_answer_speed, im_max_answer_speed, im_average_answer_speed, min_handle_time, max_handle_time, average_handle_time, count_handled_calls, min_after_call_worktime, max_after_call_worktime, average_after_call_worktime, count_agent_unanswered_calls, im_count_agent_unanswered_chats, min_reaction_time, max_reaction_time, average_reaction_time, im_min_reaction_time, im_max_reaction_time, im_average_reaction_time, im_count_abandonment_chats, im_count_lost_chats, im_lost_chats_rate, call_count_assigned_to_queue, im_count_assigned_to_queue
      */
     reportType: string | string[];
+    /**
+     * The application ID to search by. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * The application name to search by. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
     /**
      * The user ID list with a maximum of 5 values separated by semicolons (;). Use the 'all' value to select all users. Can operate as a filter for the **occupancy_rate**, **sum_agents_online_time**, **sum_agents_ready_time**, **sum_agents_dialing_time**, **sum_agents_in_service_time**, **sum_agents_afterservice_time**, **sum_agents_dnd_time**, **sum_agents_banned_time**, **min_handle_time**, **max_handle_time**, **average_handle_time**, **count_handled_calls**, **min_after_call_worktime**, **max_after_call_worktime**, **average_after_call_worktime** report types
      */
@@ -17760,7 +17579,7 @@ declare namespace VoximplantAPI {
      */
     sqQueueName?: string;
     /**
-     * Whether to keep the call task in the queue if all agents are in the DND/BANNED/OFFLINE statuses.
+     * Whether to keep the call task in the queue if all agents are in the DND/BANNED statuses.
      */
     holdCallsIfInactiveAgents?: boolean;
     /**
@@ -17999,9 +17818,9 @@ declare namespace VoximplantAPI {
      */
     userId: 'any' | number | number[];
     /**
-     * Skills to be bound to agents in the json array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b> and <b>sq_skill_level</b> keys where skill levels range from 1 to 5
+     * Skills to be bound to agents in the JSON array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b> and <b>sq_skill_level</b> keys where skill levels range from 1 to 5
      */
-    sqSkills: any;
+    sqSkills: string;
     /**
      * Application name to search by. Can be used instead of <b>application_id</b>
      */
@@ -18208,9 +18027,9 @@ declare namespace VoximplantAPI {
      */
     excludedSqQueueName?: string;
     /**
-     * Skills to filter in the json array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b>, <b>min_sq_skill_level</b>, and <b>max_sq_skill_level</b> keys where skill levels range from 1 to 5
+     * Skills to filter in the JSON array format. The array should contain objects with the <b>sq_skill_id</b>/<b>sq_skill_name</b>, <b>min_sq_skill_level</b>, and <b>max_sq_skill_level</b> keys where skill levels range from 1 to 5
      */
-    sqSkills?: any;
+    sqSkills?: string;
     /**
      * List of user IDs separated by semicolons (;)
      */
@@ -18224,9 +18043,9 @@ declare namespace VoximplantAPI {
      */
     userNameTemplate?: string;
     /**
-     * Filter statuses in the json array format. The array should contain objects with the <b>sq_status_type</b> and <b>sq_status_name</b> keys. Possible values for <b>sq_status_type</b> are 'CALL' and 'IM'. Possible values for <b>sq_status_name</b> are 'OFFLINE', 'ONLINE', 'READY', 'IN_SERVICE', 'AFTER_SERVICE', 'DND'
+     * Filter statuses in the JSON array format. The array should contain objects with the <b>sq_status_type</b> and <b>sq_status_name</b> keys. Possible values for <b>sq_status_type</b> are 'CALL' and 'IM'. Possible values for <b>sq_status_name</b> are 'OFFLINE', 'ONLINE', 'READY', 'IN_SERVICE', 'AFTER_SERVICE', 'DND'
      */
-    sqStatuses?: any;
+    sqStatuses?: string;
     /**
      * Whether to display agent skills
      */
@@ -18405,13 +18224,13 @@ declare namespace VoximplantAPI {
   }
   interface DelSkillRequest {
     /**
-     * The skill ID
+     * The skill ID. <b>Required</b> unless <b>skill_name</b> is provided.
      */
-    skillId: number;
+    skillId?: number;
     /**
-     * The skill name that can be used instead of <b>skill_id</b>
+     * The skill name. <b>Required</b> unless <b>skill_id</b> is provided.
      */
-    skillName: string;
+    skillName?: string;
   }
   interface DelSkillResponse {
     /**
@@ -18422,17 +18241,17 @@ declare namespace VoximplantAPI {
   }
   interface SetSkillInfoRequest {
     /**
-     * The skill ID
-     */
-    skillId: number;
-    /**
-     * The skill name that can be used instead of <b>skill_id</b>
-     */
-    skillName: string;
-    /**
      * The new skill name. The length must be less than 512
      */
     newSkillName: string;
+    /**
+     * The skill ID. <b>Required</b> unless <b>skill_name</b> is provided.
+     */
+    skillId?: number;
+    /**
+     * The skill name. <b>Required</b> unless <b>skill_id</b> is provided.
+     */
+    skillName?: string;
   }
   interface SetSkillInfoResponse {
     /**
@@ -18473,29 +18292,29 @@ declare namespace VoximplantAPI {
   }
   interface BindSkillRequest {
     /**
-     * The skill ID list separated by semicolons (;). Use the 'all' value to select all skills
+     * The skill ID list separated by semicolons (;). Use the 'all' value to select all skills. <b>Required</b> unless <b>skill_name</b> is provided.
      */
-    skillId: 'any' | number | number[];
+    skillId?: 'any' | number | number[];
     /**
-     * The skill name list separated by semicolons (;). Can be used instead of <b>skill_id</b>
+     * The skill name list separated by semicolons (;). <b>Required</b> unless <b>skill_id</b> is provided.
      */
-    skillName: string | string[];
+    skillName?: string | string[];
     /**
-     * The user ID list separated by semicolons (;). Use the 'all' value to select all users
+     * The user ID list separated by semicolons (;). Use the 'all' value to select all users. <b>Required</b> unless <b>user_name</b> is provided.
      */
-    userId: 'any' | number | number[];
+    userId?: 'any' | number | number[];
     /**
-     * The user name list separated by semicolons (;). <b>user_name</b> can be used instead of <b>user_id</b>
+     * The user name list separated by semicolons (;). <b>Required</b> unless <b>user_id</b> is provided.
      */
-    userName: string | string[];
+    userName?: string | string[];
     /**
-     * The ACD queue ID list separated by semicolons (;). Use the 'all' value to select all ACD queues
+     * The ACD queue ID list separated by semicolons (;). Use the 'all' value to select all ACD queues. <b>Required</b> unless <b>acd_queue_name</b> is provided.
      */
-    acdQueueId: 'any' | number | number[];
+    acdQueueId?: 'any' | number | number[];
     /**
-     * The ACD queue name that can be used instead of <b>acd_queue_id</b>. The ACD queue name list separated by semicolons (;)
+     * The ACD queue name. The ACD queue name list separated by semicolons (;). <b>Required</b> unless <b>acd_queue_id</b> is provided.
      */
-    acdQueueName: string | string[];
+    acdQueueName?: string | string[];
     /**
      * The application ID. It is required if the <b>user_name</b> is specified
      */
@@ -18538,388 +18357,6 @@ declare namespace VoximplantAPI {
      */
     bindSkill: (request: BindSkillRequest) => Promise<BindSkillResponse>;
   }
-  interface AddAdminUserRequest {
-    /**
-     * The admin user name. The length must be less than 50
-     */
-    newAdminUserName: string;
-    /**
-     * The admin user display name. The length must be less than 256
-     */
-    adminUserDisplayName: string;
-    /**
-     * The admin user password. The length must be at least 6 symbols
-     */
-    newAdminUserPassword: string;
-    /**
-     * Whether the admin user is active
-     */
-    adminUserActive?: boolean;
-    /**
-     * The role(s) ID created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attaching admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles
-     */
-    adminRoleId?: string;
-    /**
-     * The role(s) name(s) created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attaching admin role name that can be used instead of <b>admin_role_id</b>
-     */
-    adminRoleName?: string | string[];
-  }
-  interface AddAdminUserResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    /**
-     * The new admin user ID
-     */
-    adminUserId: number;
-    /**
-     * The admin user API key
-     */
-    adminUserApiKey: string;
-    error?: APIError;
-  }
-  interface DelAdminUserRequest {
-    /**
-     * The admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
-     */
-    requiredAdminUserId: 'any' | number | number[];
-    /**
-     * The admin user name to delete, can be used instead of <b>required_admin_user_id</b>
-     */
-    requiredAdminUserName: string | string[];
-  }
-  interface DelAdminUserResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface SetAdminUserInfoRequest {
-    /**
-     * The admin user to edit
-     */
-    requiredAdminUserId: number;
-    /**
-     * The admin user to edit, can be used instead of <b>required_admin_user_id</b>
-     */
-    requiredAdminUserName: string;
-    /**
-     * The new admin user name. The length must be less than 50
-     */
-    newAdminUserName?: string;
-    /**
-     * The new admin user display name. The length must be less than 256
-     */
-    adminUserDisplayName?: string;
-    /**
-     * The new admin user password. The length must be at least 6 symbols
-     */
-    newAdminUserPassword?: string;
-    /**
-     * Whether the admin user is active
-     */
-    adminUserActive?: boolean;
-  }
-  interface SetAdminUserInfoResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface GetAdminUsersRequest {
-    /**
-     * The admin user ID to filter
-     */
-    requiredAdminUserId?: number;
-    /**
-     * The admin user name part to filter
-     */
-    requiredAdminUserName?: string;
-    /**
-     * The admin user display name part to filter
-     */
-    adminUserDisplayName?: string;
-    /**
-     * Whether the admin user is active to filter
-     */
-    adminUserActive?: boolean;
-    /**
-     * Whether to get the attached admin roles
-     */
-    withRoles?: boolean;
-    /**
-     * Whether to get the admin user permissions
-     */
-    withAccessEntries?: boolean;
-    /**
-     * The max returning record count
-     */
-    count?: number;
-    /**
-     * The first <b>N</b> records are skipped in the output
-     */
-    offset?: number;
-  }
-  interface GetAdminUsersResponse {
-    result: AdminUser[];
-    /**
-     * The total found admin user count
-     */
-    totalCount: number;
-    /**
-     * The returned admin user count
-     */
-    count: number;
-    error?: APIError;
-  }
-  interface AttachAdminRoleRequest {
-    /**
-     * The admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
-     */
-    requiredAdminUserId: 'any' | number | number[];
-    /**
-     * The admin user name to bind, can be used instead of <b>required_admin_user_id</b>
-     */
-    requiredAdminUserName: string | string[];
-    /**
-     * The role(s) ID created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The attached admin role ID list separated by semicolons (;). Use the 'all' value to select alladmin roles
-     */
-    adminRoleId: 'any' | number | number[];
-    /**
-     * The role(s) name(s) created via <a href='/docs/references/httpapi/adminroles'>Managing Admin Roles</a> methods. The admin role name to attach, can be used instead of <b>admin_role_id</b>
-     */
-    adminRoleName: string | string[];
-    /**
-     * The merge mode. The following values are possible: add, del, set
-     */
-    mode?: string;
-  }
-  interface AttachAdminRoleResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface AdminUsersInterface {
-    /**
-     * Adds a new admin user into the specified parent or child account.
-     */
-    addAdminUser: (request: AddAdminUserRequest) => Promise<AddAdminUserResponse>;
-    /**
-     * Deletes the specified admin user.
-     */
-    delAdminUser: (request: DelAdminUserRequest) => Promise<DelAdminUserResponse>;
-    /**
-     * Edits the specified admin user.
-     */
-    setAdminUserInfo: (request: SetAdminUserInfoRequest) => Promise<SetAdminUserInfoResponse>;
-    /**
-     * Gets the admin users of the specified account. Note that both account types - parent and child - can have its own admins.
-     */
-    getAdminUsers: (request: GetAdminUsersRequest) => Promise<GetAdminUsersResponse>;
-    /**
-     * Attaches the admin role(s) to the already existing admin(s).
-     */
-    attachAdminRole: (request: AttachAdminRoleRequest) => Promise<AttachAdminRoleResponse>;
-  }
-  interface AddAdminRoleRequest {
-    /**
-     * The admin role name. The length must be less than 50
-     */
-    adminRoleName: string;
-    /**
-     * Whether the admin role is enabled. If false the allowed and denied entries have no affect
-     */
-    adminRoleActive?: boolean;
-    /**
-     * The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles. The list specifies the roles from which the new role automatically copies all permissions (allowed_entries and denied_entries)
-     */
-    likeAdminRoleId?: 'any' | number | number[];
-    /**
-     * The admin role name that can be used instead of <b>like_admin_role_id</b>. The name specifies a role from which the new role automatically copies all permissions (allowed_entries and denied_entries)
-     */
-    likeAdminRoleName?: string | string[];
-    /**
-     * The list of allowed access entries separated by semicolons (;) (the API function names)
-     */
-    allowedEntries?: string | string[];
-    /**
-     * The list of denied access entries separated by semicolons (;) (the API function names)
-     */
-    deniedEntries?: string | string[];
-  }
-  interface AddAdminRoleResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    /**
-     * The new admin role ID
-     */
-    adminRoleId: number;
-    error?: APIError;
-  }
-  interface DelAdminRoleRequest {
-    /**
-     * The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles
-     */
-    adminRoleId: 'any' | number | number[];
-    /**
-     * The admin role name to delete, can be used instead of <b>admin_role_id</b>
-     */
-    adminRoleName: string | string[];
-  }
-  interface DelAdminRoleResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface SetAdminRoleInfoRequest {
-    /**
-     * The admin role to edit
-     */
-    adminRoleId: number;
-    /**
-     * The admin role to edit, can be used instead of <b>admin_role_id</b>
-     */
-    adminRoleName: string;
-    /**
-     * The new admin role name. The length must be less than 50
-     */
-    newAdminRoleName?: string;
-    /**
-     * Whether the admin role is enabled. If false the allowed and denied entries have no affect
-     */
-    adminRoleActive?: boolean;
-    /**
-     * The modification mode of the permission lists (allowed_entries and denied_entries). The following values are possible: add, del, set
-     */
-    entryModificationMode?: string;
-    /**
-     * The list of allowed access entry changes separated by semicolons (;) (the API function names)
-     */
-    allowedEntries?: string | string[];
-    /**
-     * The list of denied access entry changes separated by semicolons (;) (the API function names)
-     */
-    deniedEntries?: string | string[];
-    /**
-     * The admin role ID list separated by semicolons (;). Use the 'all' value to select all admin roles. The list specifies the roles from which the allowed_entries and denied_entries are merged
-     */
-    likeAdminRoleId?: 'any' | number | number[];
-    /**
-     * The admin role name, can be used instead of <b>like_admin_role_id</b>. The name specifies a role from which the allowed_entries and denied_entries are merged
-     */
-    likeAdminRoleName?: string | string[];
-  }
-  interface SetAdminRoleInfoResponse {
-    /**
-     * Returns 1 if the request has been completed successfully
-     */
-    result: number;
-    error?: APIError;
-  }
-  interface GetAdminRolesRequest {
-    /**
-     * The admin role ID to filter
-     */
-    adminRoleId?: number;
-    /**
-     * The admin role name part to filter
-     */
-    adminRoleName?: string;
-    /**
-     * Whether the admin role is enabled to filter
-     */
-    adminRoleActive?: boolean;
-    /**
-     * Whether to get the permissions
-     */
-    withEntries?: boolean;
-    /**
-     * Whether to include the account roles
-     */
-    withAccountRoles?: boolean;
-    /**
-     * Whether to include the parent roles
-     */
-    withParentRoles?: boolean;
-    withSystemRoles?: boolean;
-    /**
-     * The attached admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
-     */
-    includedAdminUserId?: 'any' | number | number[];
-    /**
-     * Not attached admin user ID list separated by semicolons (;). Use the 'all' value to select all admin users
-     */
-    excludedAdminUserId?: 'any' | number | number[];
-    /**
-     * Set false to get roles with partial admin user list matching
-     */
-    fullAdminUsersMatching?: string;
-    /**
-     * The admin user to show in the 'admin_users' field output
-     */
-    showingAdminUserId?: number;
-    /**
-     * The max returning record count
-     */
-    count?: number;
-    /**
-     * The first <b>N</b> records are skipped in the output
-     */
-    offset?: number;
-  }
-  interface GetAdminRolesResponse {
-    result: AdminRole[];
-    /**
-     * The total found admin role count
-     */
-    totalCount: number;
-    /**
-     * The returned admin role count
-     */
-    count: number;
-    error?: APIError;
-  }
-  interface GetAvailableAdminRoleEntriesRequest {}
-  interface GetAvailableAdminRoleEntriesResponse {
-    /**
-     * Array of the admin role entries
-     */
-    result: string[];
-    error?: APIError;
-  }
-  interface AdminRolesInterface {
-    /**
-     * Adds a new admin role.
-     */
-    addAdminRole: (request: AddAdminRoleRequest) => Promise<AddAdminRoleResponse>;
-    /**
-     * Deletes the specified admin role.
-     */
-    delAdminRole: (request: DelAdminRoleRequest) => Promise<DelAdminRoleResponse>;
-    /**
-     * Edits the specified admin role.
-     */
-    setAdminRoleInfo: (request: SetAdminRoleInfoRequest) => Promise<SetAdminRoleInfoResponse>;
-    /**
-     * Gets the admin roles.
-     */
-    getAdminRoles: (request: GetAdminRolesRequest) => Promise<GetAdminRolesResponse>;
-    /**
-     * Gets the all available admin role entries.
-     */
-    getAvailableAdminRoleEntries: (
-      request: GetAvailableAdminRoleEntriesRequest
-    ) => Promise<GetAvailableAdminRoleEntriesResponse>;
-  }
   interface AddAuthorizedAccountIPRequest {
     /**
      * The authorized IP4 or network
@@ -18943,13 +18380,13 @@ declare namespace VoximplantAPI {
   }
   interface DelAuthorizedAccountIPRequest {
     /**
-     * The authorized IP4 or network to remove. Set to 'all' to remove all items
+     * The authorized IP4 or network to remove. Set to 'all' to remove all items. <b>Required</b> unless <b>contains_ip</b> is provided.
      */
-    authorizedIp: string;
+    authorizedIp?: string;
     /**
-     * Specify the parameter to remove the networks that contains the particular IP4. Can be used instead of <b>authorized_ip</b>
+     * Specify the parameter to remove the networks that contains the particular IP4. <b>Required</b> unless <b>authorized_ip</b> is provided.
      */
-    containsIp: string;
+    containsIp?: string;
     /**
      * Whether to remove the network from the white list. Set false to remove the network from the black list. Omit the parameter to remove the network from all lists
      */
@@ -19136,6 +18573,10 @@ declare namespace VoximplantAPI {
   }
   interface GetSmsHistoryRequest {
     /**
+     * Message id list separated by semicolons (;)
+     */
+    messageId?: 'any' | number | number[];
+    /**
      * The source phone number
      */
     sourceNumber?: string;
@@ -19178,6 +18619,10 @@ declare namespace VoximplantAPI {
     error?: APIError;
   }
   interface A2PGetSmsHistoryRequest {
+    /**
+     * Message id list separated by semicolons (;)
+     */
+    messageId?: 'any' | number | number[];
     /**
      * The source phone number
      */
@@ -19476,14 +18921,6 @@ declare namespace VoximplantAPI {
   }
   interface AddSecretRequest {
     /**
-     * Application ID to add the secret to
-     */
-    applicationId: number;
-    /**
-     * Application name. Can be used instead of <b>application_id</b>
-     */
-    applicationName: string;
-    /**
      * Secret name. The name must start with a Latin letter and can contain up to 64 characters, including Latin letters, digits and underscores
      */
     secretName: string;
@@ -19491,6 +18928,14 @@ declare namespace VoximplantAPI {
      * Secret value. Maximum length is 8192 characters
      */
     secretValue: string;
+    /**
+     * Application ID to add the secret to. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * Application name. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
     /**
      * Optional. Secret description. When processing, the length is truncated to the first 200 characters
      */
@@ -19505,14 +18950,6 @@ declare namespace VoximplantAPI {
   }
   interface DelSecretRequest {
     /**
-     * Application ID
-     */
-    applicationId: number;
-    /**
-     * Application name. Can be used instead of <b>application_id</b>
-     */
-    applicationName: string;
-    /**
      * IDs to delete. A list separated by semicolons (;). Use the 'all' value to delete all secrets
      */
     secretId: 'any' | number | number[];
@@ -19520,6 +18957,14 @@ declare namespace VoximplantAPI {
      * Secret names to delete. List separated by semicolons (;)
      */
     secretName: string | string[];
+    /**
+     * Application ID. <b>Required</b> unless <b>application_name</b> is provided.
+     */
+    applicationId?: number;
+    /**
+     * Application name. <b>Required</b> unless <b>application_id</b> is provided.
+     */
+    applicationName?: string;
   }
   interface DelSecretResponse {
     /**
@@ -19530,21 +18975,21 @@ declare namespace VoximplantAPI {
   }
   interface GetSecretValueRequest {
     /**
-     * Application ID
+     * Application ID. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * Application name. Can be used instead of <b>application_id</b>
+     * Application name. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string;
+    applicationName?: string;
     /**
-     * Secret ID
+     * Secret ID. <b>Required</b> unless <b>secret_name</b> is provided.
      */
-    secretId: number;
+    secretId?: number;
     /**
-     * Secret name. Can be used instead of <b>secret_id</b>
+     * Secret name. <b>Required</b> unless <b>secret_id</b> is provided.
      */
-    secretName: string;
+    secretName?: string;
   }
   interface GetSecretValueResponse {
     /**
@@ -19555,13 +19000,13 @@ declare namespace VoximplantAPI {
   }
   interface GetSecretsRequest {
     /**
-     * Application ID
+     * Application ID. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * Application name. Can be used instead of <b>application_id</b>
+     * Application name. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string;
+    applicationName?: string;
     /**
      * Filter by the secret name part
      */
@@ -19592,21 +19037,21 @@ declare namespace VoximplantAPI {
   }
   interface SetSecretInfoRequest {
     /**
-     * Application ID
+     * Application ID. <b>Required</b> unless <b>application_name</b> is provided.
      */
-    applicationId: number;
+    applicationId?: number;
     /**
-     * Application name. Can be used instead of <b>application_id</b>
+     * Application name. <b>Required</b> unless <b>application_id</b> is provided.
      */
-    applicationName: string;
+    applicationName?: string;
     /**
-     * Secret ID to edit
+     * Secret ID to edit. <b>Required</b> unless <b>secret_name</b> is provided.
      */
-    secretId: number;
+    secretId?: number;
     /**
-     * Secret name. Can be used instead of <b>secret_id</b>
+     * Secret name. <b>Required</b> unless <b>secret_id</b> is provided.
      */
-    secretName: string;
+    secretName?: string;
     /**
      * New secret name. The name must start with a Latin letter and can contain up to 64 characters, including Latin letters, digits and underscores
      */
@@ -19650,6 +19095,7 @@ declare namespace VoximplantAPI {
     setSecretInfo: (request: SetSecretInfoRequest) => Promise<SetSecretInfoResponse>;
   }
   class Client {
+    constructor();
     
     Accounts: AccountsInterface;
     Applications: ApplicationsInterface;
@@ -19667,8 +19113,6 @@ declare namespace VoximplantAPI {
     Queues: QueuesInterface;
     SmartQueue: SmartQueueInterface;
     Skills: SkillsInterface;
-    AdminUsers: AdminUsersInterface;
-    AdminRoles: AdminRolesInterface;
     AuthorizedIPs: AuthorizedIPsInterface;
     DialogflowCredentials: DialogflowCredentialsInterface;
     SMS: SMSInterface;
@@ -19680,8 +19124,6 @@ declare namespace VoximplantAPI {
   }
   
 }
-
-/* === DIFF MESSAGE - REMOVE BEFORE THE PRODUCTION === */
 
 declare namespace VoximplantAvatar {
   /**
@@ -20045,22 +19487,137 @@ declare namespace VoximplantAvatar {
  */
 declare namespace VoximplantAvatar {}
 
+declare namespace VoxTTS {
+  /**
+   * Creates a new [VoxTTS.RealtimeTTSPlayer] instance. You can attach media streams later via the [VoxTTS.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * @param parameters Realtime TTS player parameters
+   **/
+  function createRealtimeTTSPlayer(parameters: RealtimeTTSPlayerParameters): RealtimeTTSPlayer;
+}
+
 /**
- * Available audio encoding formats. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is **PCM8**.
+ * The list of available models for [VoxTTS].
+ */
+declare enum VoxTTSModelList {
+  VoxTTS = 'voxtts',
+}
+
+declare namespace VoxTTS {
+  /**
+   * Parameters for creating a VoxTTS provider context. Passed via [VoxTTS.RealtimeTTSPlayerParameters.createContextParameters].
+   */
+  type CreateContextParameters = {
+    /**
+     * Optional. Parameters for creating the TTS context. When omitted or empty, [VoxTTS.VoiceList.Sergey] and [VoxTTS.ModelList.VoxTTS] are used.
+     */
+    create?: {
+      /**
+       * Optional. The model to use for synthesis. Defaults to [VoxTTS.ModelList.VoxTTS].
+       */
+      modelId?: VoxTTSModelList;
+      /**
+       * Optional. The voice to use for synthesis. Defaults to [VoxTTS.VoiceList.Sergey].
+       */
+      voiceId?: VoxTTSVoiceList;
+      /**
+       * Optional. Parameters for cloning the TTS context.
+       */
+      cloning?: Object;
+    };
+    /**
+     * Optional. Identifier of the provider context. Use the same value in [VoxTTS.RealtimeTTSPlayer.send] requests.
+     */
+    contextId?: string;
+  };
+
+  /**
+   * [VoxTTS.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [VoxTTS.createRealtimeTTSPlayer] method.
+   */
+  interface RealtimeTTSPlayerParameters {
+    /**
+     * Object to provide parameters directly to the VoxTTS provider Create Context message.
+     */
+    createContextParameters: CreateContextParameters;
+    /**
+     * Optional. VoxTTS API key. Use your VoxTTS API key if you have your own.
+     */
+    apiKey?: string;
+    /**
+     * Optional. Whether to enable the tracing functionality.
+     *
+     * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
+     *
+     * Note: Enable this only for diagnostic purposes.
+     */
+    trace?: boolean;
+  }
+}
+
+declare namespace VoxTTS {
+  /**
+   * Parameters for the [VoxTTS.RealtimeTTSPlayer.send] method.
+   */
+  type VoxTTSSendParameters = {
+    /**
+     * Send text message parameters.
+     */
+    send_text: {
+      /**
+       * Text to synthesize.
+       */
+      text: string;
+      /**
+       * Flush context parameters passed directly to the VoxTTS provider.
+       */
+      flush_context: Object;
+    };
+    /**
+     * Optional. Identifier of the provider context.
+     */
+    contextId?: string;
+  };
+
+  class RealtimeTTSPlayer extends BasePlayer {
+    /**
+     * Sends a message object to the VoxTTS provider context.
+     * @param parameters Object that provides the parameters directly to the VoxTTS provider context.
+     */
+    send(parameters: VoxTTSSendParameters): void;
+    /**
+     * Clears a [VoxTTS.RealtimeTTSPlayer] buffer.
+     */
+    clearBuffer(): void;
+  }
+}
+
+/**
+ * The list of available voices for [VoxTTS].
+ */
+declare enum VoxTTSVoiceList {
+  Anna = 'Anna',
+  Sergey = 'Sergey',
+}
+
+declare namespace VoxTTS {
+  /**
+   * The list of available voices for [VoxTTS].
+   */
+  const VoiceList: typeof VoxTTSVoiceList;
+
+  /**
+   * The list of available models for [VoxTTS].
+   */
+  const ModelList: typeof VoxTTSModelList;
+}
+
+/**
+ * Available audio encoding formats. Can be passed via the [SendMediaParameters.encoding] parameter. The default value is **PCM16_8KHZ**.
  */
 declare enum WebSocketAudioEncoding {
   /**
    * Pulse-code modulation, 8kHz.
    */
-  PCM8 = 'PCM8',
-  /**
-   * Pulse-code modulation, 8kHz.
-   */
   PCM16_8KHZ = 'PCM8',
-  /**
-   * Pulse-code modulation, 16kHz.
-   */
-  PCM16 = 'PCM16',
   /**
    * Pulse-code modulation, 16kHz.
    */
@@ -20481,6 +20038,380 @@ declare class WebSocket {
   clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
 }
 
+declare namespace XAI {
+  /**
+   * Creates a new [XAI.RealtimeTTSPlayer] instance. You can attach media streams later via the [XAI.RealtimeTTSPlayer.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   * @param parameters Optional. Realtime TTS player parameters
+   **/
+  function createRealtimeTTSPlayer(parameters?: RealtimeTTSPlayerParameters): RealtimeTTSPlayer;
+}
+
+declare namespace XAI {
+    /**
+     * Creates a new [XAI.VoiceAgentAPIClient] instance.
+     * @param parameters The [XAI.VoiceAgentAPIClient] parameters
+     */
+    function createVoiceAgentAPIClient(parameters: VoiceAgentAPIClientParameters): Promise<XAI.VoiceAgentAPIClient>
+}
+declare namespace XAI {
+  /**
+   * @event
+   */
+  enum Events {
+    /**
+     * Triggered when the audio stream sent by a third party through an xAI WebSocket is started playing.
+     * @typedef _WebSocketMediaStartedXAIEvent
+     */
+    WebSocketMediaStarted = 'XAI.Events.WebSocketMediaStarted',
+    /**
+     * Triggers after the end of the audio stream sent by a third party through an xAI WebSocket (**1 second of silence**).
+     * @typedef _WebSocketMediaEndedXAIEvent
+     */
+    WebSocketMediaEnded = 'XAI.Events.WebSocketMediaEnded',
+  }
+
+  /**
+   * @private
+   */
+  interface _Events {
+    [XAI.Events.WebSocketMediaStarted]: _WebSocketMediaStartedXAIEvent;
+    [XAI.Events.WebSocketMediaEnded]: _WebSocketMediaEndedXAIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _Event {
+    /**
+     * The [XAI.VoiceAgentAPIClient] instance.
+     */
+    client: VoiceAgentAPIClient;
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaStartedXAIEvent extends _Event, _WebSocketMediaStartedWithoutWebSocketEvent {
+  }
+
+  /**
+   * @private
+   */
+  interface _WebSocketMediaEndedXAIEvent extends _Event, _WebSocketMediaEndedWithoutWebSocketEvent {
+  }
+}
+declare namespace XAI {
+  /**
+   * [XAI.RealtimeTTSPlayer] parameters. Can be passed as arguments to the [XAI.createRealtimeTTSPlayer] method.
+   */
+  interface RealtimeTTSPlayerParameters extends _WebSocketBasedClientParameters {
+    /**
+     * Optional. Object to provide parameters for the xAI WebSocket connection. Must contain `voice` and `language`. Find more information in the [documentation](https://docs.x.ai/developers/model-capabilities/audio/text-to-speech#connection).
+     */
+    connectionParameters?: Object;
+    /**
+     * Optional. xAI API key. Use your xAI API key if you have your own xAI account.
+     */
+    apiKey?: string;
+  }
+}
+
+declare namespace XAI {
+  class RealtimeTTSPlayer extends BasePlayer {
+    /**
+     * Send message object to the xAI provider context.
+     * @param parameters Object provides the parameters directly to the xAI provider context. Find more information in the [documentation](https://docs.x.ai/developers/model-capabilities/audio/text-to-speech#streaming-tts-websocket)
+     */
+    send(parameters: Object): void;
+    /**
+     * Clears a [XAI.RealtimeTTSPlayer] buffer.
+     */
+    clearBuffer(): void;
+  }
+}
+
+declare namespace XAI {
+  /**
+   * @private
+   */
+  interface _VoiceAgentAPIClientEvents extends _Events, _VoiceAgentAPIEvents {
+  }
+}
+declare namespace XAI {
+  /**
+   * [XAI.VoiceAgentAPIClient] parameters. Can be passed as arguments to the [XAI.createVoiceAgentAPIClient] method.
+   */
+  interface VoiceAgentAPIClientParameters extends _VoiceAIClientParameters {
+    /**
+     * The xAI API key for the XAI VoiceAgent API.
+     */
+    xAIApiKey: string;
+    /**
+      * The model to use for the XAI VoiceAgent API.[https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection](https://docs.x.ai/developers/model-capabilities/audio/voice-agent#model-selection)
+     * Note: The default value is **grok-voice-fast-1.0**.
+     */
+    model?: string;
+  }
+}
+declare namespace XAI {
+  class VoiceAgentAPIClient {
+    /**
+     * Returns the VoiceAgentAPIClient id.
+     */
+    id(): string;
+
+    /**
+     * Returns the XAI WebSocket id.
+     */
+    webSocketId(): string;
+
+    /**
+     * Closes the XAI connection (over WebSocket) or connection attempt.
+     */
+    close(): void;
+
+    /**
+     * Starts sending media from the XAI (via WebSocket) to the media unit. XAI works in real time.
+     * @param mediaUnit Media unit that receives media
+     * @param parameters Optional interaction parameters
+     */
+    sendMediaTo(mediaUnit: VoxMediaUnit, parameters?: SendMediaParameters): void;
+
+    /**
+     * Stops sending media from the XAI (via WebSocket) to the media unit.
+     * @param mediaUnit Media unit that stops receiving media
+     */
+    stopMediaTo(mediaUnit: VoxMediaUnit): void;
+
+    /**
+     * Clears the XAI WebSocket media buffer.
+     * @param parameters Optional. Media buffer clearing parameters
+     */
+    clearMediaBuffer(parameters?: ClearMediaBufferParameters): void;
+
+    /**
+     * Adds a handler for the specified [XAI.VoiceAgentAPIEvents] or [XAI.Events] event. Use only functions as handlers; anything except a function leads to the error and scenario termination when a handler is called.
+     * @param event Event class (i.e., [XAI.VoiceAgentAPIEvents.ConversationCreated])
+     * @param callback Handler function. A single parameter is passed - object with event information
+     */
+    addEventListener<T extends keyof XAI._VoiceAgentAPIClientEvents>(
+      event: XAI.Events | XAI.VoiceAgentAPIEvents | T,
+      callback: (event: XAI._VoiceAgentAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Removes a handler for the specified [XAI.VoiceAgentAPIEvents] or [XAI.Events] event.
+     * @param event Event class (i.e., [XAI.VoiceAgentAPIEvents.ConversationCreated])
+     * @param callback Optional. Handler function. If not specified, all handler functions are removed
+     */
+    removeEventListener<T extends keyof XAI._VoiceAgentAPIClientEvents>(
+      event: XAI.Events | XAI.VoiceAgentAPIEvents | T,
+      callback?: (event: XAI._VoiceAgentAPIClientEvents[T]) => any,
+    ): void;
+
+    /**
+     * Send this event to update the session’s configuration. [https://docs.x.ai/docs/guides/voice/agent#client-events-1](https://docs.x.ai/docs/guides/voice/agent#client-events-1)
+     * @param parameters
+     */
+    sessionUpdate(parameters: Object): void
+
+    /**
+     * Clear input audio buffer. [https://docs.x.ai/docs/guides/voice/agent#client-1](https://docs.x.ai/docs/guides/voice/agent#client-1)
+     * @param parameters
+     */
+    inputAudioBufferClear(parameters: Object): void
+
+    /**
+     * Create a new user message. [https://docs.x.ai/docs/guides/voice/agent#client](https://docs.x.ai/docs/guides/voice/agent#client)
+     * @param parameters
+     */
+    conversationItemCreate(parameters: Object): void
+
+    /**
+     * Request the server to create a new assistant response when using client side vad. (This is handled automatically when using server side vad.) [https://docs.x.ai/docs/guides/voice/agent#client-2](https://docs.x.ai/docs/guides/voice/agent#client-2)
+     * @param parameters
+     */
+    responseCreate(parameters: Object): void
+  }
+}
+  
+declare namespace XAI {
+  /**
+   * @event
+   */
+  enum VoiceAgentAPIEvents {
+    /**
+     * The unknown event.
+     * @typedef _VoiceAgentAPIEvent
+     */
+    Unknown = 'XAI.VoiceAgentAPI.Unknown',
+
+    /**
+     * The first message at connection. Notifies the client that a conversation session has been created. [https://docs.x.ai/docs/guides/voice/agent#server-events-2](https://docs.x.ai/docs/guides/voice/agent#server-events-2)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ConversationCreated = 'XAI.VoiceAgentAPI.ConversationCreated',
+
+    /**
+     * Acknowledge the client's "session.update" message that the session has been updated. [https://docs.x.ai/docs/guides/voice/agent#server-events-1](https://docs.x.ai/docs/guides/voice/agent#server-events-1)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    SessionUpdated = 'XAI.VoiceAgentAPI.SessionUpdated',
+
+    /**
+     * Responding to the client that a new user message has been added to conversation history, or if an assistance response has been added to conversation history. [https://docs.x.ai/docs/guides/voice/agent#server](https://docs.x.ai/docs/guides/voice/agent#server)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ConversationItemAdded = 'XAI.VoiceAgentAPI.ConversationItemAdded',
+
+    /**
+     * Notify the client the audio transcription for input has been completed. [https://docs.x.ai/docs/guides/voice/agent#server](https://docs.x.ai/docs/guides/voice/agent#server)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ConversationItemInputAudioTranscriptionCompleted = 'XAI.VoiceAgentAPI.ConversationItemInputAudioTranscriptionCompleted',
+
+    /**
+     * Input audio buffer has been committed. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    InputAudioBufferCommitted = 'XAI.VoiceAgentAPI.InputAudioBufferCommitted',
+
+    /**
+     * Input audio buffer has been cleared. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    InputAudioBufferCleared = 'XAI.VoiceAgentAPI.InputAudioBufferCleared',
+
+    /**
+     * Notify the client the server's VAD has detected the start of a speech. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    InputAudioBufferSpeechStarted = 'XAI.VoiceAgentAPI.InputAudioBufferSpeechStarted',
+
+    /**
+     * Notify the client the server's VAD has detected the end of a speech. [https://docs.x.ai/docs/guides/voice/agent#server-1](https://docs.x.ai/docs/guides/voice/agent#server-1)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    InputAudioBufferSpeechStopped = 'XAI.VoiceAgentAPI.InputAudioBufferSpeechStopped',
+
+    /**
+     * A new assistant response turn is in progress. Audio delta created from this assistant turn will have the same response id. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseCreated = 'XAI.VoiceAgentAPI.ResponseCreated',
+
+    /**
+     * The assistant's response is completed. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseDone = 'XAI.VoiceAgentAPI.ResponseDone',
+
+    /**
+     * A new assistant response is added to message history. [https://docs.x.ai/docs/guides/voice/agent#server-2](https://docs.x.ai/docs/guides/voice/agent#server-2)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseOutputItemAdded = 'XAI.VoiceAgentAPI.ResponseOutputItemAdded',
+
+    /**
+     * A new assistant response is done. 
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseOutputItemDone = 'XAI.VoiceAgentAPI.ResponseOutputItemDone',
+
+    /**
+     * Audio transcript delta of the assistant response. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseOutputAudioTranscriptDelta = 'XAI.VoiceAgentAPI.ResponseOutputAudioTranscriptDelta',
+
+    /**
+     * The audio transcript delta of the assistant response has finished generating. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseOutputAudioTranscriptDone = 'XAI.VoiceAgentAPI.ResponseOutputAudioTranscriptDone',
+
+    /**
+     * Notifies client that the audio for this turn has finished generating. [https://docs.x.ai/docs/guides/voice/agent#server-3](https://docs.x.ai/docs/guides/voice/agent#server-3)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseOutputAudioDone = 'XAI.VoiceAgentAPI.ResponseOutputAudioDone',
+
+    /**
+     * Notifies client that the content part added. 
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseContentPartAdded = 'XAI.VoiceAgentAPI.ResponseContentPartAdded',
+
+    /**
+     * Notifies client that the content part done. 
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseContentPartDone = 'XAI.VoiceAgentAPI.ResponseContentPartDone',
+
+    /**
+     * Function call triggered with complete arguments. [https://docs.x.ai/docs/guides/voice/agent#handling-function-call-responses](https://docs.x.ai/docs/guides/voice/agent#handling-function-call-responses)
+     * @typedef _VoiceAgentAPIEvent
+     */
+    ResponseFunctionCallArgumentsDone = 'XAI.VoiceAgentAPI.ResponseFunctionCallArgumentsDone',
+
+    /**
+     * The WebSocket error response event.
+     * @typedef _VoiceAgentAPIEvent
+     */
+    WebSocketError = 'XAI.VoiceAgentAPI.WebSocketError',
+
+    /**
+    * Contains information about connector.
+    * @typedef _VoiceAgentAPIEvent
+    */
+    ConnectorInformation = 'XAI.VoiceAgentAPI.ConnectorInformation',
+  }
+
+  /**
+   * @private
+   */
+  interface _VoiceAgentAPIEvents {
+    [VoiceAgentAPIEvents.Unknown]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ConversationCreated]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.SessionUpdated]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ConversationItemAdded]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ConversationItemInputAudioTranscriptionCompleted]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.InputAudioBufferCommitted]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.InputAudioBufferCleared]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.InputAudioBufferSpeechStarted]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.InputAudioBufferSpeechStopped]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseCreated]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseOutputItemAdded]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseOutputItemDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseOutputAudioTranscriptDelta]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseOutputAudioTranscriptDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseOutputAudioDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseContentPartAdded]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseContentPartDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ResponseFunctionCallArgumentsDone]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.WebSocketError]: _VoiceAgentAPIEvent;
+    [VoiceAgentAPIEvents.ConnectorInformation]: _VoiceAgentAPIEvent;
+  }
+
+  /**
+   * @private
+   */
+  interface _VoiceAgentAPIEvent {
+    /**
+     * The [XAI.VoiceAgentAPIClient] instance.
+     */
+    client: VoiceAgentAPIClient;
+    /**
+    * The 'payload' parameter contains the event's data.
+     */
+    data?: { customEvent?: string; payload?: Object; }
+  }
+}
+
+
+declare namespace XAI {
+}
 declare namespace Yandex {
     /**
      * Creates a [Yandex.RealtimeAPIClient] instance.
@@ -20948,7 +20879,7 @@ declare namespace Yandex {
   /**
    * @private
    */
-  interface _YandexRealtimeAPIEvents {
+  interface _RealtimeAPIEvents {
     [RealtimeAPIEvents.Unknown]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.HTTPResponse]: _YandexRealtimeAPIEvent;
     [RealtimeAPIEvents.WebSocketError]: _YandexRealtimeAPIEvent;
@@ -21008,9 +20939,9 @@ declare namespace Yandex {
      */
     client: RealtimeAPIClient;
     /**
-     * The event's data.
+    * The 'payload' parameter contains the event's data.
      */
-    data?: Object;
+    data?: { customEvent?: string; payload?: Object; }
   }
 }
   
@@ -21949,6 +21880,12 @@ declare namespace ASRProfileList {
    */
   namespace Google {
     /**
+     * English (United States)
+     * @const
+     */
+    const en_US: ASRProfile;
+
+    /**
      * Afrikaans (South Africa)
      * @const
      */
@@ -21967,118 +21904,10 @@ declare namespace ASRProfileList {
     const am_ET: ASRProfile;
 
     /**
-     * Arabic (Algeria)
-     * @const
-     */
-    const ar_DZ: ASRProfile;
-
-    /**
-     * Arabic (Bahrain)
-     * @const
-     */
-    const ar_BH: ASRProfile;
-
-    /**
      * Arabic (Egypt)
      * @const
      */
     const ar_EG: ASRProfile;
-
-    /**
-     * Arabic (Iraq)
-     * @const
-     */
-    const ar_IQ: ASRProfile;
-
-    /**
-     * Arabic (Israel)
-     * @const
-     */
-    const ar_IL: ASRProfile;
-
-    /**
-     * Arabic (Jordan)
-     * @const
-     */
-    const ar_JO: ASRProfile;
-
-    /**
-     * Arabic (Kuwait)
-     * @const
-     */
-    const ar_KW: ASRProfile;
-
-    /**
-     * Arabic (Lebanon)
-     * @const
-     */
-    const ar_LB: ASRProfile;
-
-    /**
-     * Arabic (Mauritania)
-     * @const
-     */
-    const ar_MR: ASRProfile;
-
-    /**
-     * Arabic (Morocco)
-     * @const
-     */
-    const ar_MA: ASRProfile;
-
-    /**
-     * Arabic (Oman)
-     * @const
-     */
-    const ar_OM: ASRProfile;
-
-    /**
-     * Arabic (Pseudo-Accents)
-     * @const
-     */
-    const ar_XA: ASRProfile;
-
-    /**
-     * Arabic (Qatar)
-     * @const
-     */
-    const ar_QA: ASRProfile;
-
-    /**
-     * Arabic (Saudi Arabia)
-     * @const
-     */
-    const ar_SA: ASRProfile;
-
-    /**
-     * Arabic (State of Palestine)
-     * @const
-     */
-    const ar_PS: ASRProfile;
-
-    /**
-     * Arabic (Syria)
-     * @const
-     */
-    const ar_SY: ASRProfile;
-
-    /**
-     * Arabic (Tunisia)
-     * @const
-     */
-    const ar_TN: ASRProfile;
-
-    /**
-     * Arabic (United Arab Emirates)
-     * @const
-     */
-    const ar_AE: ASRProfile;
-
-    /**
-     * Arabic (Yemen)
-     * @const
-     */
-    const ar_YE: ASRProfile;
 
     /**
      * Armenian (Armenia)
@@ -22225,22 +22054,10 @@ declare namespace ASRProfileList {
     const en_IN: ASRProfile;
 
     /**
-     * English (Philippines)
-     * @const
-     */
-    const en_PH: ASRProfile;
-
-    /**
      * English (United Kingdom)
      * @const
      */
     const en_GB: ASRProfile;
-
-    /**
-     * English (United States)
-     * @const
-     */
-    const en_US: ASRProfile;
 
     /**
      * Estonian (Estonia)
@@ -22633,12 +22450,6 @@ declare namespace ASRProfileList {
     const so_SO: ASRProfile;
 
     /**
-     * Spanish (Mexico)
-     * @const
-     */
-    const es_MX: ASRProfile;
-
-    /**
      * Spanish (Spain)
      * @const
      */
@@ -22759,6 +22570,114 @@ declare namespace ASRProfileList {
     const zu_ZA: ASRProfile;
 
     /**
+     * Arabic (Algeria)
+     * @const
+     */
+    const ar_DZ: ASRProfile;
+
+    /**
+     * Arabic (Bahrain)
+     * @const
+     */
+    const ar_BH: ASRProfile;
+
+    /**
+     * Arabic (Iraq)
+     * @const
+     */
+    const ar_IQ: ASRProfile;
+
+    /**
+     * Arabic (Israel)
+     * @const
+     */
+    const ar_IL: ASRProfile;
+
+    /**
+     * Arabic (Jordan)
+     * @const
+     */
+    const ar_JO: ASRProfile;
+
+    /**
+     * Arabic (Kuwait)
+     * @const
+     */
+    const ar_KW: ASRProfile;
+
+    /**
+     * Arabic (Lebanon)
+     * @const
+     */
+    const ar_LB: ASRProfile;
+
+    /**
+     * Arabic (Mauritania)
+     * @const
+     */
+    const ar_MR: ASRProfile;
+
+    /**
+     * Arabic (Morocco)
+     * @const
+     */
+    const ar_MA: ASRProfile;
+
+    /**
+     * Arabic (Oman)
+     * @const
+     */
+    const ar_OM: ASRProfile;
+
+    /**
+     * Arabic (Pseudo-Accents)
+     * @const
+     */
+    const ar_XA: ASRProfile;
+
+    /**
+     * Arabic (Qatar)
+     * @const
+     */
+    const ar_QA: ASRProfile;
+
+    /**
+     * Arabic (Saudi Arabia)
+     * @const
+     */
+    const ar_SA: ASRProfile;
+
+    /**
+     * Arabic (State of Palestine)
+     * @const
+     */
+    const ar_PS: ASRProfile;
+
+    /**
+     * Arabic (Syria)
+     * @const
+     */
+    const ar_SY: ASRProfile;
+
+    /**
+     * Arabic (Tunisia)
+     * @const
+     */
+    const ar_TN: ASRProfile;
+
+    /**
+     * Arabic (United Arab Emirates)
+     * @const
+     */
+    const ar_AE: ASRProfile;
+
+    /**
+     * Arabic (Yemen)
+     * @const
+     */
+    const ar_YE: ASRProfile;
+
+    /**
      * Dutch (Belgium)
      * @const
      */
@@ -22787,6 +22706,12 @@ declare namespace ASRProfileList {
      * @const
      */
     const en_PK: ASRProfile;
+
+    /**
+     * English (Philippines)
+     * @const
+     */
+    const en_PH: ASRProfile;
 
     /**
      * English (Singapore)
@@ -22897,6 +22822,12 @@ declare namespace ASRProfileList {
     const es_HN: ASRProfile;
 
     /**
+     * Spanish (Mexico)
+     * @const
+     */
+    const es_MX: ASRProfile;
+
+    /**
      * Spanish (Nicaragua)
      * @const
      */
@@ -22955,12 +22886,6 @@ declare namespace ASRProfileList {
      * @const
      */
     const ve_ZA: ASRProfile;
-
-    /**
-     * English (Canada)
-     * @const
-     */
-    const en_CA: ASRProfile;
   }
 }
 
@@ -23111,6 +23036,12 @@ declare namespace ASRProfileList {
      * @const
      */
     const bg_BG: ASRProfile;
+
+    /**
+     * Bhojpuri (India)
+     * @const
+     */
+    const bho_IN: ASRProfile;
 
     /**
      * Bengali (India)
@@ -23725,10 +23656,22 @@ declare namespace ASRProfileList {
     const sq_AL: ASRProfile;
 
     /**
+     * Serbian (Montenegro)
+     * @const
+     */
+    const sr_ME: ASRProfile;
+
+    /**
      * Serbian (Cyrillic, Serbia)
      * @const
      */
     const sr_RS: ASRProfile;
+
+    /**
+     * Serbian (Kosovo)
+     * @const
+     */
+    const sr_XK: ASRProfile;
 
     /**
      * Swedish (Sweden)
@@ -23785,7 +23728,7 @@ declare namespace ASRProfileList {
     const ur_IN: ASRProfile;
 
     /**
-     * Uzbek (Uzbekistan)
+     * Uzbek (Latin, Uzbekistan)
      * @const
      */
     const uz_UZ: ASRProfile;
@@ -25061,6 +25004,7 @@ declare namespace VoiceList {
     const arb_Zeina: Voice;
   }
 }
+
 declare namespace VoiceList {
   namespace Amazon {
     /**
@@ -25386,6 +25330,7 @@ declare namespace VoiceList {
     }
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of available freemium TTS voices for the [Call.say](/docs/references/voxengine/call#say) and [VoxEngine.createTTSPlayer](/docs/references/voxengine/voxengine/createttsplayer) methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -35999,6 +35944,7 @@ declare namespace VoiceList {
     const yue_HK_Standard_D: Voice;
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of available IBM TTS voices for the [Call.say](/docs/references/voxengine/call#say) and [VoxEngine.createTTSPlayer](/docs/references/voxengine/voxengine/createttsplayer) methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.
@@ -36215,6 +36161,33 @@ declare namespace VoiceList {
    */
   namespace Microsoft {}
 }
+
+declare namespace VoiceList {
+  namespace Microsoft {
+    /**
+     * List of available premium Microsoft TTS voices for the [Call.say](/docs/references/voxengine/call#say) and [VoxEngine.createTTSPlayer](/docs/references/voxengine/voxengine/createttsplayer) methods that sound more natural due to advanced synthesis technology.
+     * @namespace
+     */
+    namespace Neural {
+      /**
+       * @deprecated
+       * @const
+       */
+      const en_US_JennyMultilingualV2Neural: Voice;
+      /**
+       * @deprecated
+       * @const
+       */
+      const zh_CN_XiaoxuanNeural: Voice;
+      /**
+       * @deprecated
+       * @const
+       */
+      const en_GB_MiaNeural: Voice;
+    }
+  }
+}
+
 declare namespace VoiceList {
   namespace Microsoft {
     /**
@@ -37093,6 +37066,16 @@ declare namespace VoiceList {
        */
       const en_US_BrandonMultilingualNeural: Voice;
       /**
+       * Neural Microsoft voice, English (United States) Male, AIGenerate1Neural.
+       * @const
+       */
+      const en_US_AIGenerate1Neural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, AIGenerate2Neural.
+       * @const
+       */
+      const en_US_AIGenerate2Neural: Voice;
+      /**
        * Neural Microsoft voice, English (United States) Female, AmberNeural.
        * @const
        */
@@ -37147,6 +37130,11 @@ declare namespace VoiceList {
        * @const
        */
       const en_US_EricNeural: Voice;
+      /**
+       * Neural Microsoft voice, English (United States) Female, EvelynMultilingualNeural.
+       * @const
+       */
+      const en_US_EvelynMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, English (United States) Male, JacobNeural.
        * @const
@@ -38828,6 +38816,11 @@ declare namespace VoiceList {
        */
       const zh_CN_XiaoruiNeural: Voice;
       /**
+       * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoshuangMultilingualNeural.
+       * @const
+       */
+      const zh_CN_XiaoshuangMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoshuangNeural.
        * @const
        */
@@ -38848,6 +38841,11 @@ declare namespace VoiceList {
        */
       const zh_CN_XiaoyanNeural: Voice;
       /**
+       * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoyouMultilingualNeural.
+       * @const
+       */
+      const zh_CN_XiaoyouMultilingualNeural: Voice;
+      /**
        * Neural Microsoft voice, Chinese (Mandarin, Simplified) Female, XiaoyouNeural.
        * @const
        */
@@ -38862,6 +38860,11 @@ declare namespace VoiceList {
        * @const
        */
       const zh_CN_XiaozhenNeural: Voice;
+      /**
+       * Neural Microsoft voice, Chinese (Mandarin, Simplified) Male, YunfanMultilingualNeural.
+       * @const
+       */
+      const zh_CN_YunfanMultilingualNeural: Voice;
       /**
        * Neural Microsoft voice, Chinese (Mandarin, Simplified) Male, YunfengNeural.
        * @const
@@ -38970,6 +38973,7 @@ declare namespace VoiceList {
     }
   }
 }
+
 declare namespace VoiceList {
   /**
    * List of availabl SaluteSpeech TTS voices for the [Call.say](/docs/references/voxengine/call#say) and [VoxEngine.createTTSPlayer](/docs/references/voxengine/voxengine/createttsplayer) methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.

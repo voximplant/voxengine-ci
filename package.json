@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "34.0.0",
+  "version": "35.0.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "Apache-2.0",
   "keywords": [
@@ -29,9 +29,9 @@
     "lint:fix": "eslint {lib,bin} --ext .ts --cache --fix",
     "semantic-release": "semantic-release",
     "commitlint": "commitlint",
-    "test": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/**/*.spec.ts",
+    "test": "yarn build && mocha --timeout 60000 -r ts-node/register __tests__/**/*.spec.ts",
     "test:unit": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/unit/**/*.spec.ts",
-    "test:integration": "yarn build && mocha --timeout 15000 -r ts-node/register __tests__/integration/**/*.spec.ts",
+    "test:integration": "yarn build && mocha --timeout 60000 -r ts-node/register __tests__/integration/**/*.spec.ts",
     "spellcheck": "cspell \"{lib,bin,docs,tools}/**\" && cspell README.md",
     "prepare": "git config core.hooksPath .githooks || echo 'Git hooks configuration error!'"
   },

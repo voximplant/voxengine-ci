@@ -34,7 +34,9 @@ describe('throw error if app or rule does not exist', () => {
   before(async () => {
     use(chaiAsPromised);
     // Await for client
-    client = new VoximplantApiClient(VOX_CI_CREDENTIALS_FILE_NAME);
+    client = new VoximplantApiClient({
+      pathToCredentials: VOX_CI_CREDENTIALS_FILE_NAME,
+    });
     await new Promise((resolve) => (client.onReady = () => resolve(1)));
     // Cleanup
     await cleanupPlatform(client);

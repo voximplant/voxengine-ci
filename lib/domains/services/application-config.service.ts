@@ -8,6 +8,7 @@ export class ApplicationConfigService {
   getConfig = (): ApplicationConfig => ({
     voximplant: {
       CREDENTIALS: process.env.VOX_CI_CREDENTIALS || 'vox_ci_credentials.json',
+      HOST: process.env.VOX_CI_HOST,
     },
     voxengine_ci: {
       ROOT_DIRECTORY: process.env.VOX_CI_ROOT_PATH || 'voxfiles',

@@ -53,11 +53,15 @@ export class ApplicationModule {
       const rootDirectoryName = applicationConfig.voxengine_ci.ROOT_DIRECTORY;
       const metadataDirectoryName = '.voxengine-ci';
       const voximplantCredentials = applicationConfig.voximplant.CREDENTIALS;
+      const voximplantHost = applicationConfig.voximplant.HOST;
 
       /**
        * VoximplantContext
        */
-      const voximplantContext = new VoximplantContext(voximplantCredentials);
+      const voximplantContext = new VoximplantContext(
+        voximplantCredentials,
+        voximplantHost,
+      );
       await voximplantContext.init();
 
       /**

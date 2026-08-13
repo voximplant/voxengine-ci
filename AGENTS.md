@@ -10,7 +10,7 @@
 |----------|----------|---------|
 | Users | [README.md](README.md) | Installation, configuration, CLI usage, CI/CD templates |
 | Developers | [docs/high-level-design.md](docs/high-level-design.md) | Documentation index and high-level overview |
-| Developers | [docs/envs.md](docs/envs.md) | Environment variables (`VOX_CI_CREDENTIALS`, `VOX_CI_ROOT_PATH`) |
+| Developers | [docs/envs.md](docs/envs.md) | Environment variables (`VOX_CI_CREDENTIALS`, `VOX_CI_HOST`, `VOX_CI_ROOT_PATH`) |
 | Developers | [docs/domains.md](docs/domains.md) | DDD architecture, DI hierarchy, modules, services, repositories |
 | Developers | [docs/voxfiles-file-system.md](docs/voxfiles-file-system.md) | `voxfiles/` directory layout, config files, metadata |
 | Developers | [docs/sequence-diagrams.md](docs/sequence-diagrams.md) | Workflow notes (partially commented; reference only) |

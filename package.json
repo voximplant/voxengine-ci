@@ -1,6 +1,6 @@
 {
   "name": "@voximplant/voxengine-ci",
-  "version": "35.0.0",
+  "version": "35.1.0",
   "description": "Manage Voximplant Platform `applications`, `rules` and `scenarios` from your own environment",
   "license": "Apache-2.0",
   "keywords": [
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@iarna/toml": "2.2.5",
-    "@voximplant/apiclient-nodejs": "3.0.0",
+    "@voximplant/apiclient-nodejs": "4.8.0",
     "chalk": "4.1.2",
     "commander": "9.0.0",
     "dotenv": "10.0.0",

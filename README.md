@@ -16,6 +16,14 @@ Manage [Voximplant Platform](https://voximplant.com/platform) `applications`, `r
 
 Go to the [Service accounts](https://manage.voximplant.com/settings/service_accounts) section of the control panel and generate a file with your account credentials. Learn more about service accounts [here](https://voximplant.com/docs/howtos/integration/httpapi/auth)
 
+```json
+{
+  "account_id": 12345,
+  "key_id": "...",
+  "private_key": "..."
+}
+```
+
 ## Configuration
 
 Create a `.env` file in the root directory of your project and add environment-specific variables:
@@ -23,10 +31,12 @@ Create a `.env` file in the root directory of your project and add environment-s
 ```shell
   VOX_CI_CREDENTIALS=/path/to/the/vox_ci_credentials.json
   VOX_CI_ROOT_PATH=/path/to/the/voxengine_ci_source_files_directory
+  VOX_CI_HOST=custom.api.example
 ```
 
 - VOX_CI_CREDENTIALS - path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
 - VOX_CI_ROOT_PATH - path to the directory where the `vox` files will be located (`voxfiles` by default)
+- VOX_CI_HOST - optional API host for a non-default endpoint (for example, a private cloud deployment). When omitted, the default Voximplant API host (`api.voximplant.com`) is used.
 
 Creating a .env file is not necessary if you move the file with credentials to your project folder, and it has a default name – `vox_ci_credentials.json`.
 The folder with the files created after initialization will be placed in your project folder as well and will be named `voxfiles` unless you decide to create a .env variable and specify something different there.
@@ -164,6 +174,7 @@ Include a template in your CI/CD job:
 Define env variables:
 
 - `VOX_CI_CREDENTIALS` – path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
+- `VOX_CI_HOST` – optional API host for a non-default endpoint
 - `VOX_CI_CREDENTIALS_CONTENT` – `vox_ci_credentials.json` file contents in the `JSON` format
 
 Use the `extends` keyword to reuse the `.voxengine-ci` configuration sections from the template:
@@ -207,6 +218,7 @@ Copy the `https://github.com/voximplant/voxengine-ci/blob/main/ci-cd-templates/.
 Define the _GitHub Actions secrets_ in the `settings/secrets/actions` section of your GitHub project:
 
 - `VOX_CI_CREDENTIALS` – path to your `JSON` credentials file (`vox_ci_credentials.json` by default)
+- `VOX_CI_HOST` – optional API host for a non-default endpoint
 - `VOX_CI_CREDENTIALS_CONTENT` - `vox_ci_credentials.json` file contents in the `base64` format
 
 > __NOTE:__ since GitHub has restrictions on passing _Actions secrets_ in the `JSON` format, you need to __base64-encode__ the value before assigning it to the `VOX_CI_CREDENTIALS_CONTENT` variable

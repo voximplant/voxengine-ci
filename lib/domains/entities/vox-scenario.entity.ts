@@ -14,11 +14,13 @@ export class VoxScenarioMetadata {
   scenarioId: number;
   scenarioName: string;
   hash: string;
+  applicationId: number;
 
-  constructor(scenarioInfo: ScenarioInfo, hash: string) {
+  constructor(scenarioInfo: ScenarioInfo, hash: string, applicationId: number) {
     this.scenarioId = scenarioInfo.scenarioId;
     this.scenarioName = scenarioInfo.scenarioName;
     this.hash = hash;
+    this.applicationId = applicationId;
   }
 }
 

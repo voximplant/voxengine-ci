@@ -25,6 +25,8 @@ const messages: Record<string, string> = {
     'Cannot add the application with the {1} "applicationName" to the platform',
   )}`,
 
+  ERR__SCENARIO_SERVICE_NOT_FOUND: `Scenario service is not found in the application with --application-name "{1}"`,
+
   /**
    * RULES ERRORS
    */

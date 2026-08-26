@@ -2514,7 +2514,7 @@ declare interface CallEnableBeepDetectionParameters {
 declare enum CallEvents {
   /**
    * Triggers after remote peer answered the call or set the call into the [Call.startEarlyMedia] state. Note that event is not triggered in P2P mode.
-   * 
+   *
    * This event occurs after receiving the 183 Session Progress SIP message regardless of receiving actual media packets.
    * @typedef _AudioStartedEvent
    * */
@@ -2557,9 +2557,9 @@ declare enum CallEvents {
   Forwarding = 'Call.Forwarding',
   /**
    * Triggered when a call is terminated.
-   * 
+   *
    * Most frequent status codes (returned when a call is terminated before being answered):
-   * 
+   *
    * <table class="b-list" style="margin-top:10px">
    * <thead><tr><th>Code</th><th>Description</th></tr></thead>
    * <tbody>
@@ -2569,9 +2569,9 @@ declare enum CallEvents {
    * <tr><td>487</td><td>Request terminated</td></tr>
    * </tbody>
    * </table>
-   * 
+   *
    * You can find the complete list of rfc3261 response codes [on Wikipedia](https://en.wikipedia.org/wiki/List_of_SIP_response_codes).
-   * 
+   *
    * Note that this event does not mean the end of the JavaScript session.
    * The session without calls and/or ACD requests are automatically terminated after some time (see the [session limits](/docs/guides/voxengine/limits) for details).
    * It is a good idea to explicitly terminate the session with [VoxEngine.terminate](/docs/references/voxengine/voxengine/terminate) after it is no longer needed.
@@ -3314,12 +3314,12 @@ declare interface CallPSTNParameters {
 declare interface CallRecordParameters extends BaseRecorderParameters {
   /**
    * Optional. Whether the sound is stereo. The default value is **false**.
-   * 
+   *
    * The parameter does not change anything for the [Recorder module](/docs/references/voxengine/modules#recorder): it records stereo with mixed streams in both channels.
-   * 
+   *
    * For the [Call.record] method it works in another way:
-   * 
-   * 1. if it is False, it records stereo with mixed streams in both channels  
+   *
+   * 1. if it is False, it records stereo with mixed streams in both channels
    * 2. if it is True, the Audio stream from a call endpoint to voximplant cloud is recorded into left channel. Audio stream from voximplant cloud to a call endpoint is recorded into right channel.
    */
   stereo?: boolean;
@@ -3789,11 +3789,11 @@ declare namespace CallList {}
 declare namespace CallList {
   /**
    * Reports error to the CallList module asynchronously and continues the call list.
-   * 
-   * Call this method if the call attempt is not successful. If you do not call this method or 
-   * [reportErrorAsync](/docs/references/voxengine/calllist/reporterrorasync), the call list considers this task 
+   *
+   * Call this method if the call attempt is not successful. If you do not call this method or
+   * [reportErrorAsync](/docs/references/voxengine/calllist/reporterrorasync), the call list considers this task
    * successful and does not make any more attempts to call this task.
-   * 
+   *
    * @param error Error string or JSON
    */
   function reportErrorAsync(error: string | Object): Promise<Net.HttpRequestResult>;
@@ -3802,11 +3802,11 @@ declare namespace CallList {
 declare namespace CallList {
   /**
    * Reports error to the CallList module and continues the call list.
-   * 
-   * Call this method if the call attempt is not successful. If you do not call this method or 
-   * [reportError](/docs/references/voxengine/calllist/reporterror), the call list considers this task 
+   *
+   * Call this method if the call attempt is not successful. If you do not call this method or
+   * [reportError](/docs/references/voxengine/calllist/reporterror), the call list considers this task
    * successful and does not make any more attempts to call this task.
-   * 
+   *
    * @param error Error string or JSON
    * @param callback Optional. Callback to execute when a result is processed
    */
@@ -3838,7 +3838,7 @@ declare namespace CallList {
 
 declare namespace CallList {
   /**
-   * Reports successful result to the CallList module asynchronously, saves the report to result_data field in the sheet, 
+   * Reports successful result to the CallList module asynchronously, saves the report to result_data field in the sheet,
    * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
    */
@@ -3847,7 +3847,7 @@ declare namespace CallList {
 
 declare namespace CallList {
   /**
-   * Reports successful result to the CallList module, saves the report to result_data field in the sheet, 
+   * Reports successful result to the CallList module, saves the report to result_data field in the sheet,
    * stops the calling attempts for this task and proceeds to the next task.
    * @param result Result description string or JSON
    * @param callback Optional. Callback to execute when a result is processed
@@ -3862,7 +3862,7 @@ declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data asynchronously.
    * <br>
-   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`,
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
    * <br>
@@ -3880,7 +3880,7 @@ declare namespace CallList {
   /**
    * Changes parameters for the current task and request another calling attempt with updated data.
    * <br>
-   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`, 
+   * This method can change the following fields for the current task: `start_at`, `attempts_left`, `custom_data`,
    * `start_execution_time`, `end_execution_time` and `next_attempt_time`. The new values work for all remaining attempts.
    * This method does not change the global call list settings.
    * <br>
@@ -3924,7 +3924,7 @@ declare namespace Cartesia {
     agentId: string;
   }
 }
-  
+
 declare namespace Cartesia {
   class AgentsClient {
     /**
@@ -3998,7 +3998,7 @@ declare namespace Cartesia {
     custom(parameters: Object): void
   }
 }
-  
+
 declare namespace Cartesia {
   /**
    * @event
@@ -4081,8 +4081,8 @@ declare namespace Cartesia {
     data?: { customEvent?: string; payload?: Object; }
   }
 }
-  
-  
+
+
 declare namespace Cartesia {
 }
 declare namespace Cartesia {
@@ -4152,7 +4152,7 @@ declare namespace Cartesia {
   class RealtimeTTSPlayer extends BasePlayer {
     /**
      * Appends text to a [Cartesia.RealtimeTTSPlayer].
-     * 
+     *
      * Use this to generate speech for a transcript.
      * @param parameters Object provides the parameters directly to the Cartesia provider Generation Request message. Find more information in the [documentation](https://docs.cartesia.ai/2024-11-13/api-reference/tts/tts#send.Generation-Request)
      */
@@ -5488,8 +5488,8 @@ declare namespace Deepgram {
 
 
 /**
- * See the [Dialogflow ES language table](https://cloud.google.com/dialogflow/es/docs/reference/language#table) for reference.  
- * 
+ * See the [Dialogflow ES language table](https://cloud.google.com/dialogflow/es/docs/reference/language#table) for reference.
+ *
  * Add the following line to your scenario code to use the enum:
  * ```
  * require(Modules.AI);
@@ -6129,7 +6129,7 @@ declare namespace ElevenLabs {
     branchId?: string;
   }
 }
-  
+
 declare namespace ElevenLabs {
   class AgentsClient {
     /**
@@ -6209,7 +6209,7 @@ declare namespace ElevenLabs {
     userMessage(parameters: Object): void
   }
 }
-  
+
 declare namespace ElevenLabs {
   /**
    * @event
@@ -6342,8 +6342,8 @@ declare namespace ElevenLabs {
     data?: { customEvent?: string; payload?: Object; }
   }
 }
-  
-  
+
+
 declare namespace ElevenLabs {
     /**
      * Creates a new [ElevenLabs.AgentsClient] instance.
@@ -6415,7 +6415,7 @@ declare namespace ElevenLabs {
   class RealtimeTTSPlayer extends BasePlayer {
     /**
      * Append text to a [ElevenLabs.RealtimeTTSPlayer].
-     * 
+     *
      * The [PlayerEvents.PlaybackFinished] event is triggered only if this method is called.
      * @param text A text string to append
      * @param endOfTurn Whether to force audio generation. Set this value to true when you have finished sending text, but want to keep the websocket connection open<br><br>This is useful when you want to ensure that the last chunk of audio is generated even when the length of text sent is smaller than the value set in chunk_length_schedule (e.g. 120 or 50)
@@ -6747,21 +6747,21 @@ declare namespace Gemini {
     ): void;
 
     /**
-     * Transmits a LiveClientContent over the established connection. 
+     * Transmits a LiveClientContent over the established connection.
      * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendClientContent](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendClientContent)
      * @param input
      */
     sendClientContent(input: Object): void
 
     /**
-     * Transmits a LiveClientRealtimeInput over the established connection. 
+     * Transmits a LiveClientRealtimeInput over the established connection.
      * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendRealtimeInput](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendRealtimeInput)
      * @param input
      */
     sendRealtimeInput(input: Object): void
 
     /**
-     * Transmits a LiveClientToolResponse over the established connection. 
+     * Transmits a LiveClientToolResponse over the established connection.
      * [https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendToolResponse](https://pkg.go.dev/google.golang.org/genai@v1.61.0#Session.SendToolResponse)
      * @param input
      */
@@ -6975,7 +6975,7 @@ declare namespace Inworld {
      * The API key for the Inworld Realtime API.
      */
     apiKey: string;
-    
+
     /**
      * The session key for the Inworld Realtime API.
      */
@@ -7633,7 +7633,7 @@ declare namespace MCP {
     callTool(parameters: Object): void
   }
 }
-  
+
 declare namespace MCP {
     /**
      * Creates a new [MCP.Client] instance.
@@ -8878,7 +8878,7 @@ declare namespace OpenAI {
     createChatCompletions(parameters: Object): void
   }
 }
-  
+
 declare namespace OpenAI {
   /**
    * @event
@@ -9242,7 +9242,7 @@ declare namespace OpenAI {
     responseCancel(parameters: Object): void
   }
 }
-  
+
 declare namespace OpenAI {
   /**
    * @event
@@ -9645,7 +9645,7 @@ declare namespace OpenAI {
     createResponses(parameters: Object): void
   }
 }
-  
+
 declare namespace OpenAI {
   /**
    * @event
@@ -10438,7 +10438,7 @@ declare interface _PlayerAudioChunksPlaybackFinishedEvent extends _PlayerEvent {
 declare class Player extends BasePlayer {
   /**
    * Adds a playback marker. The [PlayerEvents.PlaybackMarkerReached] event is triggered when the marker is reached.
-   * 
+   *
    * This method is currently not supported by the ElevenLabs provider.
    * @param offset Positive/negative offset in milliseconds from the start/end of media
    */
@@ -11376,8 +11376,8 @@ declare namespace Silero {
     data?: { customEvent?: string; payload?: Object; }
   }
 }
-  
-  
+
+
 declare namespace Silero {
   /**
    * [Silero.VAD] parameters. Can be passed as arguments to the [Silero.createVAD] method.
@@ -11397,7 +11397,7 @@ declare namespace Silero {
     speechPadMs?: number;
   }
 }
-  
+
 declare namespace Silero {
   class VAD {
     /**
@@ -11441,7 +11441,7 @@ declare namespace Silero {
     ): void;
   }
 }
-  
+
 /**
  * Add the following line to your scenario code to use the events:
  * ```
@@ -12460,7 +12460,7 @@ declare namespace Ultravox {
     joinUrl?: string;
   }
 }
-  
+
 declare namespace Ultravox {
   class WebSocketAPIClient {
     /**
@@ -12561,7 +12561,7 @@ declare namespace Ultravox {
     hangUp(parameters: Object): void
   }
 }
-  
+
 declare namespace Ultravox {
   /**
    * @event
@@ -12658,8 +12658,8 @@ declare namespace Ultravox {
     data?: { customEvent?: string; payload?: Object; }
   }
 }
-  
-  
+
+
 declare namespace Ultravox {
   /**
    * @private
@@ -12942,17 +12942,17 @@ declare namespace VoxEngine {
 
 declare namespace VoxEngine {
   /**
-   * Creates a new [Player] instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.  
-   * 
+   * Creates a new [Player] instance with specified audio file URL. You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
+   *
    * After the very first playback, a file is cached; each
    * 'createURLPlayer' instance stores the cache data up to 2 weeks.
    * Note that cache addresses only the URL, without additional headers.
-   * The cached file is available for all applications and further sessions.  
-   * 
-   * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.  
-   * The supported file formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.  
-   * 
-   * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.  
+   * The cached file is available for all applications and further sessions.
+   *
+   * File download has a timeout of 12 seconds. Reaching this timeout causes the "Timeout is reached" error.
+   * The supported file formats are: mp3, ogg, flac, and wav (mp3, speex, vorbis, flac, and wav codecs respectively). Maximum file size is 10 Mb.
+   *
+   * You can attach media streams later via the [Player.sendMediaTo] or [VoxEngine.sendMediaBetween] methods.
    * method etc. IMPORTANT: each call object can send media to any number of other calls (media units), but can receive only one audio stream. A new incoming stream always replaces the previous one.
    * @param request URL player request
    * @param parameters Optional. URL player parameters
@@ -13173,7 +13173,7 @@ declare namespace VoxEngine {
 declare namespace VoxEngine {
   /**
    * Terminates the current JavaScript session. All audio/video streams are disconnected and scenario execution stops. Note that after this function, only the [AppEvents.Terminating] and [AppEvents.Terminated] events are triggered.
-   * 
+   *
    * NOTE: if you are using this method inside a code block (e.g., an "if" block), it does not stop the execution of the current block. Use `return;` after using this method to exit the current code block.
    */
   function terminate(): void;
@@ -19096,7 +19096,7 @@ declare namespace VoximplantAPI {
   }
   class Client {
     constructor();
-    
+
     Accounts: AccountsInterface;
     Applications: ApplicationsInterface;
     Users: UsersInterface;
@@ -19122,7 +19122,7 @@ declare namespace VoximplantAPI {
     Invoices: InvoicesInterface;
     Secrets: SecretsInterface;
   }
-  
+
 }
 
 declare namespace VoximplantAvatar {
@@ -19645,18 +19645,18 @@ interface _WebSocketBasedClientParameters {
    */
   statistics?: boolean;
   /**
-   * Optional. Whether to enable the tracing functionality.  
-   * 
+   * Optional. Whether to enable the tracing functionality.
+   *
    * If tracing is enabled, a URL to the trace file appears in the 'websocket.created' message. The file contains all sent and received WebSocket messages in the plain text format. The file is uploaded to the S3 storage.
-   * 
+   *
    * NOTE: enable this only for diagnostic purposes. You can provide the trace file to our support team to help investigating issues.
    */
   trace?: boolean;
   /**
    * Optional. Whether to enable the privacy functionality.
-   * 
+   *
    * If privacy is enabled, the logging for the WebSocket connection is disabled.
-   * 
+   *
    * NOTE: the default value is **false**.
    */
    privacy?: boolean;
@@ -20234,7 +20234,7 @@ declare namespace XAI {
     responseCreate(parameters: Object): void
   }
 }
-  
+
 declare namespace XAI {
   /**
    * @event
@@ -20313,7 +20313,7 @@ declare namespace XAI {
     ResponseOutputItemAdded = 'XAI.VoiceAgentAPI.ResponseOutputItemAdded',
 
     /**
-     * A new assistant response is done. 
+     * A new assistant response is done.
      * @typedef _VoiceAgentAPIEvent
      */
     ResponseOutputItemDone = 'XAI.VoiceAgentAPI.ResponseOutputItemDone',
@@ -20337,13 +20337,13 @@ declare namespace XAI {
     ResponseOutputAudioDone = 'XAI.VoiceAgentAPI.ResponseOutputAudioDone',
 
     /**
-     * Notifies client that the content part added. 
+     * Notifies client that the content part added.
      * @typedef _VoiceAgentAPIEvent
      */
     ResponseContentPartAdded = 'XAI.VoiceAgentAPI.ResponseContentPartAdded',
 
     /**
-     * Notifies client that the content part done. 
+     * Notifies client that the content part done.
      * @typedef _VoiceAgentAPIEvent
      */
     ResponseContentPartDone = 'XAI.VoiceAgentAPI.ResponseContentPartDone',
@@ -20492,7 +20492,7 @@ declare namespace Yandex {
     model?: string;
   }
 }
-  
+
 declare namespace Yandex {
   class RealtimeAPIClient {
     /**
@@ -20550,7 +20550,7 @@ declare namespace Yandex {
     ): void;
 
     /**
-     * Send this event to update the session’s configuration. 
+     * Send this event to update the session’s configuration.
      * @param parameters
      */
     sessionUpdate(parameters: Object): void
@@ -20586,13 +20586,13 @@ declare namespace Yandex {
     responseCreate(parameters: Object): void
 
     /**
-     * Send this event to cancel an in-progress response. 
+     * Send this event to cancel an in-progress response.
      * @param parameters
      */
     responseCancel(parameters: Object): void
   }
 }
-  
+
 declare namespace Yandex {
   /**
    * @event
@@ -20645,7 +20645,7 @@ declare namespace Yandex {
      * @typedef _YandexRealtimeAPIEvent
      */
     ConversationItemCreated = 'Yandex.RealtimeAPI.ConversationItemCreated',
-     
+
     /**
      * Returned when a conversation item is retrieved with conversation.item.retrieve.[https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerConversationItemRetrieved](https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerConversationItemRetrieved)
      * @typedef _YandexRealtimeAPIEvent
@@ -20701,7 +20701,7 @@ declare namespace Yandex {
     InputAudioBufferCleared = 'Yandex.RealtimeAPI.InputAudioBufferCleared',
 
      /**
-     * Returned when a DTMF event is received (telephony integrations). [https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerInputAudioBufferDtmfEventReceived](https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerInputAudioBufferDtmfEventReceived) 
+     * Returned when a DTMF event is received (telephony integrations). [https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerInputAudioBufferDtmfEventReceived](https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerInputAudioBufferDtmfEventReceived)
      * @typedef _YandexRealtimeAPIEvent
      */
     InputAudioBufferDTMFEventReceived = 'Yandex.RealtimeAPI.InputAudioBufferDTMFEventReceived',
@@ -20801,7 +20801,7 @@ declare namespace Yandex {
      * @typedef _YandexRealtimeAPIEvent
      */
     ResponseOutputAudioTranscriptDone = 'Yandex.RealtimeAPI.ResponseOutputAudioTranscriptDone',
-    
+
 
     /**
      * Returned when the model-generated audio is done.[https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerResponseMcpCallArgumentsDone](https://yandex.cloud/ru/docs/ai-studio/serverEvents/realtimeServerResponseMcpCallArgumentsDone)
@@ -20944,8 +20944,8 @@ declare namespace Yandex {
     data?: { customEvent?: string; payload?: Object; }
   }
 }
-  
-  
+
+
 declare namespace Yandex {
 }
 declare namespace ASRModelList {
@@ -21048,7 +21048,7 @@ declare namespace ASRModelList {
     const video: ASRModel;
     /**
      * Optimized for everyday audio processing.
-     * @const 
+     * @const
      */
     const nova_general: ASRModel;
     /**
@@ -25606,7 +25606,7 @@ declare namespace VoiceList {
     const createBrandVoice: (name: string) => Voice;
   }
 }
-  
+
 declare namespace VoiceList {
   /**
    * List of available Google TTS voices for the [Call.say](/docs/references/voxengine/call#say) and [VoxEngine.createTTSPlayer](/docs/references/voxengine/voxengine/createttsplayer) methods. Depending on the voice, different technologies are used to make synthesized voices sound as close as possible to live human voices. Please note that using these text-to-speech capabilities are charged according to the <a href="https://voximplant.com/pricing" target="_blank">pricing</a>.

@@ -9,19 +9,17 @@ import { FileSystemContext } from '../contexts/file-system.context';
 import { AbstractPersistentRepository } from './abstract.persistent.repository';
 
 export class VoxScenarioPersistentRepository extends AbstractPersistentRepository {
-  relativeStoragePath = 'scenarios';
+  private applicationsStoragePath = 'applications';
+  private relativeApplicationNameStoragePath;
+
+  scenariosStoragePath = 'scenarios';
+  relativeStoragePath;
 
   private srcStorageName = 'src';
-  private relativeSrcStoragePath = join(
-    this.relativeStoragePath,
-    this.srcStorageName,
-  );
+  private relativeSrcStoragePath;
 
   private distStorageName = 'dist';
-  private relativeDistStoragePath = join(
-    this.relativeStoragePath,
-    this.distStorageName,
-  );
+  private relativeDistStoragePath;
 
   private availableExtensions = ['ts', 'js'];
 
@@ -32,6 +30,7 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
 
   private relativeTypingsPath = 'typings';
 
+  // Paths are resolved from the voxfiles root (not from the nested scenario directory).
   private relativeVoxEngineTypingsPath = join(
     '..',
     this.relativeTypingsPath,
@@ -50,17 +49,48 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
   private tsConfigExtension = 'json';
   private tsConfigName = `${this.tsConfigBasename}.${this.tsConfigExtension}`;
 
-  constructor(context: FileSystemContext) {
+  constructor(context: FileSystemContext, applicationName: string) {
     super(context);
+
+    // Define application-specific storage paths
+    this.relativeApplicationNameStoragePath = join(
+      this.applicationsStoragePath,
+      applicationName,
+    );
+
+    this.relativeStoragePath = join(
+      this.relativeApplicationNameStoragePath,
+      this.scenariosStoragePath,
+    );
+
+    this.relativeSrcStoragePath = join(
+      this.relativeStoragePath,
+      this.srcStorageName,
+    );
+
+    this.relativeDistStoragePath = join(
+      this.relativeStoragePath,
+      this.distStorageName,
+    );
   }
 
   // TODO: Implement specific methods for 'VoxScenarioFileSystemRepository' class
 
   init = async (): Promise<void> => {
+    await this.context.client.createDirectory(this.applicationsStoragePath);
+    await this.context.client.createDirectory(
+      this.relativeApplicationNameStoragePath,
+    );
     await this.context.client.createDirectory(this.relativeStoragePath);
     await this.context.client.createDirectory(this.relativeSrcStoragePath);
     await this.context.client.createDirectory(this.relativeDistStoragePath);
 
+    await this.context.client.createMetadataDirectory(
+      this.applicationsStoragePath,
+    );
+    await this.context.client.createMetadataDirectory(
+      this.relativeApplicationNameStoragePath,
+    );
     await this.context.client.createMetadataDirectory(this.relativeStoragePath);
     await this.context.client.createMetadataDirectory(
       this.relativeSrcStoragePath,
@@ -74,6 +104,10 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
   };
 
   link = async (): Promise<void> => {
+    await this.context.client.createDirectory(this.applicationsStoragePath);
+    await this.context.client.createDirectory(
+      this.relativeApplicationNameStoragePath,
+    );
     await this.context.client.createDirectory(this.relativeStoragePath);
     await this.linkSrc();
     await this.linkDist();
@@ -100,6 +134,12 @@ export class VoxScenarioPersistentRepository extends AbstractPersistentRepositor
   };
 
   linkMetadata = async (): Promise<void> => {
+    await this.context.client.createMetadataDirectory(
+      this.applicationsStoragePath,
+    );
+    await this.context.client.createMetadataDirectory(
+      this.relativeApplicationNameStoragePath,
+    );
     await this.context.client.createMetadataDirectory(this.relativeStoragePath);
     await this.linkSrcMetadata();
     await this.linkDistMetadata();

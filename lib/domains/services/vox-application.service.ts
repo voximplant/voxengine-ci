@@ -2,7 +2,10 @@ import {
   VoxApplication,
   VoxApplicationMetadata,
 } from '../entities/vox-application.entity';
-import { FullVoxApplicationInfo } from '../types/vox-application.type';
+import {
+  FullVoxApplicationInfo,
+  VoxApplicationMetadataScenario,
+} from '../types/vox-application.type';
 import { LogMessageGeneratorFactory } from '../../utils/log-message-generator';
 import { ApplicationByRuleBuildAndUploadJobSettings } from '../types/job-settings.type';
 import { VoxApplicationPersistentRepository } from '../repositories/vox-application.persistent.repository';
@@ -55,17 +58,26 @@ export class VoxApplicationService {
     }
   };
 
-  saveApplicationMetadata = async (rawApplication: FullVoxApplicationInfo) => {
+  saveApplicationMetadata = async (
+    rawApplication: FullVoxApplicationInfo,
+    scenarios: VoxApplicationMetadataScenario[],
+  ) => {
     try {
       const voxApplicationMetadata: VoxApplicationMetadata =
-        new VoxApplicationMetadata(rawApplication);
+        new VoxApplicationMetadata(rawApplication, scenarios);
       await this.persistentRepository.createMetadataStorage(
         voxApplicationMetadata.applicationName,
       );
-      await this.persistentRepository.createMetadata(voxApplicationMetadata);
+      await this.persistentRepository.createOrUpdateMetadata(
+        voxApplicationMetadata,
+      );
     } catch (error) {
       console.error(error);
     }
+  };
+
+  readApplication = async (applicationName: string) => {
+    return await this.persistentRepository.read(applicationName);
   };
 
   readApplicationMetadataStorage = async () => {

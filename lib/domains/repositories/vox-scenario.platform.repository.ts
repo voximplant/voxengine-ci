@@ -72,10 +72,12 @@ export class VoxScenarioPlatformRepository {
 
   downloadScenarioByName = async (
     scenarioName: string,
+    applicationId?: number,
   ): Promise<ScenarioInfo> => {
     const response = await this.context.client.Scenarios.getScenarios({
-      scenarioName,
+      scenarioName: scenarioName,
       withScript: true,
+      ...(applicationId ? { applicationId } : {}),
     });
     if (isApiErrorResponse(response)) {
       throw new Error(
@@ -109,16 +111,42 @@ export class VoxScenarioPlatformRepository {
     return scenarioInfo;
   };
 
+  downloadScenariosByApplicationId = async (
+    applicationId: number,
+  ): Promise<ScenarioInfo[]> => {
+    const response = await this.context.client.Scenarios.getScenarios({
+      count: 1,
+      applicationId: applicationId,
+    });
+    if (isApiErrorResponse(response)) {
+      throw new Error(
+        this.lmg.generate(
+          'ERR__VOXIMPLANT_API_ERROR',
+          APIErrorCode[response.error.code],
+        ),
+      );
+    }
+    if (!response.totalCount) return [];
+    const { result } = await this.context.client.Scenarios.getScenarios({
+      count: response.totalCount,
+      applicationId: applicationId,
+    });
+    console.info(this.lmg.generate('INFO__SCENARIOS_DOWNLOADED'));
+    return result;
+  };
+
   // TODO: The 'reordering scenarios' feature need to be implemented
   // await this.context.client.Scenarios.reorderScenarios({...});
 
   addScenario = async (
     scenarioName: string,
     scenarioScript: string,
+    applicationId: number,
   ): Promise<number> => {
     try {
       const response = await this.context.client.Scenarios.getScenarios({
-        scenarioName,
+        scenarioName: scenarioName,
+        applicationId: applicationId,
       });
       if (isApiErrorResponse(response)) {
         throw new Error(
@@ -138,8 +166,9 @@ export class VoxScenarioPlatformRepository {
       }
       const { result, scenarioId } =
         await this.context.client.Scenarios.addScenario({
-          scenarioName,
-          scenarioScript,
+          scenarioName: scenarioName,
+          scenarioScript: scenarioScript,
+          applicationId: applicationId,
         });
       if (!result) {
         throw new Error(
@@ -163,7 +192,7 @@ export class VoxScenarioPlatformRepository {
   ): Promise<number> => {
     try {
       const response = await this.context.client.Scenarios.setScenarioInfo({
-        scenarioId,
+        scenarioId: scenarioId,
         requiredScenarioName: scenarioName,
         scenarioScript,
       });

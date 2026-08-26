@@ -7,6 +7,7 @@ import {
 import { FileSystemContext } from '../contexts/file-system.context';
 import { ApplicationInfo } from '@voximplant/apiclient-nodejs/dist/Structures';
 import { AbstractPersistentRepository } from './abstract.persistent.repository';
+import { VoxApplicationMetadataScenario } from '../types/vox-application.type';
 
 export class VoxApplicationPersistentRepository extends AbstractPersistentRepository {
   relativeStoragePath = 'applications';
@@ -88,7 +89,7 @@ export class VoxApplicationPersistentRepository extends AbstractPersistentReposi
         this.relativeStoragePath,
         voxApplicationMetadata.applicationName,
       );
-      await this.context.client.createOrUpdateFile(
+      await this.context.client.createOrUpdateMetadataFile(
         joinedPath,
         this.metadataBasename,
         JSON.stringify(voxApplicationMetadata),
@@ -136,10 +137,21 @@ export class VoxApplicationPersistentRepository extends AbstractPersistentReposi
       );
       const rawData = await this.context.client.readMetadataFile(joinedPath);
       if (!rawData) return;
-      const rawApplicationMetadata: ApplicationInfo = <ApplicationInfo>(
-        JSON.parse(rawData)
+      // const rawApplicationMetadata: ApplicationInfo = <ApplicationInfo>(
+      //   JSON.parse(rawData)
+      // );
+      const rawApplicationMetadata = JSON.parse(rawData) as {
+        applicationId: number;
+        applicationName: string;
+        scenarios: VoxApplicationMetadataScenario[];
+      };
+      return new VoxApplicationMetadata(
+        {
+          applicationId: rawApplicationMetadata.applicationId,
+          applicationName: rawApplicationMetadata.applicationName,
+        } as ApplicationInfo,
+        rawApplicationMetadata.scenarios,
       );
-      return new VoxApplicationMetadata(rawApplicationMetadata);
     } catch (error) {
       console.error(
         this.lmg.generate('ERR__READ_METADATA_FAILED', this.constructor.name),

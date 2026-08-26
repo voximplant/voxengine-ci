@@ -17,7 +17,7 @@ import {
   SECOND_SCENARIO_NAME,
   FIRST_SCENARIO_CODE,
   SECOND_SCENARIO_CODE,
-  SCENARIO_SRC_PATCH,
+  SCENARIO_SRC_PATH,
   APPLICATION_CONFIG_DIRECTORY_RAW_PATH,
 } from './lib/consts';
 import { cleanupPlatform, cleanupFileSystem } from './lib/cleanup';
@@ -46,12 +46,14 @@ describe('throw error if app or rule does not exist', () => {
     await application.init();
     await application.projectCleanup();
     await application.projectInit();
+    const scenarioDirPath = resolve(SCENARIO_SRC_PATH);
+    if (!existsSync(scenarioDirPath)) await mkdir(scenarioDirPath, { recursive: true });
     await writeFile(
-      join(SCENARIO_SRC_PATCH, `${FIRST_SCENARIO_NAME}.voxengine.js`),
+      join(SCENARIO_SRC_PATH, `${FIRST_SCENARIO_NAME}.voxengine.js`),
       FIRST_SCENARIO_CODE,
     );
     await writeFile(
-      join(SCENARIO_SRC_PATCH, `${SECOND_SCENARIO_NAME}.voxengine.js`),
+      join(SCENARIO_SRC_PATH, `${SECOND_SCENARIO_NAME}.voxengine.js`),
       SECOND_SCENARIO_CODE,
     );
     const appConfigDirPath = resolve(APPLICATION_CONFIG_DIRECTORY_RAW_PATH);
@@ -65,7 +67,7 @@ describe('throw error if app or rule does not exist', () => {
     await writeFile(join(appConfigDirPath, 'rules.config.json'), rulesConfig);
     await application.applicationBuildAndUpload({
       applicationName: APPLICATION_NAME,
-      applicationId: undefined,
+      applicationId: applicationId,
       isForce: false,
     });
     applicationId = (
@@ -105,11 +107,9 @@ describe('throw error if app or rule does not exist', () => {
         applicationId: undefined,
       });
     };
-    await expect(f()).to.be.become(undefined);
-    // TODO: Looks like a bug?
-    // await expect(f()).to.be.rejectedWith(
-    //   'Application with --application-name "dd" does not exist',
-    // );
+    await expect(f()).to.be.rejectedWith(
+      'Application with --application-name "dd.voxengine.voximplant.com" does not exist',
+    );
   });
 
   it('yarn voxengine-ci upload --application-name voxengine-ci --application-id 11 --dry-run', async () => {
@@ -214,8 +214,30 @@ describe('throw error if app or rule does not exist', () => {
       });
     };
     await expect(f()).to.be.rejectedWith(
-      `Rule with --rule-id "${firstTestRuleId}" does not exist`,
+      'Application with --application-name "dd.voxengine.voximplant.com" does not exist',
     );
+  });
+
+  it('yarn voxengine-ci:dev upload --application-name voxengine-ci --dry-run', async () => {
+    const f = () => {
+      return application.applicationBuild({
+        applicationName: APPLICATION_NAME,
+        applicationId: undefined,
+      });
+    };
+    await expect(f()).to.be.become(undefined);
+  });
+
+  it('yarn voxengine-ci:dev upload --application-name voxengine-ci --rule-name first-voxengine-ci-rule --dry-run', async () => {
+    const f = () => {
+      return application.applicationByRuleBuild({
+        applicationName: APPLICATION_NAME,
+        applicationId: undefined,
+        ruleName: FIRST_RULE_NAME,
+        ruleId: undefined,
+      });
+    };
+    await expect(f()).to.be.become(undefined);
   });
 
   it('yarn voxengine-ci:dev upload --application-name voxengine-ci --rule-id 11', async () => {
@@ -246,5 +268,33 @@ describe('throw error if app or rule does not exist', () => {
     await expect(f()).to.be.rejectedWith(
       `Rule with --rule-id "${firstTestRuleId}" does not exist`,
     );
+  });
+
+  it('yarn voxengine-ci upload --application-name voxengine-ci-dry-run --dry-run', async () => {
+    const dryRunApplicationName = 'voxengine-ci-dry-run';
+    const appConfigDirPath = resolve(
+      `voxfiles/applications/${dryRunApplicationName}.voxengine.voximplant.com`,
+    );
+    const scenarioDirPath = join(appConfigDirPath, 'scenarios/src');
+    await mkdir(scenarioDirPath, { recursive: true });
+    await writeFile(
+      join(appConfigDirPath, 'application.config.json'),
+      `{"applicationName":"${dryRunApplicationName}.voxengine.voximplant.com"}`,
+    );
+    await writeFile(
+      join(appConfigDirPath, 'rules.config.json'),
+      `[{"ruleName":"${FIRST_RULE_NAME}","scenarios":["${FIRST_SCENARIO_NAME}"],"rulePattern":"${FIRST_RULE_PATTERN}"}]`,
+    );
+    await writeFile(
+      join(scenarioDirPath, `${FIRST_SCENARIO_NAME}.voxengine.js`),
+      FIRST_SCENARIO_CODE,
+    );
+    const f = () => {
+      return application.applicationBuild({
+        applicationName: dryRunApplicationName,
+        applicationId: undefined,
+      });
+    };
+    await expect(f()).to.be.become(undefined);
   });
 });

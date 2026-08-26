@@ -16,7 +16,8 @@ import {
   SECOND_SCENARIO_NAME,
   FIRST_SCENARIO_CODE,
   SECOND_SCENARIO_CODE,
-  SCENARIO_SRC_PATCH,
+  SCENARIO_SRC_PATH,
+  SCENARIO_DIST_PATH,
   RULES_METADATA_FILE_NAME,
   APPLICATION_METADATA_DIRECTORY_RAW_PATH,
   APPLICATION_CONFIG_DIRECTORY_RAW_PATH,
@@ -52,17 +53,19 @@ describe(`yarn voxengine-ci upload --application-name ${APPLICATION_NAME} \n upl
     );
     const rulesConfig = `[{"ruleName":"${FIRST_RULE_NAME}","scenarios":["${SECOND_SCENARIO_NAME}","${FIRST_SCENARIO_NAME}"],"rulePattern":"${FIRST_RULE_PATTERN}"}]`;
     await writeFile(join(appConfigDirPath, 'rules.config.json'), rulesConfig);
+    const scenarioDirPath = resolve(SCENARIO_SRC_PATH);
+    if (!existsSync(scenarioDirPath)) await mkdir(scenarioDirPath, { recursive: true });
     await writeFile(
-      join(SCENARIO_SRC_PATCH, `${FIRST_SCENARIO_NAME}.voxengine.js`),
+      join(SCENARIO_SRC_PATH, `${FIRST_SCENARIO_NAME}.voxengine.js`),
       FIRST_SCENARIO_CODE,
     );
     await writeFile(
-      join(SCENARIO_SRC_PATCH, `${SECOND_SCENARIO_NAME}.voxengine.js`),
+      join(SCENARIO_SRC_PATH, `${SECOND_SCENARIO_NAME}.voxengine.js`),
       SECOND_SCENARIO_CODE,
     );
     await application.applicationBuildAndUpload({
       applicationName: APPLICATION_NAME,
-      applicationId: undefined,
+      applicationId: applicationId,
       isForce: false,
     });
   });
@@ -81,14 +84,36 @@ describe(`yarn voxengine-ci upload --application-name ${APPLICATION_NAME} \n upl
         applicationName: APPLICATION_NAME,
       })
     ).result[0].applicationId;
-    expect(file).to.equal(
-      `{"applicationId":${applicationId},"applicationName":"${APPLICATION_NAME}.voxengine.voximplant.com"}`,
+    const firstScenarioId = (
+      await client.Scenarios.getScenarios({
+        scenarioName: FIRST_SCENARIO_NAME,
+        applicationId,
+      })
+    ).result.find(
+      (scenario) => scenario.scenarioName === FIRST_SCENARIO_NAME,
+    ).scenarioId;
+    const secondScenarioId = (
+      await client.Scenarios.getScenarios({
+        scenarioName: SECOND_SCENARIO_NAME,
+        applicationId,
+      })
+    ).result.find(
+      (scenario) => scenario.scenarioName === SECOND_SCENARIO_NAME,
+    ).scenarioId;
+    const metadata = JSON.parse(file);
+    expect(metadata.applicationId).to.equal(applicationId);
+    expect(metadata.applicationName).to.equal(
+      `${APPLICATION_NAME}.voxengine.voximplant.com`,
     );
+    expect(metadata.scenarios).to.have.deep.members([
+      { scenarioId: firstScenarioId, scenarioName: FIRST_SCENARIO_NAME },
+      { scenarioId: secondScenarioId, scenarioName: SECOND_SCENARIO_NAME },
+    ]);
   });
 
   it('should create scenario metadata file', async () => {
     const pathToAppMetadataFile = resolve(
-      'voxfiles/.voxengine-ci/scenarios/dist',
+      SCENARIO_DIST_PATH,
     );
     const file = await readFile(
       join(
@@ -111,7 +136,7 @@ describe(`yarn voxengine-ci upload --application-name ${APPLICATION_NAME} \n upl
     ).result[0].scenarioScript;
     const hash = createHash('sha256').update(scenarioScript).digest('hex');
     expect(file).to.equal(
-      `{"scenarioId":${scenarioId},"scenarioName":"${FIRST_SCENARIO_NAME}","hash":"${hash}"}`,
+      `{"scenarioId":${scenarioId},"scenarioName":"${FIRST_SCENARIO_NAME}","hash":"${hash}","applicationId":${applicationId}}`,
     );
   });
 

@@ -40,6 +40,7 @@ describe('VoxApplicationPersistentRepository', () => {
       await voxApplicationPersistentRepository.createMetadata({
         applicationName: 'application',
         applicationId: 11,
+        scenarios: [{ scenarioName: 'scenario', scenarioId: 111 }],
       });
       createMetadataFileStub.restore();
       assert.calledWith(
@@ -49,6 +50,35 @@ describe('VoxApplicationPersistentRepository', () => {
         JSON.stringify({
           applicationName: 'application',
           applicationId: 11,
+          scenarios: [{ scenarioName: 'scenario', scenarioId: 111 }],
+        }),
+      );
+    });
+  });
+
+  describe('createOrUpdateMetadata', () => {
+    let createOrUpdateMetadataFileStub: any;
+    beforeEach(function () {
+      createOrUpdateMetadataFileStub = stub(
+        fileSystemContext.client,
+        'createOrUpdateMetadataFile',
+      );
+    });
+    it('should call createOrUpdateMetadataFile with arguments', async () => {
+      await voxApplicationPersistentRepository.createOrUpdateMetadata({
+        applicationName: 'application',
+        applicationId: 11,
+        scenarios: [{ scenarioName: 'scenario', scenarioId: 111 }],
+      });
+      createOrUpdateMetadataFileStub.restore();
+      assert.calledWith(
+        createOrUpdateMetadataFileStub,
+        'applications/application',
+        'application.metadata.config',
+        JSON.stringify({
+          applicationName: 'application',
+          applicationId: 11,
+          scenarios: [{ scenarioName: 'scenario', scenarioId: 111 }],
         }),
       );
     });
@@ -77,13 +107,14 @@ describe('VoxApplicationPersistentRepository', () => {
     });
     it('should return new VoxApplicationMetadata', async () => {
       const rawData =
-        '{"applicationId":11, "applicationName":"raw.nikit.voximplant.com"}';
+        '{"applicationId":11, "applicationName":"raw.nikit.voximplant.com", "scenarios": [{"scenarioId":111, "scenarioName":"scenario"}]}';
       readMetadataFileStub.returns(Promise.resolve(rawData));
       const result = await voxApplicationPersistentRepository.readMetadata('');
       readMetadataFileStub.restore();
       expect(result).to.deep.equal({
         applicationId: 11,
         applicationName: 'raw.nikit.voximplant.com',
+        scenarios: [{ scenarioId: 111, scenarioName: 'scenario' }],
       });
     });
   });

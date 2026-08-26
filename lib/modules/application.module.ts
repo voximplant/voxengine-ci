@@ -21,7 +21,10 @@ import { LogMessageGeneratorFactory } from '../utils/log-message-generator';
 import { FileSystemContext } from '../domains/contexts/file-system.context';
 import { ApplicationConfig } from '../domains/types/application-config.type';
 import { VoxScenarioService } from '../domains/services/vox-scenario.service';
-import { FullVoxApplicationInfo } from '../domains/types/vox-application.type';
+import {
+  FullVoxApplicationInfo,
+  VoxApplicationMetadataScenario,
+} from '../domains/types/vox-application.type';
 import { VoxApplicationService } from '../domains/services/vox-application.service';
 import { ApplicationConfigService } from '../domains/services/application-config.service';
 import { VoxRulePlatformRepository } from '../domains/repositories/vox-rule.platform.repository';
@@ -34,9 +37,11 @@ import { VoxApplicationPersistentRepository } from '../domains/repositories/vox-
 export class ApplicationModule {
   private voxApplicationService: VoxApplicationService;
   private voxRuleService: VoxRuleService;
-  private voxScenarioService: VoxScenarioService;
+  private voxScenarioServices: Map<string, VoxScenarioService> = new Map();
   private lmg: LogMessageGeneratorFactory =
     LogMessageGeneratorFactory.getInstance();
+  private fileSystemContext: FileSystemContext;
+  private voxScenarioPlatformRepository: VoxScenarioPlatformRepository;
 
   init = async (): Promise<void> => {
     try {
@@ -67,11 +72,11 @@ export class ApplicationModule {
       /**
        * FileSystemContext
        */
-      const fileSystemContext = new FileSystemContext(
+      this.fileSystemContext = new FileSystemContext(
         rootDirectoryName,
         metadataDirectoryName,
       );
-      await fileSystemContext.init();
+      await this.fileSystemContext.init();
 
       /**
        * VoxApplicationPlatformRepository
@@ -91,32 +96,25 @@ export class ApplicationModule {
       /**
        * VoxScenarioPlatformRepository
        */
-      const voxScenarioPlatformRepository = new VoxScenarioPlatformRepository(
+      this.voxScenarioPlatformRepository = new VoxScenarioPlatformRepository(
         voximplantContext,
       );
-      voxScenarioPlatformRepository.init();
+      this.voxScenarioPlatformRepository.init();
 
       /**
        * VoxApplicationPersistentRepository
        */
       const voxApplicationPersistentRepository =
-        new VoxApplicationPersistentRepository(fileSystemContext);
+        new VoxApplicationPersistentRepository(this.fileSystemContext);
       await voxApplicationPersistentRepository.init();
 
       /**
        * VoxRulePersistentRepository
        */
       const voxRulePersistentRepository = new VoxRulePersistentRepository(
-        fileSystemContext,
+        this.fileSystemContext,
       );
       await voxRulePersistentRepository.init();
-
-      /**
-       * VoxScenarioPersistentRepository
-       */
-      const voxScenarioPersistentRepository =
-        new VoxScenarioPersistentRepository(fileSystemContext);
-      await voxScenarioPersistentRepository.init();
 
       /**
        * VoxApplicationService
@@ -136,15 +134,36 @@ export class ApplicationModule {
       );
       this.voxRuleService.init();
 
-      /**
-       * VoxScenarioService
-       */
-      this.voxScenarioService = new VoxScenarioService(
-        voxScenarioPlatformRepository,
-        voxScenarioPersistentRepository,
-      );
+      const rawApplications: FullVoxApplicationInfo[] =
+        await this.voxApplicationService.downloadApplications();
+      if (!rawApplications.length) {
+        console.info(this.lmg.generate('INFO__NO_APPLICATIONS'));
+        return;
+      }
+      for (const rawApplication of rawApplications) {
+        /**
+         * VoxScenarioPersistentRepository
+         */
+        const voxScenarioPersistentRepository =
+          new VoxScenarioPersistentRepository(
+            this.fileSystemContext,
+            rawApplication.applicationName,
+          );
+        await voxScenarioPersistentRepository.init();
 
-      this.voxScenarioService.init();
+        /**
+         * VoxScenarioService
+         */
+        const scenarioService = new VoxScenarioService(
+          this.voxScenarioPlatformRepository,
+          voxScenarioPersistentRepository,
+        );
+        scenarioService.init();
+        this.voxScenarioServices.set(
+          rawApplication.applicationName,
+          scenarioService,
+        );
+      }
     } catch (error) {
       console.error(this.lmg.generate('INIT_FAILED', this.constructor.name));
       console.error(error);
@@ -155,7 +174,9 @@ export class ApplicationModule {
   projectCleanup = async (): Promise<void> => {
     try {
       await this.voxApplicationService.cleanup();
-      await this.voxScenarioService.cleanup();
+      for (const svc of this.voxScenarioServices.values()) {
+        await svc.cleanup();
+      }
     } catch (error) {
       console.error(
         this.lmg.generate('ERR__PROJECT_CLEANUP_FAILED', this.constructor.name),
@@ -166,21 +187,19 @@ export class ApplicationModule {
 
   projectInit = async (): Promise<void> => {
     try {
-      const isApplicationAlreadyExists =
-        await this.voxApplicationService.checkApplicationsAlreadyExists();
-      if (isApplicationAlreadyExists) {
+      // const isApplicationAlreadyExists =
+      //   await this.voxApplicationService.checkApplicationsAlreadyExists();
+      let isScenariosAlreadyExists = false;
+      for (const svc of this.voxScenarioServices.values()) {
+        if (await svc.checkScenariosAlreadyExists()) {
+          isScenariosAlreadyExists = true;
+          break;
+        }
+      }
+      if (isScenariosAlreadyExists) {
         throw new Error(
           this.lmg.generate('ERR__PROJECT_IS_ALREADY_INITIALIZED'),
         );
-      }
-      const rawScenarios: FullVoxScenarioInfo[] =
-        await this.voxScenarioService.downloadScenarios();
-      this.voxScenarioService.checkScenariosNames(rawScenarios);
-      for (const { scenarioId } of rawScenarios) {
-        const rawFullScenario: FullVoxScenarioInfo =
-          await this.voxScenarioService.downloadScenario(scenarioId);
-        await this.voxScenarioService.saveScenario(rawFullScenario);
-        await this.voxScenarioService.saveScenarioMetadata(rawFullScenario);
       }
       const rawApplications: FullVoxApplicationInfo[] =
         await this.voxApplicationService.downloadApplications();
@@ -190,9 +209,38 @@ export class ApplicationModule {
       }
       for (const rawApplication of rawApplications) {
         await this.voxApplicationService.saveApplication(rawApplication);
+
+        const voxScenarioService = await this.getOrCreateScenarioService(
+          rawApplication.applicationName,
+        );
+        const rawScenarios: FullVoxScenarioInfo[] =
+          await voxScenarioService.downloadScenariosByApplicationId(
+            rawApplication.applicationId,
+          );
+        voxScenarioService.checkScenariosNames(rawScenarios);
+
+        const scenarioData: VoxApplicationMetadataScenario[] = [];
+        for (const { scenarioId } of rawScenarios) {
+          const rawFullScenario: FullVoxScenarioInfo =
+            await voxScenarioService.downloadScenario(scenarioId);
+          await voxScenarioService.saveScenario(rawFullScenario);
+          await voxScenarioService.saveScenarioMetadata(
+            rawFullScenario,
+            rawApplication.applicationId,
+          );
+          scenarioData.push({
+            scenarioId: rawFullScenario.scenarioId,
+            scenarioName: rawFullScenario.scenarioName,
+          });
+          // sleep for not to send mass amount of requests
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
         await this.voxApplicationService.saveApplicationMetadata(
           rawApplication,
+          scenarioData,
         );
+
         const rawRules: FullVoxRuleInfo[] =
           await this.voxRuleService.downloadApplicationRules(rawApplication);
         await this.voxRuleService.saveRules(rawApplication, rawRules);
@@ -215,9 +263,53 @@ export class ApplicationModule {
     );
   };
 
+  private getOrCreateScenarioService = async (
+    applicationName: string,
+  ): Promise<VoxScenarioService> => {
+    const existing = this.voxScenarioServices.get(applicationName);
+    if (existing) {
+      return existing;
+    }
+    const voxScenarioPersistentRepository = new VoxScenarioPersistentRepository(
+      this.fileSystemContext,
+      applicationName,
+    );
+    await voxScenarioPersistentRepository.init();
+    const scenarioService = new VoxScenarioService(
+      this.voxScenarioPlatformRepository,
+      voxScenarioPersistentRepository,
+    );
+    scenarioService.init();
+    this.voxScenarioServices.set(applicationName, scenarioService);
+    return scenarioService;
+  };
+
+  private ensureLocalOrPlatformApplication = async (
+    applicationName: string,
+    applicationId?: number,
+  ): Promise<void> => {
+    if (applicationId) {
+      return;
+    }
+    const localApplication = await this.voxApplicationService.readApplication(
+      applicationName,
+    );
+    if (!localApplication) {
+      throw new Error(
+        this.lmg.generate('ERR__APP_BY_NAME_DOES_NOT_EXIST', applicationName),
+      );
+    }
+  };
+
+  private toMetadataScenarios = (
+    scenarios: Array<{ scenarioId: number; scenarioName: string }>,
+  ): VoxApplicationMetadataScenario[] =>
+    scenarios
+      .filter((scenario) => scenario?.scenarioId && scenario?.scenarioName)
+      .map(({ scenarioId, scenarioName }) => ({ scenarioId, scenarioName }));
+
   private getScenariosByRuleId = async (
     applicationName: string,
-    applicationId: number,
     ruleId: number,
   ): Promise<Partial<VoxRule> | undefined> => {
     if (!ruleId) return;
@@ -247,7 +339,6 @@ export class ApplicationModule {
 
   private getScenariosByRuleName = async (
     applicationName: string,
-    applicationId: number,
     ruleName: string,
   ): Promise<Partial<VoxRule> | undefined> => {
     if (!ruleName) return;
@@ -255,7 +346,6 @@ export class ApplicationModule {
     const voxRulesList: VoxRulesList =
       await this.voxRuleService.readApplicationRulesByName(applicationName);
 
-    await this.voxScenarioService.cleanupDist();
     const ruleByName = voxRulesList?.find((rule) => rule.ruleName === ruleName);
     if (!ruleByName) {
       throw new Error(
@@ -277,7 +367,19 @@ export class ApplicationModule {
         modified: new Date(),
         secureRecordStorage: false,
       };
-      await this.voxApplicationService.saveApplicationMetadata(rawApplication);
+
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      const scenarios =
+        await voxScenarioService.downloadScenariosByApplicationId(
+          applicationId,
+        );
+
+      await this.voxApplicationService.saveApplicationMetadata(
+        rawApplication,
+        this.toMetadataScenarios(scenarios),
+      );
       return applicationId;
     } catch (error) {
       console.error(error);
@@ -331,26 +433,39 @@ export class ApplicationModule {
       bind: false,
     };
     if (unbindScenarioRequest.scenarioId?.length) {
-      await this.voxScenarioService.addScenariosToRule(unbindScenarioRequest);
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      await voxScenarioService.addScenariosToRule(unbindScenarioRequest);
     }
     if (uploadedScenariosInfo.length) {
-      await this.voxScenarioService.addScenariosToRule(bindScenarioRequest);
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      await voxScenarioService.addScenariosToRule(bindScenarioRequest);
     }
   };
 
   applicationBuild = async (
     settings: ApplicationBuildJobSettings,
   ): Promise<void> => {
-    const { applicationName } =
+    const { applicationName, applicationId } =
       await this.voxApplicationService.getApplicationNameAndId(settings);
     try {
+      await this.ensureLocalOrPlatformApplication(
+        applicationName,
+        applicationId,
+      );
       const voxRulesList: VoxRulesList = await this.getRulesByApplicationName(
         applicationName,
       );
-      await this.voxScenarioService.cleanupDist();
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      await voxScenarioService.cleanupDist();
       for (const voxRule of voxRulesList) {
         const { scenarios } = voxRule;
-        await this.voxScenarioService.build(scenarios);
+        await voxScenarioService.build(scenarios);
       }
     } catch (error) {
       console.error(
@@ -382,16 +497,24 @@ export class ApplicationModule {
         modified: new Date(),
         secureRecordStorage: false,
       };
+
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+
       const rulesFromPlatform =
         await this.voxRuleService.downloadApplicationRules(rawApplication);
-      await this.voxScenarioService.cleanupDist();
+      await voxScenarioService.cleanupDist();
       for (const voxRule of voxRulesList) {
         const { scenarios, rulePattern, ruleName } = voxRule;
-        await this.voxScenarioService.build(scenarios);
+        await voxScenarioService.build(scenarios);
         const { isForce } = settings;
-        await this.voxScenarioService.upload(scenarios, isForce);
+        await voxScenarioService.upload(scenarios, isForce, applicationId);
         const uploadedScenariosInfo =
-          await this.voxScenarioService.getScenarioInfoFromPlatform(scenarios);
+          await voxScenarioService.getScenarioInfoFromPlatform(
+            scenarios,
+            applicationId,
+          );
         const existingRule = rulesFromPlatform?.find(
           (rule) => rule.ruleName === ruleName,
         );
@@ -441,6 +564,15 @@ export class ApplicationModule {
       const rawRules: FullVoxRuleInfo[] =
         await this.voxRuleService.downloadApplicationRules(rawApplication);
       await this.voxRuleService.saveRulesMetadata(rawApplication, rawRules);
+
+      const platformScenarios =
+        await voxScenarioService.downloadScenariosByApplicationId(
+          applicationId,
+        );
+      await this.voxApplicationService.saveApplicationMetadata(
+        rawApplication,
+        this.toMetadataScenarios(platformScenarios),
+      );
     } catch (error) {
       console.error(
         this.lmg.generate(
@@ -456,23 +588,21 @@ export class ApplicationModule {
     settings: ApplicationByRuleBuildJobSettings,
   ): Promise<void> => {
     try {
-      const { applicationName, applicationId } = settings;
-      const fullApplicationName =
-        await this.voxApplicationService.getApplicationFullName(
-          applicationName,
-        );
+      const { applicationName, applicationId } =
+        await this.voxApplicationService.getApplicationNameAndId(settings);
+      await this.ensureLocalOrPlatformApplication(
+        applicationName,
+        applicationId,
+      );
       const { scenarios } =
-        (await this.getScenariosByRuleId(
-          fullApplicationName,
-          applicationId,
-          settings.ruleId,
-        )) ??
-        (await this.getScenariosByRuleName(
-          fullApplicationName,
-          applicationId,
-          settings.ruleName,
-        ));
-      await this.voxScenarioService.build(scenarios);
+        (await this.getScenariosByRuleId(applicationName, settings.ruleId)) ??
+        (await this.getScenariosByRuleName(applicationName, settings.ruleName));
+
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      await voxScenarioService.cleanupDist();
+      await voxScenarioService.build(scenarios);
     } catch (error) {
       console.error(
         this.lmg.generate(
@@ -495,24 +625,29 @@ export class ApplicationModule {
       if (!applicationId && !ruleId && !ruleName) {
         newApplicationId = await this.addApplicationToPlatform(applicationName);
       }
+      const resolvedApplicationId = applicationId || newApplicationId;
       const { scenarios, rulePattern } =
-        (await this.getScenariosByRuleId(
-          applicationName,
-          applicationId || newApplicationId,
-          ruleId,
-        )) ||
-        (await this.getScenariosByRuleName(
-          applicationName,
-          applicationId || newApplicationId,
-          ruleName,
-        ));
-      await this.voxScenarioService.build(scenarios);
-      await this.voxScenarioService.upload(scenarios, isForce);
+        (await this.getScenariosByRuleId(applicationName, ruleId)) ||
+        (await this.getScenariosByRuleName(applicationName, ruleName));
+
+      const voxScenarioService = await this.getOrCreateScenarioService(
+        applicationName,
+      );
+      await voxScenarioService.cleanupDist();
+      await voxScenarioService.build(scenarios);
+      await voxScenarioService.upload(
+        scenarios,
+        isForce,
+        resolvedApplicationId,
+      );
       const uploadedScenariosInfo =
-        await this.voxScenarioService.getScenarioInfoFromPlatform(scenarios);
+        await voxScenarioService.getScenarioInfoFromPlatform(
+          scenarios,
+          resolvedApplicationId,
+        );
       const rawApplication: FullVoxApplicationInfo = {
         applicationName,
-        applicationId: applicationId || newApplicationId,
+        applicationId: resolvedApplicationId,
         modified: new Date(),
         secureRecordStorage: false,
       };
@@ -533,7 +668,7 @@ export class ApplicationModule {
       }
       if (!existingRule) {
         await this.voxRuleService.uploadApplicationRule(
-          applicationId || newApplicationId,
+          resolvedApplicationId,
           settings.ruleName,
           uploadedScenariosInfo.map(({ scenarioId }) => scenarioId),
           rulePattern,
@@ -557,13 +692,22 @@ export class ApplicationModule {
         await this.bindScenarios(
           existingRule,
           uploadedScenariosInfo,
-          applicationId || newApplicationId,
+          resolvedApplicationId,
           applicationName,
         );
       }
       const rawRules: FullVoxRuleInfo[] =
         await this.voxRuleService.downloadApplicationRules(rawApplication);
       await this.voxRuleService.saveRulesMetadata(rawApplication, rawRules);
+
+      const platformScenarios =
+        await voxScenarioService.downloadScenariosByApplicationId(
+          resolvedApplicationId,
+        );
+      await this.voxApplicationService.saveApplicationMetadata(
+        rawApplication,
+        this.toMetadataScenarios(platformScenarios),
+      );
     } catch (error) {
       console.error(
         this.lmg.generate(

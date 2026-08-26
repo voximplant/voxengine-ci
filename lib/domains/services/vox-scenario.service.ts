@@ -53,9 +53,9 @@ export class VoxScenarioService {
 
   checkScenariosAlreadyExists = async (): Promise<boolean> => {
     try {
-      const scenarios = await this.persistentRepository.readStorage();
+      const scenarios = await this.persistentRepository.readStorage('./src');
       const scenariosMetadata =
-        await this.persistentRepository.readMetadataStorage();
+        await this.persistentRepository.readMetadataStorage('./dist');
       return !!scenarios.length && !!scenariosMetadata.length;
     } catch (error) {
       console.error(
@@ -93,6 +93,14 @@ export class VoxScenarioService {
 
   downloadScenarios = async (): Promise<FullVoxScenarioInfo[]> => {
     return await this.platformRepository.downloadScenarios();
+  };
+
+  downloadScenariosByApplicationId = async (
+    applicationId: number,
+  ): Promise<FullVoxScenarioInfo[]> => {
+    return await this.platformRepository.downloadScenariosByApplicationId(
+      applicationId,
+    );
   };
 
   downloadScenario = async (
@@ -147,12 +155,16 @@ export class VoxScenarioService {
     }
   };
 
-  saveScenarioMetadata = async (rawScenario: FullVoxScenarioInfo) => {
+  saveScenarioMetadata = async (
+    rawScenario: FullVoxScenarioInfo,
+    applicationId: number,
+  ) => {
     try {
       const hash = this.generateHash(rawScenario.scenarioScript);
       const voxScenarioMetadata: VoxScenarioMetadata = new VoxScenarioMetadata(
         rawScenario,
         hash,
+        applicationId,
       );
       await this.persistentRepository.createMetadata(voxScenarioMetadata);
     } catch (error) {
@@ -168,11 +180,17 @@ export class VoxScenarioService {
 
   getScenarioInfoFromPlatform = async (
     scenarioNames: string[],
+    applicationId: number,
   ): Promise<ScenarioInfo[]> => {
-    const allScenarios = await this.platformRepository.downloadScenarios();
+    const applicationScenarios =
+      await this.platformRepository.downloadScenariosByApplicationId(
+        applicationId,
+      );
     return scenarioNames
       .map((scenarioName) =>
-        allScenarios.find((scenario) => scenario.scenarioName === scenarioName),
+        applicationScenarios.find(
+          (scenario) => scenario.scenarioName === scenarioName,
+        ),
       )
       .filter((scenario) => scenario);
   };
@@ -192,6 +210,7 @@ export class VoxScenarioService {
           scenarioId: scenario.scenarioId,
           hash: scenario.hash,
           scenarioName: scenario.scenarioName,
+          applicationId: scenario.applicationId,
         });
       }
     } catch (error) {
@@ -236,7 +255,11 @@ export class VoxScenarioService {
     }
   };
 
-  upload = async (scenarios: string[] = [], isForce = false): Promise<void> => {
+  upload = async (
+    scenarios: string[] = [],
+    isForce = false,
+    applicationId: number,
+  ): Promise<void> => {
     try {
       for (const scenarioName of scenarios) {
         const distScenario = await this.persistentRepository.readDist(
@@ -254,7 +277,10 @@ export class VoxScenarioService {
           await this.persistentRepository.readDistMetadata(scenarioName);
 
         const platformScenarioInfo: FullVoxScenarioInfo =
-          await this.platformRepository.downloadScenarioByName(scenarioName);
+          await this.platformRepository.downloadScenarioByName(
+            scenarioName,
+            applicationId,
+          );
 
         // Brand-new scenario
         if (!stringDistScenarioMetadata && !platformScenarioInfo) {
@@ -262,6 +288,7 @@ export class VoxScenarioService {
             await this.platformRepository.addScenario(
               scenarioName,
               distScenario,
+              applicationId,
             );
           if (!addScenarioResult) {
             throw new Error(
@@ -269,7 +296,10 @@ export class VoxScenarioService {
             );
           }
           const platformScenarioInfoWithoutScript: FullVoxScenarioInfo =
-            await this.platformRepository.downloadScenarioByName(scenarioName);
+            await this.platformRepository.downloadScenarioByName(
+              scenarioName,
+              applicationId,
+            );
           if (!platformScenarioInfoWithoutScript) {
             throw new Error(
               this.lmg.generate(
@@ -282,6 +312,7 @@ export class VoxScenarioService {
             new VoxScenarioMetadata(
               platformScenarioInfoWithoutScript,
               distScenarioHash,
+              applicationId,
             );
           await this.persistentRepository.createOrUpdateMetadata(
             voxScenarioMetadata,
@@ -295,7 +326,11 @@ export class VoxScenarioService {
             platformScenarioInfo.scenarioScript,
           );
           const voxScenarioMetadata: VoxScenarioMetadata =
-            new VoxScenarioMetadata(platformScenarioInfo, platformScenarioHash);
+            new VoxScenarioMetadata(
+              platformScenarioInfo,
+              platformScenarioHash,
+              applicationId,
+            );
           await this.persistentRepository.createOrUpdateMetadata(
             voxScenarioMetadata,
           );
@@ -381,6 +416,7 @@ export class VoxScenarioService {
             new VoxScenarioMetadata(
               platformScenarioInfoWithScript,
               distScenarioHash,
+              applicationId,
             );
           await this.persistentRepository.createOrUpdateMetadata(
             voxScenarioMetadata,
